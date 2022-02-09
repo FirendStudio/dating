@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "320445830507",
+    "project_id": "jablesscupid",
+    "storage_bucket": "jablesscupid.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:320445830507:android:e18c6e9ede3a127a6e282e",
+        "android_client_info": {
+          "package_name": "com.jabless.cupid"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "320445830507-j67ma3kulo16vi3trqjmuugfv11fjdtp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5bHiW99yF2oAPsaqNHeZZc5AlrgDdFd8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "320445830507-j67ma3kulo16vi3trqjmuugfv11fjdtp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
