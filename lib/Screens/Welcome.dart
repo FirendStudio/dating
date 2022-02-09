@@ -138,27 +138,48 @@ class _WelcomeState extends State<Welcome> {
                               fontWeight: FontWeight.bold),
                         ))),
                     onTap: () async {
-                      await FirebaseAuth.instance.currentUser().then((_user) {
-                        if (_user.displayName != null) {
-                          if (_user.displayName.length > 0) {
-                            Navigator.push(
-                                context,
-                                CupertinoPageRoute(
-                                    builder: (context) => UserDOB(
-                                        {'UserName': _user.displayName})));
-                          } else {
-                            Navigator.push(
-                                context,
-                                CupertinoPageRoute(
-                                    builder: (context) => UserName()));
-                          }
+                      User _user = FirebaseAuth.instance.currentUser;
+
+                      if (_user.displayName != null) {
+                        if (_user.displayName.length > 0) {
+                          Navigator.push(
+                              context,
+                              CupertinoPageRoute(
+                                  builder: (context) => UserDOB(
+                                      {'UserName': _user.displayName})));
                         } else {
                           Navigator.push(
                               context,
                               CupertinoPageRoute(
                                   builder: (context) => UserName()));
                         }
-                      });
+                      } else {
+                        Navigator.push(
+                            context,
+                            CupertinoPageRoute(
+                                builder: (context) => UserName()));
+                      }
+                      // await FirebaseAuth.instance.currentUser().then((_user) {
+                      //   if (_user.displayName != null) {
+                      //     if (_user.displayName.length > 0) {
+                      //       Navigator.push(
+                      //           context,
+                      //           CupertinoPageRoute(
+                      //               builder: (context) => UserDOB(
+                      //                   {'UserName': _user.displayName})));
+                      //     } else {
+                      //       Navigator.push(
+                      //           context,
+                      //           CupertinoPageRoute(
+                      //               builder: (context) => UserName()));
+                      //     }
+                      //   } else {
+                      //     Navigator.push(
+                      //         context,
+                      //         CupertinoPageRoute(
+                      //             builder: (context) => UserName()));
+                      //   }
+                      // });
                     },
                   ),
                 ),

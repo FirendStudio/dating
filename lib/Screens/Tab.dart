@@ -33,7 +33,7 @@ class Tabbar extends StatefulWidget {
 //_
 class TabbarState extends State<Tabbar> {
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-  CollectionReference docRef = Firestore.instance.collection('Users');
+  CollectionReference docRef = FirebaseFirestore.instance.collection('Users');
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   UserModel currentUser;
   List<UserModel> matches = [];
@@ -43,7 +43,7 @@ class TabbarState extends State<Tabbar> {
 
   /// Past purchases
   List<PurchaseDetails> purchases = [];
-  InAppPurchaseConnection _iap = InAppPurchaseConnection.instance;
+  InAppPurchase _iap = InAppPurchase.instance;
   bool isPuchased = false;
   @override
   void initState() {
@@ -73,40 +73,40 @@ class TabbarState extends State<Tabbar> {
     _getAccessItems();
     _getCurrentUser();
     _getMatches();
-    _getpastPurchases();
+    // _getpastPurchases();
   }
 
   Map items = {};
   _getAccessItems() async {
-    Firestore.instance.collection("Item_access").snapshots().listen((doc) {
-      if (doc.documents.length > 0) {
-        items = doc.documents[0].data;
-        print(doc.documents[0].data);
+    FirebaseFirestore.instance.collection("Item_access").snapshots().listen((doc) {
+      if (doc.docs.length > 0) {
+        items = doc.docs[0].data;
+        print(doc.docs[0].data);
       }
 
       if (mounted) setState(() {});
     });
   }
 
-  Future<void> _getpastPurchases() async {
-    print('in past purchases');
-    QueryPurchaseDetailsResponse response = await _iap.queryPastPurchases();
-    print('response   ${response.pastPurchases}');
-    for (PurchaseDetails purchase in response.pastPurchases) {
-      // if (Platform.isIOS) {
-      await _iap.completePurchase(purchase);
-      // }
-    }
-    setState(() {
-      purchases = response.pastPurchases;
-    });
-    if (response.pastPurchases.length > 0) {
-      purchases.forEach((purchase) async {
-        print('   ${purchase.productID}');
-        await _verifyPuchase(purchase.productID);
-      });
-    }
-  }
+  // Future<void> _getpastPurchases() async {
+  //   print('in past purchases');
+  //   QueryPurchaseDetailsResponse response = await _iap.queryPastPurchases();
+  //   print('response   ${response.pastPurchases}');
+  //   for (PurchaseDetails purchase in response.pastPurchases) {
+  //     // if (Platform.isIOS) {
+  //     await _iap.completePurchase(purchase);
+  //     // }
+  //   }
+  //   setState(() {
+  //     purchases = response.pastPurchases;
+  //   });
+  //   if (response.pastPurchases.length > 0) {
+  //     purchases.forEach((purchase) async {
+  //       print('   ${purchase.productID}');
+  //       await _verifyPuchase(purchase.productID);
+  //     });
+  //   }
+  // }
 
   /// check if user has pruchased
   PurchaseDetails _hasPurchased(String productId) {
@@ -133,7 +133,7 @@ class TabbarState extends State<Tabbar> {
 
   int swipecount = 0;
   _getSwipedcount() {
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection('/Users/${currentUser.id}/CheckedUser')
         .where(
           'timestamp',
@@ -141,11 +141,11 @@ class TabbarState extends State<Tabbar> {
         )
         .snapshots()
         .listen((event) {
-      print(event.documents.length);
+      print(event.docs.length);
       setState(() {
-        swipecount = event.documents.length;
+        swipecount = event.docs.length;
       });
-      return event.documents.length;
+      return event.docs.length;
     });
   }
 
@@ -237,9 +237,9 @@ class TabbarState extends State<Tabbar> {
   // }
 
   _checkcallState(channelId) async {
-    bool iscalling = await Firestore.instance
+    bool iscalling = await FirebaseFirestore.instance
         .collection("calls")
-        .document(channelId)
+        .doc(channelId)
         .get()
         .then((value) {
       return value.data["calling"] ?? false;
@@ -248,18 +248,18 @@ class TabbarState extends State<Tabbar> {
   }
 
   _getMatches() async {
-    FirebaseUser user = await _firebaseAuth.currentUser();
-    return Firestore.instance
+    User user = _firebaseAuth.currentUser;
+    return FirebaseFirestore.instance
         .collection('/Users/${user.uid}/Matches')
         .orderBy('timestamp', descending: true)
         .snapshots()
         .listen((ondata) {
       matches.clear();
       newmatches.clear();
-      if (ondata.documents.length > 0) {
-        ondata.documents.forEach((f) async {
+      if (ondata.docs.length > 0) {
+        ondata.docs.forEach((f) async {
           await docRef
-              .document(f.data['Matches'])
+              .doc(f.data['Matches'])
               .get()
               .then((DocumentSnapshot doc) {
             if (doc.exists) {
@@ -282,8 +282,8 @@ class TabbarState extends State<Tabbar> {
   }
 
   _getCurrentUser() async {
-    FirebaseUser user = await _firebaseAuth.currentUser();
-    return docRef.document("${user.uid}").snapshots().listen((data) async {
+    User user = _firebaseAuth.currentUser;
+    return docRef.doc("${user.uid}").snapshots().listen((data) async {
       currentUser = UserModel.fromDocument(data);
       if (mounted) setState(() {});
       users.clear();
@@ -326,12 +326,12 @@ class TabbarState extends State<Tabbar> {
 
   Future getUserList() async {
     List checkedUser = [];
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection('/Users/${currentUser.id}/CheckedUser')
-        .getDocuments()
+        .get()
         .then((data) {
-      checkedUser.addAll(data.documents.map((f) => f['DislikedUser']));
-      checkedUser.addAll(data.documents.map((f) => f['LikedUser']));
+      checkedUser.addAll(data.docs.map((f) => f['DislikedUser']));
+      checkedUser.addAll(data.docs.map((f) => f['LikedUser']));
     }).then((_) {
       query().getDocuments().then((data) async {
         if (data.documents.length < 1) {
@@ -366,11 +366,11 @@ class TabbarState extends State<Tabbar> {
 
   getLikedByList() {
     docRef
-        .document(currentUser.id)
+        .doc(currentUser.id)
         .collection("LikedBy")
         .snapshots()
         .listen((data) async {
-      likedByList.addAll(data.documents.map((f) => f['LikedBy']));
+      likedByList.addAll(data.docs.map((f) => f['LikedBy']));
     });
   }
 

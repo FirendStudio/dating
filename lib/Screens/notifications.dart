@@ -18,14 +18,14 @@ class Notifications extends StatefulWidget {
 }
 
 class _NotificationsState extends State<Notifications> {
-  final db = Firestore.instance;
+  final db = FirebaseFirestore.instance;
   CollectionReference matchReference;
 
   @override
   void initState() {
     matchReference = db
         .collection("Users")
-        .document(widget.currentUser.id)
+        .doc(widget.currentUser.id)
         .collection('Matches');
 
     super.initState();
@@ -98,7 +98,7 @@ class _NotificationsState extends State<Notifications> {
                           "No Notification".tr().toString(),
                           style: TextStyle(color: secondryColor, fontSize: 16),
                         ));
-                      else if (snapshot.data.documents.length == 0) {
+                      else if (snapshot.data.docs.length == 0) {
                         return Center(
                             child: Text(
                           "No Notification".tr().toString(),
@@ -107,7 +107,7 @@ class _NotificationsState extends State<Notifications> {
                       }
                       return Expanded(
                         child: ListView(
-                          children: snapshot.data.documents
+                          children: snapshot.data.docs
                               .map((doc) => Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Container(
@@ -216,7 +216,7 @@ class _NotificationsState extends State<Notifications> {
                                                 });
                                             DocumentSnapshot userdoc = await db
                                                 .collection("Users")
-                                                .document(doc.data["Matches"])
+                                                .doc(doc.data["Matches"])
                                                 .get();
                                             if (userdoc.exists) {
                                               Navigator.pop(context);
@@ -241,12 +241,12 @@ class _NotificationsState extends State<Notifications> {
                                                   context: context,
                                                   builder: (context) {
                                                     if (!doc.data["isRead"]) {
-                                                      Firestore.instance
+                                                      FirebaseFirestore.instance
                                                           .collection(
                                                               "/Users/${widget.currentUser.id}/Matches")
-                                                          .document(
+                                                          .doc(
                                                               '${doc.data["Matches"]}')
-                                                          .updateData(
+                                                          .update(
                                                               {'isRead': true});
                                                     }
                                                     return Info(

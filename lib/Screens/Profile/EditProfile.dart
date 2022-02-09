@@ -188,7 +188,7 @@ class EditProfileState extends State<EditProfile> {
   Future getImage(
       ImageSource imageSource, context, currentUser, isProfilePicture) async {
     try {
-      var image = await ImagePicker.pickImage(source: imageSource);
+      var image = await ImagePicker().pickImage(source: imageSource);
       if (image != null) {
         File croppedFile = await ImageCropper.cropImage(
             sourcePath: image.path,

@@ -28,11 +28,13 @@ class _VerificationState extends State<Verification> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   Login _login = new Login();
   Future updateNumber() async {
-    FirebaseUser user = await FirebaseAuth.instance.currentUser();
-    await Firestore.instance
+    User user = await FirebaseAuth.instance.currentUser;
+    await FirebaseFirestore.instance
         .collection("Users")
-        .document(user.uid)
-        .setData({'phoneNumber': user.phoneNumber}, merge: true).then((_) {
+        .doc(user.uid)
+        .set({'phoneNumber': user.phoneNumber},
+        // merge: true
+    ).then((_) {
       showDialog(
           barrierDismissible: false,
           context: context,
@@ -121,14 +123,18 @@ class _VerificationState extends State<Verification> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 50),
               child: PinCodeTextField(
-                textInputType: TextInputType.number,
+                keyboardType: TextInputType.number,
                 length: 6,
-                obsecureText: false,
+                obscureText: false,
                 animationType: AnimationType.fade,
-                shape: PinCodeFieldShape.underline,
+                pinTheme: PinTheme(
+                  shape: PinCodeFieldShape.underline,
+                  borderRadius: BorderRadius.circular(5),
+                  fieldHeight: 50,
+                  fieldWidth: 35,
+                  activeFillColor: Colors.white,
+                ),
                 animationDuration: Duration(milliseconds: 300),
-                fieldHeight: 50,
-                fieldWidth: 35,
                 onChanged: (value) {
                   code = value;
                 },
@@ -193,12 +199,11 @@ class _VerificationState extends State<Verification> {
                   barrierDismissible: false,
                   context: context,
                 );
-                AuthCredential _phoneAuth = PhoneAuthProvider.getCredential(
+                AuthCredential _phoneAuth = PhoneAuthProvider.credential(
                     verificationId: widget.smsVerificationCode, smsCode: code);
                 if (widget.updateNumber) {
-                  FirebaseUser user = await FirebaseAuth.instance.currentUser();
-                  user
-                      .updatePhoneNumberCredential(_phoneAuth)
+                  User user = FirebaseAuth.instance.currentUser;
+                  user.updatePhoneNumber(_phoneAuth)
                       .then((_) => updateNumber())
                       .catchError((e) {
                     CustomSnackbar.snackbar("$e", _scaffoldKey);
@@ -243,12 +248,12 @@ class _VerificationState extends State<Verification> {
                                       ],
                                     )));
                           });
-                      Firestore.instance
+                      FirebaseFirestore.instance
                           .collection('Users')
                           .where('userId', isEqualTo: authResult.user.uid)
-                          .getDocuments()
+                          .get()
                           .then((QuerySnapshot snapshot) async {
-                        if (snapshot.documents.length <= 0) {
+                        if (snapshot.docs.length <= 0) {
                           await setDataUser(authResult.user);
                         }
                       });

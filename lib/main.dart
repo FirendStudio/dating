@@ -19,7 +19,7 @@ void main() {
     DeviceOrientation.portraitDown,
     DeviceOrientation.portraitUp,
   ]).then((_) {
-    InAppPurchaseConnection.enablePendingPurchases();
+    // InAppPurchaseConnection.enablePendingPurchases();
     //runApp(new MyApp());
     runApp(EasyLocalization(
       supportedLocales: [Locale('en', 'US'), Locale('es', 'ES')],
@@ -53,45 +53,77 @@ class _MyAppState extends State<MyApp> {
 
   Future _checkAuth() async {
     final FirebaseAuth _auth = FirebaseAuth.instance;
-    _auth.currentUser().then((FirebaseUser user) async {
-      print(user);
-      if (user != null) {
-        await Firestore.instance
-            .collection('Users')
-            .where('userId', isEqualTo: user.uid)
-            .getDocuments()
-            .then((QuerySnapshot snapshot) async {
-          if (snapshot.documents.length > 0) {
-            if (snapshot.documents[0].data['location'] != null) {
-              setState(() {
-                isRegistered = true;
-                isLoading = false;
-              });
-            } else {
-              setState(() {
-                isAuth = true;
-                isLoading = false;
-              });
-            }
-            print("loggedin ${user.uid}");
+    User user = _auth.currentUser;
+    print(user);
+    if (user != null) {
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .where('userId', isEqualTo: user.uid)
+          .get()
+          .then((QuerySnapshot snapshot) async {
+        if (snapshot.docs.length > 0) {
+          if (snapshot.docs[0].data['location'] != null) {
+            setState(() {
+              isRegistered = true;
+              isLoading = false;
+            });
           } else {
             setState(() {
+              isAuth = true;
               isLoading = false;
             });
           }
-        });
-      } else {
-        setState(() {
-          isLoading = false;
-        });
-      }
-    });
+          print("loggedin ${user.uid}");
+        } else {
+          setState(() {
+            isLoading = false;
+          });
+        }
+      });
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+    }
+    // _auth.currentUser().then((FirebaseUser user) async {
+    //   print(user);
+    //   if (user != null) {
+    //     await Firestore.instance
+    //         .collection('Users')
+    //         .where('userId', isEqualTo: user.uid)
+    //         .getDocuments()
+    //         .then((QuerySnapshot snapshot) async {
+    //       if (snapshot.documents.length > 0) {
+    //         if (snapshot.documents[0].data['location'] != null) {
+    //           setState(() {
+    //             isRegistered = true;
+    //             isLoading = false;
+    //           });
+    //         } else {
+    //           setState(() {
+    //             isAuth = true;
+    //             isLoading = false;
+    //           });
+    //         }
+    //         print("loggedin ${user.uid}");
+    //       } else {
+    //         setState(() {
+    //           isLoading = false;
+    //         });
+    //       }
+    //     });
+    //   } else {
+    //     setState(() {
+    //       isLoading = false;
+    //     });
+    //   }
+    // });
   }
 
   _getLanguage() async {
-    var itemList = await Firestore.instance
+    var itemList = await FirebaseFirestore.instance
         .collection('Language')
-        .document('present_languages')
+        .doc('present_languages')
         .get();
 
     if (itemList.data['spanish'] == true && itemList.data['english'] == false) {

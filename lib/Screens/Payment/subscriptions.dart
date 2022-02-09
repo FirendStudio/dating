@@ -9,7 +9,7 @@ import 'package:hookup4u/models/user_model.dart';
 import 'package:hookup4u/util/color.dart';
 import 'package:hookup4u/util/snackbar.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
-import 'package:in_app_purchase/store_kit_wrappers.dart';
+// import 'package:in_app_purchase/store_kit_wrappers.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../Profile/profile.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -43,7 +43,7 @@ class _SubscriptionState extends State<Subscription> {
   ProductDetails selectedProduct;
   var response;
   bool _isLoading = true;
-  InAppPurchaseConnection _iap = InAppPurchaseConnection.instance;
+  InAppPurchase _iap = InAppPurchase.instance;
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   @override
   void initState() {
@@ -81,12 +81,12 @@ class _SubscriptionState extends State<Subscription> {
   Future<List<String>> _fetchPackageIds() async {
     List<String> packageId = [];
 
-    await Firestore.instance
+    await FirebaseFirestore.instance
         .collection("Packages")
         .where('status', isEqualTo: true)
-        .getDocuments()
+        .get()
         .then((value) {
-      packageId.addAll(value.documents.map((e) => e['id']));
+      packageId.addAll(value.docs.map((e) => e['id']));
     });
 
     return packageId;
@@ -102,20 +102,20 @@ class _SubscriptionState extends State<Subscription> {
       await Future.wait(futures);
 
       /// removing all the pending puchases.
-      if (Platform.isIOS) {
-        var paymentWrapper = SKPaymentQueueWrapper();
-        var transactions = await paymentWrapper.transactions();
-        transactions.forEach((transaction) async {
-          print(transaction.transactionState);
-          await paymentWrapper
-              .finishTransaction(transaction)
-              .catchError((onError) {
-            print('finishTransaction Error $onError');
-          });
-        });
-      }
+      // if (Platform.isIOS) {
+      //   var paymentWrapper = SKPaymentQueueWrapper();
+      //   var transactions = await paymentWrapper.transactions();
+      //   transactions.forEach((transaction) async {
+      //     print(transaction.transactionState);
+      //     await paymentWrapper
+      //         .finishTransaction(transaction)
+      //         .catchError((onError) {
+      //       print('finishTransaction Error $onError');
+      //     });
+      //   });
+      // }
 
-      _streamSubscription = _iap.purchaseUpdatedStream.listen((data) {
+      _streamSubscription = _iap.purchaseStream.listen((data) {
         setState(
           () {
             purchases.addAll(data);
@@ -335,23 +335,12 @@ class _SubscriptionState extends State<Subscription> {
                                                         productList(
                                                           context: context,
                                                           product: product,
-                                                          interval: Platform
-                                                                  .isIOS
-                                                              ? getInterval(
-                                                                  product)
-                                                              : getIntervalAndroid(
-                                                                  product),
-                                                          intervalCount: Platform
-                                                                  .isIOS
-                                                              ? product
-                                                                  .skProduct
-                                                                  .subscriptionPeriod
-                                                                  .numberOfUnits
-                                                                  .toString()
-                                                              : product
-                                                                  .skuDetail
-                                                                  .subscriptionPeriod
-                                                                  .split("")[1],
+                                                          // interval: Platform.isIOS
+                                                          //     ? getInterval(product)
+                                                          //     : getIntervalAndroid(product),
+                                                          // intervalCount: Platform.isIOS
+                                                          //     ? product.skProduct.subscriptionPeriod.numberOfUnits.toString()
+                                                          //     : product.skuDetail.subscriptionPeriod.split("")[1],
                                                           price: product.price,
                                                         ),
                                                       ],
@@ -459,17 +448,17 @@ class _SubscriptionState extends State<Subscription> {
                               fontWeight: FontWeight.bold),
                         ))),
                     onTap: () async {
-                      var result = await _getpastPurchases();
-                      if (result.length == 0) {
-                        showDialog(
-                            context: context,
-                            builder: (ctx) {
-                              return AlertDialog(
-                                content: Text("No purchase found".tr().toString()),
-                                title: Text("Past Purchases".tr().toString()),
-                              );
-                            });
-                      }
+                      // var result = await _getpastPurchases();
+                      // if (result.length == 0) {
+                      //   showDialog(
+                      //       context: context,
+                      //       builder: (ctx) {
+                      //         return AlertDialog(
+                      //           content: Text("No purchase found".tr().toString()),
+                      //           title: Text("Past Purchases".tr().toString()),
+                      //         );
+                      //       });
+                      // }
                     },
                   )
                 : Container(),
@@ -583,27 +572,27 @@ class _SubscriptionState extends State<Subscription> {
   }
 
   ///get past purchases of user
-  Future _getpastPurchases() async {
-    QueryPurchaseDetailsResponse response = await _iap.queryPastPurchases();
-    for (PurchaseDetails purchase in response.pastPurchases) {
-      if (Platform.isIOS) {
-        _iap.completePurchase(purchase);
-      }
-    }
-    setState(() {
-      purchases = response.pastPurchases;
-    });
-    if (purchases.length > 0) {
-      purchases.forEach(
-        (purchase) async {
-          print('Plan    ${purchase.productID}');
-          await _verifyPuchase(purchase.productID);
-        },
-      );
-    } else {
-      return purchases;
-    }
-  }
+  // Future _getpastPurchases() async {
+  //   QueryPurchaseDetailsResponse response = await _iap.queryPastPurchases();
+  //   for (PurchaseDetails purchase in response.pastPurchases) {
+  //     if (Platform.isIOS) {
+  //       _iap.completePurchase(purchase);
+  //     }
+  //   }
+  //   setState(() {
+  //     purchases = response.pastPurchases;
+  //   });
+  //   if (purchases.length > 0) {
+  //     purchases.forEach(
+  //       (purchase) async {
+  //         print('Plan    ${purchase.productID}');
+  //         await _verifyPuchase(purchase.productID);
+  //       },
+  //     );
+  //   } else {
+  //     return purchases;
+  //   }
+  // }
 
   /// check if user has pruchased
   PurchaseDetails _hasPurchased(String productId) {
@@ -648,26 +637,26 @@ class _SubscriptionState extends State<Subscription> {
     await _iap.buyNonConsumable(purchaseParam: purchaseParam);
   }
 
-  String getInterval(ProductDetails product) {
-    SKSubscriptionPeriodUnit periodUnit =
-        product.skProduct.subscriptionPeriod.unit;
-    if (SKSubscriptionPeriodUnit.month == periodUnit) {
-      return "Month(s)";
-    } else if (SKSubscriptionPeriodUnit.week == periodUnit) {
-      return "Week(s)";
-    } else {
-      return "Year";
-    }
-  }
-
-  String getIntervalAndroid(ProductDetails product) {
-    String durCode = product.skuDetail.subscriptionPeriod.split("")[2];
-    if (durCode == "M") {
-      return "Month(s)";
-    } else if (durCode == "Y") {
-      return "Year";
-    } else {
-      return "Week(s)";
-    }
-  }
+  // String getInterval(ProductDetails product) {
+  //   SKSubscriptionPeriodUnit periodUnit =
+  //       product.skProduct.subscriptionPeriod.unit;
+  //   if (SKSubscriptionPeriodUnit.month == periodUnit) {
+  //     return "Month(s)";
+  //   } else if (SKSubscriptionPeriodUnit.week == periodUnit) {
+  //     return "Week(s)";
+  //   } else {
+  //     return "Year";
+  //   }
+  // }
+  //
+  // String getIntervalAndroid(ProductDetails product) {
+  //   String durCode = product.skuDetail.subscriptionPeriod.split("")[2];
+  //   if (durCode == "M") {
+  //     return "Month(s)";
+  //   } else if (durCode == "Y") {
+  //     return "Year";
+  //   } else {
+  //     return "Week(s)";
+  //   }
+  // }
 }

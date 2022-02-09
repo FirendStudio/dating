@@ -9,7 +9,7 @@ import 'package:hookup4u/util/color.dart';
 import 'package:intl/intl.dart';
 
 class RecentChats extends StatelessWidget {
-  final db = Firestore.instance;
+  final db = FirebaseFirestore.instance;
   final UserModel currentUser;
   final List<UserModel> matches;
 
@@ -48,7 +48,7 @@ class RecentChats extends StatelessWidget {
                             child: StreamBuilder(
                                 stream: db
                                     .collection("chats")
-                                    .document(chatId(currentUser, index))
+                                    .doc(chatId(currentUser, index))
                                     .collection('messages')
                                     .orderBy('time', descending: true)
                                     .snapshots(),
@@ -64,8 +64,7 @@ class RecentChats extends StatelessWidget {
                                       0) {
                                     return Container();
                                   }
-                                  index.lastmsg =
-                                      snapshot.data.documents[0]['time'];
+                                  index.lastmsg = snapshot.data.documents[0]['time'];
                                   return Container(
                                     margin: EdgeInsets.only(
                                         top: 5.0, bottom: 5.0, right: 20.0),

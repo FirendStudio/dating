@@ -307,13 +307,13 @@ class _CardPicturesState extends State<CardPictures>
                                     print(position);
                                     print(widget.users[index].name);
                                     CollectionReference docRef =
-                                        Firestore.instance.collection("Users");
+                                        FirebaseFirestore.instance.collection("Users");
                                     if (position == SwiperPosition.Left) {
                                       await docRef
-                                          .document(widget.currentUser.id)
+                                          .doc(widget.currentUser.id)
                                           .collection("CheckedUser")
-                                          .document(widget.users[index].id)
-                                          .setData(
+                                          .doc(widget.users[index].id)
+                                          .set(
                                         {
                                           'DislikedUser':
                                               widget.users[index].id,
@@ -370,10 +370,10 @@ class _CardPicturesState extends State<CardPictures>
                                               );
                                             });
                                         await docRef
-                                            .document(widget.currentUser.id)
+                                            .doc(widget.currentUser.id)
                                             .collection("Matches")
-                                            .document(widget.users[index].id)
-                                            .setData(
+                                            .doc(widget.users[index].id)
+                                            .set(
                                           {
                                             'Matches': widget.users[index].id,
                                             'isRead': false,
@@ -386,10 +386,10 @@ class _CardPicturesState extends State<CardPictures>
                                           },
                                         );
                                         await docRef
-                                            .document(widget.users[index].id)
+                                            .doc(widget.users[index].id)
                                             .collection("Matches")
-                                            .document(widget.currentUser.id)
-                                            .setData(
+                                            .doc(widget.currentUser.id)
+                                            .set(
                                           {
                                             'Matches': widget.currentUser.id,
                                             'userName': widget.currentUser.name,
@@ -403,10 +403,10 @@ class _CardPicturesState extends State<CardPictures>
                                       }
 
                                       await docRef
-                                          .document(widget.currentUser.id)
+                                          .doc(widget.currentUser.id)
                                           .collection("CheckedUser")
-                                          .document(widget.users[index].id)
-                                          .setData(
+                                          .doc(widget.users[index].id)
+                                          .set(
                                         {
                                           'LikedUser': widget.users[index].id,
                                           'timestamp':
@@ -414,10 +414,10 @@ class _CardPicturesState extends State<CardPictures>
                                         },
                                       );
                                       await docRef
-                                          .document(widget.users[index].id)
+                                          .doc(widget.users[index].id)
                                           .collection("LikedBy")
-                                          .document(widget.currentUser.id)
-                                          .setData(
+                                          .doc(widget.currentUser.id)
+                                          .set(
                                         {
                                           'LikedBy': widget.currentUser.id,
                                           'timestamp':

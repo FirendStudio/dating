@@ -53,11 +53,13 @@ class _OTPState extends State<OTP> {
 
   Future updatePhoneNumber() async {
     print("here");
-    FirebaseUser user = await FirebaseAuth.instance.currentUser();
-    await Firestore.instance
+    User user = FirebaseAuth.instance.currentUser;
+    await FirebaseFirestore.instance
         .collection("Users")
-        .document(user.uid)
-        .setData({'phoneNumber': user.phoneNumber}, merge: true).then((_) {
+        .doc(user.uid)
+        .set({'phoneNumber': user.phoneNumber},
+        // merge: true
+    ).then((_) {
       showDialog(
           barrierDismissible: false,
           context: context,
@@ -99,9 +101,8 @@ class _OTPState extends State<OTP> {
   _verificationComplete(
       AuthCredential authCredential, BuildContext context) async {
     if (widget.updateNumber) {
-      FirebaseUser user = await FirebaseAuth.instance.currentUser();
-      user
-          .updatePhoneNumberCredential(authCredential)
+      User user = FirebaseAuth.instance.currentUser;
+      user.updatePhoneNumber(authCredential)
           .then((_) => updatePhoneNumber())
           .catchError((e) {
         CustomSnackbar.snackbar("$e", _scaffoldKey);
@@ -147,12 +148,12 @@ class _OTPState extends State<OTP> {
                         ],
                       )));
             });
-        await Firestore.instance
+        await FirebaseFirestore.instance
             .collection('Users')
             .where('userId', isEqualTo: authResult.user.uid)
-            .getDocuments()
+            .get()
             .then((QuerySnapshot snapshot) async {
-          if (snapshot.documents.length <= 0) {
+          if (snapshot.docs.length <= 0) {
             await setDataUser(authResult.user);
           }
         });
@@ -209,7 +210,7 @@ class _OTPState extends State<OTP> {
         });
   }
 
-  _verificationFailed(AuthException authException, BuildContext context) {
+  _verificationFailed(FirebaseAuthException authException, BuildContext context) {
     CustomSnackbar.snackbar(
         "Exception!! message:" + authException.message.toString(),
         _scaffoldKey);
@@ -374,8 +375,8 @@ class _OTPState extends State<OTP> {
   }
 }
 
-Future setDataUser(FirebaseUser user) async {
-  await Firestore.instance.collection("Users").document(user.uid).setData({
+Future setDataUser(User user) async {
+  await FirebaseFirestore.instance.collection("Users").doc(user.uid).set({
     'userId': user.uid,
     'phoneNumber': user.phoneNumber,
     'timestamp': FieldValue.serverTimestamp(),
@@ -385,5 +386,7 @@ Future setDataUser(FirebaseUser user) async {
 
     // 'name': user.displayName,
     // 'pictureUrl': user.photoUrl,
-  }, merge: true);
+  },
+      // merge: true
+  );
 }

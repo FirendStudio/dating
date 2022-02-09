@@ -122,19 +122,19 @@ class PaymentDetails extends StatelessWidget {
                                                   style: TextStyle(
                                                     fontSize: 15,
                                                   ))),
-                                              DataCell(Text(
-                                                  index.billingClientPurchase
-                                                          .isAutoRenewing
-                                                      ? "Active".tr().toString()
-                                                      : "Cancelled".tr().toString(),
-                                                  style: TextStyle(
-                                                    color: index
-                                                            .billingClientPurchase
-                                                            .isAutoRenewing
-                                                        ? Colors.green
-                                                        : Colors.red,
-                                                    fontSize: 15,
-                                                  ))),
+                                              // DataCell(Text(
+                                              //     index.billingClientPurchase
+                                              //             .isAutoRenewing
+                                              //         ? "Active".tr().toString()
+                                              //         : "Cancelled".tr().toString(),
+                                              //     style: TextStyle(
+                                              //       color: index
+                                              //               .billingClientPurchase
+                                              //               .isAutoRenewing
+                                              //           ? Colors.green
+                                              //           : Colors.red,
+                                              //       fontSize: 15,
+                                              //     ))),
                                             ]),
                                           ],
                                         ),

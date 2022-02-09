@@ -28,7 +28,7 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   bool isBlocked = false;
-  final db = Firestore.instance;
+  final db = FirebaseFirestore.instance;
   CollectionReference chatReference;
   final TextEditingController _textController = new TextEditingController();
   bool _isWritting = false;
@@ -42,14 +42,13 @@ class _ChatPageState extends State<ChatPage> {
       ..show();
     print("object    -${widget.chatId}");
     super.initState();
-    chatReference =
-        db.collection("chats").document(widget.chatId).collection('messages');
+    chatReference = db.collection("chats").doc(widget.chatId).collection('messages');
     checkblock();
   }
 
   var blockedBy;
   checkblock() {
-    chatReference.document('blocked').snapshots().listen((onData) {
+    chatReference.doc('blocked').snapshots().listen((onData) {
       if (onData.data != null) {
         blockedBy = onData.data['blockedBy'];
         if (onData.data['isBlocked']) {
@@ -365,7 +364,7 @@ class _ChatPageState extends State<ChatPage> {
 
   List<Widget> generateReceiverLayout(DocumentSnapshot documentSnapshot) {
     if (!documentSnapshot.data['isRead']) {
-      chatReference.document(documentSnapshot.documentID).updateData({
+      chatReference.doc(documentSnapshot.documentID).updateData({
         'isRead': true,
       });
 
@@ -375,8 +374,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   generateMessages(AsyncSnapshot<QuerySnapshot> snapshot) {
-    return snapshot.data.documents
-        .map<Widget>((doc) => Container(
+    return snapshot.data.docs.map<Widget>((doc) => Container(
               margin: const EdgeInsets.symmetric(vertical: 10.0),
               child: new Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -464,12 +462,12 @@ class _ChatPageState extends State<ChatPage> {
                                   Navigator.pop(ctx);
                                   if (isBlocked &&
                                       blockedBy == widget.sender.id) {
-                                    chatReference.document('blocked').setData({
+                                    chatReference.doc('blocked').set({
                                       'isBlocked': !isBlocked,
                                       'blockedBy': widget.sender.id,
                                     });
                                   } else if (!isBlocked) {
-                                    chatReference.document('blocked').setData({
+                                    chatReference.doc('blocked').set({
                                       'isBlocked': !isBlocked,
                                       'blockedBy': widget.sender.id,
                                     });
@@ -584,7 +582,7 @@ class _ChatPageState extends State<ChatPage> {
                       color: primaryColor,
                     ),
                     onPressed: () async {
-                      var image = await ImagePicker.pickImage(
+                      var image = await ImagePicker().pickImage(
                           source: ImageSource.gallery);
                       int timestamp = new DateTime.now().millisecondsSinceEpoch;
                       StorageReference storageReference = FirebaseStorage
@@ -688,7 +686,19 @@ class _ChatPageState extends State<ChatPage> {
 }
 
 Future<void> handleCameraAndMic(callType) async {
-  await PermissionHandler().requestPermissions(callType == "VideoCall"
-      ? [PermissionGroup.camera, PermissionGroup.microphone]
-      : [PermissionGroup.microphone]);
+
+  if(callType == "VideoCall"){
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.camera,
+      Permission.microphone,
+    ].request();
+  }else{
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.microphone,
+    ].request();
+  }
+
+  // await PermissionHandler().requestPermissions(callType == "VideoCall"
+  //     ? [PermissionGroup.camera, PermissionGroup.microphone]
+  //     : [PermissionGroup.microphone]);
 }

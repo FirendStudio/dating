@@ -184,12 +184,19 @@ class AllowLocation extends StatelessWidget {
 }
 
 Future setUserData(Map<String, dynamic> userData) async {
-  await FirebaseAuth.instance.currentUser().then((FirebaseUser user) async {
-    await Firestore.instance
-        .collection("Users")
-        .document(user.uid)
-        .setData(userData, merge: true);
-  });
+  User user = FirebaseAuth.instance.currentUser;
+  await FirebaseFirestore.instance
+      .collection("Users")
+      .doc(user.uid)
+      .set(userData,
+      // merge: true
+  );
+  // await FirebaseAuth.instance.currentUser().then((FirebaseUser user) async {
+  //   await Firestore.instance
+  //       .collection("Users")
+  //       .document(user.uid)
+  //       .setData(userData, merge: true);
+  // });
 }
 
 Future showWelcomDialog(context) async {

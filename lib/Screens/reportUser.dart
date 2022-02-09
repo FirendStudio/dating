@@ -135,7 +135,7 @@ class _ReportUserState extends State<ReportUser> {
   }
 
   Future _newReport(context, String reason) async {
-    await Firestore.instance.collection("Reports").add({
+    await FirebaseFirestore.instance.collection("Reports").add({
       'reported_by': widget.currentUser.id,
       'victim_id': widget.seconduser.id,
       'reason': reason,
