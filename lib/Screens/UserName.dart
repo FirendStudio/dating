@@ -1,18 +1,18 @@
-import 'package:firebase_admob/firebase_admob.dart';
+// import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hookup4u/Screens/UserDOB.dart';
 import 'package:hookup4u/ads/ads.dart';
 import 'package:hookup4u/util/color.dart';
-import 'package:easy_localization/easy_localization.dart';
+// import 'package:easy_localization/easy_localization.dart';
 
 class UserName extends StatefulWidget {
   @override
   _UserNameState createState() => _UserNameState();
 }
 
-BannerAd ad1;
-Ads ads = new Ads();
+// BannerAd ad1;
+// Ads ads = new Ads();
 
 class _UserNameState extends State<UserName> {
   Map<String, dynamic> userData = {}; //user personal info
@@ -20,19 +20,20 @@ class _UserNameState extends State<UserName> {
 
   @override
   void initState() {
-    ad1 = ads.myBanner();
+    // ad1 = ads.myBanner();
+
     super.initState();
-    ad1
-      ..load()
-      ..show(
-        anchorOffset: 180.0,
-        anchorType: AnchorType.bottom,
-      );
+    // ad1
+    //   ..load()
+    //   ..show(
+    //     anchorOffset: 180.0,
+    //     anchorType: AnchorType.bottom,
+    //   );
   }
 
   @override
   void dispose() {
-    ads.disable(ad1);
+    // ads.disable(ad1);
     super.dispose();
   }
 
@@ -73,7 +74,7 @@ class _UserNameState extends State<UserName> {
                 children: <Widget>[
                   Padding(
                     child: Text(
-                      "My first\nname is".tr().toString(),
+                      "My username is",
                       style: TextStyle(fontSize: 40),
                     ),
                     padding: EdgeInsets.only(left: 50, top: 120),
@@ -86,10 +87,10 @@ class _UserNameState extends State<UserName> {
                   child: TextFormField(
                     style: TextStyle(fontSize: 23),
                     decoration: InputDecoration(
-                      hintText: "Enter your first name".tr().toString(),
+                      hintText: "Enter your first name",
                       focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(color: primaryColor)),
-                      helperText: "This is how it will appear in App.".tr().toString(),
+                      helperText: "This is the name other member will see on the App",
                       helperStyle:
                           TextStyle(color: secondryColor, fontSize: 15),
                     ),
@@ -124,7 +125,7 @@ class _UserNameState extends State<UserName> {
                               width: MediaQuery.of(context).size.width * .75,
                               child: Center(
                                   child: Text(
-                                "CONTINUE".tr().toString(),
+                                "CONTINUE",
                                 style: TextStyle(
                                     fontSize: 15,
                                     color: textColor,
@@ -155,7 +156,7 @@ class _UserNameState extends State<UserName> {
                               width: MediaQuery.of(context).size.width * .75,
                               child: Center(
                                   child: Text(
-                                "CONTINUE".tr().toString(),
+                                "CONTINUE",
                                 style: TextStyle(
                                     fontSize: 15,
                                     color: secondryColor,

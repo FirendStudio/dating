@@ -3,7 +3,7 @@ import 'package:flutter_mapbox_autocomplete/flutter_mapbox_autocomplete.dart';
 import 'package:hookup4u/Screens/seach_location.dart';
 import 'package:location/location.dart' as loc;
 import 'package:geocoder/geocoder.dart';
-import 'package:easy_localization/easy_localization.dart';
+// import 'package:easy_localization/easy_localization.dart';
 
 class UpdateLocation extends StatefulWidget {
   @override
@@ -31,12 +31,12 @@ class _UpdateLocationState extends State<UpdateLocation> {
         automaticallyImplyLeading: false,
         title: ListTile(
           title: Text(
-            "Use current location".tr().toString(),
+            "Use current location",
             style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
           subtitle: Text(_newAddress != null
-              ? _newAddress['PlaceName'] ?? 'Fetching..'.tr().toString()
-              : 'Unable to load...'.tr().toString()),
+              ? _newAddress['PlaceName'] ?? 'Fetching..'
+              : 'Unable to load...'),
           leading: Icon(
             Icons.location_searching_rounded,
             color: Colors.white,
@@ -63,7 +63,7 @@ class _UpdateLocationState extends State<UpdateLocation> {
           closeOnSelect: false,
           apiKey: mapboxApi,
           limit: 10,
-          hint: 'Enter your city name'.tr().toString(),
+          hint: 'Enter your city name',
           onSelect: (place) {
             Map obj = {};
             obj['PlaceName'] = place.placeName;

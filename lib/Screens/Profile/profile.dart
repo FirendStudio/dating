@@ -10,38 +10,38 @@ import 'package:hookup4u/models/user_model.dart';
 import 'package:hookup4u/util/color.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import '../Payment/subscriptions.dart';
-import 'package:easy_localization/easy_localization.dart';
+// import 'package:easy_localization/easy_localization.dart';
 
 final List adds = [
   {
     'icon': Icons.whatshot,
     'color': Colors.indigo,
-    'title': "Get matches faster".tr().toString(),
-    'subtitle': "Boost your profile once a month".tr().toString(),
+    'title': "Get matches faster",
+    'subtitle': "Boost your profile once a month",
   },
   {
     'icon': Icons.favorite,
     'color': Colors.lightBlueAccent,
-    'title': "more likes".tr().toString(),
-    'subtitle': "Get free rewindes".tr().toString(),
+    'title': "more likes",
+    'subtitle': "Get free rewindes",
   },
   {
     'icon': Icons.star_half,
     'color': Colors.amber,
-    'title': "Increase your chances".tr().toString(),
-    'subtitle': "Get unlimited free likes".tr().toString(),
+    'title': "Increase your chances",
+    'subtitle': "Get unlimited free likes",
   },
   {
     'icon': Icons.location_on,
     'color': Colors.purple,
-    'title': "Swipe around the world".tr().toString(),
-    'subtitle': "Passport to anywhere with hookup4u".tr().toString(),
+    'title': "Swipe around the world",
+    'subtitle': "Passport to anywhere with hookup4u",
   },
   {
     'icon': Icons.vpn_key,
     'color': Colors.orange,
-    'title': "Control your profile".tr().toString(),
-    'subtitle': "highly secured".tr().toString(),
+    'title': "Control your profile",
+    'subtitle': "highly secured",
   }
 ];
 
@@ -125,7 +125,7 @@ class _ProfileState extends State<Profile> {
                                       size: 30,
                                     ),
                                     Text(
-                                      "Enable to load".tr().toString(),
+                                      "Enable to load",
                                       style: TextStyle(
                                         color: Colors.black,
                                       ),
@@ -220,7 +220,7 @@ class _ProfileState extends State<Profile> {
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
-                              "Add media".tr().toString(),
+                              "Add media",
                               style: TextStyle(color: secondryColor),
                             ),
                           ),
@@ -256,7 +256,7 @@ class _ProfileState extends State<Profile> {
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                "Settings".tr().toString(),
+                                "Settings",
                                 style: TextStyle(color: secondryColor),
                               ),
                             )
@@ -288,7 +288,7 @@ class _ProfileState extends State<Profile> {
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                "Edit Info".tr().toString(),
+                                "Edit Info",
                                 style: TextStyle(color: secondryColor),
                               ),
                             ),
@@ -398,8 +398,8 @@ class _ProfileState extends State<Profile> {
                     child: Center(
                         child: Text(
                       widget.isPuchased && widget.purchases != null
-                          ? "Check Payment Details".tr().toString()
-                          : "Subscribe Plan".tr().toString(),
+                          ? "Check Payment Details"
+                          : "Subscribe Plan",
                       style: TextStyle(
                           fontSize: 15,
                           color: textColor,

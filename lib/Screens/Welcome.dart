@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hookup4u/Screens/UserDOB.dart';
 import 'package:hookup4u/Screens/UserName.dart';
 import 'package:hookup4u/util/color.dart';
-import 'package:easy_localization/easy_localization.dart';
+// import 'package:easy_localization/easy_localization.dart';
 
 class Welcome extends StatefulWidget {
   @override
@@ -31,19 +31,14 @@ class _WelcomeState extends State<Welcome> {
                         SizedBox(
                           height: 150,
                         ),
-                        Text(
-                          "hookup4u",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              fontSize: 35,
-                              color: primaryColor,
-                              fontWeight: FontWeight.bold,
-                              fontStyle: FontStyle.normal),
+                        Image.asset(
+                          "asset/images/logo1.png",
                         ),
                         ListTile(
                           contentPadding: EdgeInsets.all(8),
                           title: Text(
-                            "Welcome to hookup4u.\nPlease follow these House Rules.".tr().toString(),
+                            "This is a community for unvaccinated singles looking to meet, like"
+                            "-minded people for love, fun, and friendship",
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold),
                           ),
@@ -51,12 +46,12 @@ class _WelcomeState extends State<Welcome> {
                         ListTile(
                           contentPadding: EdgeInsets.all(8),
                           title: Text(
-                            "Be yourself.".tr().toString(),
+                            "Be yourself.",
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                           subtitle: Text(
-                            "Make sure your photos, age, and bio are true to who you are.".tr().toString(),
+                            "Please make your photos, age, and bio are true to who you are.",
                             style: TextStyle(
                               fontSize: 17,
                             ),
@@ -65,12 +60,12 @@ class _WelcomeState extends State<Welcome> {
                         ListTile(
                           contentPadding: EdgeInsets.all(8),
                           title: Text(
-                            "Play it cool.".tr().toString(),
+                            "Play it cool.",
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                           subtitle: Text(
-                            "Respect other and treat them as you would like to be treated".tr().toString(),
+                            "Respect other and treat them as you would like to be treated",
                             style: TextStyle(
                               fontSize: 17,
                             ),
@@ -79,12 +74,12 @@ class _WelcomeState extends State<Welcome> {
                         ListTile(
                           contentPadding: EdgeInsets.all(8),
                           title: Text(
-                            "Stay safe.".tr().toString(),
+                            "Stay safe.",
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                           subtitle: Text(
-                            "Don't be too quick to give out personal information.".tr().toString(),
+                            "Don't be too quick to give out personal information.",
                             style: TextStyle(
                               fontSize: 17,
                             ),
@@ -93,12 +88,12 @@ class _WelcomeState extends State<Welcome> {
                         ListTile(
                           contentPadding: EdgeInsets.all(8),
                           title: Text(
-                            "Be proactive.".tr().toString(),
+                            "Be proactive.",
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                           subtitle: Text(
-                            "Always report bad behavior.".tr().toString(),
+                            "Always report bad behavior.",
                             style: TextStyle(
                               fontSize: 17,
                             ),
@@ -131,7 +126,7 @@ class _WelcomeState extends State<Welcome> {
                         width: MediaQuery.of(context).size.width * .75,
                         child: Center(
                             child: Text(
-                          "GOT IT".tr().toString(),
+                          "GOT IT",
                           style: TextStyle(
                               fontSize: 15,
                               color: textColor,

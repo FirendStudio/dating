@@ -105,7 +105,7 @@
 //                                             size: 30,
 //                                           ),
 //                                           Text(
-//                                             "Enable to load".tr().toString(),
+//                                             "Enable to load",
 //                                             style: TextStyle(
 //                                               color: Colors.black,
 //                                             ),
@@ -128,7 +128,7 @@
 //                                     color: Colors.white,
 //                                   ),
 //                                   label: Text(
-//                                     "END".tr().toString(),
+//                                     "END",
 //                                     style: TextStyle(color: Colors.white),
 //                                   ),
 //                                   onPressed: () async {
@@ -169,7 +169,7 @@
 //                                     color: Colors.white,
 //                                   ),
 //                                   label: Text(
-//                                     "Back".tr().toString(),
+//                                     "Back",
 //                                     style: TextStyle(color: Colors.white),
 //                                   ),
 //                                   onPressed: () async {
@@ -197,7 +197,7 @@
 //                                     color: Colors.white,
 //                                   ),
 //                                   label: Text(
-//                                     "Back".tr().toString(),
+//                                     "Back",
 //                                     style: TextStyle(color: Colors.white),
 //                                   ),
 //                                   onPressed: () async {
@@ -214,7 +214,7 @@
 //                             Navigator.pop(context);
 //                           });
 //                           return Container(
-//                             child: Text("Call Ended...".tr().toString()),
+//                             child: Text("Call Ended..."),
 //                           );
 //                         }
 //                         break;

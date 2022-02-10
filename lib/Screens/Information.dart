@@ -8,7 +8,7 @@ import 'package:hookup4u/Screens/reportUser.dart';
 import 'package:hookup4u/models/user_model.dart';
 import 'package:hookup4u/util/color.dart';
 import 'package:swipe_stack/swipe_stack.dart';
-import 'package:easy_localization/easy_localization.dart';
+// import 'package:easy_localization/easy_localization.dart';
 
 import 'Chat/chatPage.dart';
 
@@ -145,7 +145,8 @@ class Info extends StatelessWidget {
                                         color: secondryColor,
                                         fontSize: 16,
                                         fontWeight: FontWeight.w500),
-                                  ).tr(args: ["${user.editInfo['living_in']}"]),
+                                  )
+                                      // .tr(args: ["${user.editInfo['living_in']}"]),
                                 )
                               : Container(),
                           !isMe

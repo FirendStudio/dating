@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,8 +13,9 @@ import 'package:hookup4u/models/user_model.dart';
 import 'package:hookup4u/util/color.dart';
 import 'package:hookup4u/util/snackbar.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:easy_localization/easy_localization.dart';
+// import 'package:easy_localization/easy_localization.dart';
 
 import '../Calling/dial.dart';
 
@@ -33,13 +35,13 @@ class _ChatPageState extends State<ChatPage> {
   final TextEditingController _textController = new TextEditingController();
   bool _isWritting = false;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
-  Ads _ads = new Ads();
+  // Ads _ads = new Ads();
 
   @override
   void initState() {
-    _ads.myInterstitial()
-      ..load()
-      ..show();
+    // _ads.myInterstitial()
+    //   ..load()
+    //   ..show();
     print("object    -${widget.chatId}");
     super.initState();
     chatReference = db.collection("chats").doc(widget.chatId).collection('messages');
@@ -50,8 +52,10 @@ class _ChatPageState extends State<ChatPage> {
   checkblock() {
     chatReference.doc('blocked').snapshots().listen((onData) {
       if (onData.data != null) {
-        blockedBy = onData.data['blockedBy'];
-        if (onData.data['isBlocked']) {
+        // blockedBy = onData.data['blockedBy'];
+        // if (onData.data['isBlocked']) {
+        blockedBy = onData['blockedBy'];
+        if (onData['isBlocked']) {
           isBlocked = true;
         } else {
           isBlocked = false;
@@ -70,7 +74,8 @@ class _ChatPageState extends State<ChatPage> {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: <Widget>[
             Container(
-              child: documentSnapshot.data['image_url'] != ''
+              // child: documentSnapshot.data['image_url'] != ''
+                child: documentSnapshot['image_url'] != ''
                   ? InkWell(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.end,
@@ -91,14 +96,15 @@ class _ChatPageState extends State<ChatPage> {
                                   height:
                                       MediaQuery.of(context).size.height * .65,
                                   width: MediaQuery.of(context).size.width * .9,
-                                  imageUrl:
-                                      documentSnapshot.data['image_url'] ?? '',
+                                  // imageUrl: documentSnapshot.data['image_url'] ?? '',
+                                  imageUrl: documentSnapshot['image_url'] ?? '',
                                   fit: BoxFit.fitWidth,
                                 ),
                                 Container(
                                   alignment: Alignment.bottomRight,
                                   child:
-                                      documentSnapshot.data['isRead'] == false
+                                      // documentSnapshot.data['isRead'] == false
+                                      documentSnapshot['isRead'] == false
                                           ? Icon(
                                               Icons.done,
                                               color: secondryColor,
@@ -120,10 +126,12 @@ class _ChatPageState extends State<ChatPage> {
                           Padding(
                             padding: const EdgeInsets.only(right: 10),
                             child: Text(
-                                documentSnapshot.data["time"] != null
+                                // documentSnapshot.data["time"] != null
+                                documentSnapshot["time"] != null
                                     ? DateFormat.yMMMd('en_US')
                                         .add_jm()
-                                        .format(documentSnapshot.data["time"]
+                                        // .format(documentSnapshot.data["time"]
+                                        .format(documentSnapshot["time"]
                                             .toDate())
                                         .toString()
                                     : "",
@@ -139,7 +147,8 @@ class _ChatPageState extends State<ChatPage> {
                         Navigator.of(context).push(
                           CupertinoPageRoute(
                             builder: (context) => LargeImage(
-                              documentSnapshot.data['image_url'],
+                              // documentSnapshot.data['image_url'],
+                              documentSnapshot['image_url'],
                             ),
                           ),
                         );
@@ -163,7 +172,8 @@ class _ChatPageState extends State<ChatPage> {
                               Expanded(
                                 child: Container(
                                   child: Text(
-                                    documentSnapshot.data['text'],
+                                    // documentSnapshot.data['text'],
+                                    documentSnapshot['text'],
                                     style: TextStyle(
                                       color: Colors.black87,
                                       fontSize: 16.0,
@@ -176,13 +186,12 @@ class _ChatPageState extends State<ChatPage> {
                                 mainAxisAlignment: MainAxisAlignment.end,
                                 children: <Widget>[
                                   Text(
-                                    documentSnapshot.data["time"] != null
+                                    // documentSnapshot.data["time"] != null
+                                    documentSnapshot["time"] != null
                                         ? DateFormat.MMMd('en_US')
-                                            .add_jm()
-                                            .format(documentSnapshot
-                                                .data["time"]
-                                                .toDate())
-                                            .toString()
+                                      // .add_jm().format(documentSnapshot.data["time"]
+                                        .add_jm().format(documentSnapshot["time"]
+                                        .toDate()).toString()
                                         : "",
                                     style: TextStyle(
                                       color: secondryColor,
@@ -193,7 +202,8 @@ class _ChatPageState extends State<ChatPage> {
                                   SizedBox(
                                     width: 5,
                                   ),
-                                  documentSnapshot.data['isRead'] == false
+                                  // documentSnapshot.data['isRead'] == false
+                                  documentSnapshot['isRead'] == false
                                       ? Icon(
                                           Icons.done,
                                           color: secondryColor,
@@ -363,8 +373,9 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   List<Widget> generateReceiverLayout(DocumentSnapshot documentSnapshot) {
-    if (!documentSnapshot.data['isRead']) {
-      chatReference.doc(documentSnapshot.documentID).updateData({
+    // if (!documentSnapshot.data['isRead']) {
+    if (!documentSnapshot['isRead']) {
+      chatReference.doc(documentSnapshot.data()).update({
         'isRead': true,
       });
 
@@ -378,18 +389,25 @@ class _ChatPageState extends State<ChatPage> {
               margin: const EdgeInsets.symmetric(vertical: 10.0),
               child: new Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: doc.data['type'] == "Call"
+                  // children: doc.data['type'] == "Call"
+                // children: doc.data['type'] == "Call"
+                  children: doc['type'] == "Call"
                       ? [
-                          Text(doc.data["time"] != null
-                              ? "${doc.data['text']} : " +
+                          // Text(doc.data["time"] != null
+                          //     ? "${doc.data['text']} : " +
+                          Text(doc["time"] != null
+                              ? "${doc['text']} : " +
                                   DateFormat.yMMMd('en_US')
                                       .add_jm()
-                                      .format(doc.data["time"].toDate())
+                                      // .format(doc.data["time"].toDate())
+                                      .format(doc["time"].toDate())
                                       .toString() +
-                                  " by ${doc.data['sender_id'] == widget.sender.id ? "You" : "${widget.second.name}"}"
+                                  // " by ${doc.data['sender_id'] == widget.sender.id ? "You" : "${widget.second.name}"}"
+                                  " by ${doc['sender_id'] == widget.sender.id ? "You" : "${widget.second.name}"}"
                               : "")
                         ]
-                      : doc.data['sender_id'] != widget.sender.id
+                      // : doc.data['sender_id'] != widget.sender.id
+                      : doc['sender_id'] != widget.sender.id
                           ? generateReceiverLayout(
                               doc,
                             )
@@ -434,7 +452,7 @@ class _ChatPageState extends State<ChatPage> {
                         width: 100,
                         height: 30,
                         child: Text(
-                          "Report".tr().toString(),
+                          "Report",
                         )),
                   ),
                 ),
@@ -450,12 +468,12 @@ class _ChatPageState extends State<ChatPage> {
                         builder: (BuildContext ctx) {
                           return AlertDialog(
                             title: Text(isBlocked ? 'Unblock' : 'Block'),
-                            content: Text('Do you want to ').tr(args: ["${isBlocked ? 'Unblock' : 'Block'}", "${widget.second.name}"]),
+                            content: Text('Do you want to ' + "${isBlocked ? 'Unblock' : 'Block'} " "${widget.second.name}"),
                             actions: <Widget>[
                               FlatButton(
                                 onPressed: () =>
                                     Navigator.of(context).pop(false),
-                                child: Text('No'.tr().toString()),
+                                child: Text('No'),
                               ),
                               FlatButton(
                                 onPressed: () async {
@@ -473,10 +491,10 @@ class _ChatPageState extends State<ChatPage> {
                                     });
                                   } else {
                                     CustomSnackbar.snackbar(
-                                        "You can't unblock".tr().toString(), _scaffoldKey);
+                                        "You can't unblock", _scaffoldKey);
                                   }
                                 },
-                                child: Text('Yes'.tr().toString()),
+                                child: Text('Yes'),
                               ),
                             ],
                           );
@@ -539,7 +557,7 @@ class _ChatPageState extends State<ChatPage> {
                     decoration:
                         BoxDecoration(color: Theme.of(context).cardColor),
                     child: isBlocked
-                        ? Text("Sorry You can't send message!".tr().toString())
+                        ? Text("Sorry You can't send message!")
                         : _buildTextComposer(),
                   ),
                 ],
@@ -585,17 +603,27 @@ class _ChatPageState extends State<ChatPage> {
                       var image = await ImagePicker().pickImage(
                           source: ImageSource.gallery);
                       int timestamp = new DateTime.now().millisecondsSinceEpoch;
-                      StorageReference storageReference = FirebaseStorage
-                          .instance
-                          .ref()
-                          .child('chats/${widget.chatId}/img_' +
-                              timestamp.toString() +
-                              '.jpg');
-                      StorageUploadTask uploadTask =
-                          storageReference.putFile(image);
-                      await uploadTask.onComplete;
-                      String fileUrl = await storageReference.getDownloadURL();
-                      _sendImage(messageText: 'Photo', imageUrl: fileUrl);
+                      // StorageReference storageReference = FirebaseStorage
+                      //     .instance
+                      //     .ref()
+                      //     .child('chats/${widget.chatId}/img_' +
+                      //         timestamp.toString() +
+                      //         '.jpg');
+                      // StorageUploadTask uploadTask =
+                      //     storageReference.putFile(image);
+                      // await uploadTask.onComplete;
+                      // String fileUrl = await storageReference.getDownloadURL();
+                      if(image != null){
+                        FirebaseStorage storage = FirebaseStorage.instance;
+                        Reference ref = storage.ref().child('chats/${widget.chatId}/img_'
+                            + timestamp.toString() +'.jpg');
+                        UploadTask uploadTask = ref.putFile(File(image.path));
+                        uploadTask.then((res) async {
+                          String fileUrl = await res.ref.getDownloadURL();
+                          _sendImage(messageText: 'Photo', imageUrl: fileUrl);
+                        });
+                      }
+
                     }),
               ),
               new Flexible(
@@ -613,7 +641,7 @@ class _ChatPageState extends State<ChatPage> {
                       floatingLabelBehavior: FloatingLabelBehavior.auto,
                       // border: OutlineInputBorder(
                       //     borderRadius: BorderRadius.circular(18)),
-                      hintText: "Send a message...".tr().toString()),
+                      hintText: "Send a message..."),
                 ),
               ),
               Container(
@@ -680,7 +708,7 @@ class _ChatPageState extends State<ChatPage> {
       //   ),
       // );
     } else {
-      CustomSnackbar.snackbar("Blocked !".tr().toString(), _scaffoldKey);
+      CustomSnackbar.snackbar("Blocked !", _scaffoldKey);
     }
   }
 }

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hookup4u/Screens/auth/otp.dart';
 import 'package:hookup4u/models/user_model.dart';
 import 'package:hookup4u/util/color.dart';
-import 'package:easy_localization/easy_localization.dart';
+// import 'package:easy_localization/easy_localization.dart';
 
 class UpdateNumber extends StatelessWidget {
   final UserModel currentUser;
@@ -15,7 +15,7 @@ class UpdateNumber extends StatelessWidget {
       backgroundColor: primaryColor,
       appBar: AppBar(
         title: Text(
-          "Phone number settings".tr().toString(),
+          "Phone number settings",
           style: TextStyle(color: Colors.white),
         ),
         leading: IconButton(
@@ -36,7 +36,7 @@ class UpdateNumber extends StatelessWidget {
           children: <Widget>[
             Padding(
               padding: const EdgeInsets.all(15.0),
-              child: Text("Phone number".tr().toString(),
+              child: Text("Phone number",
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
             ),
             Card(
@@ -44,7 +44,7 @@ class UpdateNumber extends StatelessWidget {
               title: Text(
                   currentUser.phoneNumber != null
                       ? "${currentUser.phoneNumber}"
-                      : "Verify Phone number".tr().toString(),
+                      : "Verify Phone number",
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400)),
               trailing: Icon(
                 currentUser.phoneNumber != null ? Icons.done : null,
@@ -53,7 +53,7 @@ class UpdateNumber extends StatelessWidget {
             )),
             Padding(
               padding: const EdgeInsets.only(left: 15),
-              child: Text("Verified phone number".tr().toString(),
+              child: Text("Verified phone number",
                   style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w400,
@@ -66,7 +66,7 @@ class UpdateNumber extends StatelessWidget {
                   child: Card(
                     child: Padding(
                       padding: const EdgeInsets.all(18.0),
-                      child: Text("Update my phone number".tr().toString(),
+                      child: Text("Update my phone number",
                           style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w500,

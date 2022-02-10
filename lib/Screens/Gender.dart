@@ -1,10 +1,13 @@
+import 'package:dropdown_search/dropdown_search.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:hookup4u/Screens/SexualOrientation.dart';
 import 'package:hookup4u/Screens/UserName.dart';
 import 'package:hookup4u/util/color.dart';
 import 'package:hookup4u/util/snackbar.dart';
-import 'package:easy_localization/easy_localization.dart';
+// import 'package:easy_localization/easy_localization.dart';
 
 class Gender extends StatefulWidget {
   final Map<String, dynamic> userData;
@@ -19,7 +22,17 @@ class _GenderState extends State<Gender> {
   bool woman = false;
   bool other = false;
   bool select = false;
+  String other_text = "other";
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  List <String> listGender = [
+    "other", 'agender', 'androgynous', 'bigender',
+    "gender fluid", "gender non conforming", "gender queer",
+    "gender questioning", "intersex", "non-binary", "pangender",
+    "trans human", "trans man", "trans woman", "transfeminime",
+    "transmasculine", "two-spirit"
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -52,7 +65,7 @@ class _GenderState extends State<Gender> {
         children: <Widget>[
           Padding(
             child: Text(
-              "I am a".tr().toString(),
+              "I am a",
               style: TextStyle(fontSize: 40),
             ),
             padding: EdgeInsets.only(left: 50, top: 120),
@@ -68,7 +81,7 @@ class _GenderState extends State<Gender> {
                     height: MediaQuery.of(context).size.height * .065,
                     width: MediaQuery.of(context).size.width * .75,
                     child: Center(
-                        child: Text("MAN".tr().toString(),
+                        child: Text("MAN",
                             style: TextStyle(
                                 fontSize: 20,
                                 color: man ? primaryColor : secondryColor,
@@ -95,7 +108,7 @@ class _GenderState extends State<Gender> {
                       height: MediaQuery.of(context).size.height * .065,
                       width: MediaQuery.of(context).size.width * .75,
                       child: Center(
-                          child: Text("WOMAN".tr().toString(),
+                          child: Text("WOMAN",
                               style: TextStyle(
                                   fontSize: 20,
                                   color: woman ? primaryColor : secondryColor,
@@ -126,7 +139,8 @@ class _GenderState extends State<Gender> {
                     height: MediaQuery.of(context).size.height * .065,
                     width: MediaQuery.of(context).size.width * .75,
                     child: Center(
-                        child: Text("OTHER".tr().toString(),
+                        child: Text(
+                            other_text.toUpperCase(),
                             style: TextStyle(
                                 fontSize: 20,
                                 color: other ? primaryColor : secondryColor,
@@ -139,13 +153,13 @@ class _GenderState extends State<Gender> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(25)),
                   onPressed: () {
-                    setState(() {
-                      woman = false;
-                      man = false;
-                      other = true;
-                    });
-                    // Navigator.push(
-                    //     context, CupertinoPageRoute(builder: (context) => OTP()));
+                    // setState(() {
+                    //   woman = false;
+                    //   man = false;
+                    //   other = true;
+                    // });
+                    dropdownGenderWidget(context, other_text);
+
                   },
                 ),
               ],
@@ -165,7 +179,7 @@ class _GenderState extends State<Gender> {
                     });
                   },
                 ),
-                title: Text("Show my gender on my profile".tr().toString()),
+                title: Text("Show my gender on my profile"),
               ),
             ),
           ),
@@ -192,7 +206,7 @@ class _GenderState extends State<Gender> {
                           width: MediaQuery.of(context).size.width * .75,
                           child: Center(
                               child: Text(
-                            "CONTINUE".tr().toString(),
+                            "CONTINUE",
                             style: TextStyle(
                                 fontSize: 15,
                                 color: textColor,
@@ -212,7 +226,7 @@ class _GenderState extends State<Gender> {
                           };
                         } else {
                           userGender = {
-                            'userGender': "other",
+                            'userGender': other_text,
                             'showOnProfile': select
                           };
                         }
@@ -223,7 +237,7 @@ class _GenderState extends State<Gender> {
                             CupertinoPageRoute(
                                 builder: (context) =>
                                     SexualOrientation(widget.userData)));
-                        ads.disable(ad1);
+                        // ads.disable(ad1);
                       },
                     ),
                   ),
@@ -242,7 +256,7 @@ class _GenderState extends State<Gender> {
                           width: MediaQuery.of(context).size.width * .75,
                           child: Center(
                               child: Text(
-                            "CONTINUE".tr().toString(),
+                            "CONTINUE",
                             style: TextStyle(
                                 fontSize: 15,
                                 color: secondryColor,
@@ -250,7 +264,7 @@ class _GenderState extends State<Gender> {
                           ))),
                       onTap: () {
                         CustomSnackbar.snackbar(
-                            "Please select one".tr().toString(), _scaffoldKey);
+                            "Please select one", _scaffoldKey);
                       },
                     ),
                   ),
@@ -259,4 +273,140 @@ class _GenderState extends State<Gender> {
       ),
     );
   }
+
+  void dropdownGenderWidget(BuildContext context2, String awal){
+    showDialog(
+      context: context2,
+      builder: (context) {
+        return AlertDialog(
+          title: Text("Gender"),
+          content: SizedBox(
+              height: Get.height * 0.1,
+              child: DropdownSearch<String>(
+                dropdownSearchDecoration: const InputDecoration(
+                  labelText: "Other Option",
+                  labelStyle: TextStyle(
+                    color: Colors.black,
+                  ),
+                  hintText: "Other Option",
+                  contentPadding: EdgeInsets.fromLTRB(12, 4, 12, 4),
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(5),
+                      ),
+                      borderSide: BorderSide(color: Colors.black)
+                  ),
+                ),
+                onChanged: (String data) {
+
+                  setState(() {
+                    other_text = data;
+                  });
+
+                },
+                showSearchBox: true,
+                items: listGender,
+                selectedItem: other_text,
+                dropdownBuilder: _customDropDownGenderWidget,
+                popupItemBuilder: _customPopUpGenderWidget,
+                isFilteredOnline: true,
+                onFind:(String filter) => getData(filter),
+              )
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              child: const Text('CANCEL'),
+              onPressed: () {
+                setState(() {
+                  other_text = awal;
+                  Navigator.pop(context2);
+                });
+
+              },
+            ),
+            ElevatedButton(
+              child: const Text('OK'),
+              onPressed: () {
+                if (kDebugMode) {
+                  print(other_text);
+                }
+                setState(() {
+                  man = false;
+                  woman = false;
+                  other = true;
+                  Navigator.pop(context2);
+                });
+
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _customPopUpGenderWidget(
+      BuildContext context, String item, bool isSelected) {
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 8),
+      decoration: !isSelected
+          ? null
+          : BoxDecoration(
+        border: Border.all(color: Theme.of(context).primaryColor),
+        borderRadius: BorderRadius.circular(5),
+        color: Colors.white,
+      ),
+      child: ListTile(
+          selected: isSelected,
+          title: Text(
+            item.toUpperCase(),
+            style: const TextStyle(color: Colors.black),
+          ),
+          leading: const Icon(Icons.drag_indicator_outlined)
+      ),
+    );
+  }
+
+  Widget _customDropDownGenderWidget(BuildContext context, String item) {
+    // if (item == null) {
+    //   return Container();
+    // }
+
+    return Container(
+      child: (item == '')
+          ? const ListTile(
+        contentPadding: EdgeInsets.all(0),
+        leading: CircleAvatar(),
+        title: Text("No item selected"),
+      )
+          : ListTile(
+          contentPadding: const EdgeInsets.all(0),
+          title: Text(
+            item.toUpperCase(),
+            style: const TextStyle(color: Colors.black),
+          ),
+          leading: const Icon(Icons.drag_indicator_outlined)
+      ),
+    );
+  }
+
+  Future<List<String>> getData(String filter) async {
+    if (kDebugMode) {
+      print(listGender.length);
+      print("Search : " + filter);
+    }
+
+    List<String> listTemp = [];
+    for (var element in listGender) {
+      if (element.toLowerCase().contains(filter.toLowerCase())) {
+        listTemp.add(element);
+      }
+    }
+    if (kDebugMode) {
+      print("Cek : "+listTemp.length.toString());
+    }
+
+    return listTemp;
+  }
+
 }

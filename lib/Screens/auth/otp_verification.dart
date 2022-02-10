@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -10,7 +12,7 @@ import 'package:hookup4u/util/color.dart';
 import 'package:hookup4u/util/snackbar.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'login.dart';
-import 'package:easy_localization/easy_localization.dart';
+// import 'package:easy_localization/easy_localization.dart';
 
 class Verification extends StatefulWidget {
   final bool updateNumber;
@@ -25,10 +27,13 @@ class Verification extends StatefulWidget {
 var onTapRecognizer;
 
 class _VerificationState extends State<Verification> {
+  // StreamController<ErrorAnimationType> errorController = StreamController<ErrorAnimationType>();
+
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   Login _login = new Login();
+  TextEditingController otp = TextEditingController();
   Future updateNumber() async {
-    User user = await FirebaseAuth.instance.currentUser;
+    User user = FirebaseAuth.instance.currentUser;
     await FirebaseFirestore.instance
         .collection("Users")
         .doc(user.uid)
@@ -59,7 +64,7 @@ class _VerificationState extends State<Verification> {
                           height: 100,
                         ),
                         Text(
-                          "Phone Number\nChanged\nSuccessfully".tr().toString(),
+                          "Phone Number\nChanged\nSuccessfully",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               decoration: TextDecoration.none,
@@ -105,7 +110,7 @@ class _VerificationState extends State<Verification> {
                   const EdgeInsets.symmetric(horizontal: 10.0, vertical: 50),
               child: RichText(
                 text: TextSpan(
-                    text: "Enter the code sent to ".tr().toString(),
+                    text: "Enter the code sent to ",
                     children: [
                       TextSpan(
                           text: widget.phoneNumber,
@@ -122,23 +127,41 @@ class _VerificationState extends State<Verification> {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 50),
-              child: PinCodeTextField(
-                keyboardType: TextInputType.number,
-                length: 6,
-                obscureText: false,
-                animationType: AnimationType.fade,
-                pinTheme: PinTheme(
-                  shape: PinCodeFieldShape.underline,
-                  borderRadius: BorderRadius.circular(5),
-                  fieldHeight: 50,
-                  fieldWidth: 35,
-                  activeFillColor: Colors.white,
+              child: Container(
+                padding: EdgeInsets.fromLTRB(10,2,10,2),
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(5),
+                    border: Border.all(color: Colors.red)
                 ),
-                animationDuration: Duration(milliseconds: 300),
-                onChanged: (value) {
-                  code = value;
-                },
-              ),
+                child: TextField(
+                  maxLength: 6,
+                  maxLines: 1,
+                  decoration: InputDecoration(
+                    border: InputBorder.none,
+                    labelText: "OTP",
+                  ),
+                  controller: otp,
+                ),
+              )
+              // PinCodeTextField(
+              //   controller: otp,
+              //   errorAnimationController: errorController, // Pass it here
+              //   keyboardType: TextInputType.number,
+              //   length: 6,
+              //   obscureText: false,
+              //   animationType: AnimationType.fade,
+              //   // pinTheme: PinTheme(
+              //   //   shape: PinCodeFieldShape.underline,
+              //   //   borderRadius: BorderRadius.circular(5),
+              //   //   fieldHeight: 50,
+              //   //   fieldWidth: 35,
+              //   //   activeFillColor: Colors.white,
+              //   // ),
+              //   animationDuration: Duration(milliseconds: 300),
+              //   onChanged: (value) {
+              //     code = value;
+              //   },
+              // ),
             ),
             SizedBox(
               height: 20,
@@ -146,11 +169,11 @@ class _VerificationState extends State<Verification> {
             RichText(
               textAlign: TextAlign.center,
               text: TextSpan(
-                  text: "Didn't receive the code? ".tr().toString(),
+                  text: "Didn't receive the code? ",
                   style: TextStyle(color: Colors.black54, fontSize: 15),
                   children: [
                     TextSpan(
-                        text: " RESEND".tr().toString(),
+                        text: " RESEND",
                         recognizer: onTapRecognizer,
                         style: TextStyle(
                             color: Color(0xFF91D3B3),
@@ -179,7 +202,7 @@ class _VerificationState extends State<Verification> {
                   width: MediaQuery.of(context).size.width * .75,
                   child: Center(
                       child: Text(
-                    "VERIFY".tr().toString(),
+                    "VERIFY",
                     style: TextStyle(
                         fontSize: 18,
                         color: textColor,
@@ -200,7 +223,12 @@ class _VerificationState extends State<Verification> {
                   context: context,
                 );
                 AuthCredential _phoneAuth = PhoneAuthProvider.credential(
-                    verificationId: widget.smsVerificationCode, smsCode: code);
+                    verificationId: widget.smsVerificationCode, smsCode: otp.text);
+                print(_phoneAuth.providerId);
+                // final PhoneAuthCredential credential = PhoneAuthProvider.credential(
+                //   verificationId: widget.smsVerificationCode,
+                //   smsCode: otp.text,
+                // );
                 if (widget.updateNumber) {
                   User user = FirebaseAuth.instance.currentUser;
                   user.updatePhoneNumber(_phoneAuth)
@@ -238,7 +266,7 @@ class _VerificationState extends State<Verification> {
                                           height: 100,
                                         ),
                                         Text(
-                                          "Verified\n Successfully".tr().toString(),
+                                          "Verified\n Successfully",
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                               decoration: TextDecoration.none,

@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hookup4u/models/user_model.dart';
 import 'package:hookup4u/util/color.dart';
-import 'package:easy_localization/easy_localization.dart';
+// import 'package:easy_localization/easy_localization.dart';
 
 class ReportUser extends StatefulWidget {
   final UserModel currentUser;
@@ -36,7 +36,7 @@ class _ReportUserState extends State<ReportUser> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                "Report User".tr().toString(),
+                "Report User",
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 22,
@@ -44,7 +44,7 @@ class _ReportUserState extends State<ReportUser> {
               ),
             ),
             Text(
-              "Is this person bothering you? Tell us what they did.".tr().toString(),
+              "Is this person bothering you? Tell us what they did.",
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 14, color: Colors.black),
             ),
@@ -55,7 +55,7 @@ class _ReportUserState extends State<ReportUser> {
           ? <Widget>[
               Material(
                 child: ListTile(
-                    title: Text("Inappropriate Photos".tr().toString()),
+                    title: Text("Inappropriate Photos"),
                     leading: Icon(
                       Icons.camera_alt,
                       color: Colors.indigo,
@@ -66,7 +66,7 @@ class _ReportUserState extends State<ReportUser> {
               Material(
                 child: ListTile(
                     title: Text(
-                      "Feels Like Spam".tr().toString(),
+                      "Feels Like Spam",
                     ),
                     leading: Icon(
                       Icons.sentiment_very_dissatisfied,
@@ -78,7 +78,7 @@ class _ReportUserState extends State<ReportUser> {
               Material(
                 child: ListTile(
                     title: Text(
-                      "User is underage".tr().toString(),
+                      "User is underage",
                     ),
                     leading: Icon(
                       Icons.call_missed_outgoing,
@@ -90,7 +90,7 @@ class _ReportUserState extends State<ReportUser> {
               Material(
                 child: ListTile(
                     title: Text(
-                      "Other".tr().toString(),
+                      "Other",
                     ),
                     leading: Icon(
                       Icons.report_problem,
@@ -112,14 +112,14 @@ class _ReportUserState extends State<ReportUser> {
                     TextField(
                       controller: reasonCtlr,
                       decoration: InputDecoration(
-                          hintText: "Additional Info(optional)".tr().toString()),
+                          hintText: "Additional Info(optional)"),
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       child: RaisedButton(
                           color: primaryColor,
                           child: Text(
-                            "Report User".tr().toString(),
+                            "Report User",
                             style: TextStyle(color: Colors.white),
                           ),
                           onPressed: () {
@@ -165,7 +165,7 @@ class _ReportUserState extends State<ReportUser> {
                         colorBlendMode: BlendMode.color,
                       ),
                       Text(
-                        "Reported".tr().toString(),
+                        "Reported",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             decoration: TextDecoration.none,

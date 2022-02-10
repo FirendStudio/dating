@@ -99,8 +99,8 @@
 //                                 Text(
 //                                   snapshot.data.documents[0]['callType'] ==
 //                                           "VideoCall"
-//                                       ? "Incoming Video Call".tr().toString()
-//                                       : "Incoming Audio Call".tr().toString(),
+//                                       ? "Incoming Video Call"
+//                                       : "Incoming Audio Call",
 //                                   style: TextStyle(
 //                                       color: primaryColor,
 //                                       fontSize: 25,
@@ -166,7 +166,7 @@
 //                                                           size: 30,
 //                                                         ),
 //                                                         Text(
-//                                                           "Enable to load".tr().toString(),
+//                                                           "Enable to load",
 //                                                           style: TextStyle(
 //                                                             color: Colors.black,
 //                                                           ),
@@ -196,7 +196,7 @@
 //                                       baseColor: Colors.white,
 //                                       highlightColor: Colors.black,
 //                                       child: Text(
-//                                         "is calling you...".tr().toString(),
+//                                         "is calling you...",
 //                                         style: TextStyle(
 //                                             fontSize: 20,
 //                                             fontWeight: FontWeight.bold),
@@ -271,7 +271,7 @@
 //                               Navigator.pop(context);
 //                             });
 //                             return Container(
-//                               child: Text("Call Ended...".tr().toString()),
+//                               child: Text("Call Ended..."),
 //                             );
 //                           }
 //                           break;
@@ -287,7 +287,7 @@
 //                   }
 //
 //                 return Container(
-//                   child: Text("Connecting...".tr().toString()),
+//                   child: Text("Connecting..."),
 //                 );
 //               }),
 //         ),

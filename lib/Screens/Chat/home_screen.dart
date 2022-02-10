@@ -3,7 +3,7 @@ import 'package:hookup4u/Screens/Chat/recent_chats.dart';
 import 'package:hookup4u/models/user_model.dart';
 import 'package:hookup4u/util/color.dart';
 import 'Matches.dart';
-import 'package:easy_localization/easy_localization.dart';
+// import 'package:easy_localization/easy_localization.dart';
 
 class HomeScreen extends StatefulWidget {
   final UserModel currentUser;
@@ -43,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: primaryColor,
         automaticallyImplyLeading: false,
         title: Text(
-          'Messages'.tr().toString(),
+          'Messages',
           style: TextStyle(
             color: Colors.white,
             fontSize: 18.0,
@@ -72,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 Padding(
                   padding: const EdgeInsets.all(20),
                   child: Text(
-                    'Recent messages'.tr().toString(),
+                    'Recent messages',
                     style: TextStyle(
                       color: primaryColor,
                       fontSize: 18.0,

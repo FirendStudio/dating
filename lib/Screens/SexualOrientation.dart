@@ -1,9 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:hookup4u/Screens/ShowGender.dart';
 import 'package:hookup4u/util/color.dart';
 import 'package:hookup4u/util/snackbar.dart';
-import 'package:easy_localization/easy_localization.dart';
+// import 'package:easy_localization/easy_localization.dart';
 
 class SexualOrientation extends StatefulWidget {
   final Map<String, dynamic> userData;
@@ -15,13 +16,29 @@ class SexualOrientation extends StatefulWidget {
 
 class _SexualOrientationState extends State<SexualOrientation> {
   List<Map<String, dynamic>> orientationlist = [
-    {'name': 'Straight'.tr().toString(), 'ontap': false},
-    {'name': 'Gay'.tr().toString(), 'ontap': false},
-    {'name': 'Asexual'.tr().toString(), 'ontap': false},
-    {'name': 'Lesbian'.tr().toString(), 'ontap': false},
-    {'name': 'Bisexual'.tr().toString(), 'ontap': false},
-    {'name': 'Demisexual'.tr().toString(), 'ontap': false},
+    {'name': 'straight', 'ontap': false},
+    {'name': 'gay', 'ontap': false},
+    {'name': 'lesbian', 'ontap': false},
+    {'name': 'bisexual', 'ontap': false},
+    {'name': 'bi-curious', 'ontap': false},
+    {'name': 'pansexual', 'ontap': false},
+    {'name': 'polysexual', 'ontap': false},
+    {'name': 'queer', 'ontap': false},
+    {'name': 'androgynobexual', 'ontap': false},
+    {'name': 'androsexual', 'ontap': false},
+    {'name': 'asexual', 'ontap': false},
+    {'name': 'autosexual', 'ontap': false},
+    {'name': 'demisexual', 'ontap': false},
+    {'name': 'gray a', 'ontap': false},
+    {'name': 'gynosexual', 'ontap': false},
+    {'name': 'heteroflexible', 'ontap': false},
+    {'name': 'homoflexible', 'ontap': false},
+    {'name': 'objectumsexual', 'ontap': false},
+    {'name': 'omnisexual', 'ontap': false},
+    {'name': 'skoliosexual', 'ontap': false},
   ];
+  String other_text = "other";
+
   List selected = [];
   bool select = false;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -61,74 +78,80 @@ class _SexualOrientationState extends State<SexualOrientation> {
             // mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
+
               Padding(
                 child: Text(
-                  "My sexual\norientation is".tr().toString(),
-                  style: TextStyle(fontSize: 40),
+                  "My sexual\norientation is",
+                  style: TextStyle(fontSize: Get.height * 0.05,),
                 ),
                 padding: EdgeInsets.only(left: 50, top: 80),
               ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 70, vertical: 50),
-                child: ListView.builder(
-                  physics: NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: orientationlist.length,
-                  itemBuilder: (BuildContext context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: OutlineButton(
-                        highlightedBorderColor: primaryColor,
-                        child: Container(
-                          height: MediaQuery.of(context).size.height * .055,
-                          width: MediaQuery.of(context).size.width * .65,
-                          child: Center(
-                              child: Text("${orientationlist[index]["name"]}",
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      color: orientationlist[index]["ontap"]
-                                          ? primaryColor
-                                          : secondryColor,
-                                      fontWeight: FontWeight.bold))),
-                        ),
-                        borderSide: BorderSide(
-                            width: 1,
-                            style: BorderStyle.solid,
-                            color: orientationlist[index]["ontap"]
-                                ? primaryColor
-                                : secondryColor),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25)),
-                        onPressed: () {
-                          setState(() {
-                            if (selected.length < 3) {
-                              orientationlist[index]["ontap"] =
-                                  !orientationlist[index]["ontap"];
-                              if (orientationlist[index]["ontap"]) {
-                                selected.add(orientationlist[index]["name"]);
-                                print(orientationlist[index]["name"]);
-                                print(selected);
-                              } else {
-                                selected.remove(orientationlist[index]["name"]);
-                                print(selected);
-                              }
-                            } else {
-                              if (orientationlist[index]["ontap"]) {
+
+              SizedBox(
+                height: Get.height * 0.6,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 70, vertical: 50),
+                  child: ListView.builder(
+                    // physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemCount: orientationlist.length,
+                    itemBuilder: (BuildContext context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: OutlineButton(
+                          highlightedBorderColor: primaryColor,
+                          child: Container(
+                            height: MediaQuery.of(context).size.height * .055,
+                            width: MediaQuery.of(context).size.width * .65,
+                            child: Center(
+                                child: Text("${orientationlist[index]["name"]}".toUpperCase(),
+                                    style: TextStyle(
+                                        fontSize: 20,
+                                        color: orientationlist[index]["ontap"]
+                                            ? primaryColor
+                                            : secondryColor,
+                                        fontWeight: FontWeight.bold))),
+                          ),
+                          borderSide: BorderSide(
+                              width: 1,
+                              style: BorderStyle.solid,
+                              color: orientationlist[index]["ontap"]
+                                  ? primaryColor
+                                  : secondryColor),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25)),
+                          onPressed: () {
+                            setState(() {
+                              if (selected.length < 3) {
                                 orientationlist[index]["ontap"] =
-                                    !orientationlist[index]["ontap"];
-                                selected.remove(orientationlist[index]["name"]);
+                                !orientationlist[index]["ontap"];
+                                if (orientationlist[index]["ontap"]) {
+                                  selected.add(orientationlist[index]["name"]);
+                                  print(orientationlist[index]["name"]);
+                                  print(selected);
+                                } else {
+                                  selected.remove(orientationlist[index]["name"]);
+                                  print(selected);
+                                }
                               } else {
-                                CustomSnackbar.snackbar(
-                                    "select upto 3".tr().toString(), _scaffoldKey);
+                                if (orientationlist[index]["ontap"]) {
+                                  orientationlist[index]["ontap"] =
+                                  !orientationlist[index]["ontap"];
+                                  selected.remove(orientationlist[index]["name"]);
+                                } else {
+                                  CustomSnackbar.snackbar(
+                                      "select upto 3", _scaffoldKey);
+                                }
                               }
-                            }
-                          });
-                        },
-                      ),
-                    );
-                  },
+                            });
+                          },
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
+
               Column(
                 children: <Widget>[
                   ListTile(
@@ -141,7 +164,7 @@ class _SexualOrientationState extends State<SexualOrientation> {
                         });
                       },
                     ),
-                    title: Text("Show my orientation on my profile".tr().toString()),
+                    title: Text("Show my orientation on my profile"),
                   ),
                   selected.length > 0
                       ? Padding(
@@ -168,7 +191,7 @@ class _SexualOrientationState extends State<SexualOrientation> {
                                       MediaQuery.of(context).size.width * .75,
                                   child: Center(
                                       child: Text(
-                                    "CONTINUE".tr().toString(),
+                                    "CONTINUE",
                                     style: TextStyle(
                                         fontSize: 15,
                                         color: textColor,
@@ -207,7 +230,7 @@ class _SexualOrientationState extends State<SexualOrientation> {
                                       MediaQuery.of(context).size.width * .75,
                                   child: Center(
                                       child: Text(
-                                    "CONTINUE".tr().toString(),
+                                    "CONTINUE",
                                     style: TextStyle(
                                         fontSize: 15,
                                         color: secondryColor,
@@ -215,7 +238,7 @@ class _SexualOrientationState extends State<SexualOrientation> {
                                   ))),
                               onTap: () {
                                 CustomSnackbar.snackbar(
-                                    "Please select one".tr().toString(), _scaffoldKey);
+                                    "Please select one", _scaffoldKey);
                               },
                             ),
                           ),

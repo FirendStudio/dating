@@ -1,6 +1,7 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:get/get.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class CustomWebView extends StatefulWidget {
   final String selectedUrl;
@@ -12,22 +13,22 @@ class CustomWebView extends StatefulWidget {
 }
 
 class _CustomWebViewState extends State<CustomWebView> {
-  final flutterWebviewPlugin = new FlutterWebviewPlugin();
-
+  // final flutterWebviewPlugin = new FlutterWebviewPlugin();
+  final Completer<WebViewController> _controller = Completer<WebViewController>();
   @override
   void initState() {
     super.initState();
-
-    flutterWebviewPlugin.onUrlChanged.listen((String url) {
-      if (url.contains("#access_token")) {
-        succeed(url);
-      }
-
-      if (url.contains(
-          "https://www.facebook.com/connect/login_success.html?error=access_denied&error_code=200&error_description=Permissions+error&error_reason=user_denied")) {
-        denied();
-      }
-    });
+    // if (url.contains("#access_token")) {
+    //   succeed(url);
+    // }
+    //
+    // if (url.contains(
+    //     "https://www.facebook.com/connect/login_success.html?error=access_denied&error_code=200&error_description=Permissions+error&error_reason=user_denied")) {
+    //   denied();
+    // }
+    // flutterWebviewPlugin.onUrlChanged.listen((String url) {
+    //
+    // });
   }
 
   denied() {
@@ -44,11 +45,34 @@ class _CustomWebViewState extends State<CustomWebView> {
 
   @override
   Widget build(BuildContext context) {
-    return WebviewScaffold(
-        url: widget.selectedUrl,
+    return Scaffold(
         appBar: new AppBar(
           backgroundColor: Color.fromRGBO(66, 103, 178, 1),
           title: new Text("Facebook login"),
-        ));
+        ),
+      body: Container(
+        height: Get.height,
+          child: WebView(
+              initialUrl: widget.selectedUrl,
+            onWebViewCreated: (WebViewController webViewController) {
+              _controller.complete(webViewController);
+            },
+            navigationDelegate: (NavigationRequest request) {
+              if (request.url.contains("#access_token")) {
+                print('Sukses $request}');
+                succeed(request.url);
+                return NavigationDecision.prevent;
+              }
+              if (request.url.contains("https://www.facebook.com/connect/login_success.html?error=access_denied&error_code=200&error_description=Permissions+error&error_reason=user_denied")) {
+                print('blocking navigation to $request}');
+                denied();
+                return NavigationDecision.prevent;
+              }
+              print('allowing navigation to $request');
+              return NavigationDecision.navigate;
+            },
+          )
+      )
+    );
   }
 }

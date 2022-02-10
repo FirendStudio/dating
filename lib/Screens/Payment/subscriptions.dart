@@ -13,7 +13,7 @@ import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../Profile/profile.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
-import 'package:easy_localization/easy_localization.dart';
+// import 'package:easy_localization/easy_localization.dart';
 
 import '../Tab.dart';
 
@@ -55,12 +55,12 @@ class _SubscriptionState extends State<Subscription> {
         await Alert(
           context: context,
           type: AlertType.error,
-          title: "Failed".tr().toString(),
-          desc: "Oops !! something went wrong. Try Again".tr().toString(),
+          title: "Failed",
+          desc: "Oops !! something went wrong. Try Again",
           buttons: [
             DialogButton(
               child: Text(
-                "Retry".tr().toString(),
+                "Retry",
                 style: TextStyle(color: Colors.white, fontSize: 20),
               ),
               onPressed: () => Navigator.pop(context),
@@ -134,7 +134,7 @@ class _SubscriptionState extends State<Subscription> {
             SnackBar(
               content: error != null
                   ? Text('$error')
-                  : Text("Oops !! something went wrong. Try Again".tr().toString()),
+                  : Text("Oops !! something went wrong. Try Again"),
             ),
           );
         },
@@ -181,7 +181,7 @@ class _SubscriptionState extends State<Subscription> {
                     ListTile(
                       dense: true,
                       title: Text(
-                        "Get our premium plans".tr().toString(),
+                        "Get our premium plans",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             color: primaryColor,
@@ -196,7 +196,7 @@ class _SubscriptionState extends State<Subscription> {
                         color: Colors.blue,
                       ),
                       title: Text(
-                        "Unlimited swipe.".tr().toString(),
+                        "Unlimited swipe.",
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w400),
                       ),
@@ -214,7 +214,7 @@ class _SubscriptionState extends State<Subscription> {
                             // Color(0xFF1A1A1A),
                             fontSize: 16,
                             fontWeight: FontWeight.w400),
-                      ).tr(args: ["${widget.items['paid_radius'] ?? ''}"]),
+                      ),
                     ),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -373,7 +373,7 @@ class _SubscriptionState extends State<Subscription> {
                             : Container(
                                 height: MediaQuery.of(context).size.width * .8,
                                 child: Center(
-                                  child: Text("No active product found!!".tr().toString()),
+                                  child: Text("No active product found!!"),
                                 ),
                               )
                   ],
@@ -402,7 +402,7 @@ class _SubscriptionState extends State<Subscription> {
                         width: MediaQuery.of(context).size.width * .55,
                         child: Center(
                             child: Text(
-                          "CONTINUE".tr().toString(),
+                          "CONTINUE",
                           style: TextStyle(
                               fontSize: 15,
                               color: textColor,
@@ -413,7 +413,7 @@ class _SubscriptionState extends State<Subscription> {
                         _buyProduct(selectedProduct);
                       else {
                         CustomSnackbar.snackbar(
-                            "You must choose a subscription to continue.".tr().toString(),
+                            "You must choose a subscription to continue.",
                             _scaffoldKey);
                       }
                     },
@@ -441,7 +441,7 @@ class _SubscriptionState extends State<Subscription> {
                         width: MediaQuery.of(context).size.width * .55,
                         child: Center(
                             child: Text(
-                          "RESTORE PURCHASE".tr().toString(),
+                          "RESTORE PURCHASE",
                           style: TextStyle(
                               fontSize: 15,
                               color: textColor,
@@ -454,8 +454,8 @@ class _SubscriptionState extends State<Subscription> {
                       //       context: context,
                       //       builder: (ctx) {
                       //         return AlertDialog(
-                      //           content: Text("No purchase found".tr().toString()),
-                      //           title: Text("Past Purchases".tr().toString()),
+                      //           content: Text("No purchase found"),
+                      //           title: Text("Past Purchases"),
                       //         );
                       //       });
                       // }
@@ -472,7 +472,7 @@ class _SubscriptionState extends State<Subscription> {
                 children: <Widget>[
                   GestureDetector(
                     child: Text(
-                      "Privacy Policy".tr().toString(),
+                      "Privacy Policy",
                       style: TextStyle(color: Colors.blue),
                     ),
                     onTap: () => launch(
@@ -480,7 +480,7 @@ class _SubscriptionState extends State<Subscription> {
                   ),
                   GestureDetector(
                     child: Text(
-                      "Terms & Conditions".tr().toString(),
+                      "Terms & Conditions",
                       style: TextStyle(color: Colors.blue),
                     ),
                     onTap: () => launch(

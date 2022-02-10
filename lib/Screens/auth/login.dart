@@ -11,13 +11,12 @@ import 'package:hookup4u/Screens/auth/otp.dart';
 import 'package:hookup4u/models/custom_web_view.dart';
 import 'package:hookup4u/util/color.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:easy_localization/easy_localization.dart';
+// import 'package:easy_localization/easy_localization.dart';
 
 class Login extends StatelessWidget {
   static const your_client_id = '00000000000000';
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  static const your_redirect_url =
-      'https://h*****firebaseapp.com/__/auth/handler';
+  static const your_redirect_url = 'https://h*****firebaseapp.com/__/auth/handler';
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
@@ -25,9 +24,22 @@ class Login extends StatelessWidget {
   Widget build(BuildContext context) {
     return WillPopScope(
       child: Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          elevation: 0,
+        appBar: new PreferredSize(
+          child: new Container(
+            padding: new EdgeInsets.only(
+                top: MediaQuery.of(context).padding.top
+            ),
+            decoration: BoxDecoration(
+                gradient: LinearGradient(colors: [
+                  primaryColor,
+                  primaryColor
+                ]),
+            ),
+          ),
+          preferredSize: new Size(
+              MediaQuery.of(context).size.width,
+              MediaQuery.of(context).size.height * 0.1,
+          ),
         ),
         backgroundColor: Colors.white,
         body: Container(
@@ -96,7 +108,6 @@ class Login extends StatelessWidget {
                 Container(
                   child: Text(
                     "By tapping 'Log in', you agree with our \n Terms.Learn how we process your data in \n our Privacy Policy and Cookies Policy."
-                        .tr()
                         .toString(),
                     textAlign: TextAlign.center,
                     style: TextStyle(color: Colors.black54, fontSize: 15),
@@ -127,7 +138,7 @@ class Login extends StatelessWidget {
                             width: MediaQuery.of(context).size.width * .8,
                             child: Center(
                                 child: Text(
-                              "LOG IN WITH FACEBOOK".tr().toString(),
+                              "LOG IN WITH FACEBOOK".toString(),
                               style: TextStyle(
                                   color: textColor,
                                   fontWeight: FontWeight.bold),
@@ -186,7 +197,7 @@ class Login extends StatelessWidget {
                     height: MediaQuery.of(context).size.height * .065,
                     width: MediaQuery.of(context).size.width * .75,
                     child: Center(
-                        child: Text("LOG IN WITH PHONE NUMBER".tr().toString(),
+                        child: Text("LOG IN WITH PHONE NUMBER".toString(),
                             style: TextStyle(
                                 color: primaryColor,
                                 fontWeight: FontWeight.bold))),
@@ -210,7 +221,7 @@ class Login extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      "Trouble logging in?".tr().toString(),
+                      "Trouble logging in?".toString(),
                       style: TextStyle(
                           color: Colors.black,
                           fontSize: 12,
@@ -224,7 +235,7 @@ class Login extends StatelessWidget {
                 children: <Widget>[
                   GestureDetector(
                     child: Text(
-                      "Privacy Policy".tr().toString(),
+                      "Privacy Policy",
                       style: TextStyle(color: Colors.blue),
                     ),
                     onTap: () => _launchURL(
@@ -240,7 +251,7 @@ class Login extends StatelessWidget {
                   ),
                   GestureDetector(
                     child: Text(
-                      "Terms & Conditions".tr().toString(),
+                      "Terms & Conditions",
                       style: TextStyle(color: Colors.blue),
                     ),
                     onTap: () => _launchURL(
@@ -248,65 +259,65 @@ class Login extends StatelessWidget {
                   ),
                 ],
               ),
-              Container(
-                child: StreamBuilder<QuerySnapshot>(
-                  stream: FirebaseFirestore.instance.collection('Language').snapshots(),
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData) {
-                      return Center(
-                          // child: Text('Lanuage not Found'),
-                          );
-                    }
-                    return Column(
-                      children: snapshot.data.docs.map((document) {
-                        if (document['spanish'] == true &&
-                            document['english'] == true) {
-                          return Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              FlatButton(
-                                child: Text(
-                                  "English".tr().toString(),
-                                  style: TextStyle(color: Colors.pink),
-                                ),
-                                onPressed: () {
-                                  context.locale = Locale('en', 'US');
-                                  // EasyLocalization.of(context).locale =
-                                  //     Locale('en', 'US');
-                                  Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => Login(),
-                                      ));
-                                },
-                              ),
-                              FlatButton(
-                                child: Text(
-                                  "Spanish".tr().toString(),
-                                  style: TextStyle(color: Colors.pink),
-                                ),
-                                onPressed: () {
-                                  context.locale = Locale('es', 'ES');
-
-                                  // EasyLocalization.of(context).locale =
-                                  //     Locale('es', 'ES');
-                                  Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => Login(),
-                                      ));
-                                },
-                              ),
-                            ],
-                          );
-                        } else {
-                          return Text('');
-                        }
-                      }).toList(),
-                    );
-                  },
-                ),
-              ),
+              // Container(
+              //   child: StreamBuilder<QuerySnapshot>(
+              //     stream: FirebaseFirestore.instance.collection('Language').snapshots(),
+              //     builder: (context, snapshot) {
+              //       if (!snapshot.hasData) {
+              //         return Center(
+              //             // child: Text('Lanuage not Found'),
+              //             );
+              //       }
+              //       return Column(
+              //         children: snapshot.data.docs.map((document) {
+              //           if (document['spanish'] == true &&
+              //               document['english'] == true) {
+              //             return Row(
+              //               mainAxisAlignment: MainAxisAlignment.center,
+              //               children: [
+              //                 FlatButton(
+              //                   child: Text(
+              //                     "English".toString(),
+              //                     style: TextStyle(color: Colors.pink),
+              //                   ),
+              //                   onPressed: () {
+              //                     // context.setLocale(Locale('en', 'US'));
+              //                     // EasyLocalization.of(context).locale =
+              //                     //     Locale('en', 'US');
+              //                     Navigator.pushReplacement(
+              //                         context,
+              //                         MaterialPageRoute(
+              //                           builder: (context) => Login(),
+              //                         ));
+              //                   },
+              //                 ),
+              //                 FlatButton(
+              //                   child: Text(
+              //                     "Spanish",
+              //                     style: TextStyle(color: Colors.pink),
+              //                   ),
+              //                   onPressed: () {
+              //                     context.locale = Locale('es', 'ES');
+              //
+              //                     // EasyLocalization.of(context).locale =
+              //                     //     Locale('es', 'ES');
+              //                     Navigator.pushReplacement(
+              //                         context,
+              //                         MaterialPageRoute(
+              //                           builder: (context) => Login(),
+              //                         ));
+              //                   },
+              //                 ),
+              //               ],
+              //             );
+              //           } else {
+              //             return Text('');
+              //           }
+              //         }).toList(),
+              //       );
+              //     },
+              //   ),
+              // ),
             ],
           ),
         ),
@@ -316,17 +327,17 @@ class Login extends StatelessWidget {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text('Exit'.tr().toString()),
-              content: Text('Do you want to exit the app?'.tr().toString()),
+              title: Text('Exit'.toString()),
+              content: Text('Do you want to exit the app?'.toString()),
               actions: <Widget>[
                 FlatButton(
                   onPressed: () => Navigator.of(context).pop(false),
-                  child: Text('No'.tr().toString()),
+                  child: Text('No'.toString()),
                 ),
                 FlatButton(
                   onPressed: () => SystemChannels.platform
                       .invokeMethod('SystemNavigator.pop'),
-                  child: Text('Yes'.tr().toString()),
+                  child: Text('Yes'.toString()),
                 ),
               ],
             );
@@ -372,24 +383,36 @@ class Login extends StatelessWidget {
   }
 
   Future navigationCheck(User currentUser, context) async {
-    await FirebaseFirestore.instance
-        .collection('Users')
-        .where('userId', isEqualTo: currentUser.uid)
-        .get()
-        .then((QuerySnapshot snapshot) async {
-      if (snapshot.docs.length > 0) {
-        if (snapshot.docs[0].data['location'] != null) {
-          Navigator.push(context,
-              CupertinoPageRoute(builder: (context) => Tabbar(null, null)));
-        } else {
-          Navigator.push(
-              context, CupertinoPageRoute(builder: (context) => Welcome()));
-        }
-      } else {
-        await _setDataUser(currentUser);
-        Navigator.push(
-            context, CupertinoPageRoute(builder: (context) => Welcome()));
-      }
+    await FirebaseFirestore.instance.collection('Users')
+        .where('userId', isEqualTo: currentUser.uid).get().then((QuerySnapshot snapshot) async {
+          print("masuk sini 1");
+          print(snapshot.docs);
+          if (snapshot.docs.length > 0) {
+            print("masuk sini 2");
+            var location;
+            snapshot.docs.map((e) {
+              print(e['phoneNumber']);
+              location = e['location'];
+            });
+            print("Location : " + location.toString());
+            if (location == null) {
+              Navigator.push(
+                  context, CupertinoPageRoute(builder: (context) => Welcome()));
+
+            } else {
+              Navigator.push(context,
+                  CupertinoPageRoute(builder: (context) => Tabbar(null, null)));
+            }
+
+          } else {
+            print("masuk sini 3");
+            await _setDataUser(currentUser);
+            Navigator.push(
+                context, CupertinoPageRoute(builder: (context) => Welcome()));
+          }
+
+        // if (snapshot.docs[0].data['location'] != null) {
+
     });
   }
 
@@ -535,19 +558,19 @@ class WaveClipper2 extends CustomClipper<Path> {
   }
 }
 
-Future _setDataUser(FirebaseUser user) async {
-  await Firestore.instance.collection("Users").document(user.uid).setData(
+Future _setDataUser(User user) async {
+  await FirebaseFirestore.instance.collection("Users").doc(user.uid).set(
     {
       'userId': user.uid,
       'UserName': user.displayName ?? '',
       'Pictures': FieldValue.arrayUnion([
-        user.photoUrl != null
-            ? user.photoUrl + '?width=9999'
+        user.photoURL != null
+            ? user.photoURL + '?width=9999'
             : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxUC64VZctJ0un9UBnbUKtj-blhw02PeDEQIMOqovc215LWYKu&s'
       ]),
       'phoneNumber': user.phoneNumber,
       'timestamp': FieldValue.serverTimestamp()
     },
-    merge: true,
+    // merge: true,
   );
 }

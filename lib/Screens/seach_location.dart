@@ -1,10 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hookup4u/util/color.dart';
 import 'package:hookup4u/util/snackbar.dart';
 import 'AllowLocation.dart';
 import 'package:flutter_mapbox_autocomplete/flutter_mapbox_autocomplete.dart';
-import 'package:easy_localization/easy_localization.dart';
+// import 'package:easy_localization/easy_localization.dart';
 
 class SearchLocation extends StatefulWidget {
   final Map<String, dynamic> userData;
@@ -58,7 +57,7 @@ class _SearchLocationState extends State<SearchLocation> {
               children: <Widget>[
                 Padding(
                   child: Text(
-                    "Select\nyour city".tr().toString(),
+                    "Select\nyour city",
                     style: TextStyle(fontSize: 40),
                   ),
                   padding: EdgeInsets.only(left: 50, top: 120),
@@ -72,12 +71,10 @@ class _SearchLocationState extends State<SearchLocation> {
                         autofocus: false,
                         readOnly: true,
                         decoration: InputDecoration(
-                          hintText: "Enter your city name".tr().toString(),
+                          hintText: "Enter your city name",
                           focusedBorder: UnderlineInputBorder(
                               borderSide: BorderSide(color: primaryColor)),
-                          helperText: "This is how it will appear in App."
-                              .tr()
-                              .toString(),
+                          helperText: "This is how it will appear in App.",
                           helperStyle:
                               TextStyle(color: secondryColor, fontSize: 15),
                         ),
@@ -90,7 +87,7 @@ class _SearchLocationState extends State<SearchLocation> {
                                 closeOnSelect: true,
                                 apiKey: mapboxApi,
                                 limit: 10,
-                                hint: 'Enter your city name'.tr().toString(),
+                                hint: 'Enter your city name',
                                 onSelect: (place) {
                                   setState(() {
                                     _mapBoxPlace = place;
@@ -127,7 +124,7 @@ class _SearchLocationState extends State<SearchLocation> {
                                 width: MediaQuery.of(context).size.width * .75,
                                 child: Center(
                                     child: Text(
-                                  "Continue".tr().toString(),
+                                  "Continue",
                                   style: TextStyle(
                                       fontSize: 15,
                                       color: textColor,
@@ -172,7 +169,7 @@ class _SearchLocationState extends State<SearchLocation> {
                                 width: MediaQuery.of(context).size.width * .75,
                                 child: Center(
                                     child: Text(
-                                  "CONTINUE".tr().toString(),
+                                  "CONTINUE",
                                   style: TextStyle(
                                       fontSize: 15,
                                       color: secondryColor,
@@ -180,7 +177,7 @@ class _SearchLocationState extends State<SearchLocation> {
                                 ))),
                             onTap: () {
                               CustomSnackbar.snackbar(
-                                  "Select a location !".tr().toString(),
+                                  "Select a location !",
                                   _scaffoldKey);
                             },
                           ),

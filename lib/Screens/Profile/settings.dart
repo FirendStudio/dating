@@ -1,11 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_admob/firebase_admob.dart';
+// import 'package:firebase_admob/firebase_admob.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hookup4u/Screens/Tab.dart';
-
 import 'package:hookup4u/Screens/UpdateLocation.dart';
 import 'package:hookup4u/Screens/auth/login.dart';
 import 'package:hookup4u/ads/ads.dart';
@@ -13,8 +12,7 @@ import 'package:hookup4u/models/user_model.dart';
 import 'package:hookup4u/util/color.dart';
 import 'package:share/share.dart';
 import 'UpdateNumber.dart';
-
-import 'package:easy_localization/easy_localization.dart';
+// import 'package:easy_localization/easy_localization.dart';
 
 class Settings extends StatefulWidget {
   final UserModel currentUser;
@@ -33,12 +31,12 @@ class _SettingsState extends State<Settings> {
   var _showMe;
   int distance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  Ads _ads = new Ads();
-  BannerAd _ad;
-  FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  // Ads _ads = new Ads();
+  // BannerAd _ad;
+  // FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   @override
   void dispose() {
-    _ads.disable(_ad);
+    // _ads.disable(_ad);
 
     // _ad?.dispose();
     super.dispose();
@@ -49,10 +47,12 @@ class _SettingsState extends State<Settings> {
   }
 
   Future updateData() async {
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection("Users")
-        .document(widget.currentUser.id)
-        .setData(changeValues, merge: true);
+        .doc(widget.currentUser.id)
+        .set(changeValues,
+        // merge: true
+    );
     // lastVisible = null;
     // print('ewew$lastVisible');
   }
@@ -62,11 +62,11 @@ class _SettingsState extends State<Settings> {
 
   @override
   void initState() {
-    _ad = _ads.myBanner();
+    // _ad = _ads.myBanner();
     super.initState();
-    _ad
-      ..load()
-      ..show();
+    // _ad
+    //   ..load()
+    //   ..show();
     freeR = widget.items['free_radius'] != null
         ? int.parse(widget.items['free_radius'])
         : 400;
@@ -95,7 +95,7 @@ class _SettingsState extends State<Settings> {
       backgroundColor: primaryColor,
       appBar: AppBar(
           title: Text(
-            "Settings".tr().toString(),
+            "Settings",
             style: TextStyle(color: Colors.white),
           ),
           leading: IconButton(
@@ -121,7 +121,7 @@ class _SettingsState extends State<Settings> {
                 Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: Text(
-                    "Account settings".tr().toString(),
+                    "Account settings",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
                   ),
                 ),
@@ -133,7 +133,7 @@ class _SettingsState extends State<Settings> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          Text("Phone Number".tr().toString()),
+                          Text("Phone Number"),
                           Padding(
                             padding: const EdgeInsets.only(
                               left: 20,
@@ -141,7 +141,7 @@ class _SettingsState extends State<Settings> {
                             child: Text(
                               widget.currentUser.phoneNumber != null
                                   ? "${widget.currentUser.phoneNumber}"
-                                  : "Verify Now".tr().toString(),
+                                  : "Verify Now",
                               style: TextStyle(color: secondryColor),
                             ),
                           ),
@@ -158,18 +158,16 @@ class _SettingsState extends State<Settings> {
                             CupertinoPageRoute(
                                 builder: (context) =>
                                     UpdateNumber(widget.currentUser)));
-                        _ads.disable(_ad);
+                        // _ads.disable(_ad);
                       },
                     ),
                   )),
-                  subtitle: Text("Verify a phone number to secure your account"
-                      .tr()
-                      .toString()),
+                  subtitle: Text("Verify a phone number to secure your account"),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: Text(
-                    "Discovery settings".tr().toString(),
+                    "Discovery settings",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
                   ),
                 ),
@@ -179,7 +177,7 @@ class _SettingsState extends State<Settings> {
                     child: ExpansionTile(
                       key: UniqueKey(),
                       leading: Text(
-                        "Current location : ".tr().toString(),
+                        "Current location : ",
                         style: TextStyle(
                           fontSize: 14,
                         ),
@@ -205,7 +203,7 @@ class _SettingsState extends State<Settings> {
                               ),
                               InkWell(
                                 child: Text(
-                                  "Change location".tr().toString(),
+                                  "Change location",
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     color: Colors.blue,
@@ -240,9 +238,7 @@ class _SettingsState extends State<Settings> {
                     left: 15,
                   ),
                   child: Text(
-                    "Change your location to see members in other city"
-                        .tr()
-                        .toString(),
+                    "Change your location to see members in other city",
                     style: TextStyle(color: Colors.black54),
                   ),
                 ),
@@ -255,7 +251,7 @@ class _SettingsState extends State<Settings> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            "Show me".tr().toString(),
+                            "Show me",
                             style: TextStyle(
                                 fontSize: 18,
                                 color: primaryColor,
@@ -268,14 +264,14 @@ class _SettingsState extends State<Settings> {
                               isExpanded: true,
                               items: [
                                 DropdownMenuItem(
-                                  child: Text("Man".tr().toString()),
+                                  child: Text("Man"),
                                   value: "man",
                                 ),
                                 DropdownMenuItem(
-                                    child: Text("Woman".tr().toString()),
+                                    child: Text("Woman"),
                                     value: "woman"),
                                 DropdownMenuItem(
-                                    child: Text("Everyone".tr().toString()),
+                                    child: Text("Everyone"),
                                     value: "everyone"),
                               ],
                               onChanged: (val) {
@@ -301,7 +297,7 @@ class _SettingsState extends State<Settings> {
                       padding: const EdgeInsets.all(8.0),
                       child: ListTile(
                         title: Text(
-                          "Maximum distance".tr().toString(),
+                          "Maximum distance",
                           style: TextStyle(
                               fontSize: 18,
                               color: primaryColor,
@@ -337,7 +333,7 @@ class _SettingsState extends State<Settings> {
                       padding: const EdgeInsets.all(8.0),
                       child: ListTile(
                         title: Text(
-                          "Age range".tr().toString(),
+                          "Age range",
                           style: TextStyle(
                               fontSize: 18,
                               color: primaryColor,
@@ -373,7 +369,7 @@ class _SettingsState extends State<Settings> {
                 ),
                 ListTile(
                   title: Text(
-                    "App settings".tr().toString(),
+                    "App settings",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
                   ),
                   subtitle: Card(
@@ -386,7 +382,7 @@ class _SettingsState extends State<Settings> {
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
-                              "Notifications".tr().toString(),
+                              "Notifications",
                               style: TextStyle(
                                   fontSize: 18,
                                   color: primaryColor,
@@ -395,178 +391,162 @@ class _SettingsState extends State<Settings> {
                           ),
                           Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Text("Push notifications".tr().toString()),
+                            child: Text("Push notifications"),
                           ),
                         ],
                       ),
                     ),
                   ),
                 ),
-                Container(
-                  child: StreamBuilder<QuerySnapshot>(
-                    stream:
-                        Firestore.instance.collection('Language').snapshots(),
-                    builder: (context, snapshot) {
-                      if (!snapshot.hasData) {
-                        return Center(
-                            // child: Text('Lanuage not Found'),
-                            );
-                      }
-                      return Column(
-                        children: snapshot.data.documents.map((document) {
-                          if (document['spanish'] == true &&
-                              document['english'] == true) {
-                            return ListTile(
-                              subtitle: Card(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: const EdgeInsets.all(0.0),
-                                        child: Text(
-                                          "Change Language".tr().toString(),
-                                          style: TextStyle(
-                                              fontSize: 18,
-                                              color: primaryColor,
-                                              fontWeight: FontWeight.w500),
-                                        ),
-                                      ),
-                                      Padding(
-                                        padding: EdgeInsets.all(8.0),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.start,
-                                          children: [
-                                            FlatButton(
-                                              child: Text(
-                                                "English".tr().toString(),
-                                                style: TextStyle(
-                                                    color: Colors.pink),
-                                              ),
-                                              onPressed: () async {
-                                                showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return AlertDialog(
-                                                      title: Text(
-                                                          "Change Language"
-                                                              .tr()
-                                                              .toString()),
-                                                      content: Text(
-                                                          'Do you want to change the language to English?'
-                                                              .tr()
-                                                              .toString()),
-                                                      actions: <Widget>[
-                                                        FlatButton(
-                                                          onPressed: () =>
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop(false),
-                                                          child: Text('No'
-                                                              .tr()
-                                                              .toString()),
-                                                        ),
-                                                        FlatButton(
-                                                          onPressed: () {
-                                                            EasyLocalization.of(
-                                                                        context)
-                                                                    .locale =
-                                                                Locale(
-                                                                    'en', 'US');
-                                                            Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                    builder: (context) =>
-                                                                        Tabbar(
-                                                                            null,
-                                                                            false)));
-                                                          },
-                                                          child: Text('Yes'
-                                                              .tr()
-                                                              .toString()),
-                                                        ),
-                                                      ],
-                                                    );
-                                                  },
-                                                );
-                                              },
-                                            ),
-                                            FlatButton(
-                                              child: Text(
-                                                "Spanish".tr().toString(),
-                                                style: TextStyle(
-                                                    color: Colors.pink),
-                                              ),
-                                              onPressed: () async {
-                                                showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return AlertDialog(
-                                                      title: Text(
-                                                          "Change Language"
-                                                              .tr()
-                                                              .toString()),
-                                                      content: Text(
-                                                          'Do you want to change the language to Spanish?'
-                                                              .tr()
-                                                              .toString()),
-                                                      actions: <Widget>[
-                                                        FlatButton(
-                                                          onPressed: () =>
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop(false),
-                                                          child: Text('No'
-                                                              .tr()
-                                                              .toString()),
-                                                        ),
-                                                        FlatButton(
-                                                          onPressed: () {
-                                                            EasyLocalization.of(
-                                                                        context)
-                                                                    .locale =
-                                                                Locale(
-                                                                    'es', 'ES');
-                                                            Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                    builder: (context) =>
-                                                                        Tabbar(
-                                                                            null,
-                                                                            false)));
-                                                            _ads.disable(_ad);
-                                                          },
-                                                          child: Text('Yes'
-                                                              .tr()
-                                                              .toString()),
-                                                        ),
-                                                      ],
-                                                    );
-                                                  },
-                                                );
-                                              },
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            );
-                          } else {
-                            return Text('');
-                          }
-                        }).toList(),
-                      );
-                    },
-                  ),
-                ),
+                // Container(
+                //   child: StreamBuilder<QuerySnapshot>(
+                //     stream:
+                //         FirebaseFirestore.instance.collection('Language').snapshots(),
+                //     builder: (context, snapshot) {
+                //       if (!snapshot.hasData) {
+                //         return Center(
+                //             // child: Text('Lanuage not Found'),
+                //             );
+                //       }
+                //       return Column(
+                //         children: snapshot.data.docs.map((document) {
+                //           if (document['spanish'] == true &&
+                //               document['english'] == true) {
+                //             return ListTile(
+                //               subtitle: Card(
+                //                 child: Padding(
+                //                   padding: const EdgeInsets.all(8.0),
+                //                   child: Column(
+                //                     crossAxisAlignment:
+                //                         CrossAxisAlignment.start,
+                //                     children: [
+                //                       Padding(
+                //                         padding: const EdgeInsets.all(0.0),
+                //                         child: Text(
+                //                           "Change Language",
+                //                           style: TextStyle(
+                //                               fontSize: 18,
+                //                               color: primaryColor,
+                //                               fontWeight: FontWeight.w500),
+                //                         ),
+                //                       ),
+                //                       Padding(
+                //                         padding: EdgeInsets.all(8.0),
+                //                         child: Row(
+                //                           mainAxisAlignment:
+                //                               MainAxisAlignment.start,
+                //                           children: [
+                //                             FlatButton(
+                //                               child: Text(
+                //                                 "English",
+                //                                 style: TextStyle(
+                //                                     color: Colors.pink),
+                //                               ),
+                //                               onPressed: () async {
+                //                                 showDialog(
+                //                                   context: context,
+                //                                   builder:
+                //                                       (BuildContext context) {
+                //                                     return AlertDialog(
+                //                                       title: Text(
+                //                                           "Change Language"),
+                //                                       content: Text(
+                //                                           'Do you want to change the language to English?'),
+                //                                       actions: <Widget>[
+                //                                         FlatButton(
+                //                                           onPressed: () =>
+                //                                               Navigator.of(
+                //                                                       context)
+                //                                                   .pop(false),
+                //                                           child: Text('No'),
+                //                                         ),
+                //                                         ElevatedButton(
+                //                                           onPressed: () {
+                //                                             // context.setLocale(Locale('en', 'US'));
+                //                                             // EasyLocalization.of(context).locale =
+                //                                             //     Locale('en', 'US');
+                //                                             Navigator.push(context,
+                //                                                 MaterialPageRoute(
+                //                                                     builder: (context) =>
+                //                                                         Tabbar(null, false)
+                //                                                 )
+                //                                             );
+                //                                           },
+                //                                           child: Text('Yes'
+                //                                               .tr()
+                //                                               .toString()),
+                //                                         ),
+                //                                       ],
+                //                                     );
+                //                                   },
+                //                                 );
+                //                               },
+                //                             ),
+                //                             FlatButton(
+                //                               child: Text(
+                //                                 "Spanish",
+                //                                 style: TextStyle(
+                //                                     color: Colors.pink),
+                //                               ),
+                //                               onPressed: () async {
+                //                                 showDialog(
+                //                                   context: context,
+                //                                   builder:
+                //                                       (BuildContext context) {
+                //                                     return AlertDialog(
+                //                                       title: Text(
+                //                                           "Change Language"
+                //                                               .tr()
+                //                                               .toString()),
+                //                                       content: Text(
+                //                                           'Do you want to change the language to Spanish?'
+                //                                               .tr()
+                //                                               .toString()),
+                //                                       actions: <Widget>[
+                //                                         ElevatedButton(
+                //                                           onPressed: () =>
+                //                                               Navigator.of(context).pop(false),
+                //                                           child: Text('No'),
+                //                                         ),
+                //                                         ElevatedButton(
+                //                                           onPressed: () {
+                //                                             context.setLocale(Locale('es', 'ES'));
+                //                                             // EasyLocalization.of(context).locale =
+                //                                             //     Locale('es', 'ES');
+                //                                             Navigator.push(context,
+                //                                                 MaterialPageRoute(
+                //                                                     builder: (context) =>
+                //                                                         Tabbar(null, false)
+                //                                                 )
+                //                                             );
+                //                                             // _ads.disable(_ad);
+                //                                           },
+                //                                           child: Text('Yes'
+                //                                               .tr()
+                //                                               .toString()),
+                //                                         ),
+                //                                       ],
+                //                                     );
+                //                                   },
+                //                                 );
+                //                               },
+                //                             ),
+                //                           ],
+                //                         ),
+                //                       ),
+                //                     ],
+                //                   ),
+                //                 ),
+                //               ),
+                //             );
+                //           } else {
+                //             return Text('');
+                //           }
+                //         }).toList(),
+                //       );
+                //     },
+                //   ),
+                // ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: InkWell(
@@ -575,7 +555,7 @@ class _SettingsState extends State<Settings> {
                         padding: const EdgeInsets.all(18.0),
                         child: Center(
                           child: Text(
-                            "Invite your friends".tr().toString(),
+                            "Invite your friends",
                             style: TextStyle(
                                 color: primaryColor,
                                 fontSize: 15,
@@ -587,7 +567,7 @@ class _SettingsState extends State<Settings> {
                     onTap: () {
                       Share.share(
                           'check out my website https://deligence.com', //Replace with your dynamic link and msg for invite users
-                          subject: 'Look what I made!'.tr().toString());
+                          subject: 'Look what I made!');
                     },
                   ),
                 ),
@@ -599,7 +579,7 @@ class _SettingsState extends State<Settings> {
                         child: Padding(
                           padding: const EdgeInsets.all(18.0),
                           child: Text(
-                            "Logout".tr().toString(),
+                            "Logout",
                             style: TextStyle(
                                 fontSize: 15, fontWeight: FontWeight.w500),
                           ),
@@ -611,29 +591,27 @@ class _SettingsState extends State<Settings> {
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            title: Text('Logout'.tr().toString()),
-                            content: Text('Do you want to logout your account?'
-                                .tr()
-                                .toString()),
+                            title: Text('Logout'),
+                            content: Text('Do you want to logout your account?'),
                             actions: <Widget>[
                               FlatButton(
                                 onPressed: () =>
                                     Navigator.of(context).pop(false),
-                                child: Text('No'.tr().toString()),
+                                child: Text('No'),
                               ),
                               FlatButton(
                                 onPressed: () async {
                                   await _auth.signOut().whenComplete(() {
-                                    _firebaseMessaging.deleteInstanceID();
+                                    // _firebaseMessaging.deleteInstanceID();
                                     Navigator.pushReplacement(
                                       context,
                                       CupertinoPageRoute(
                                           builder: (context) => Login()),
                                     );
                                   });
-                                  _ads.disable(_ad);
+                                  // _ads.disable(_ad);
                                 },
-                                child: Text('Yes'.tr().toString()),
+                                child: Text('Yes'),
                               ),
                             ],
                           );
@@ -650,7 +628,7 @@ class _SettingsState extends State<Settings> {
                         padding: const EdgeInsets.all(18.0),
                         child: Center(
                           child: Text(
-                            "Delete Account".tr().toString(),
+                            "Delete Account",
                             style: TextStyle(
                                 color: primaryColor,
                                 fontSize: 15,
@@ -664,23 +642,17 @@ class _SettingsState extends State<Settings> {
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
-                            title: Text('Delete Account'.tr().toString()),
-                            content: Text('Do you want to delete your account?'
-                                .tr()
-                                .toString()),
+                            title: Text('Delete Account'),
+                            content: Text('Do you want to delete your account?'),
                             actions: <Widget>[
                               FlatButton(
                                 onPressed: () =>
                                     Navigator.of(context).pop(false),
-                                child: Text('No'.tr().toString()),
+                                child: Text('No'),
                               ),
                               FlatButton(
                                 onPressed: () async {
-                                  final user = await _auth
-                                      .currentUser()
-                                      .then((FirebaseUser user) {
-                                    return user;
-                                  });
+                                  final user = _auth.currentUser;
                                   await _deleteUser(user).then((_) async {
                                     await _auth.signOut().whenComplete(() {
                                       Navigator.pushReplacement(
@@ -689,10 +661,10 @@ class _SettingsState extends State<Settings> {
                                             builder: (context) => Login()),
                                       );
                                     });
-                                    _ads.disable(_ad);
+                                    // _ads.disable(_ad);
                                   });
                                 },
-                                child: Text('Yes'.tr().toString()),
+                                child: Text('Yes'),
                               ),
                             ],
                           );
@@ -738,7 +710,7 @@ class _SettingsState extends State<Settings> {
                     title: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
-                        'New address:'.tr().toString(),
+                        'New address:',
                         style: TextStyle(
                             color: Colors.black,
                             fontSize: 18,
@@ -771,15 +743,15 @@ class _SettingsState extends State<Settings> {
                 RaisedButton(
                   color: Colors.white,
                   child: Text(
-                    "Confirm".tr().toString(),
+                    "Confirm",
                     style: TextStyle(color: primaryColor),
                   ),
                   onPressed: () async {
                     Navigator.pop(context);
-                    await Firestore.instance
+                    await FirebaseFirestore.instance
                         .collection("Users")
-                        .document('${widget.currentUser.id}')
-                        .updateData({
+                        .doc('${widget.currentUser.id}')
+                        .update({
                           'location': {
                             'latitude': _address['latitude'],
                             'longitude': _address['longitude'],
@@ -816,7 +788,7 @@ class _SettingsState extends State<Settings> {
                                             colorBlendMode: BlendMode.color,
                                           ),
                                           Text(
-                                            "location\nchanged".tr().toString(),
+                                            "location\nchanged",
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
                                                 decoration: TextDecoration.none,
@@ -841,7 +813,7 @@ class _SettingsState extends State<Settings> {
         });
   }
 
-  Future _deleteUser(FirebaseUser user) async {
-    await Firestore.instance.collection("Users").document(user.uid).delete();
+  Future _deleteUser(User user) async {
+    await FirebaseFirestore.instance.collection("Users").doc(user.uid).delete();
   }
 }

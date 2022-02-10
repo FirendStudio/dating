@@ -1,8 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hookup4u/util/color.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
-import 'package:easy_localization/easy_localization.dart';
+// import 'package:easy_localization/easy_localization.dart';
 
 class PaymentDetails extends StatelessWidget {
   final List<PurchaseDetails> purchases;
@@ -13,7 +12,7 @@ class PaymentDetails extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: Text("Subscription details".tr().toString()),
+          title: Text("Subscription details"),
           elevation: 0,
           leading: IconButton(
             icon: Icon(Icons.arrow_back_ios),
@@ -40,7 +39,7 @@ class PaymentDetails extends StatelessWidget {
                     Row(children: <Widget>[
                       Padding(
                         padding: const EdgeInsets.all(38.0),
-                        child: Text("Payment Summary:".tr().toString(),
+                        child: Text("Payment Summary:",
                             style: TextStyle(
                                 color: primaryColor,
                                 fontWeight: FontWeight.bold,
@@ -61,7 +60,7 @@ class PaymentDetails extends StatelessWidget {
                                           columns: [
                                             DataColumn(
                                                 label: Text(
-                                              "Plan".tr().toString(),
+                                              "Plan",
                                               style: TextStyle(
                                                 //   color: primaryColor,
                                                 fontSize: 15,
@@ -69,7 +68,7 @@ class PaymentDetails extends StatelessWidget {
                                               ),
                                             )),
                                             DataColumn(
-                                                label: Text("Details".tr().toString(),
+                                                label: Text("Details",
                                                     style: TextStyle(
                                                       fontSize: 15,
                                                       // color: primaryColor,
@@ -102,7 +101,7 @@ class PaymentDetails extends StatelessWidget {
                                                       ))),
                                             ]),
                                             DataRow(cells: [
-                                              DataCell(Text("Subscribed on".tr().toString(),
+                                              DataCell(Text("Subscribed on",
                                                   style: TextStyle(
                                                     fontSize: 15,
                                                   ))),
@@ -118,15 +117,15 @@ class PaymentDetails extends StatelessWidget {
                                                   ))),
                                             ]),
                                             DataRow(cells: [
-                                              DataCell(Text("Status".tr().toString(),
+                                              DataCell(Text("Status",
                                                   style: TextStyle(
                                                     fontSize: 15,
                                                   ))),
                                               // DataCell(Text(
                                               //     index.billingClientPurchase
                                               //             .isAutoRenewing
-                                              //         ? "Active".tr().toString()
-                                              //         : "Cancelled".tr().toString(),
+                                              //         ? "Active"
+                                              //         : "Cancelled",
                                               //     style: TextStyle(
                                               //       color: index
                                               //               .billingClientPurchase
@@ -158,7 +157,7 @@ class PaymentDetails extends StatelessWidget {
                               borderRadius: BorderRadius.circular(25)),
                           child: Center(
                               child: Text(
-                            "Back".tr().toString(),
+                            "Back",
                             style: TextStyle(fontSize: 17, color: Colors.white),
                           )),
                         ),

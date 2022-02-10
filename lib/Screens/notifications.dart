@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:hookup4u/Screens/Information.dart';
 import 'package:hookup4u/models/user_model.dart';
 import 'package:hookup4u/util/color.dart';
-import 'package:easy_localization/easy_localization.dart';
+// import 'package:easy_localization/easy_localization.dart';
 
 import 'Tab.dart';
 
@@ -48,7 +48,7 @@ class _NotificationsState extends State<Notifications> {
         appBar: AppBar(
           automaticallyImplyLeading: false,
           title: Text(
-            'Notifications'.tr().toString(),
+            'Notifications',
             style: TextStyle(
               color: Colors.white,
               fontSize: 18.0,
@@ -95,13 +95,13 @@ class _NotificationsState extends State<Notifications> {
                       if (!snapshot.hasData)
                         return Center(
                             child: Text(
-                          "No Notification".tr().toString(),
+                          "No Notification",
                           style: TextStyle(color: secondryColor, fontSize: 16),
                         ));
                       else if (snapshot.data.docs.length == 0) {
                         return Center(
                             child: Text(
-                          "No Notification".tr().toString(),
+                          "No Notification",
                           style: TextStyle(color: secondryColor, fontSize: 16),
                         ));
                       }
@@ -114,7 +114,8 @@ class _NotificationsState extends State<Notifications> {
                                         decoration: BoxDecoration(
                                             borderRadius:
                                                 BorderRadius.circular(20),
-                                            color: !doc.data['isRead']
+                                            // color: !doc.data['isRead']
+                                            color: !doc['isRead']
                                                 ? primaryColor.withOpacity(.15)
                                                 : secondryColor
                                                     .withOpacity(.15)),
@@ -130,7 +131,8 @@ class _NotificationsState extends State<Notifications> {
                                               ),
                                               child: CachedNetworkImage(
                                                 imageUrl:
-                                                    doc.data['pictureUrl'] ??
+                                                    // doc.data['pictureUrl'] ??
+                                                    doc['pictureUrl'] ??
                                                         "",
                                                 fit: BoxFit.cover,
                                                 useOldImageOnUrlChange: true,
@@ -153,14 +155,16 @@ class _NotificationsState extends State<Notifications> {
                                             // )
                                           ),
                                           // title: Text(
-                                          //     "you are matched with ${doc.data['userName'] ?? "__"}".tr().toString()),
-                                          title: Text("you are matched with")
-                                              .tr(args: [
-                                            "${doc.data['userName'] ?? '__'}"
-                                          ]),
+                                          //     "you are matched with ${doc.data['userName'] ?? "__"}"),
+                                          title: Text("you are matched with"),
+                                          //     .tr(args: [
+                                          //   // "${doc.data['userName'] ?? '__'}"
+                                          //   "${doc['userName'] ?? '__'}"
+                                          // ]),
 
                                           subtitle: Text(
-                                              "${(doc.data['timestamp'].toDate())}"),
+                                              // "${(doc.data['timestamp'].toDate())}"),
+                                              "${(doc['timestamp'].toDate())}"),
                                           //  Text(
                                           //     "Now you can start chat with ${notification[index].sender.name}"),
                                           // "if you want to match your profile with ${notifications[index].sender.name} just like ${notifications[index].sender.name}'s profile"),
@@ -171,7 +175,8 @@ class _NotificationsState extends State<Notifications> {
                                               mainAxisAlignment:
                                                   MainAxisAlignment.spaceAround,
                                               children: <Widget>[
-                                                !doc.data['isRead']
+                                                // !doc.data['isRead']
+                                                !doc['isRead']
                                                     ? Container(
                                                         width: 40.0,
                                                         height: 20.0,
@@ -200,7 +205,8 @@ class _NotificationsState extends State<Notifications> {
                                             ),
                                           ),
                                           onTap: () async {
-                                            print(doc.data["Matches"]);
+                                            // print(doc.data["Matches"]);
+                                            print(doc["Matches"]);
                                             showDialog(
                                                 context: context,
                                                 builder: (context) {
@@ -216,7 +222,8 @@ class _NotificationsState extends State<Notifications> {
                                                 });
                                             DocumentSnapshot userdoc = await db
                                                 .collection("Users")
-                                                .doc(doc.data["Matches"])
+                                                // .doc(doc.data["Matches"])
+                                                .doc(doc["Matches"])
                                                 .get();
                                             if (userdoc.exists) {
                                               Navigator.pop(context);
@@ -240,12 +247,14 @@ class _NotificationsState extends State<Notifications> {
                                                   barrierDismissible: false,
                                                   context: context,
                                                   builder: (context) {
-                                                    if (!doc.data["isRead"]) {
+
+                                                    // if (!doc.data["isRead"]) {
+                                                    if (!doc["isRead"]) {
                                                       FirebaseFirestore.instance
                                                           .collection(
                                                               "/Users/${widget.currentUser.id}/Matches")
-                                                          .doc(
-                                                              '${doc.data["Matches"]}')
+                                                          // .doc('${doc.data["Matches"]}')
+                                                          .doc('${doc["Matches"]}')
                                                           .update(
                                                               {'isRead': true});
                                                     }

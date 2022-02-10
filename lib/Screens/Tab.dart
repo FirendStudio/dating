@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hookup4u/Screens/Profile/profile.dart';
@@ -14,11 +13,10 @@ import 'package:hookup4u/Screens/notifications.dart';
 import 'package:hookup4u/models/user_model.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
-import 'Calling/incomingCall.dart';
 import 'Chat/home_screen.dart';
 import 'Home.dart';
 import 'package:hookup4u/util/color.dart';
-import 'package:easy_localization/easy_localization.dart';
+// import 'package:easy_localization/easy_localization.dart';
 
 List likedByList = [];
 
@@ -32,7 +30,7 @@ class Tabbar extends StatefulWidget {
 
 //_
 class TabbarState extends State<Tabbar> {
-  FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+  // FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   CollectionReference docRef = FirebaseFirestore.instance.collection('Users');
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   UserModel currentUser;
@@ -54,13 +52,13 @@ class TabbarState extends State<Tabbar> {
         await Alert(
           context: context,
           type: AlertType.success,
-          title: "Confirmation".tr().toString(),
-          desc: "You have successfully subscribed to our"
-              .tr(args: ['${widget.plan}']).toString(),
+          title: "Confirmation",
+          desc: "You have successfully subscribed to our",
+              // .tr(args: ['${widget.plan}']).toString(),
           buttons: [
             DialogButton(
               child: Text(
-                "Ok".tr().toString(),
+                "Ok",
                 style: TextStyle(color: Colors.white, fontSize: 20),
               ),
               onPressed: () => Navigator.pop(context),
@@ -76,11 +74,12 @@ class TabbarState extends State<Tabbar> {
     // _getpastPurchases();
   }
 
-  Map items = {};
+  Map<String, dynamic> items = {};
   _getAccessItems() async {
     FirebaseFirestore.instance.collection("Item_access").snapshots().listen((doc) {
       if (doc.docs.length > 0) {
-        items = doc.docs[0].data;
+        // items = doc.docs[0].data;
+        items = doc.docs[0].data();
         print(doc.docs[0].data);
       }
 
@@ -242,7 +241,8 @@ class TabbarState extends State<Tabbar> {
         .doc(channelId)
         .get()
         .then((value) {
-      return value.data["calling"] ?? false;
+      // return value.data["calling"] ?? false;
+      return value["calling"] ?? false;
     });
     return iscalling;
   }
@@ -259,7 +259,8 @@ class TabbarState extends State<Tabbar> {
       if (ondata.docs.length > 0) {
         ondata.docs.forEach((f) async {
           await docRef
-              .doc(f.data['Matches'])
+              // .doc(f.data['Matches'])
+              .doc(f['Matches'])
               .get()
               .then((DocumentSnapshot doc) {
             if (doc.exists) {
@@ -284,7 +285,7 @@ class TabbarState extends State<Tabbar> {
   _getCurrentUser() async {
     User user = _firebaseAuth.currentUser;
     return docRef.doc("${user.uid}").snapshots().listen((data) async {
-      currentUser = UserModel.fromDocument(data);
+      currentUser = UserModel.fromDocument(data.data());
       if (mounted) setState(() {});
       users.clear();
       userRemoved.clear();
@@ -382,17 +383,17 @@ class TabbarState extends State<Tabbar> {
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text('Exit'.tr().toString()),
-              content: Text('Do you want to exit the app?'.tr().toString()),
+              title: Text('Exit'),
+              content: Text('Do you want to exit the app?'),
               actions: <Widget>[
                 FlatButton(
                   onPressed: () => Navigator.of(context).pop(false),
-                  child: Text('No'.tr().toString()),
+                  child: Text('No'),
                 ),
                 FlatButton(
                   onPressed: () => SystemChannels.platform
                       .invokeMethod('SystemNavigator.pop'),
-                  child: Text('Yes'.tr().toString()),
+                  child: Text('Yes'),
                 ),
               ],
             );

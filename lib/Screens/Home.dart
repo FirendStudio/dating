@@ -11,7 +11,7 @@ import 'package:hookup4u/ads/ads.dart';
 import 'package:hookup4u/models/user_model.dart';
 import 'package:hookup4u/util/color.dart';
 import 'package:swipe_stack/swipe_stack.dart';
-import 'package:easy_localization/easy_localization.dart';
+// import 'package:easy_localization/easy_localization.dart';
 
 List userRemoved = [];
 int countswipe = 1;
@@ -31,7 +31,7 @@ class _CardPicturesState extends State<CardPictures>
     with AutomaticKeepAliveClientMixin<CardPictures> {
   // TabbarState state = TabbarState();
   bool onEnd = false;
-  Ads _ads = new Ads();
+  // Ads _ads = new Ads();
 
   GlobalKey<SwipeStackState> swipeKey = GlobalKey<SwipeStackState>();
   @override
@@ -80,7 +80,7 @@ class _CardPicturesState extends State<CardPictures>
                                         ),
                                       ),
                                       Text(
-                                        "There's no one new around you.".tr().toString(),
+                                        "There's no one new around you.",
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
                                             color: secondryColor,
@@ -195,7 +195,7 @@ class _CardPicturesState extends State<CardPictures>
                                                                           .red)),
                                                               child: Center(
                                                                 child: Text(
-                                                                    "NOPE".tr().toString(),
+                                                                    "NOPE",
                                                                     style: TextStyle(
                                                                         color: Colors
                                                                             .red,
@@ -231,7 +231,7 @@ class _CardPicturesState extends State<CardPictures>
                                                                               Colors.lightBlueAccent)),
                                                                   child: Center(
                                                                     child: Text(
-                                                                        "LIKE".tr().toString(),
+                                                                        "LIKE",
                                                                         style: TextStyle(
                                                                             color:
                                                                                 Colors.lightBlueAccent,
@@ -252,9 +252,9 @@ class _CardPicturesState extends State<CardPictures>
                                                           Alignment.bottomLeft,
                                                       child: ListTile(
                                                           onTap: () {
-                                                            _ads.myInterstitial()
-                                                              ..load()
-                                                              ..show();
+                                                            // _ads.myInterstitial()
+                                                            //   ..load()
+                                                            //   ..show();
                                                             showDialog(
                                                                 barrierDismissible:
                                                                     false,
@@ -362,7 +362,8 @@ class _CardPicturesState extends State<CardPictures>
                                                               decoration:
                                                                   TextDecoration
                                                                       .none),
-                                                        ).tr(args: ['${widget.users[index].name}']),
+                                                        )
+                                                            // .tr(args: ['${widget.users[index].name}']),
                                                       ),
                                                     ),
                                                   ),
@@ -543,7 +544,7 @@ class _CardPicturesState extends State<CardPictures>
                                       color: primaryColor,
                                     ),
                                     Text(
-                                      "you have already used the maximum number of free available swipes for 24 hrs.".tr().toString(),
+                                      "you have already used the maximum number of free available swipes for 24 hrs.",
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
@@ -559,7 +560,7 @@ class _CardPicturesState extends State<CardPictures>
                                       ),
                                     ),
                                     Text(
-                                      "For swipe more users just subscribe our premium plans.".tr().toString(),
+                                      "For swipe more users just subscribe our premium plans.",
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                           color: primaryColor,
@@ -588,9 +589,9 @@ class _CardPicturesState extends State<CardPictures>
   void _adsCheck(count) {
     print(count);
     if (count % 5 == 0) {
-      _ads.myInterstitial()
-        ..load()
-        ..show();
+      // _ads.myInterstitial()
+      //   ..load()
+      //   ..show();
       countswipe++;
     } else {
       countswipe++;

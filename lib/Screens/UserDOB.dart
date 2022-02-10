@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hookup4u/Screens/Gender.dart';
 import 'package:hookup4u/util/color.dart';
-import 'package:easy_localization/easy_localization.dart';
+// import 'package:easy_localization/easy_localization.dart';
 
 class UserDOB extends StatefulWidget {
   final Map<String, dynamic> userData;
@@ -53,7 +53,7 @@ class _UserDOBState extends State<UserDOB> {
                 children: <Widget>[
                   Padding(
                     child: Text(
-                      "My\nbirthday is".tr().toString(),
+                      "My\nbirthday is",
                       style: TextStyle(fontSize: 40),
                     ),
                     padding: EdgeInsets.only(left: 50, top: 120),
@@ -108,7 +108,7 @@ class _UserDOBState extends State<UserDOB> {
                       placeholder: "DD/MM/YYYY",
                       controller: dobctlr,
                     ),
-                    subtitle: Text(" Your age will be public".tr().toString()),
+                    subtitle: Text(" Your age will be public"),
                   ))),
               dobctlr.text.length > 0
                   ? Padding(
@@ -133,7 +133,7 @@ class _UserDOBState extends State<UserDOB> {
                               width: MediaQuery.of(context).size.width * .75,
                               child: Center(
                                   child: Text(
-                                "CONTINUE".tr().toString(),
+                                "CONTINUE",
                                 style: TextStyle(
                                     fontSize: 15,
                                     color: textColor,
@@ -172,7 +172,7 @@ class _UserDOBState extends State<UserDOB> {
                               width: MediaQuery.of(context).size.width * .75,
                               child: Center(
                                   child: Text(
-                                "CONTINUE".tr().toString(),
+                                "CONTINUE",
                                 style: TextStyle(
                                     fontSize: 15,
                                     color: secondryColor,

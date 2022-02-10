@@ -8,7 +8,7 @@ import 'package:hookup4u/Screens/auth/otp_verification.dart';
 import 'package:hookup4u/util/color.dart';
 import 'package:hookup4u/util/snackbar.dart';
 import 'login.dart';
-import 'package:easy_localization/easy_localization.dart';
+// import 'package:easy_localization/easy_localization.dart';
 
 class OTP extends StatefulWidget {
   final bool updateNumber;
@@ -84,7 +84,7 @@ class _OTPState extends State<OTP> {
                           height: 100,
                         ),
                         Text(
-                          "Phone Number\nChanged\nSuccessfully".tr().toString(),
+                          "Phone Number\nChanged\nSuccessfully",
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               decoration: TextDecoration.none,
@@ -138,7 +138,7 @@ class _OTPState extends State<OTP> {
                             colorBlendMode: BlendMode.color,
                           ),
                           Text(
-                            "Verified\n Successfully".tr().toString(),
+                            "Verified\n Successfully",
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 decoration: TextDecoration.none,
@@ -198,7 +198,7 @@ class _OTPState extends State<OTP> {
                         colorBlendMode: BlendMode.color,
                       ),
                       Text(
-                        "OTP\nSent".tr().toString(),
+                        "OTP\nSent",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             decoration: TextDecoration.none,
@@ -247,12 +247,12 @@ class _OTPState extends State<OTP> {
               // ),
               ListTile(
                 title: Text(
-                  "Verify Your Number".tr().toString(),
+                  "Verify Your Number",
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 27, fontWeight: FontWeight.bold),
                 ),
                 subtitle: Text(
-                  "Please enter Your mobile Number to\n receive a verification code. Message and data\n rates may apply".tr().toString(),
+                  "Please enter Your mobile Number to\n receive a verification code. Message and data\n rates may apply",
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
                 ),
@@ -299,7 +299,7 @@ class _OTPState extends State<OTP> {
                             });
                           },
                           decoration: InputDecoration(
-                            hintText: "Enter your number".tr().toString(),
+                            hintText: "Enter your number",
                             hintStyle: TextStyle(fontSize: 18),
                             focusColor: primaryColor,
                             focusedBorder: UnderlineInputBorder(
@@ -328,7 +328,7 @@ class _OTPState extends State<OTP> {
                           width: MediaQuery.of(context).size.width * .75,
                           child: Center(
                               child: Text(
-                            "CONTINUE".tr().toString(),
+                            "CONTINUE",
                             style: TextStyle(
                                 fontSize: 15,
                                 color: textColor,
@@ -361,7 +361,7 @@ class _OTPState extends State<OTP> {
                       width: MediaQuery.of(context).size.width * .75,
                       child: Center(
                           child: Text(
-                        "CONTINUE".tr().toString(),
+                        "CONTINUE",
                         style: TextStyle(
                             fontSize: 15,
                             color: darkPrimaryColor,

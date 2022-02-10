@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:hookup4u/Screens/Chat/chatPage.dart';
 import 'package:hookup4u/models/user_model.dart';
 import 'package:hookup4u/util/color.dart';
-import 'package:easy_localization/easy_localization.dart';
+// import 'package:easy_localization/easy_localization.dart';
 
 class Matches extends StatelessWidget {
   final UserModel currentUser;
@@ -24,7 +24,7 @@ class Matches extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
-                  'New Matches'.tr().toString(),
+                  'New Matches',
                   style: TextStyle(
                     color: primaryColor,
                     fontSize: 18.0,
@@ -101,7 +101,7 @@ class Matches extends StatelessWidget {
                     )
                   : Center(
                       child: Text(
-                      "No match found".tr().toString(),
+                      "No match found",
                       style: TextStyle(color: secondryColor, fontSize: 16),
                     ))),
         ],

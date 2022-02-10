@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hookup4u/util/color.dart';
 import 'AllowLocation.dart';
-import 'package:easy_localization/easy_localization.dart';
+// import 'package:easy_localization/easy_localization.dart';
 
 class University extends StatefulWidget {
   final Map<String, dynamic> userData;
@@ -52,7 +52,7 @@ class _UniversityState extends State<University> {
                 children: <Widget>[
                   Padding(
                     child: Text(
-                      "My\nuniversity is".tr().toString(),
+                      "My\nuniversity is",
                       style: TextStyle(fontSize: 40),
                     ),
                     padding: EdgeInsets.only(left: 50, top: 120),
@@ -65,10 +65,10 @@ class _UniversityState extends State<University> {
                   child: TextFormField(
                     style: TextStyle(fontSize: 23),
                     decoration: InputDecoration(
-                      hintText: "Enter your university name".tr().toString(),
+                      hintText: "Enter your university name",
                       focusedBorder: UnderlineInputBorder(
                           borderSide: BorderSide(color: primaryColor)),
-                      helperText: "This is how it will appear in App.".tr().toString(),
+                      helperText: "This is how it will appear in App.",
                       helperStyle:
                           TextStyle(color: secondryColor, fontSize: 15),
                     ),
@@ -103,7 +103,7 @@ class _UniversityState extends State<University> {
                               width: MediaQuery.of(context).size.width * .75,
                               child: Center(
                                   child: Text(
-                                "CONTINUE".tr().toString(),
+                                "CONTINUE",
                                 style: TextStyle(
                                     fontSize: 15,
                                     color: textColor,
@@ -145,7 +145,7 @@ class _UniversityState extends State<University> {
                               width: MediaQuery.of(context).size.width * .75,
                               child: Center(
                                   child: Text(
-                                "CONTINUE".tr().toString(),
+                                "CONTINUE",
                                 style: TextStyle(
                                     fontSize: 15,
                                     color: secondryColor,

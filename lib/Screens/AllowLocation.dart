@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:hookup4u/Screens/Tab.dart';
 import 'package:hookup4u/Screens/seach_location.dart';
 import 'package:hookup4u/util/color.dart';
-import 'package:easy_localization/easy_localization.dart';
+// import 'package:easy_localization/easy_localization.dart';
 
 import 'UpdateLocation.dart';
 //import 'package:geolocator/geolocator.dart';
@@ -61,7 +61,7 @@ class AllowLocation extends StatelessWidget {
                           CupertinoPageRoute(
                               builder: (context) => SearchLocation(userData))),
                       label: Text(
-                        "Skip..".tr().toString(),
+                        "Skip..",
                         style: TextStyle(color: primaryColor),
                       ),
                       icon: Icon(
@@ -101,11 +101,11 @@ class AllowLocation extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 0),
                     child: RichText(
                       text: TextSpan(
-                        text: "Enable location".tr().toString(),
+                        text: "Enable location",
                         style: TextStyle(color: Colors.black, fontSize: 40),
                         children: [
                           TextSpan(
-                              text: "\nYou'll need to provide a \nlocation\nin order to search users around you.".tr().toString(),
+                              text: "\nYou'll need to provide a \nlocation\nin order to search users around you.",
                               style: TextStyle(
                                   fontWeight: FontWeight.w400,
                                   color: secondryColor,
@@ -146,7 +146,7 @@ class AllowLocation extends StatelessWidget {
                       width: MediaQuery.of(context).size.width * .75,
                       child: Center(
                           child: Text(
-                        "ALLOW LOCATION".tr().toString(),
+                        "ALLOW LOCATION",
                         style: TextStyle(
                             fontSize: 15,
                             color: textColor,
@@ -226,7 +226,7 @@ Future showWelcomDialog(context) async {
                       colorBlendMode: BlendMode.color,
                     ),
                     Text(
-                      "You'r in".tr().toString(),
+                      "You'r in",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           decoration: TextDecoration.none,

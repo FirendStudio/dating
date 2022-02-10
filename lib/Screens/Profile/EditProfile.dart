@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:firebase_admob/firebase_admob.dart';
+// import 'package:firebase_admob/firebase_admob.dart';
 import 'package:hookup4u/ads/ads.dart';
 import 'package:image/image.dart' as i;
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,7 +12,7 @@ import 'package:hookup4u/util/color.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:easy_localization/easy_localization.dart';
+// import 'package:easy_localization/easy_localization.dart';
 
 class EditProfile extends StatefulWidget {
   final UserModel currentUser;
@@ -33,8 +33,8 @@ class EditProfileState extends State<EditProfile> {
 
   var showMe;
   Map editInfo = {};
-  Ads _ads = new Ads();
-  BannerAd _ad;
+  // Ads _ads = new Ads();
+  // BannerAd _ad;
   @override
   void initState() {
     super.initState();
@@ -48,11 +48,11 @@ class EditProfileState extends State<EditProfile> {
       visibleAge = widget.currentUser.editInfo['showMyAge'] ?? false;
       visibleDistance = widget.currentUser.editInfo['DistanceVisible'] ?? true;
     });
-    _ad = _ads.myBanner();
+    // _ad = _ads.myBanner();
     super.initState();
-    _ad
-      ..load()
-      ..show();
+    // _ad
+    //   ..load()
+    //   ..show();
   }
 
   @override
@@ -62,15 +62,16 @@ class EditProfileState extends State<EditProfile> {
     if (editInfo.length > 0) {
       updateData();
     }
-    _ads.disable(_ad);
+    // _ads.disable(_ad);
   }
 
   Future updateData() async {
-    Firestore.instance
+    FirebaseFirestore.instance
         .collection("Users")
-        .document(widget.currentUser.id)
-        .setData({'editInfo': editInfo, 'age': widget.currentUser.age},
-            merge: true);
+        .doc(widget.currentUser.id)
+        .set({'editInfo': editInfo, 'age': widget.currentUser.age},
+            // merge: true
+    );
   }
 
   Future source(
@@ -80,10 +81,10 @@ class EditProfileState extends State<EditProfile> {
         builder: (BuildContext context) {
           return CupertinoAlertDialog(
               title: Text(isProfilePicture
-                  ? "Update profile picture".tr().toString()
-                  : "Add pictures".tr().toString()),
+                  ? "Update profile picture"
+                  : "Add pictures"),
               content: Text(
-                "Select source".tr().toString(),
+                "Select source",
               ),
               insetAnimationCurve: Curves.decelerate,
               actions: currentUser.imageUrl.length < 9
@@ -99,7 +100,7 @@ class EditProfileState extends State<EditProfile> {
                                 size: 28,
                               ),
                               Text(
-                                " Camera".tr().toString(),
+                                " Camera",
                                 style: TextStyle(
                                     fontSize: 15,
                                     color: Colors.black,
@@ -135,7 +136,7 @@ class EditProfileState extends State<EditProfile> {
                                 size: 28,
                               ),
                               Text(
-                                " Gallery".tr().toString(),
+                                " Gallery",
                                 style: TextStyle(
                                     fontSize: 15,
                                     color: Colors.black,
@@ -170,9 +171,7 @@ class EditProfileState extends State<EditProfile> {
                           children: <Widget>[
                             Icon(Icons.error),
                             Text(
-                              "Can't uplaod more than 9 pictures"
-                                  .tr()
-                                  .toString(),
+                              "Can't uplaod more than 9 pictures",
                               style: TextStyle(
                                   fontSize: 15,
                                   color: Colors.black,
@@ -215,13 +214,13 @@ class EditProfileState extends State<EditProfile> {
   }
 
   Future uploadFile(File image, UserModel currentUser, isProfilePicture) async {
-    StorageReference storageReference = FirebaseStorage.instance
-        .ref()
-        .child('users/${currentUser.id}/${image.hashCode}.jpg');
-    StorageUploadTask uploadTask = storageReference.putFile(image);
-    if (uploadTask.isInProgress == true) {}
-    if (await uploadTask.onComplete != null) {
-      storageReference.getDownloadURL().then((fileURL) async {
+
+    if(image != null){
+      FirebaseStorage storage = FirebaseStorage.instance;
+      Reference ref = storage.ref().child('users/${currentUser.id}/${image.hashCode}.jpg');
+      UploadTask uploadTask = ref.putFile(File(image.path));
+      uploadTask.then((res) async {
+        String fileURL = await res.ref.getDownloadURL();
         Map<String, dynamic> updateObject = {
           "Pictures": FieldValue.arrayUnion([
             fileURL,
@@ -232,15 +231,19 @@ class EditProfileState extends State<EditProfile> {
             //currentUser.imageUrl.removeAt(0);
             currentUser.imageUrl.insert(0, fileURL);
             print("object");
-            await Firestore.instance
+            await FirebaseFirestore.instance
                 .collection("Users")
-                .document(currentUser.id)
-                .setData({"Pictures": currentUser.imageUrl}, merge: true);
+                .doc(currentUser.id)
+                .set({"Pictures": currentUser.imageUrl},
+                // merge: true
+            );
           } else {
-            await Firestore.instance
+            await FirebaseFirestore.instance
                 .collection("Users")
-                .document(currentUser.id)
-                .setData(updateObject, merge: true);
+                .doc(currentUser.id)
+                .set(updateObject,
+                // merge: true
+            );
             widget.currentUser.imageUrl.add(fileURL);
           }
           if (mounted) setState(() {});
@@ -249,6 +252,42 @@ class EditProfileState extends State<EditProfile> {
         }
       });
     }
+
+    // StorageReference storageReference = FirebaseStorage.instance
+    //     .ref()
+    //     .child('users/${currentUser.id}/${image.hashCode}.jpg');
+    // StorageUploadTask uploadTask = storageReference.putFile(image);
+    //
+    // if (uploadTask.isInProgress == true) {}
+    // if (await uploadTask.onComplete != null) {
+    //   storageReference.getDownloadURL().then((fileURL) async {
+    //     Map<String, dynamic> updateObject = {
+    //       "Pictures": FieldValue.arrayUnion([
+    //         fileURL,
+    //       ])
+    //     };
+    //     try {
+    //       if (isProfilePicture) {
+    //         //currentUser.imageUrl.removeAt(0);
+    //         currentUser.imageUrl.insert(0, fileURL);
+    //         print("object");
+    //         await Firestore.instance
+    //             .collection("Users")
+    //             .document(currentUser.id)
+    //             .setData({"Pictures": currentUser.imageUrl}, merge: true);
+    //       } else {
+    //         await Firestore.instance
+    //             .collection("Users")
+    //             .document(currentUser.id)
+    //             .setData(updateObject, merge: true);
+    //         widget.currentUser.imageUrl.add(fileURL);
+    //       }
+    //       if (mounted) setState(() {});
+    //     } catch (err) {
+    //       print("Error: $err");
+    //     }
+    //   });
+    // }
   }
 
   Future compressimage(File image) async {
@@ -270,7 +309,7 @@ class EditProfileState extends State<EditProfile> {
       appBar: AppBar(
           elevation: 0,
           title: Text(
-            "Edit Profile".tr().toString(),
+            "Edit Profile",
             style: TextStyle(color: Colors.white),
           ),
           leading: IconButton(
@@ -358,9 +397,7 @@ class EditProfileState extends State<EditProfile> {
                                                     size: 25,
                                                   ),
                                                   Text(
-                                                    "Enable to load"
-                                                        .tr()
-                                                        .toString(),
+                                                    "Enable to load",
                                                     style: TextStyle(
                                                       color: Colors.black,
                                                     ),
@@ -450,7 +487,7 @@ class EditProfileState extends State<EditProfile> {
                         width: 340,
                         child: Center(
                             child: Text(
-                          "Add media".tr().toString(),
+                          "Add media",
                           style: TextStyle(
                               fontSize: 15,
                               color: textColor,
@@ -476,13 +513,14 @@ class EditProfileState extends State<EditProfile> {
                                 fontWeight: FontWeight.w500,
                                 fontSize: 16,
                                 color: Colors.black87),
-                          ).tr(args: ['${widget.currentUser.name}']),
+                          ),
+                              // .tr(args: ['${widget.currentUser.name}']),
                           subtitle: CupertinoTextField(
                             controller: aboutCtlr,
                             cursorColor: primaryColor,
                             maxLines: 10,
                             minLines: 3,
-                            placeholder: "About you".tr().toString(),
+                            placeholder: "About you",
                             padding: EdgeInsets.all(10),
                             onChanged: (text) {
                               editInfo.addAll({'about': text});
@@ -491,7 +529,7 @@ class EditProfileState extends State<EditProfile> {
                         ),
                         ListTile(
                           title: Text(
-                            "Job title".tr().toString(),
+                            "Job title",
                             style: TextStyle(
                                 fontWeight: FontWeight.w500,
                                 fontSize: 16,
@@ -500,7 +538,7 @@ class EditProfileState extends State<EditProfile> {
                           subtitle: CupertinoTextField(
                             controller: jobCtlr,
                             cursorColor: primaryColor,
-                            placeholder: "Add job title".tr().toString(),
+                            placeholder: "Add job title",
                             padding: EdgeInsets.all(10),
                             onChanged: (text) {
                               editInfo.addAll({'job_title': text});
@@ -509,7 +547,7 @@ class EditProfileState extends State<EditProfile> {
                         ),
                         ListTile(
                           title: Text(
-                            "Company".tr().toString(),
+                            "Company",
                             style: TextStyle(
                                 fontWeight: FontWeight.w500,
                                 fontSize: 16,
@@ -518,7 +556,7 @@ class EditProfileState extends State<EditProfile> {
                           subtitle: CupertinoTextField(
                             controller: companyCtlr,
                             cursorColor: primaryColor,
-                            placeholder: "Add company".tr().toString(),
+                            placeholder: "Add company",
                             padding: EdgeInsets.all(10),
                             onChanged: (text) {
                               editInfo.addAll({'company': text});
@@ -527,7 +565,7 @@ class EditProfileState extends State<EditProfile> {
                         ),
                         ListTile(
                           title: Text(
-                            "University".tr().toString(),
+                            "University",
                             style: TextStyle(
                                 fontWeight: FontWeight.w500,
                                 fontSize: 16,
@@ -536,7 +574,7 @@ class EditProfileState extends State<EditProfile> {
                           subtitle: CupertinoTextField(
                             controller: universityCtlr,
                             cursorColor: primaryColor,
-                            placeholder: "Add university".tr().toString(),
+                            placeholder: "Add university",
                             padding: EdgeInsets.all(10),
                             onChanged: (text) {
                               editInfo.addAll({'university': text});
@@ -545,7 +583,7 @@ class EditProfileState extends State<EditProfile> {
                         ),
                         ListTile(
                           title: Text(
-                            "Living in".tr().toString(),
+                            "Living in",
                             style: TextStyle(
                                 fontWeight: FontWeight.w500,
                                 fontSize: 16,
@@ -554,7 +592,7 @@ class EditProfileState extends State<EditProfile> {
                           subtitle: CupertinoTextField(
                             controller: livingCtlr,
                             cursorColor: primaryColor,
-                            placeholder: "Add city".tr().toString(),
+                            placeholder: "Add city",
                             padding: EdgeInsets.all(10),
                             onChanged: (text) {
                               editInfo.addAll({'living_in': text});
@@ -565,7 +603,7 @@ class EditProfileState extends State<EditProfile> {
                           padding: const EdgeInsets.symmetric(vertical: 10),
                           child: ListTile(
                             title: Text(
-                              "I am".tr().toString(),
+                              "I am",
                               style: TextStyle(
                                   fontWeight: FontWeight.w500,
                                   fontSize: 16,
@@ -577,14 +615,14 @@ class EditProfileState extends State<EditProfile> {
                               isExpanded: true,
                               items: [
                                 DropdownMenuItem(
-                                  child: Text("Man".tr().toString()),
+                                  child: Text("Man"),
                                   value: "man",
                                 ),
                                 DropdownMenuItem(
-                                    child: Text("Woman".tr().toString()),
+                                    child: Text("Woman"),
                                     value: "woman"),
                                 DropdownMenuItem(
-                                    child: Text("Other".tr().toString()),
+                                    child: Text("Other"),
                                     value: "other"),
                               ],
                               onChanged: (val) {
@@ -602,7 +640,7 @@ class EditProfileState extends State<EditProfile> {
                         ),
                         ListTile(
                             title: Text(
-                              "Control your profile".tr().toString(),
+                              "Control your profile",
                               style: TextStyle(
                                   fontWeight: FontWeight.w500,
                                   fontSize: 16,
@@ -620,9 +658,7 @@ class EditProfileState extends State<EditProfile> {
                                     children: <Widget>[
                                       Padding(
                                         padding: const EdgeInsets.all(8.0),
-                                        child: Text("Don't Show My Age"
-                                            .tr()
-                                            .toString()),
+                                        child: Text("Don't Show My Age"),
                                       ),
                                       Switch(
                                           activeColor: primaryColor,
@@ -642,9 +678,7 @@ class EditProfileState extends State<EditProfile> {
                                     children: <Widget>[
                                       Padding(
                                         padding: const EdgeInsets.all(8.0),
-                                        child: Text("Make My Distance Visible"
-                                            .tr()
-                                            .toString()),
+                                        child: Text("Make My Distance Visible"),
                                       ),
                                       Switch(
                                           activeColor: primaryColor,
@@ -679,9 +713,9 @@ class EditProfileState extends State<EditProfile> {
   void _deletePicture(index) async {
     if (widget.currentUser.imageUrl[index] != null) {
       try {
-        StorageReference _ref = await FirebaseStorage.instance
-            .getReferenceFromUrl(widget.currentUser.imageUrl[index]);
-        print(_ref.path);
+        var _ref = FirebaseStorage.instance
+            .ref(widget.currentUser.imageUrl[index]);
+        print(_ref.fullPath);
         await _ref.delete();
       } catch (e) {
         print(e);
@@ -692,9 +726,11 @@ class EditProfileState extends State<EditProfile> {
     });
     var temp = [];
     temp.add(widget.currentUser.imageUrl);
-    await Firestore.instance
+    await FirebaseFirestore.instance
         .collection("Users")
-        .document("${widget.currentUser.id}")
-        .setData({"Pictures": temp[0]}, merge: true);
+        .doc("${widget.currentUser.id}")
+        .set({"Pictures": temp[0]},
+        // merge: true
+    );
   }
 }
