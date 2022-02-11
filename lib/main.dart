@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:firebase_admob/firebase_admob.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -12,13 +13,18 @@ import 'package:hookup4u/Screens/Welcome.dart';
 import 'package:hookup4u/Screens/auth/login.dart';
 import 'package:hookup4u/ads/ads.dart';
 import 'package:hookup4u/util/color.dart';
+import 'package:hookup4u/util/firebase_config.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 // import 'package:easy_localization/easy_localization.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // await EasyLocalization.ensureInitialized();
-  await Firebase.initializeApp();
+  if(kIsWeb){
+    await Firebase.initializeApp(options: DefaultFirebaseConfig.platformOptions);
+  }else{
+    await Firebase.initializeApp();
+  }
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitDown,
     DeviceOrientation.portraitUp,
