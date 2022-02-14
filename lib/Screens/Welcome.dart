@@ -37,8 +37,7 @@ class _WelcomeState extends State<Welcome> {
                         ListTile(
                           contentPadding: EdgeInsets.all(8),
                           title: Text(
-                            "This is a community for unvaccinated singles looking to meet, like"
-                            "-minded people for love, fun, and friendship",
+                            "This is a community for unvaccinated singles looking to meet like-minded people for love, fun and friendship.",
                             style: TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.bold),
                           ),
@@ -51,7 +50,7 @@ class _WelcomeState extends State<Welcome> {
                                 fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                           subtitle: Text(
-                            "Please make your photos, age, and bio are true to who you are.",
+                            "Please make sure that your photos, age and bio are accurate and a true representation of who you are.",
                             style: TextStyle(
                               fontSize: 17,
                             ),
@@ -65,7 +64,7 @@ class _WelcomeState extends State<Welcome> {
                                 fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                           subtitle: Text(
-                            "Respect other and treat them as you would like to be treated",
+                            "Respect others and treat them as you would like to be treated.",
                             style: TextStyle(
                               fontSize: 17,
                             ),

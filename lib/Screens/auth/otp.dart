@@ -60,7 +60,7 @@ class _OTPState extends State<OTP> {
         .collection("Users")
         .doc(user.uid)
         .set({'phoneNumber': user.phoneNumber},
-        // merge: true
+        SetOptions(merge : true)
     ).then((_) {
       showDialog(
           barrierDismissible: false,
@@ -389,6 +389,6 @@ Future setDataUser(User user) async {
     // 'name': user.displayName,
     // 'pictureUrl': user.photoUrl,
   },
-      // merge: true
+      SetOptions(merge : true)
   );
 }

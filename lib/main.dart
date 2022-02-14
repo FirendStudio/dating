@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:firebase_admob/firebase_admob.dart';
@@ -65,14 +66,25 @@ class _MyAppState extends State<MyApp> {
     User user = _auth.currentUser;
     print(user);
     if (user != null) {
+      print("ID User : " + user.uid);
       await FirebaseFirestore.instance
-          .collection('Users')
-          .where('userId', isEqualTo: user.uid)
-          .get()
-          .then((QuerySnapshot snapshot) async {
+      .collection('Users')
+      .where('userId', isEqualTo: user.uid)
+      .limit(1)
+      .get()
+      .then((QuerySnapshot snapshot) async {
+
+        // var data = snapshot.data();
+
         if (snapshot.docs.length > 0) {
+
+          print(snapshot.docs);
+          var docs = snapshot.docs.first;
+          print(docs.data());
+          Map<String, dynamic> data = docs.data();
+          // var data['']
           // if (snapshot.docs[0].data['location'] != null) {
-          if (snapshot.docs[0]['location'] != null) {
+          if (data['location'] != null) {
             setState(() {
               isRegistered = true;
               isLoading = false;
@@ -136,7 +148,7 @@ class _MyAppState extends State<MyApp> {
         .get();
 
     var data = itemList.data();
-    print(data);
+    print("Data Language : " + data.toString());
 
     if(data != null){
       if (data['spanish'] == true && data['english'] == false) {
@@ -162,6 +174,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     
     return GetMaterialApp(
+      title: "JablessCupid",
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primaryColor: primaryColor,

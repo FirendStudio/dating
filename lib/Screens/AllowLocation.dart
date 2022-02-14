@@ -169,6 +169,7 @@ class AllowLocation extends StatelessWidget {
                           },
                         },
                       );
+                      print(userData);
                       showWelcomDialog(context);
                       setUserData(userData);
                     }
@@ -189,7 +190,7 @@ Future setUserData(Map<String, dynamic> userData) async {
       .collection("Users")
       .doc(user.uid)
       .set(userData,
-      // merge: true
+      SetOptions(merge : true)
   );
   // await FirebaseAuth.instance.currentUser().then((FirebaseUser user) async {
   //   await Firestore.instance

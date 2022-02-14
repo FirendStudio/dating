@@ -170,26 +170,26 @@ class _ProfileState extends State<Profile> {
                   fontWeight: FontWeight.w500,
                   fontSize: 30),
             ),
-            Text(
-              widget.currentUser.editInfo['job_title'] != null
-                  ? "${widget.currentUser.editInfo['job_title']}  ${widget.currentUser.editInfo['company'] != null ? "at ${widget.currentUser.editInfo['company']}" : ""}"
-                  : "",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  color: Colors.black54,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 20),
-            ),
-            Text(
-              widget.currentUser.editInfo['university'] != null
-                  ? "${widget.currentUser.editInfo['university']}"
-                  : "",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  color: Colors.black54,
-                  fontWeight: FontWeight.w400,
-                  fontSize: 20),
-            ),
+            // Text(
+            //   widget.currentUser.editInfo['job_title'] != null
+            //       ? "${widget.currentUser.editInfo['job_title']}  ${widget.currentUser.editInfo['company'] != null ? "at ${widget.currentUser.editInfo['company']}" : ""}"
+            //       : "",
+            //   textAlign: TextAlign.center,
+            //   style: TextStyle(
+            //       color: Colors.black54,
+            //       fontWeight: FontWeight.w400,
+            //       fontSize: 20),
+            // ),
+            // Text(
+            //   widget.currentUser.editInfo['university'] != null
+            //       ? "${widget.currentUser.editInfo['university']}"
+            //       : "",
+            //   textAlign: TextAlign.center,
+            //   style: TextStyle(
+            //       color: Colors.black54,
+            //       fontWeight: FontWeight.w400,
+            //       fontSize: 20),
+            // ),
             Container(
               height: MediaQuery.of(context).size.height * .45,
               child: Stack(

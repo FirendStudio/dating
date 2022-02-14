@@ -80,7 +80,7 @@ class TabbarState extends State<Tabbar> {
       if (doc.docs.length > 0) {
         // items = doc.docs[0].data;
         items = doc.docs[0].data();
-        print(doc.docs[0].data);
+        print(doc.docs[0].data());
       }
 
       if (mounted) setState(() {});
@@ -237,10 +237,11 @@ class TabbarState extends State<Tabbar> {
 
   _checkcallState(channelId) async {
     bool iscalling = await FirebaseFirestore.instance
-        .collection("calls")
-        .doc(channelId)
-        .get()
-        .then((value) {
+    .collection("calls")
+    .doc(channelId)
+    .get()
+    .then((value) {
+          print(value);
       // return value.data["calling"] ?? false;
       return value["calling"] ?? false;
     });
@@ -285,7 +286,8 @@ class TabbarState extends State<Tabbar> {
   _getCurrentUser() async {
     User user = _firebaseAuth.currentUser;
     return docRef.doc("${user.uid}").snapshots().listen((data) async {
-      currentUser = UserModel.fromDocument(data.data());
+      print(data);
+      currentUser = UserModel.fromDocument(data);
       if (mounted) setState(() {});
       users.clear();
       userRemoved.clear();
@@ -334,14 +336,16 @@ class TabbarState extends State<Tabbar> {
       checkedUser.addAll(data.docs.map((f) => f['DislikedUser']));
       checkedUser.addAll(data.docs.map((f) => f['LikedUser']));
     }).then((_) {
-      query().getDocuments().then((data) async {
-        if (data.documents.length < 1) {
+      query().get().then((data) async {
+        print(data);
+        QuerySnapshot result = data;
+        if (result.docs.length < 1) {
           print("no more data");
           return;
         }
         users.clear();
         userRemoved.clear();
-        for (var doc in data.documents) {
+        for (var doc in result.docs) {
           UserModel temp = UserModel.fromDocument(doc);
           var distance = calculateDistance(
               currentUser.coordinates['latitude'],

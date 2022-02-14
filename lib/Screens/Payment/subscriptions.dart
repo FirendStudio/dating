@@ -196,7 +196,7 @@ class _SubscriptionState extends State<Subscription> {
                         color: Colors.blue,
                       ),
                       title: Text(
-                        "Unlimited swipe.",
+                        "Unlimited swipe!",
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w400),
                       ),
@@ -208,7 +208,7 @@ class _SubscriptionState extends State<Subscription> {
                         color: Colors.green,
                       ),
                       title: Text(
-                        "Search users around",
+                        "Search users around 1000 kms away!",
                         style: TextStyle(
 
                             // Color(0xFF1A1A1A),

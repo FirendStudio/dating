@@ -40,7 +40,8 @@ class UserModel {
     // DateTime date = DateTime.parse(doc["user_DOB"]);
     return UserModel(
         id: doc['userId'],
-        isBlocked: doc['isBlocked'] != null ? doc['isBlocked'] : false,
+        // isBlocked: doc['isBlocked'] != null ? doc['isBlocked'] : false,
+        isBlocked: false,
         phoneNumber: doc['phoneNumber'],
         name: doc['UserName'],
         editInfo: doc['editInfo'],

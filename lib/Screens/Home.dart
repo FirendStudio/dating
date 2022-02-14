@@ -503,7 +503,7 @@ class _CardPicturesState extends State<CardPictures>
                                 backgroundColor: Colors.white,
                                 child: Icon(
                                   Icons.favorite,
-                                  color: Colors.lightBlueAccent,
+                                  color: Colors.red,
                                   size: 30,
                                 ),
                                 onPressed: () {

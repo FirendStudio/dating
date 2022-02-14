@@ -148,7 +148,7 @@ class _SearchLocationState extends State<SearchLocation> {
                                 },
                               );
 
-                              showWelcomDialog(context);
+                              // showWelcomDialog(context);
                               setUserData(widget.userData);
                             },
                           ),

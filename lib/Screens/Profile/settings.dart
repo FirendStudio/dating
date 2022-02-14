@@ -592,7 +592,7 @@ class _SettingsState extends State<Settings> {
                         builder: (BuildContext context) {
                           return AlertDialog(
                             title: Text('Logout'),
-                            content: Text('Do you want to logout your account?'),
+                            content: Text('Would you like to logout of your account?'),
                             actions: <Widget>[
                               FlatButton(
                                 onPressed: () =>

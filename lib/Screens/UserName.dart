@@ -39,6 +39,7 @@ class _UserNameState extends State<UserName> {
 
   @override
   Widget build(BuildContext context) {
+    // print("sini");
     return Scaffold(
       backgroundColor: Colors.white,
       floatingActionButton: AnimatedOpacity(
@@ -83,24 +84,38 @@ class _UserNameState extends State<UserName> {
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 50),
-                child: Container(
-                  child: TextFormField(
-                    style: TextStyle(fontSize: 23),
-                    decoration: InputDecoration(
-                      hintText: "Enter your first name",
-                      focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: primaryColor)),
-                      helperText: "This is the name other member will see on the App",
-                      helperStyle:
-                          TextStyle(color: secondryColor, fontSize: 15),
+                child: Column(
+                  children: [
+
+                    Container(
+                      child: TextFormField(
+                        style: TextStyle(fontSize: 23),
+                        decoration: InputDecoration(
+                          hintText: "Enter your first name",
+                          focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: primaryColor)),
+                          // helperText: "This is the name others member will see on the App",
+                          // helperStyle:
+                          // TextStyle(color: secondryColor, fontSize: 15),
+                        ),
+                        onChanged: (value) {
+                          setState(() {
+                            username = value;
+                          });
+                        },
+                      ),
                     ),
-                    onChanged: (value) {
-                      setState(() {
-                        username = value;
-                      });
-                    },
-                  ),
-                ),
+
+                    Text("This is the name others members will see on the App.",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        // fontStyle: FontStyle.normal,
+                        color: secondryColor
+                      ),
+                    )
+
+                  ],
+                )
               ),
               username.length > 0
                   ? Padding(

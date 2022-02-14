@@ -70,7 +70,7 @@ class EditProfileState extends State<EditProfile> {
         .collection("Users")
         .doc(widget.currentUser.id)
         .set({'editInfo': editInfo, 'age': widget.currentUser.age},
-            // merge: true
+        SetOptions(merge : true)
     );
   }
 
@@ -235,14 +235,16 @@ class EditProfileState extends State<EditProfile> {
                 .collection("Users")
                 .doc(currentUser.id)
                 .set({"Pictures": currentUser.imageUrl},
-                // merge: true
+                SetOptions(merge : true)
+
             );
           } else {
             await FirebaseFirestore.instance
                 .collection("Users")
                 .doc(currentUser.id)
                 .set(updateObject,
-                // merge: true
+                SetOptions(merge : true)
+
             );
             widget.currentUser.imageUrl.add(fileURL);
           }
@@ -428,9 +430,7 @@ class EditProfileState extends State<EditProfile> {
                                                 ? Colors.white
                                                 : primaryColor,
                                           ),
-                                          child: widget.currentUser.imageUrl
-                                                      .length >
-                                                  index
+                                          child: widget.currentUser.imageUrl.length > index
                                               ? InkWell(
                                                   child: Icon(
                                                     Icons.cancel,
@@ -730,7 +730,7 @@ class EditProfileState extends State<EditProfile> {
         .collection("Users")
         .doc("${widget.currentUser.id}")
         .set({"Pictures": temp[0]},
-        // merge: true
+        SetOptions(merge : true)
     );
   }
 }
