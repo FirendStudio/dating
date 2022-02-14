@@ -42,8 +42,10 @@ class _OTPState extends State<OTP> {
         timeout: Duration(seconds: 30),
         verificationCompleted: (authCredential) =>
             _verificationComplete(authCredential, context),
-        verificationFailed: (authException) =>
-            _verificationFailed(authException, context),
+        verificationFailed: (authException) {
+          print(authException);
+            _verificationFailed(authException, context);
+        },
         codeAutoRetrievalTimeout: (verificationId) =>
             _codeAutoRetrievalTimeout(verificationId),
         // called when the SMS code is sent

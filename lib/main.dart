@@ -23,7 +23,13 @@ Future<void> main() async {
   if(kIsWeb){
     await Firebase.initializeApp(options: DefaultFirebaseConfig.platformOptions);
   }else{
-    await Firebase.initializeApp();
+
+    if(Platform.isIOS){
+      await Firebase.initializeApp(options: DefaultFirebaseConfig.platformOptions);
+    }else{
+      await Firebase.initializeApp();
+    }
+
   }
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitDown,
@@ -129,15 +135,18 @@ class _MyAppState extends State<MyApp> {
         .doc('present_languages')
         .get();
 
-    if(itemList['spanish'] != null){
-      if (itemList['spanish'] == true && itemList['english'] == false) {
+    var data = itemList.data();
+    print(data);
+
+    if(data != null){
+      if (data['spanish'] == true && data['english'] == false) {
         setState(() {
           // EasyLocalization.of(context).locale = Locale('es', 'ES');
           // context.setLocale(Locale('es', 'ES'));
         });
       }
       // if (itemList.data['english'] == true && itemList.data['spanish'] == false) {
-      if (itemList['english'] == true && itemList['spanish'] == false) {
+      if (data['english'] == true && data['spanish'] == false) {
         setState(() {
           // EasyLocalization.of(context).locale = Locale('en', 'US');
           // context.setLocale(Locale('en', 'US'));

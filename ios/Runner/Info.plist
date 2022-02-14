@@ -10,6 +10,11 @@
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+		<string>es</string>
+	</array>
 	<key>CFBundleName</key>
 	<string>JablessCupid</string>
 	<key>CFBundlePackageType</key>
@@ -20,15 +25,14 @@
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
 	<array>
-		
-			
 		<dict>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>Client</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com**********ar7ubsfi3stm9a</string>
-				<string>fb000000000000</string>
+				<string>com.googleusercontent.apps.320445830507-rmqfclnkr3d182vb5flk1ho3b1ismkn1</string>
 			</array>
 		</dict>
 	</array>
@@ -38,8 +42,12 @@
 	<string>000000000000</string>
 	<key>FacebookDisplayName</key>
 	<string>Hookup4u</string>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<false/>
+	<key>GADApplicationIdentifier</key>
+	<string>ca-app-pub-0000000000000000~0000000000</string>
 	<key>LSApplicationCategoryType</key>
-	<string>The iOS Simulator deployment target &apos;IPHONEOS_DEPLOYMENT_TARGET&apos; is set to 7.0, but the range of supported deployment target versions is 8.0 to 13.2.99.</string>
+	<string>The iOS Simulator deployment target 'IPHONEOS_DEPLOYMENT_TARGET' is set to 7.0, but the range of supported deployment target versions is 8.0 to 13.2.99.</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppleMusicUsageDescription</key>
@@ -88,18 +96,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-	<key>io.flutter.embedded_views_preview</key>
-	<true/>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<key>GADApplicationIdentifier</key>
-			<string>ca-app-pub-0000000000000000~0000000000</string>
-			
-	<key>CFBundleLocalizations</key>
-	<array>
-		<string>en</string>
-		<string>es</string>
-	</array>
-		
+	<key>io.flutter.embedded_views_preview</key>
+	<true/>
 </dict>
 </plist>
