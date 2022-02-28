@@ -306,19 +306,18 @@ class _CardPicturesState extends State<CardPictures>
                                     _adsCheck(countswipe);
                                     print(position);
                                     print(widget.users[index].name);
-                                    CollectionReference docRef =
-                                        FirebaseFirestore.instance.collection("Users");
+                                    CollectionReference docRef = FirebaseFirestore.instance.collection("Users");
                                     if (position == SwiperPosition.Left) {
                                       await docRef
-                                          .doc(widget.currentUser.id)
-                                          .collection("CheckedUser")
-                                          .doc(widget.users[index].id)
-                                          .set(
-                                        {
+                                        .doc(widget.currentUser.id)
+                                        .collection("CheckedUser")
+                                        .doc(widget.users[index].id)
+                                        .set({
                                           'DislikedUser':
                                               widget.users[index].id,
                                           'timestamp': DateTime.now(),
                                         },
+                                          SetOptions(merge : true)
                                       );
 
                                       if (index < widget.users.length) {
@@ -385,6 +384,7 @@ class _CardPicturesState extends State<CardPictures>
                                             'timestamp':
                                                 FieldValue.serverTimestamp()
                                           },
+                                            SetOptions(merge : true)
                                         );
                                         await docRef
                                             .doc(widget.users[index].id)
@@ -400,6 +400,7 @@ class _CardPicturesState extends State<CardPictures>
                                             'timestamp':
                                                 FieldValue.serverTimestamp()
                                           },
+                                            SetOptions(merge : true)
                                         );
                                       }
 
@@ -413,6 +414,7 @@ class _CardPicturesState extends State<CardPictures>
                                           'timestamp':
                                               FieldValue.serverTimestamp(),
                                         },
+                                          SetOptions(merge : true)
                                       );
                                       await docRef
                                           .doc(widget.users[index].id)
@@ -424,6 +426,7 @@ class _CardPicturesState extends State<CardPictures>
                                           'timestamp':
                                               FieldValue.serverTimestamp()
                                         },
+                                          SetOptions(merge : true)
                                       );
                                       if (index < widget.users.length) {
                                         userRemoved.clear();

@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 import 'package:hookup4u/Screens/Tab.dart';
 import 'package:hookup4u/Screens/Welcome.dart';
 import 'package:hookup4u/Screens/auth/otp.dart';
@@ -110,7 +111,9 @@ class Login extends StatelessWidget {
                     "By tapping 'Log in', you agree with our \n Terms.Learn how we process your data in \n our Privacy Policy and Cookies Policy."
                         .toString(),
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.black54, fontSize: 15),
+                    style: TextStyle(color: Colors.black54,
+                      fontSize: Get.height * 0.02,
+                    ),
                   ),
                 ),
                 Padding(
@@ -224,7 +227,7 @@ class Login extends StatelessWidget {
                       "Trouble logging in?".toString(),
                       style: TextStyle(
                           color: Colors.black,
-                          fontSize: 12,
+                          fontSize: Get.height * 0.018,
                           fontWeight: FontWeight.normal),
                     ),
                   ],
@@ -453,7 +456,6 @@ class Login extends StatelessWidget {
               content: Text('An error occured. Please Try again.'),
               duration: Duration(seconds: 8),
             ));
-
             break;
 
           case i.AuthorizationStatus.cancelled:

@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:hookup4u/Screens/UserDOB.dart';
 import 'package:hookup4u/Screens/UserName.dart';
 import 'package:hookup4u/util/color.dart';
@@ -29,7 +30,7 @@ class _WelcomeState extends State<Welcome> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         SizedBox(
-                          height: 150,
+                          height: Get.height * 0.1,
                         ),
                         Image.asset(
                           "asset/images/logo1.png",
@@ -39,7 +40,8 @@ class _WelcomeState extends State<Welcome> {
                           title: Text(
                             "This is a community for unvaccinated singles looking to meet like-minded people for love, fun and friendship.",
                             style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
+                                fontSize: Get.height * 0.025,
+                                fontWeight: FontWeight.bold),
                           ),
                         ),
                         ListTile(
@@ -47,12 +49,13 @@ class _WelcomeState extends State<Welcome> {
                           title: Text(
                             "Be yourself.",
                             style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
+                                fontSize: Get.height * 0.025,
+                                fontWeight: FontWeight.bold),
                           ),
                           subtitle: Text(
                             "Please make sure that your photos, age and bio are accurate and a true representation of who you are.",
                             style: TextStyle(
-                              fontSize: 17,
+                              fontSize: Get.height * 0.024,
                             ),
                           ),
                         ),
@@ -61,12 +64,13 @@ class _WelcomeState extends State<Welcome> {
                           title: Text(
                             "Play it cool.",
                             style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
+                                fontSize: Get.height * 0.025,
+                                fontWeight: FontWeight.bold),
                           ),
                           subtitle: Text(
                             "Respect others and treat them as you would like to be treated.",
                             style: TextStyle(
-                              fontSize: 17,
+                              fontSize: Get.height * 0.024,
                             ),
                           ),
                         ),
@@ -75,12 +79,13 @@ class _WelcomeState extends State<Welcome> {
                           title: Text(
                             "Stay safe.",
                             style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
+                                fontSize: Get.height * 0.025,
+                                fontWeight: FontWeight.bold),
                           ),
                           subtitle: Text(
                             "Don't be too quick to give out personal information.",
                             style: TextStyle(
-                              fontSize: 17,
+                              fontSize: Get.height * 0.024,
                             ),
                           ),
                         ),
@@ -89,12 +94,13 @@ class _WelcomeState extends State<Welcome> {
                           title: Text(
                             "Be proactive.",
                             style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
+                                fontSize: Get.height * 0.025,
+                                fontWeight: FontWeight.bold),
                           ),
                           subtitle: Text(
                             "Always report bad behavior.",
                             style: TextStyle(
-                              fontSize: 17,
+                              fontSize: Get.height * 0.024,
                             ),
                           ),
                         ),
@@ -127,7 +133,7 @@ class _WelcomeState extends State<Welcome> {
                             child: Text(
                           "GOT IT",
                           style: TextStyle(
-                              fontSize: 15,
+                              fontSize: Get.height * 0.022,
                               color: textColor,
                               fontWeight: FontWeight.bold),
                         ))),

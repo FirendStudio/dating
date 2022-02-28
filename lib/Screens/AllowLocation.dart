@@ -153,7 +153,9 @@ class AllowLocation extends StatelessWidget {
                             fontWeight: FontWeight.bold),
                       ))),
                   onTap: () async {
+                    print("Cek");
                     var currentLocation = await getLocationCoordinates();
+                    print(currentLocation);
                     if (currentLocation != null) {
                       userData.addAll(
                         {

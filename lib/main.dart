@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:firebase_admob/firebase_admob.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -24,12 +25,14 @@ Future<void> main() async {
   if(kIsWeb){
     await Firebase.initializeApp(options: DefaultFirebaseConfig.platformOptions);
   }else{
+    await Firebase.initializeApp();
 
-    if(Platform.isIOS){
-      await Firebase.initializeApp(options: DefaultFirebaseConfig.platformOptions);
-    }else{
-      await Firebase.initializeApp();
-    }
+    // if(Platform.isIOS){
+    //   await Firebase.initializeApp(options: DefaultFirebaseConfig.platformOptions);
+    //
+    //
+    // }else{
+    // }
 
   }
   SystemChrome.setPreferredOrientations([
@@ -62,6 +65,14 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future _checkAuth() async {
+
+    if(GetPlatform.isIOS){
+      await FirebaseMessaging.instance.requestPermission();
+
+      var iosToken = await FirebaseMessaging.instance.getAPNSToken();
+      print(iosToken);
+    }
+
     final FirebaseAuth _auth = FirebaseAuth.instance;
     User user = _auth.currentUser;
     print(user);
@@ -174,6 +185,12 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     
     return GetMaterialApp(
+      builder: (context, child) {
+        return MediaQuery(
+          child: child,
+          data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+        );
+      },
       title: "JablessCupid",
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
