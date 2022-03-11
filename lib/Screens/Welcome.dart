@@ -21,7 +21,7 @@ class _WelcomeState extends State<Welcome> {
           child: Column(
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.only(left: 30),
+                padding: const EdgeInsets.only(left: 30, right: 30),
                 child: Container(
                   height: MediaQuery.of(context).size.height * .8,
                   child: SingleChildScrollView(

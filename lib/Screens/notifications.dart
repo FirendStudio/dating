@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:hookup4u/Screens/Information.dart';
 import 'package:hookup4u/models/user_model.dart';
 import 'package:hookup4u/util/color.dart';
+import 'package:intl/intl.dart';
 // import 'package:easy_localization/easy_localization.dart';
 
 import 'Tab.dart';
@@ -164,8 +165,13 @@ class _NotificationsState extends State<Notifications> {
                                           // ]),
 
                                           subtitle: Text(
+                                              DateFormat.MMMd('en_US')
+                                                  .add_jm()
+                                                  .format(doc['timestamp']
+                                                  .toDate())
+                                                  .toString(),),
                                               // "${(doc.data['timestamp'].toDate())}"),
-                                              "${(doc['timestamp'].toDate())}"),
+                                              // "${(doc['timestamp'].toDate())}"),
                                           //  Text(
                                           //     "Now you can start chat with ${notification[index].sender.name}"),
                                           // "if you want to match your profile with ${notifications[index].sender.name} just like ${notifications[index].sender.name}'s profile"),

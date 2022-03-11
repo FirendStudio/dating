@@ -46,7 +46,7 @@ class UserModel {
         name: doc['UserName'],
         editInfo: doc['editInfo'],
         ageRange: doc['age_range'],
-        showGender: doc['showGender'],
+        showGender: doc['showGender'].toString(),
         maxDistance: doc['maximum_distance'],
         sexualOrientation: doc['sexualOrientation']['orientation'] ?? "",
         age: ((DateTime.now()

@@ -45,7 +45,7 @@ class _ChatPageState extends State<ChatPage> {
     print("object    -${widget.chatId}");
     super.initState();
     chatReference = db.collection("chats").doc(widget.chatId).collection('messages');
-    checkblock();
+    // checkblock();
   }
 
   var blockedBy;
@@ -422,6 +422,7 @@ class _ChatPageState extends State<ChatPage> {
       key: _scaffoldKey,
       backgroundColor: Colors.white,
       appBar: AppBar(
+          backgroundColor: Colors.red,
           centerTitle: true,
           elevation: 0,
           title: Text(widget.second.name),

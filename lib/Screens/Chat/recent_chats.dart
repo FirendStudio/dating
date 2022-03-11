@@ -46,13 +46,14 @@ class RecentChats extends StatelessWidget {
                               ),
                             ),
                             child: StreamBuilder(
-                                stream: db
-                                    .collection("chats")
+                                stream: db.collection("chats")
                                     .doc(chatId(currentUser, index))
                                     .collection('messages')
                                     .orderBy('time', descending: true)
+                                    // .get()
                                     .snapshots(),
-                                builder: (context, snapshot) {
+                                builder: (context, AsyncSnapshot snapshot) {
+                                  // print(snapshot.data.docs[0].data()['time']);
                                   if (!snapshot.hasData)
                                     return Container(
                                       child: Padding(
@@ -60,21 +61,19 @@ class RecentChats extends StatelessWidget {
                                         child: CupertinoActivityIndicator(),
                                       ),
                                     );
-                                  else if (snapshot.data.documents.length ==
-                                      0) {
+                                  else if (snapshot.data.docs.length == 0) {
                                     return Container();
                                   }
-                                  index.lastmsg = snapshot.data.documents[0]['time'];
+                                  index.lastmsg = snapshot.data.docs[0].data()['time'];
                                   return Container(
                                     margin: EdgeInsets.only(
                                         top: 5.0, bottom: 5.0, right: 20.0),
                                     padding: EdgeInsets.symmetric(
                                         horizontal: 20.0, vertical: 10.0),
                                     decoration: BoxDecoration(
-                                      color: snapshot.data.documents[0]
-                                                      ['sender_id'] !=
+                                      color: snapshot.data.docs[0].data()['sender_id'] !=
                                                   currentUser.id &&
-                                              !snapshot.data.documents[0]
+                                              !snapshot.data.docs[0].data()
                                                   ['isRead']
                                           ? primaryColor.withOpacity(.1)
                                           : secondryColor.withOpacity(.2),
@@ -112,12 +111,11 @@ class RecentChats extends StatelessWidget {
                                         ),
                                       ),
                                       subtitle: Text(
-                                        snapshot.data.documents[0]['image_url']
-                                                    .toString()
-                                                    .length >
+                                        snapshot.data.docs[0].data()['image_url']
+                                                    .toString().length >
                                                 0
                                             ? "Photo"
-                                            : snapshot.data.documents[0]
+                                            : snapshot.data.docs[0].data()
                                                 ['text'],
                                         style: TextStyle(
                                           color: Colors.blueGrey,
@@ -133,13 +131,12 @@ class RecentChats extends StatelessWidget {
                                             CrossAxisAlignment.end,
                                         children: <Widget>[
                                           Text(
-                                            snapshot.data.documents[0]
-                                                        ["time"] !=
+                                            snapshot.data.docs[0].data()
+                                            ["time"] !=
                                                     null
                                                 ? DateFormat.MMMd('en_US')
                                                     .add_jm()
-                                                    .format(snapshot.data
-                                                        .documents[0]["time"]
+                                                    .format(snapshot.data.docs[0].data()["time"]
                                                         .toDate())
                                                     .toString()
                                                 : "",
@@ -149,10 +146,10 @@ class RecentChats extends StatelessWidget {
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
-                                          snapshot.data.documents[0]
+                                          snapshot.data.docs[0].data()
                                                           ['sender_id'] !=
                                                       currentUser.id &&
-                                                  !snapshot.data.documents[0]
+                                                  !snapshot.data.docs[0].data()
                                                       ['isRead']
                                               ? Container(
                                                   width: 40.0,
@@ -175,10 +172,10 @@ class RecentChats extends StatelessWidget {
                                                   ),
                                                 )
                                               : Text(""),
-                                          snapshot.data.documents[0]
+                                          snapshot.data.docs[0].data()
                                                       ['sender_id'] ==
                                                   currentUser.id
-                                              ? !snapshot.data.documents[0]
+                                              ? !snapshot.data.docs[0].data()
                                                       ['isRead']
                                                   ? Icon(
                                                       Icons.done,

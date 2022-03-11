@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hookup4u/Screens/ShowGender.dart';
+import 'package:hookup4u/Screens/Welcome/Desires/DesiresScreen.dart';
 import 'package:hookup4u/util/color.dart';
 import 'package:hookup4u/util/snackbar.dart';
 // import 'package:easy_localization/easy_localization.dart';
@@ -209,7 +209,7 @@ class _SexualOrientationState extends State<SexualOrientation> {
                                     context,
                                     CupertinoPageRoute(
                                         builder: (context) =>
-                                            ShowGender(widget.userData)));
+                                            DesiresScreen(widget.userData)));
                               },
                             ),
                           ),

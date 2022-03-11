@@ -261,7 +261,7 @@ class _OTPState extends State<OTP> {
               ),
               Padding(
                   padding:
-                      const EdgeInsets.symmetric(vertical: 50, horizontal: 50),
+                      const EdgeInsets.symmetric(vertical: 20, horizontal: 50),
                   child: ListTile(
                       leading: Container(
                         decoration: BoxDecoration(

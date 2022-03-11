@@ -108,8 +108,8 @@ class Login extends StatelessWidget {
                 ),
                 Container(
                   child: Text(
-                    "By tapping 'Log in', you agree with our \n Terms.Learn how we process your data in \n our Privacy Policy and Cookies Policy."
-                        .toString(),
+                    // "By tapping 'Log in', you agree with our \n Terms.Learn how we process your data in \n our Privacy Policy and Cookies Policy.".toString(),
+                    "By signing in, you are indicating that you have read the Privacy Policy and agree to the Terms of Service",
                     textAlign: TextAlign.center,
                     style: TextStyle(color: Colors.black54,
                       fontSize: Get.height * 0.02,
@@ -179,8 +179,7 @@ class Login extends StatelessWidget {
                           cornerRadius: 50,
                           type: i.ButtonType.defaultButton,
                           onPressed: () async {
-                            final User currentUser =
-                                await handleAppleLogin().catchError((onError) {
+                            final User currentUser = await handleAppleLogin().catchError((onError) {
                               SnackBar snackBar =
                                   SnackBar(content: Text(onError));
                               _scaffoldKey.currentState.showSnackBar(snackBar);
@@ -218,21 +217,22 @@ class Login extends StatelessWidget {
                   },
                 ),
               ]),
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Text(
-                      "Trouble logging in?".toString(),
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: Get.height * 0.018,
-                          fontWeight: FontWeight.normal),
-                    ),
-                  ],
-                ),
-              ),
+              // Padding(
+              //   padding: const EdgeInsets.symmetric(vertical: 10),
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.center,
+              //     children: <Widget>[
+              //       Text(
+              //         "Trouble logging in?".toString(),
+              //         style: TextStyle(
+              //             color: Colors.black,
+              //             fontSize: Get.height * 0.018,
+              //             fontWeight: FontWeight.normal),
+              //       ),
+              //     ],
+              //   ),
+              // ),
+              SizedBox(height: Get.height * 0.01,),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
@@ -242,7 +242,7 @@ class Login extends StatelessWidget {
                       style: TextStyle(color: Colors.blue),
                     ),
                     onTap: () => _launchURL(
-                        "https://www.deligence.com/apps/hookup4u/Privacy-Policy.html"), //TODO: add privacy policy
+                        "https://jablesscupid.com/privacy-policy/"), //TODO: add privacy policy
                   ),
                   Container(
                     margin: EdgeInsets.only(left: 10, right: 10),
@@ -258,7 +258,7 @@ class Login extends StatelessWidget {
                       style: TextStyle(color: Colors.blue),
                     ),
                     onTap: () => _launchURL(
-                        "https://www.deligence.com/apps/hookup4u/Terms-Service.html"), //TODO: add Terms and conditions
+                        "https://jablesscupid.com/terms-conditions/"), //TODO: add Terms and conditions
                   ),
                 ],
               ),
@@ -393,12 +393,16 @@ class Login extends StatelessWidget {
           if (snapshot.docs.length > 0) {
             print("masuk sini 2");
             var location;
-            snapshot.docs.map((e) {
-              print(e['phoneNumber']);
-              location = e['location'];
-            });
-            print("Location : " + location.toString());
-            if (location == null) {
+            // snapshot.docs.map((e) {
+            //   print(e.get('phoneNumber'));
+            //   location = e.get('location');
+            //   print(e['location']);
+            // });
+
+            var data = snapshot.docs.map((doc) => doc.get('location')).toList();
+            print(data);
+            // print("Location : " + location.toString());
+            if (data == null) {
               Navigator.push(
                   context, CupertinoPageRoute(builder: (context) => Welcome()));
 
@@ -423,12 +427,12 @@ class Login extends StatelessWidget {
     User user;
     if (await i.AppleSignIn.isAvailable()) {
       try {
-        final i.AuthorizationResult result =
-            await i.AppleSignIn.performRequests([
-          i.AppleIdRequest(requestedScopes: [i.Scope.email, i.Scope.fullName])
+        final i.AuthorizationResult result = await i.AppleSignIn.performRequests([i.AppleIdRequest(requestedScopes: [i.Scope.email, i.Scope.fullName])
         ]).catchError((onError) {
           print("inside $onError");
         });
+
+        print("masuk sini cuy");
 
         switch (result.status) {
           case i.AuthorizationStatus.authorized:
@@ -575,4 +579,108 @@ Future _setDataUser(User user) async {
     },
     // merge: true,
   );
+
+
 }
+
+class FirstLogin extends StatefulWidget {
+  @override
+  _FirstLogin createState() => _FirstLogin();
+}
+
+class _FirstLogin extends State<FirstLogin> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        backgroundColor: Colors.white,
+        body: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.only(left: 10),
+                child: Container(
+                  height: MediaQuery.of(context).size.height * .6,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        SizedBox(
+                          height: Get.height * 0.1,
+                        ),
+                        Image.asset(
+                          "asset/images/logo1.png",
+                        ),
+                        ListTile(
+                          contentPadding: EdgeInsets.all(8),
+                          title: Text(
+                            "Are you 18 years of age? In order to use this app you must be 18 years old or over.",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: Get.height * 0.025,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+
+                        SizedBox(
+                          height: Get.height * 0.02,
+                        ),
+
+                        ListTile(
+                          contentPadding: EdgeInsets.all(8),
+                          title: Text(
+                            "If you aren't please leave and do not continue.",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: Get.height * 0.025,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 40, top: 0),
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: InkWell(
+                    child: Container(
+                        decoration: BoxDecoration(
+                            shape: BoxShape.rectangle,
+                            borderRadius: BorderRadius.circular(25),
+                            gradient: LinearGradient(
+                                begin: Alignment.topRight,
+                                end: Alignment.bottomLeft,
+                                colors: [
+                                  primaryColor.withOpacity(.5),
+                                  primaryColor.withOpacity(.8),
+                                  primaryColor,
+                                  primaryColor
+                                ])),
+                        height: MediaQuery.of(context).size.height * .065,
+                        width: MediaQuery.of(context).size.width * .75,
+                        child: Center(
+                            child: Text(
+                              "I'm 18+",
+                              style: TextStyle(
+                                  fontSize: Get.height * 0.022,
+                                  color: textColor,
+                                  fontWeight: FontWeight.bold),
+                            ))),
+                    onTap: () async {
+
+                      Get.to(()=>Login());
+
+                    },
+                  ),
+                ),
+              )
+            ],
+          ),
+        ));
+  }
+}
+

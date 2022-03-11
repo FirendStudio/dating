@@ -140,7 +140,7 @@ class Info extends StatelessWidget {
                                   leading:
                                       Icon(Icons.home, color: primaryColor),
                                   title: Text(
-                                    "Living in ",
+                                    "Living in " + user.editInfo['living_in'],
                                     style: TextStyle(
                                         color: secondryColor,
                                         fontSize: 16,

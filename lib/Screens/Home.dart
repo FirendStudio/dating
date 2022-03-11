@@ -252,6 +252,7 @@ class _CardPicturesState extends State<CardPictures>
                                                           Alignment.bottomLeft,
                                                       child: ListTile(
                                                           onTap: () {
+                                                            print("coba");
                                                             // _ads.myInterstitial()
                                                             //   ..load()
                                                             //   ..show();
@@ -327,17 +328,16 @@ class _CardPicturesState extends State<CardPictures>
                                           widget.users.removeAt(index);
                                         });
                                       }
-                                    } else if (position ==
-                                        SwiperPosition.Right) {
-                                      if (likedByList
-                                          .contains(widget.users[index].id)) {
+                                    } else if (position == SwiperPosition.Right) {
+                                      if (likedByList.contains(widget.users[index].id)) {
+                                        print("Masuk sini");
                                         showDialog(
                                             context: context,
                                             builder: (ctx) {
                                               Future.delayed(
-                                                  Duration(milliseconds: 1700),
-                                                  () {
-                                                Navigator.pop(ctx);
+                                                Duration(milliseconds: 1700),
+                                                () {
+                                                  Navigator.pop(ctx);
                                               });
                                               return Padding(
                                                 padding: const EdgeInsets.only(

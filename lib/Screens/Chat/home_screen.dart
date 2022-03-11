@@ -19,6 +19,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     Future.delayed(Duration(milliseconds: 500), () {
+      print(widget.matches);
       if (widget.matches.length > 0 && widget.matches[0].lastmsg != null) {
         widget.matches.sort((a, b) {
           if (a.lastmsg != null && b.lastmsg != null) {

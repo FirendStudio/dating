@@ -7,7 +7,7 @@ import 'package:hookup4u/Screens/seach_location.dart';
 import 'package:hookup4u/util/color.dart';
 // import 'package:easy_localization/easy_localization.dart';
 
-import 'UpdateLocation.dart';
+import '../UpdateLocation.dart';
 //import 'package:geolocator/geolocator.dart';
 
 class AllowLocation extends StatelessWidget {

@@ -257,6 +257,7 @@ class TabbarState extends State<Tabbar> {
         .listen((ondata) {
       matches.clear();
       newmatches.clear();
+      print(ondata.docs.length);
       if (ondata.docs.length > 0) {
         ondata.docs.forEach((f) async {
           await docRef
@@ -302,29 +303,39 @@ class TabbarState extends State<Tabbar> {
   }
 
   query() {
-    if (currentUser.showGender == 'everyone') {
-      return docRef
-          .where(
-            'age',
-            isGreaterThanOrEqualTo: int.parse(currentUser.ageRange['min']),
-          )
-          .where('age',
-              isLessThanOrEqualTo: int.parse(currentUser.ageRange['max']))
-          .orderBy('age', descending: false);
-    } else {
-      return docRef
-          .where('editInfo.userGender', isEqualTo: currentUser.showGender)
-          .where(
-            'age',
-            isGreaterThanOrEqualTo: int.parse(currentUser.ageRange['min']),
-          )
-          .where('age',
-              isLessThanOrEqualTo: int.parse(currentUser.ageRange['max']))
-          //FOR FETCH USER WHO MATCH WITH USER SEXUAL ORIENTAION
-          // .where('sexualOrientation.orientation',
-          //     arrayContainsAny: currentUser.sexualOrientation)
-          .orderBy('age', descending: false);
-    }
+
+    return docRef
+        .where(
+      'age',
+      isGreaterThanOrEqualTo: int.parse(currentUser.ageRange['min']),
+    )
+        .where('age',
+        isLessThanOrEqualTo: int.parse(currentUser.ageRange['max']))
+        .orderBy('age', descending: false);
+
+    // if (currentUser.showGender == 'everyone') {
+    //   return docRef
+    //       .where(
+    //         'age',
+    //         isGreaterThanOrEqualTo: int.parse(currentUser.ageRange['min']),
+    //       )
+    //       .where('age',
+    //           isLessThanOrEqualTo: int.parse(currentUser.ageRange['max']))
+    //       .orderBy('age', descending: false);
+    // } else {
+    //   return docRef
+    //       .where('editInfo.userGender', isEqualTo: currentUser.showGender)
+    //       .where(
+    //         'age',
+    //         isGreaterThanOrEqualTo: int.parse(currentUser.ageRange['min']),
+    //       )
+    //       .where('age',
+    //           isLessThanOrEqualTo: int.parse(currentUser.ageRange['max']))
+    //       //FOR FETCH USER WHO MATCH WITH USER SEXUAL ORIENTAION
+    //       // .where('sexualOrientation.orientation',
+    //       //     arrayContainsAny: currentUser.sexualOrientation)
+    //       .orderBy('age', descending: false);
+    // }
   }
 
   Future getUserList() async {
@@ -333,8 +344,19 @@ class TabbarState extends State<Tabbar> {
         .collection('/Users/${currentUser.id}/CheckedUser')
         .get()
         .then((data) {
-      checkedUser.addAll(data.docs.map((f) => f['DislikedUser']));
-      checkedUser.addAll(data.docs.map((f) => f['LikedUser']));
+      // var cek = data.docs.map((doc) => doc.get('DislikedUser')).toList();
+      // print(cek);
+      // var dataDislike = data.docs.map((f) => f['DislikedUser']);
+      // if(dataDislike != null){
+      //   // checkedUser.addAll(data.docs.map((f) => f['DislikedUser']));
+      //   checkedUser.addAll(dataDislike);
+      // }
+      var dataLike = data.docs.map((f) => f['LikedUser']);
+      if(dataLike != null){
+        // checkedUser.addAll(data.docs.map((f) => f['LikedUser']));
+        checkedUser.addAll(dataLike);
+      }
+
     }).then((_) {
       query().get().then((data) async {
         print(data);

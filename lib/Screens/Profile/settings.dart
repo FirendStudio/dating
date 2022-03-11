@@ -51,7 +51,7 @@ class _SettingsState extends State<Settings> {
         .collection("Users")
         .doc(widget.currentUser.id)
         .set(changeValues,
-        // merge: true
+        SetOptions(merge : true)
     );
     // lastVisible = null;
     // print('ewew$lastVisible');
@@ -257,34 +257,34 @@ class _SettingsState extends State<Settings> {
                                 color: primaryColor,
                                 fontWeight: FontWeight.w500),
                           ),
-                          ListTile(
-                            title: DropdownButton(
-                              iconEnabledColor: primaryColor,
-                              iconDisabledColor: secondryColor,
-                              isExpanded: true,
-                              items: [
-                                DropdownMenuItem(
-                                  child: Text("Man"),
-                                  value: "man",
-                                ),
-                                DropdownMenuItem(
-                                    child: Text("Woman"),
-                                    value: "woman"),
-                                DropdownMenuItem(
-                                    child: Text("Everyone"),
-                                    value: "everyone"),
-                              ],
-                              onChanged: (val) {
-                                changeValues.addAll({
-                                  'showGender': val,
-                                });
-                                setState(() {
-                                  _showMe = val;
-                                });
-                              },
-                              value: _showMe,
-                            ),
-                          ),
+                          // ListTile(
+                          //   title: DropdownButton(
+                          //     iconEnabledColor: primaryColor,
+                          //     iconDisabledColor: secondryColor,
+                          //     isExpanded: true,
+                          //     items: [
+                          //       DropdownMenuItem(
+                          //         child: Text("Man"),
+                          //         value: "man",
+                          //       ),
+                          //       DropdownMenuItem(
+                          //           child: Text("Woman"),
+                          //           value: "woman"),
+                          //       DropdownMenuItem(
+                          //           child: Text("Everyone"),
+                          //           value: "everyone"),
+                          //     ],
+                          //     onChanged: (val) {
+                          //       changeValues.addAll({
+                          //         'showGender': val,
+                          //       });
+                          //       setState(() {
+                          //         _showMe = val;
+                          //       });
+                          //     },
+                          //     value: _showMe,
+                          //   ),
+                          // ),
                         ],
                       ),
                     ),
@@ -757,7 +757,9 @@ class _SettingsState extends State<Settings> {
                             'longitude': _address['longitude'],
                             'address': _address['PlaceName']
                           },
-                        })
+                        },
+
+                    )
                         .whenComplete(() => showDialog(
                             barrierDismissible: false,
                             context: context,
