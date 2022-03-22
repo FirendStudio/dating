@@ -187,7 +187,9 @@ class EditProfileState extends State<EditProfile> {
   Future getImage(
       ImageSource imageSource, context, currentUser, isProfilePicture) async {
     try {
-      var image = await ImagePicker().pickImage(source: imageSource);
+      var image = await ImagePicker().pickImage(source: imageSource,
+        imageQuality: 10
+      );
       if (image != null) {
         File croppedFile = await ImageCropper.cropImage(
             sourcePath: image.path,
@@ -209,7 +211,9 @@ class EditProfileState extends State<EditProfile> {
       }
       Navigator.pop(context);
     } catch (e) {
-      Navigator.pop(context);
+      print("error");
+      print(e);
+      // Navigator.pop(context);
     }
   }
 
@@ -652,26 +656,26 @@ class EditProfileState extends State<EditProfile> {
                                     MainAxisAlignment.spaceAround,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: <Widget>[
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text("Don't Show My Age"),
-                                      ),
-                                      Switch(
-                                          activeColor: primaryColor,
-                                          value: visibleAge,
-                                          onChanged: (value) {
-                                            editInfo
-                                                .addAll({'showMyAge': value});
-                                            setState(() {
-                                              visibleAge = value;
-                                            });
-                                          })
-                                    ],
-                                  ),
+                                  // Row(
+                                  //   mainAxisAlignment:
+                                  //       MainAxisAlignment.spaceBetween,
+                                  //   children: <Widget>[
+                                  //     Padding(
+                                  //       padding: const EdgeInsets.all(8.0),
+                                  //       child: Text("Don't Show My Age"),
+                                  //     ),
+                                  //     Switch(
+                                  //         activeColor: primaryColor,
+                                  //         value: visibleAge,
+                                  //         onChanged: (value) {
+                                  //           editInfo
+                                  //               .addAll({'showMyAge': value});
+                                  //           setState(() {
+                                  //             visibleAge = value;
+                                  //           });
+                                  //         })
+                                  //   ],
+                                  // ),
                                   Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,

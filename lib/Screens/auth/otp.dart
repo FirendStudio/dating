@@ -3,6 +3,7 @@ import 'package:country_code_picker/country_code_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:hookup4u/Screens/Tab.dart';
 import 'package:hookup4u/Screens/auth/otp_verification.dart';
 import 'package:hookup4u/util/color.dart';
@@ -230,7 +231,11 @@ class _OTPState extends State<OTP> {
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 50),
+          padding: EdgeInsets.only(
+              top: 50,
+            bottom: 50,
+
+          ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -247,18 +252,25 @@ class _OTPState extends State<OTP> {
               //   Icons.mobile_screen_share,
               //   size: 50,
               // ),
-              ListTile(
-                title: Text(
-                  "Verify Your Number",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 27, fontWeight: FontWeight.bold),
+              Container(
+                padding: EdgeInsets.only(
+                  left: Get.width * 0.1,
+                  right: Get.width * 0.1,
                 ),
-                subtitle: Text(
-                  "Please enter Your mobile Number to\n receive a verification code. Message and data\n rates may apply",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
+                child: ListTile(
+                  title: Text(
+                    "Verify Your Number",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 27, fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Text(
+                    "Please enter Your mobile Number to\n receive a verification code. Message and data rates may apply",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
+                  ),
                 ),
               ),
+
               Padding(
                   padding:
                       const EdgeInsets.symmetric(vertical: 20, horizontal: 50),

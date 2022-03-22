@@ -38,7 +38,8 @@ class _VerificationState extends State<Verification> {
         .collection("Users")
         .doc(user.uid)
         .set({'phoneNumber': user.phoneNumber},
-        // merge: true
+        SetOptions(merge : true)
+
     ).then((_) {
       showDialog(
           barrierDismissible: false,

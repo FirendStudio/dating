@@ -10,14 +10,15 @@ import 'package:hookup4u/Screens/Tab.dart';
 import 'package:hookup4u/Screens/Welcome.dart';
 import 'package:hookup4u/Screens/auth/otp.dart';
 import 'package:hookup4u/models/custom_web_view.dart';
+import 'package:hookup4u/util/Global.dart';
 import 'package:hookup4u/util/color.dart';
 import 'package:url_launcher/url_launcher.dart';
 // import 'package:easy_localization/easy_localization.dart';
 
 class Login extends StatelessWidget {
-  static const your_client_id = '00000000000000';
+  static const your_client_id = '709280423766575';
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  static const your_redirect_url = 'https://h*****firebaseapp.com/__/auth/handler';
+  static const your_redirect_url = 'https://jablesscupid.firebaseapp.com/__/auth/handler';
 
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
@@ -44,6 +45,7 @@ class Login extends StatelessWidget {
         ),
         backgroundColor: Colors.white,
         body: Container(
+
           decoration: BoxDecoration(
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(50), topRight: Radius.circular(50)),
@@ -55,6 +57,7 @@ class Login extends StatelessWidget {
                   ClipPath(
                     clipper: WaveClipper2(),
                     child: Container(
+
                       child: Column(),
                       width: double.infinity,
                       height: 280,
@@ -68,6 +71,7 @@ class Login extends StatelessWidget {
                   ClipPath(
                     clipper: WaveClipper3(),
                     child: Container(
+
                       child: Column(),
                       width: double.infinity,
                       height: 280,
@@ -81,6 +85,11 @@ class Login extends StatelessWidget {
                   ClipPath(
                     clipper: WaveClipper1(),
                     child: Container(
+                      padding: EdgeInsets.only(
+                        left: Get.width * 0.1,
+                        right: Get.width * 0.1,
+                      ),
+                      // padding: EdgeInsets.all(20),
                       child: Column(
                         children: <Widget>[
                           SizedBox(
@@ -107,6 +116,10 @@ class Login extends StatelessWidget {
                   height: MediaQuery.of(context).size.height * .02,
                 ),
                 Container(
+                  padding: EdgeInsets.only(
+                    left: Get.width * 0.1,
+                    right: Get.width * 0.1,
+                  ),
                   child: Text(
                     // "By tapping 'Log in', you agree with our \n Terms.Learn how we process your data in \n our Privacy Policy and Cookies Policy.".toString(),
                     "By signing in, you are indicating that you have read the Privacy Policy and agree to the Terms of Service",
@@ -117,7 +130,10 @@ class Login extends StatelessWidget {
                   ),
                 ),
                 Padding(
-                  padding: const EdgeInsets.only(top: 10, bottom: 10),
+                  padding: EdgeInsets.only(top: 10, bottom: 10,
+                    left: Get.width * 0.1,
+                    right: Get.width * 0.1,
+                  ),
                   child: Material(
                     elevation: 2.0,
                     borderRadius: BorderRadius.all(Radius.circular(30)),
@@ -132,18 +148,20 @@ class Login extends StatelessWidget {
                                     begin: Alignment.topRight,
                                     end: Alignment.bottomLeft,
                                     colors: [
-                                      primaryColor.withOpacity(.5),
-                                      primaryColor.withOpacity(.8),
-                                      primaryColor,
-                                      primaryColor
+                                      textBlue,
+                                      textBlue,
+                                      textBlue,
+                                      textBlue
                                     ])),
                             height: MediaQuery.of(context).size.height * .065,
                             width: MediaQuery.of(context).size.width * .8,
                             child: Center(
                                 child: Text(
-                              "LOG IN WITH FACEBOOK".toString(),
+                              "LOGIN WITH FACEBOOK".toString(),
                               style: TextStyle(
                                   color: textColor,
+                                  fontSize: 16,
+                                  fontFamily: Global.font,
                                   fontWeight: FontWeight.bold),
                             ))),
                         onTap: () async {
@@ -172,8 +190,11 @@ class Login extends StatelessWidget {
                 ),
                 Platform.isIOS
                     ? Padding(
-                        padding: const EdgeInsets.only(
-                            bottom: 10.0, left: 30, right: 30),
+                        padding: EdgeInsets.only(
+                            bottom: 10.0,
+                          left: Get.width * 0.1,
+                          right: Get.width * 0.1,
+                        ),
                         child: i.AppleSignInButton(
                           style: i.ButtonStyle.black,
                           cornerRadius: 50,
@@ -181,7 +202,7 @@ class Login extends StatelessWidget {
                           onPressed: () async {
                             final User currentUser = await handleAppleLogin().catchError((onError) {
                               SnackBar snackBar =
-                                  SnackBar(content: Text(onError));
+                                  SnackBar(content: Text(onError.toString()));
                               _scaffoldKey.currentState.showSnackBar(snackBar);
                             });
                             if (currentUser != null) {
@@ -194,28 +215,68 @@ class Login extends StatelessWidget {
                         ),
                       )
                     : Container(),
-                OutlineButton(
-                  child: Container(
-                    height: MediaQuery.of(context).size.height * .065,
-                    width: MediaQuery.of(context).size.width * .75,
-                    child: Center(
-                        child: Text("LOG IN WITH PHONE NUMBER".toString(),
-                            style: TextStyle(
-                                color: primaryColor,
-                                fontWeight: FontWeight.bold))),
-                  ),
-                  borderSide: BorderSide(
-                      width: 1, style: BorderStyle.solid, color: primaryColor),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(25)),
-                  onPressed: () {
+                InkWell(
+                  onTap: (){
                     bool updateNumber = false;
                     Navigator.push(
                         context,
                         CupertinoPageRoute(
                             builder: (context) => OTP(updateNumber)));
                   },
+                  child: Container(
+                      height: MediaQuery.of(context).size.height * .065,
+                      width: MediaQuery.of(context).size.width * .75,
+                      padding: EdgeInsets.only(
+                        // left: Get.width * 0.1,
+                        // right: Get.width * 0.1,
+                      ),
+                      decoration: BoxDecoration(
+                          color: primaryColor,
+                          // border: Border.all(
+                          //   color: Colors.red[500],
+                          // ),
+                          borderRadius: BorderRadius.all(Radius.circular(20))
+                      ),
+                      child: Center(
+                        child: Text("LOGIN WITH PHONE NUMBER",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontFamily: Global.font,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold)
+                        ),
+                      )
+                    // child: OutlineButton(
+                    //
+                    //   child: Container(
+                    //     height: MediaQuery.of(context).size.height * .065,
+                    //     width: MediaQuery.of(context).size.width * .75,
+                    //     // padding: EdgeInsets.only(),
+                    //     child: Center(
+                    //         child: Text("LOGIN WITH PHONE NUMBER".toString(),
+                    //             style: TextStyle(
+                    //                 fontSize: 16,
+                    //                 fontFamily: Global.font,
+                    //                 color: primaryColor,
+                    //                 fontWeight: FontWeight.bold))),
+                    //   ),
+                    //   color: primaryColor,
+                    //   borderSide: BorderSide(
+                    //       width: 1, style: BorderStyle.solid, color: primaryColor),
+                    //   shape: RoundedRectangleBorder(
+                    //       borderRadius: BorderRadius.circular(25)),
+                    //   onPressed: () {
+                    //     bool updateNumber = false;
+                    //     Navigator.push(
+                    //         context,
+                    //         CupertinoPageRoute(
+                    //             builder: (context) => OTP(updateNumber)));
+                    //   },
+                    // ),
+                  )
                 ),
+
               ]),
               // Padding(
               //   padding: const EdgeInsets.symmetric(vertical: 10),
@@ -399,17 +460,24 @@ class Login extends StatelessWidget {
             //   print(e['location']);
             // });
 
-            var data = snapshot.docs.map((doc) => doc.get('location')).toList();
-            print(data);
-            // print("Location : " + location.toString());
-            if (data == null) {
-              Navigator.push(
-                  context, CupertinoPageRoute(builder: (context) => Welcome()));
-
-            } else {
+            try {
+              var data = snapshot.docs.map((doc) => doc.get('location')).toList();
+              print(data);
               Navigator.push(context,
                   CupertinoPageRoute(builder: (context) => Tabbar(null, null)));
+            } on StateError catch (e) {
+              Navigator.push(
+                  context, CupertinoPageRoute(builder: (context) => Welcome()));
             }
+
+
+            // print("Location : " + location.toString());
+            // if (data == null) {
+            //
+            //
+            // } else {
+            //
+            // }
 
           } else {
             print("masuk sini 3");
@@ -577,7 +645,8 @@ Future _setDataUser(User user) async {
       'phoneNumber': user.phoneNumber,
       'timestamp': FieldValue.serverTimestamp()
     },
-    // merge: true,
+      SetOptions(merge : true)
+
   );
 
 
@@ -597,7 +666,10 @@ class _FirstLogin extends State<FirstLogin> {
           child: Column(
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.only(left: 10),
+                padding: EdgeInsets.only(
+                  left: Get.width * 0.1,
+                  right: Get.width * 0.1,
+                ),
                 child: Container(
                   height: MediaQuery.of(context).size.height * .6,
                   child: SingleChildScrollView(
@@ -608,8 +680,12 @@ class _FirstLogin extends State<FirstLogin> {
                         SizedBox(
                           height: Get.height * 0.1,
                         ),
-                        Image.asset(
-                          "asset/images/logo1.png",
+
+                        Container(
+                          padding: EdgeInsets.all(12),
+                          child: Image.asset(
+                            "asset/images/logo1.png",
+                          )
                         ),
                         ListTile(
                           contentPadding: EdgeInsets.all(8),
@@ -617,13 +693,15 @@ class _FirstLogin extends State<FirstLogin> {
                             "Are you 18 years of age? In order to use this app you must be 18 years old or over.",
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                                fontSize: Get.height * 0.025,
-                                fontWeight: FontWeight.bold),
+                              fontSize: Get.height * 0.027,
+                              fontFamily: "Arial",
+                              fontWeight: FontWeight.bold
+                            ),
                           ),
                         ),
 
                         SizedBox(
-                          height: Get.height * 0.02,
+                          height: Get.height * 0.01,
                         ),
 
                         ListTile(
@@ -632,7 +710,8 @@ class _FirstLogin extends State<FirstLogin> {
                             "If you aren't please leave and do not continue.",
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                                fontSize: Get.height * 0.025,
+                                fontSize: Get.height * 0.027,
+                                fontFamily: "Arial",
                                 fontWeight: FontWeight.bold),
                           ),
                         ),
@@ -666,8 +745,9 @@ class _FirstLogin extends State<FirstLogin> {
                             child: Text(
                               "I'm 18+",
                               style: TextStyle(
-                                  fontSize: Get.height * 0.022,
+                                  fontSize: Get.height * 0.025,
                                   color: textColor,
+                                  fontFamily: "Arial",
                                   fontWeight: FontWeight.bold),
                             ))),
                     onTap: () async {

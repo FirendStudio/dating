@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/Screens/Welcome/ShowGender.dart';
 import 'package:hookup4u/Screens/Welcome/Status/StatusScreen.dart';
+import 'package:hookup4u/util/Global.dart';
 import 'package:hookup4u/util/color.dart';
 import 'package:hookup4u/util/snackbar.dart';
 
@@ -67,18 +68,33 @@ class _DesiresScreen extends State<DesiresScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
 
-              Padding(
-                child: Text(
-                  "I am looking for",
-                  style: TextStyle(fontSize: Get.height * 0.05,),
+              Container(
+                child: Center(
+                  child: Text(
+                    "I am looking for",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontFamily: Global.font,
+                    ),
+                  ),
                 ),
-                padding: EdgeInsets.only(left: 50, top: 80),
+                padding: EdgeInsets.only(
+                    left: Get.width * 0.1,
+                    right: Get.width * 0.1,
+                    top: 100
+                ),
               ),
 
               SizedBox(
                 height: Get.height * 0.65,
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+                  padding: EdgeInsets.only(
+                      left: Get.width * 0.1,
+                      right: Get.width * 0.1,
+                      top: 0,
+                      bottom: 20
+                  ),
                   child: ListView.builder(
                     // physics: NeverScrollableScrollPhysics(),
                     shrinkWrap: true,
@@ -101,11 +117,12 @@ class _DesiresScreen extends State<DesiresScreen> {
                                 child: Text("${listDesire[index]["name"]}".toUpperCase(),
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                        fontSize: 20,
+                                        fontSize: 18,
+                                        fontFamily: Global.font,
                                         color: listDesire[index]["ontap"]
                                             ? primaryColor
                                             : secondryColor,
-                                        fontWeight: FontWeight.bold
+                                        fontWeight: FontWeight.normal
                                     )
                                 )
                             ),
@@ -120,27 +137,28 @@ class _DesiresScreen extends State<DesiresScreen> {
                               borderRadius: BorderRadius.circular(25)),
                           onPressed: () {
                             setState(() {
-                              if (selected.length < 3) {
-                                listDesire[index]["ontap"] =
-                                !listDesire[index]["ontap"];
-                                if (listDesire[index]["ontap"]) {
-                                  selected.add(listDesire[index]["name"]);
-                                  print(listDesire[index]["name"]);
-                                  print(selected);
-                                } else {
-                                  selected.remove(listDesire[index]["name"]);
-                                  print(selected);
-                                }
+                              listDesire[index]["ontap"] =
+                              !listDesire[index]["ontap"];
+                              if (listDesire[index]["ontap"]) {
+                                selected.add(listDesire[index]["name"]);
+                                print(listDesire[index]["name"]);
+                                print(selected);
                               } else {
-                                if (listDesire[index]["ontap"]) {
-                                  listDesire[index]["ontap"] =
-                                  !listDesire[index]["ontap"];
-                                  selected.remove(listDesire[index]["name"]);
-                                } else {
-                                  CustomSnackbar.snackbar(
-                                      "select upto 3", _scaffoldKey);
-                                }
+                                selected.remove(listDesire[index]["name"]);
+                                print(selected);
                               }
+                              // if (selected.length < 3) {
+                              //
+                              // } else {
+                              //   if (listDesire[index]["ontap"]) {
+                              //     listDesire[index]["ontap"] =
+                              //     !listDesire[index]["ontap"];
+                              //     selected.remove(listDesire[index]["name"]);
+                              //   } else {
+                              //     CustomSnackbar.snackbar(
+                              //         "select upto 3", _scaffoldKey);
+                              //   }
+                              // }
                             });
                           },
                         ),
@@ -150,141 +168,149 @@ class _DesiresScreen extends State<DesiresScreen> {
                 ),
               ),
 
-              Column(
-                children: <Widget>[
-                  ListTile(
-                    leading: Checkbox(
-                      activeColor: primaryColor,
-                      value: select,
-                      onChanged: (bool newValue) {
-                        setState(() {
-                          select = newValue;
-                        });
-                      },
+              Container(
+                padding: EdgeInsets.only(
+                  left: Get.width * 0.05,
+                  right: Get.width * 0.05,
+                ),
+                child: Column(
+                  children: <Widget>[
+                    ListTile(
+                      leading: Checkbox(
+                        activeColor: primaryColor,
+                        value: select,
+                        onChanged: (bool newValue) {
+                          setState(() {
+                            select = newValue;
+                          });
+                        },
+                      ),
+                      title: Text("Show my desires on my profile"),
                     ),
-                    title: Text("Show my orientation on my profile"),
-                  ),
-                  selected.length > 0
-                      ? Padding(
-                    padding: const EdgeInsets.only(bottom: 40),
-                    child: Align(
-                      alignment: Alignment.bottomCenter,
-                      child: InkWell(
-                        child: Container(
-                            decoration: BoxDecoration(
+                    selected.length > 0
+                        ? Padding(
+                      padding: const EdgeInsets.only(bottom: 40),
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: InkWell(
+                          child: Container(
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.rectangle,
+                                  borderRadius: BorderRadius.circular(25),
+                                  gradient: LinearGradient(
+                                      begin: Alignment.topRight,
+                                      end: Alignment.bottomLeft,
+                                      colors: [
+                                        primaryColor.withOpacity(.5),
+                                        primaryColor.withOpacity(.8),
+                                        primaryColor,
+                                        primaryColor
+                                      ])),
+                              height:
+                              MediaQuery.of(context).size.height * .065,
+                              width:
+                              MediaQuery.of(context).size.width * .75,
+                              child: Center(
+                                  child: Text(
+                                    "CONTINUE",
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        color: textColor,
+                                        fontWeight: FontWeight.bold
+                                    ),
+                                  ))),
+                          onTap: () {
+                            // widget.userData.addAll({
+                            //   "showMe": {
+                            //     'showme': selected,
+                            //     // 'showOnProfile': select
+                            //   },
+                            // });
+                            // print(widget.userData);
+                            // Navigator.push(
+                            //     context,
+                            //     CupertinoPageRoute(
+                            //         builder: (context) =>
+                            //             ShowMe(widget.userData)
+                            //     )
+                            // );
+
+                            // if (man) {
+                            //   widget.userData.addAll({'showGender': "man"});
+                            // } else if (woman) {
+                            //   widget.userData.addAll({'showGender': "woman"});
+                            // } else if(eyeryone){
+                            //   widget.userData.addAll({'showGender': "everyone"});
+                            // }else{
+                            //   widget.userData.addAll({'showGender': more_text});
+                            // }
+                            widget.userData.addAll(
+                                {
+                                  'desires': selected,
+                                  'showdesires': select
+                                }
+                            );
+                            print(widget.userData);
+                            // Navigator.push(
+                            //     context,
+                            //     CupertinoPageRoute(
+                            //         builder: (context) =>
+                            //             University(widget.userData)));
+                            // widget.userData.addAll({
+                            //   'editInfo': {
+                            //     'university': "",
+                            //     'userGender': widget.userData['userGender'],
+                            //     'showOnProfile':
+                            //     widget.userData['showOnProfile']
+                            //   }
+                            // });
+                            // widget.userData.remove('showOnProfile');
+                            // widget.userData.remove('userGender');
+
+                            print(widget.userData);
+                            Navigator.push(
+                                context,
+                                CupertinoPageRoute(
+                                    builder: (context) =>
+                                        StatusScreen(widget.userData)));
+
+                          },
+                        ),
+                      ),
+                    )
+                        : Padding(
+                      padding: const EdgeInsets.only(bottom: 40),
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: InkWell(
+                          child: Container(
+                              decoration: BoxDecoration(
                                 shape: BoxShape.rectangle,
                                 borderRadius: BorderRadius.circular(25),
-                                gradient: LinearGradient(
-                                    begin: Alignment.topRight,
-                                    end: Alignment.bottomLeft,
-                                    colors: [
-                                      primaryColor.withOpacity(.5),
-                                      primaryColor.withOpacity(.8),
-                                      primaryColor,
-                                      primaryColor
-                                    ])),
-                            height:
-                            MediaQuery.of(context).size.height * .065,
-                            width:
-                            MediaQuery.of(context).size.width * .75,
-                            child: Center(
-                                child: Text(
-                                  "CONTINUE",
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      color: textColor,
-                                      fontWeight: FontWeight.bold),
-                                ))),
-                        onTap: () {
-                          // widget.userData.addAll({
-                          //   "showMe": {
-                          //     'showme': selected,
-                          //     // 'showOnProfile': select
-                          //   },
-                          // });
-                          // print(widget.userData);
-                          // Navigator.push(
-                          //     context,
-                          //     CupertinoPageRoute(
-                          //         builder: (context) =>
-                          //             ShowMe(widget.userData)
-                          //     )
-                          // );
-
-                          // if (man) {
-                          //   widget.userData.addAll({'showGender': "man"});
-                          // } else if (woman) {
-                          //   widget.userData.addAll({'showGender': "woman"});
-                          // } else if(eyeryone){
-                          //   widget.userData.addAll({'showGender': "everyone"});
-                          // }else{
-                          //   widget.userData.addAll({'showGender': more_text});
-                          // }
-                          widget.userData.addAll(
-                            {
-                              'desires': selected,
-                              'showdesires': select
-                            }
-                          );
-                          print(widget.userData);
-                          // Navigator.push(
-                          //     context,
-                          //     CupertinoPageRoute(
-                          //         builder: (context) =>
-                          //             University(widget.userData)));
-                          // widget.userData.addAll({
-                          //   'editInfo': {
-                          //     'university': "",
-                          //     'userGender': widget.userData['userGender'],
-                          //     'showOnProfile':
-                          //     widget.userData['showOnProfile']
-                          //   }
-                          // });
-                          // widget.userData.remove('showOnProfile');
-                          // widget.userData.remove('userGender');
-
-                          print(widget.userData);
-                          Navigator.push(
-                              context,
-                              CupertinoPageRoute(
-                                  builder: (context) =>
-                                      StatusScreen(widget.userData)));
-
-                        },
+                              ),
+                              height:
+                              MediaQuery.of(context).size.height * .065,
+                              width:
+                              MediaQuery.of(context).size.width * .75,
+                              child: Center(
+                                  child: Text(
+                                    "CONTINUE",
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        color: secondryColor,
+                                        fontWeight: FontWeight.bold),
+                                  ))),
+                          onTap: () {
+                            CustomSnackbar.snackbar(
+                                "Please select one", _scaffoldKey);
+                          },
+                        ),
                       ),
-                    ),
-                  )
-                      : Padding(
-                    padding: const EdgeInsets.only(bottom: 40),
-                    child: Align(
-                      alignment: Alignment.bottomCenter,
-                      child: InkWell(
-                        child: Container(
-                            decoration: BoxDecoration(
-                              shape: BoxShape.rectangle,
-                              borderRadius: BorderRadius.circular(25),
-                            ),
-                            height:
-                            MediaQuery.of(context).size.height * .065,
-                            width:
-                            MediaQuery.of(context).size.width * .75,
-                            child: Center(
-                                child: Text(
-                                  "CONTINUE",
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      color: secondryColor,
-                                      fontWeight: FontWeight.bold),
-                                ))),
-                        onTap: () {
-                          CustomSnackbar.snackbar(
-                              "Please select one", _scaffoldKey);
-                        },
-                      ),
-                    ),
-                  )
-                ],
-              ),
+                    )
+                  ],
+                ),
+              )
+
             ],
           ),
         ),

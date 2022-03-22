@@ -4,8 +4,13 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:get/get.dart';
+import 'package:hookup4u/Controller/HomeController.dart';
+import 'package:hookup4u/Screens/Calling/incomingCall.dart';
 import 'package:hookup4u/Screens/Profile/profile.dart';
 import 'package:hookup4u/Screens/Splash.dart';
 import 'package:hookup4u/Screens/blockUserByAdmin.dart';
@@ -30,13 +35,13 @@ class Tabbar extends StatefulWidget {
 
 //_
 class TabbarState extends State<Tabbar> {
-  // FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
   CollectionReference docRef = FirebaseFirestore.instance.collection('Users');
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   UserModel currentUser;
   List<UserModel> matches = [];
   List<UserModel> newmatches = [];
-
+  FirebaseMessaging _firebaseMessaging;
+  
   List<UserModel> users = [];
 
   /// Past purchases
@@ -148,106 +153,6 @@ class TabbarState extends State<Tabbar> {
     });
   }
 
-  // configurePushNotification(User user) async {
-  //   await _firebaseMessaging.requestNotificationPermissions(
-  //       IosNotificationSettings(
-  //           alert: true, sound: true, provisional: false, badge: true));
-  //
-  //   _firebaseMessaging.getToken().then((token) {
-  //     print(token);
-  //     docRef.document(user.id).updateData({
-  //       'pushToken': token,
-  //     });
-  //   });
-  //
-  //   _firebaseMessaging.configure(
-  //     onLaunch: (Map<String, dynamic> message) async {
-  //       print('===============onLaunch$message');
-  //       if (Platform.isIOS && message['type'] == 'Call') {
-  //         Map callInfo = {};
-  //         callInfo['channel_id'] = message['channel_id'];
-  //         callInfo['senderName'] = message['senderName'];
-  //         callInfo['senderPicture'] = message['senderPicture'];
-  //         bool iscallling = await _checkcallState(message['channel_id']);
-  //         print("=================$iscallling");
-  //         if (iscallling) {
-  //           await Navigator.push(context,
-  //               MaterialPageRoute(builder: (context) => Incoming(message)));
-  //         }
-  //       } else if (Platform.isAndroid && message['data']['type'] == 'Call') {
-  //         bool iscallling =
-  //             await _checkcallState(message['data']['channel_id']);
-  //         print("=================$iscallling");
-  //         if (iscallling) {
-  //           await Navigator.push(
-  //               context,
-  //               MaterialPageRoute(
-  //                   builder: (context) => Incoming(message['data'])));
-  //         } else {
-  //           print("Timeout");
-  //         }
-  //       }
-  //     },
-  //     onMessage: (Map<String, dynamic> message) async {
-  //       print("onmessage$message");
-  //       if (Platform.isIOS && message['type'] == 'Call') {
-  //         Map callInfo = {};
-  //         callInfo['channel_id'] = message['channel_id'];
-  //         callInfo['senderName'] = message['senderName'];
-  //         callInfo['senderPicture'] = message['senderPicture'];
-  //         await Navigator.push(context,
-  //             MaterialPageRoute(builder: (context) => Incoming(callInfo)));
-  //       } else if (Platform.isAndroid && message['data']['type'] == 'Call') {
-  //         await Navigator.push(
-  //             context,
-  //             MaterialPageRoute(
-  //                 builder: (context) => Incoming(message['data'])));
-  //       } else
-  //         print("object");
-  //     },
-  //     onResume: (Map<String, dynamic> message) async {
-  //       print('onResume$message');
-  //       if (Platform.isIOS && message['type'] == 'Call') {
-  //         Map callInfo = {};
-  //         callInfo['channel_id'] = message['channel_id'];
-  //         callInfo['senderName'] = message['senderName'];
-  //         callInfo['senderPicture'] = message['senderPicture'];
-  //         bool iscallling = await _checkcallState(message['channel_id']);
-  //         print("=================$iscallling");
-  //         if (iscallling) {
-  //           await Navigator.push(context,
-  //               MaterialPageRoute(builder: (context) => Incoming(message)));
-  //         }
-  //       } else if (Platform.isAndroid && message['data']['type'] == 'Call') {
-  //         bool iscallling =
-  //             await _checkcallState(message['data']['channel_id']);
-  //         print("=================$iscallling");
-  //         if (iscallling) {
-  //           await Navigator.push(
-  //               context,
-  //               MaterialPageRoute(
-  //                   builder: (context) => Incoming(message['data'])));
-  //         } else {
-  //           print("Timeout");
-  //         }
-  //       }
-  //     },
-  //   );
-  // }
-
-  _checkcallState(channelId) async {
-    bool iscalling = await FirebaseFirestore.instance
-    .collection("calls")
-    .doc(channelId)
-    .get()
-    .then((value) {
-          print(value);
-      // return value.data["calling"] ?? false;
-      return value["calling"] ?? false;
-    });
-    return iscalling;
-  }
-
   _getMatches() async {
     User user = _firebaseAuth.currentUser;
     return FirebaseFirestore.instance
@@ -294,13 +199,98 @@ class TabbarState extends State<Tabbar> {
       userRemoved.clear();
       getUserList();
       getLikedByList();
-      // configurePushNotification(currentUser);
+      configurePushNotification(currentUser);
       if (!isPuchased) {
         _getSwipedcount();
       }
       return currentUser;
     });
   }
+
+  configurePushNotification(UserModel user) async {
+
+    // await FirebaseMessaging.instance.requestPermission(
+    //     IosNotificationSettings(
+    //         alert: true, sound: true, provisional: false, badge: true)
+    // );
+    await Get.find<HomeController>().initFCM(docRef, user, context);
+
+    // _firebaseMessaging.configure(
+    //   onLaunch: (Map<String, dynamic> message) async {
+    //     print('===============onLaunch$message');
+    //     if (Platform.isIOS && message['type'] == 'Call') {
+    //       Map callInfo = {};
+    //       callInfo['channel_id'] = message['channel_id'];
+    //       callInfo['senderName'] = message['senderName'];
+    //       callInfo['senderPicture'] = message['senderPicture'];
+    //       bool iscallling = await _checkcallState(message['channel_id']);
+    //       print("=================$iscallling");
+    //       if (iscallling) {
+    //         await Navigator.push(context,
+    //             MaterialPageRoute(builder: (context) => Incoming(message)));
+    //       }
+    //     } else if (Platform.isAndroid && message['data']['type'] == 'Call') {
+    //       bool iscallling =
+    //       await _checkcallState(message['data']['channel_id']);
+    //       print("=================$iscallling");
+    //       if (iscallling) {
+    //         await Navigator.push(
+    //             context,
+    //             MaterialPageRoute(
+    //                 builder: (context) => Incoming(message['data'])));
+    //       } else {
+    //         print("Timeout");
+    //       }
+    //     }
+    //   },
+    //   onMessage: (Map<String, dynamic> message) async {
+    //     print("onmessage$message");
+    //     if (Platform.isIOS && message['type'] == 'Call') {
+    //       Map callInfo = {};
+    //       callInfo['channel_id'] = message['channel_id'];
+    //       callInfo['senderName'] = message['senderName'];
+    //       callInfo['senderPicture'] = message['senderPicture'];
+    //       await Navigator.push(context,
+    //           MaterialPageRoute(builder: (context) => Incoming(callInfo)));
+    //     } else if (Platform.isAndroid && message['data']['type'] == 'Call') {
+    //       await Navigator.push(
+    //           context,
+    //           MaterialPageRoute(
+    //               builder: (context) => Incoming(message['data'])));
+    //     } else
+    //       print("object");
+    //   },
+    //   onResume: (Map<String, dynamic> message) async {
+    //     print('onResume$message');
+    //     if (Platform.isIOS && message['type'] == 'Call') {
+    //       Map callInfo = {};
+    //       callInfo['channel_id'] = message['channel_id'];
+    //       callInfo['senderName'] = message['senderName'];
+    //       callInfo['senderPicture'] = message['senderPicture'];
+    //       bool iscallling = await _checkcallState(message['channel_id']);
+    //       print("=================$iscallling");
+    //       if (iscallling) {
+    //         await Navigator.push(context,
+    //             MaterialPageRoute(builder: (context) => Incoming(message)));
+    //       }
+    //     } else if (Platform.isAndroid && message['data']['type'] == 'Call') {
+    //       bool iscallling =
+    //       await _checkcallState(message['data']['channel_id']);
+    //       print("=================$iscallling");
+    //       if (iscallling) {
+    //         await Navigator.push(
+    //             context,
+    //             MaterialPageRoute(
+    //                 builder: (context) => Incoming(message['data'])));
+    //       } else {
+    //         print("Timeout");
+    //       }
+    //     }
+    //   },
+    // );
+  }
+
+  
 
   query() {
 

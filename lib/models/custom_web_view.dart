@@ -61,12 +61,12 @@ class _CustomWebViewState extends State<CustomWebView> {
               if (request.url.contains("#access_token")) {
                 print('Sukses $request}');
                 succeed(request.url);
-                return NavigationDecision.prevent;
+                // return NavigationDecision.prevent;
               }
               if (request.url.contains("https://www.facebook.com/connect/login_success.html?error=access_denied&error_code=200&error_description=Permissions+error&error_reason=user_denied")) {
                 print('blocking navigation to $request}');
                 denied();
-                return NavigationDecision.prevent;
+                // return NavigationDecision.prevent;
               }
               print('allowing navigation to $request');
               return NavigationDecision.navigate;

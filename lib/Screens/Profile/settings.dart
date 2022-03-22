@@ -273,6 +273,14 @@ class _SettingsState extends State<Settings> {
                           //       DropdownMenuItem(
                           //           child: Text("Everyone"),
                           //           value: "everyone"),
+                          //       {'name': 'men', 'ontap': false},
+                          //       {'name': 'woman', 'ontap': false},
+                          //       {'name': 'man + woman couples', 'ontap': false},
+                          //       {'name': 'man + man couples', 'ontap': false},
+                          //       {'name': 'woman + woman couples', 'ontap': false},
+                          //       {'name': 'gender fluid', 'ontap': false},
+                          //       {'name': 'gender non conforming', 'ontap': false},
+                          //       {'name': 'gender queer', 'ontap': false},
                           //     ],
                           //     onChanged: (val) {
                           //       changeValues.addAll({

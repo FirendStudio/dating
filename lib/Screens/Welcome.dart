@@ -1,9 +1,11 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/Screens/UserDOB.dart';
 import 'package:hookup4u/Screens/UserName.dart';
+import 'package:hookup4u/util/Global.dart';
 import 'package:hookup4u/util/color.dart';
 // import 'package:easy_localization/easy_localization.dart';
 
@@ -35,72 +37,90 @@ class _WelcomeState extends State<Welcome> {
                         Image.asset(
                           "asset/images/logo1.png",
                         ),
+
+                        SizedBox(height: Get.height * 0.02,),
                         ListTile(
                           contentPadding: EdgeInsets.all(8),
-                          title: Text(
+                          title: AutoSizeText(
                             "This is a community for unvaccinated singles looking to meet like-minded people for love, fun and friendship.",
                             style: TextStyle(
-                                fontSize: Get.height * 0.025,
-                                fontWeight: FontWeight.bold),
+                                fontSize: 18,
+                                fontFamily: Global.font,
+                                fontWeight: FontWeight.bold
+                            ),
                           ),
                         ),
+
+                        SizedBox(height: Get.height * 0.03,),
+
                         ListTile(
                           contentPadding: EdgeInsets.all(8),
-                          title: Text(
+                          title: AutoSizeText(
                             "Be yourself.",
                             style: TextStyle(
-                                fontSize: Get.height * 0.025,
+                                fontSize: 18,
+                                fontFamily: Global.font,
                                 fontWeight: FontWeight.bold),
                           ),
-                          subtitle: Text(
+                          subtitle: AutoSizeText(
                             "Please make sure that your photos, age and bio are accurate and a true representation of who you are.",
                             style: TextStyle(
-                              fontSize: Get.height * 0.024,
+                              fontSize: 18,
+                              fontFamily: Global.font,
                             ),
                           ),
                         ),
                         ListTile(
                           contentPadding: EdgeInsets.all(8),
-                          title: Text(
+                          title: AutoSizeText(
                             "Play it cool.",
                             style: TextStyle(
-                                fontSize: Get.height * 0.025,
-                                fontWeight: FontWeight.bold),
+                                fontSize: 18,
+                                fontFamily: Global.font,
+                                fontWeight: FontWeight.bold
+                            ),
                           ),
-                          subtitle: Text(
+                          subtitle: AutoSizeText(
                             "Respect others and treat them as you would like to be treated.",
                             style: TextStyle(
-                              fontSize: Get.height * 0.024,
+                              fontSize: 18,
+                              fontFamily: Global.font,
                             ),
                           ),
                         ),
                         ListTile(
                           contentPadding: EdgeInsets.all(8),
-                          title: Text(
+                          title: AutoSizeText(
                             "Stay safe.",
                             style: TextStyle(
-                                fontSize: Get.height * 0.025,
-                                fontWeight: FontWeight.bold),
+                                fontSize: 18,
+                                fontFamily: Global.font,
+                                fontWeight: FontWeight.bold
+                            ),
                           ),
-                          subtitle: Text(
+                          subtitle: AutoSizeText(
                             "Don't be too quick to give out personal information.",
                             style: TextStyle(
-                              fontSize: Get.height * 0.024,
+                              fontSize: 18,
+                              fontFamily: Global.font,
                             ),
                           ),
                         ),
                         ListTile(
                           contentPadding: EdgeInsets.all(8),
-                          title: Text(
+                          title: AutoSizeText(
                             "Be proactive.",
                             style: TextStyle(
-                                fontSize: Get.height * 0.025,
-                                fontWeight: FontWeight.bold),
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              fontFamily: Global.font,
+                            ),
                           ),
-                          subtitle: Text(
+                          subtitle: AutoSizeText(
                             "Always report bad behavior.",
                             style: TextStyle(
-                              fontSize: Get.height * 0.024,
+                              fontSize: 18,
+                              fontFamily: Global.font,
                             ),
                           ),
                         ),
@@ -130,10 +150,11 @@ class _WelcomeState extends State<Welcome> {
                         height: MediaQuery.of(context).size.height * .065,
                         width: MediaQuery.of(context).size.width * .75,
                         child: Center(
-                            child: Text(
+                            child: AutoSizeText(
                           "GOT IT",
                           style: TextStyle(
-                              fontSize: Get.height * 0.022,
+                              fontSize: 18,
+                              fontFamily: Global.font,
                               color: textColor,
                               fontWeight: FontWeight.bold),
                         ))),

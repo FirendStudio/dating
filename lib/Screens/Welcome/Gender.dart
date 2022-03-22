@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/Screens/Welcome/SexualOrientation.dart';
 import 'package:hookup4u/Screens/UserName.dart';
+import 'package:hookup4u/util/Global.dart';
 import 'package:hookup4u/util/color.dart';
 import 'package:hookup4u/util/snackbar.dart';
 // import 'package:easy_localization/easy_localization.dart';
@@ -88,21 +89,39 @@ class _GenderState extends State<Gender> {
       body: Stack(
         children: <Widget>[
           Padding(
-            child: Text(
-              "I am a",
-              style: TextStyle(fontSize: 40),
-            ),
-            padding: EdgeInsets.only(left: 50, top: 120),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                  Text(
+                    "I am a",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontFamily: Global.font,
+                    ),
+                  ),
+
+                ],
+              ),
+            padding: EdgeInsets.only(left: 0, top: 70),
           ),
-          Center(
+          Container(
+            padding: EdgeInsets.only(
+              top: Get.height * 0.16
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 SizedBox(
                   height: Get.height * 0.6,
                   child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 70, vertical: 50),
+                    padding: EdgeInsets.only(
+                        left: Get.width * 0.1,
+                        right: Get.width * 0.1,
+                        top: 0,
+                        bottom: 50
+                    ),
                     child: ListView.builder(
                       // physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
@@ -114,15 +133,17 @@ class _GenderState extends State<Gender> {
                             highlightedBorderColor: primaryColor,
                             child: Container(
                               height: MediaQuery.of(context).size.height * .055,
-                              width: MediaQuery.of(context).size.width * .65,
+                              // width: MediaQuery.of(context).size.width * .65,
                               child: Center(
                                   child: Text("${listGender[index]["name"]}".toUpperCase(),
                                       style: TextStyle(
-                                          fontSize: 20,
                                           color: listGender[index] == selection
                                               ? primaryColor
                                               : secondryColor,
-                                          fontWeight: FontWeight.bold))),
+                                          fontSize: 18,
+                                          fontFamily: Global.font,
+                                          fontWeight: FontWeight.normal
+                                      ))),
                             ),
                             borderSide: BorderSide(
                                 width: 1,

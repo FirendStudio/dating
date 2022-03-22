@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Hookup4u</string>
+    <string name="app_name">JablessCupid</string>
 
     <!-- Replace "000000000000" with your Facebook App ID here. -->
-    <string name="facebook_app_id">000000000000</string>
+    <string name="facebook_app_id">709280423766575</string>
 
     <!--
       Replace "000000000000" with your Facebook App ID here.

@@ -43,9 +43,9 @@
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>FacebookAppID</key>
-	<string>000000000000</string>
+	<string>709280423766575</string>
 	<key>FacebookDisplayName</key>
-	<string>Hookup4u</string>
+	<string>JablessCupid</string>
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<false/>
 	<key>GADApplicationIdentifier</key>

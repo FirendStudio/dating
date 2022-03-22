@@ -1,4 +1,4 @@
-import 'package:agora_rtc_engine/agora_rtc_engine.dart';
+import 'package:agora_rtc_engine/rtc_engine.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,7 +11,7 @@ import 'call.dart';
 
 class DialCall extends StatefulWidget {
   final String channelName;
-  final User receiver;
+  final UserModel receiver;
   final String callType;
   const DialCall({@required this.channelName, this.receiver, this.callType});
 
@@ -91,6 +91,7 @@ class _DialCallState extends State<DialCall> {
                                     child: CachedNetworkImage(
                                       imageUrl:
                                           widget.receiver.imageUrl[0] ?? '',
+                                      // widget.receiver.photoURL ?? '',
                                       useOldImageOnUrlChange: true,
                                       placeholder: (context, url) =>
                                           CupertinoActivityIndicator(
