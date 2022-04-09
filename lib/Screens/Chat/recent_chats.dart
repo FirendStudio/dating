@@ -64,6 +64,9 @@ class RecentChats extends StatelessWidget {
                                   else if (snapshot.data.docs.length == 0) {
                                     return Container();
                                   }
+                                  bool cek = index.imageUrl[0].runtimeType == String;
+                                  // print("Cek");
+                                  // print(cek);
                                   index.lastmsg = snapshot.data.docs[0].data()['time'];
                                   return Container(
                                     margin: EdgeInsets.only(
@@ -90,7 +93,10 @@ class RecentChats extends StatelessWidget {
                                           borderRadius:
                                               BorderRadius.circular(90),
                                           child: CachedNetworkImage(
-                                            imageUrl: index.imageUrl[0] ?? '',
+                                            imageUrl:
+                                            (cek)?
+                                            index.imageUrl[0]:
+                                            index.imageUrl[0]['url'] ?? '',
                                             useOldImageOnUrlChange: true,
                                             placeholder: (context, url) =>
                                                 CupertinoActivityIndicator(

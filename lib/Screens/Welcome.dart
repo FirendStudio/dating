@@ -3,8 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hookup4u/Screens/UserDOB.dart';
-import 'package:hookup4u/Screens/UserName.dart';
+import 'package:hookup4u/Screens/Welcome/UserDOB.dart';
+import 'package:hookup4u/Screens/Welcome/UserName.dart';
 import 'package:hookup4u/util/Global.dart';
 import 'package:hookup4u/util/color.dart';
 // import 'package:easy_localization/easy_localization.dart';
@@ -25,57 +25,78 @@ class _WelcomeState extends State<Welcome> {
               Padding(
                 padding: const EdgeInsets.only(left: 30, right: 30),
                 child: Container(
-                  height: MediaQuery.of(context).size.height * .8,
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        SizedBox(
-                          height: Get.height * 0.1,
-                        ),
-                        Image.asset(
-                          "asset/images/logo1.png",
-                        ),
+                  height: Get.height * 0.83,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      // SizedBox(
+                      //   height: Get.height * 0.1,
+                      // ),
+                      Expanded(
+                        flex: 1,
+                        child: Container(),
+                      ),
+                      Expanded(
+                        flex: 3,
+                        child: Center(
+                          child: Image.asset(
+                            "asset/images/logo1.png",
+                            // height: Get.height * 0.1,
+                          ),
+                        )
+                      ),
 
-                        SizedBox(height: Get.height * 0.02,),
-                        ListTile(
+                      Expanded(
+                        flex: 2,
+                        child: ListTile(
                           contentPadding: EdgeInsets.all(8),
                           title: AutoSizeText(
                             "This is a community for unvaccinated singles looking to meet like-minded people for love, fun and friendship.",
                             style: TextStyle(
-                                fontSize: 18,
+                                fontSize: Get.height * 0.03,
                                 fontFamily: Global.font,
                                 fontWeight: FontWeight.bold
                             ),
                           ),
                         ),
+                      ),
 
-                        SizedBox(height: Get.height * 0.03,),
 
-                        ListTile(
+                      // SizedBox(height: Get.height * 0.015,),
+
+
+                      // SizedBox(height: Get.height * 0.03,),
+                      Expanded(
+                        flex: 2,
+                        child: ListTile(
                           contentPadding: EdgeInsets.all(8),
                           title: AutoSizeText(
                             "Be yourself.",
                             style: TextStyle(
-                                fontSize: 18,
+                                fontSize: Get.height * 0.027,
                                 fontFamily: Global.font,
                                 fontWeight: FontWeight.bold),
                           ),
                           subtitle: AutoSizeText(
                             "Please make sure that your photos, age and bio are accurate and a true representation of who you are.",
                             style: TextStyle(
-                              fontSize: 18,
+                              fontSize: Get.height * 0.025,
                               fontFamily: Global.font,
                             ),
                           ),
                         ),
-                        ListTile(
+                      ),
+
+
+                      Expanded(
+                        flex: 2,
+                        child: ListTile(
                           contentPadding: EdgeInsets.all(8),
                           title: AutoSizeText(
                             "Play it cool.",
                             style: TextStyle(
-                                fontSize: 18,
+                                fontSize: Get.height * 0.027,
                                 fontFamily: Global.font,
                                 fontWeight: FontWeight.bold
                             ),
@@ -83,17 +104,21 @@ class _WelcomeState extends State<Welcome> {
                           subtitle: AutoSizeText(
                             "Respect others and treat them as you would like to be treated.",
                             style: TextStyle(
-                              fontSize: 18,
+                              fontSize: Get.height * 0.025,
                               fontFamily: Global.font,
                             ),
                           ),
                         ),
-                        ListTile(
+                      ),
+
+                      Expanded(
+                        flex: 2,
+                        child: ListTile(
                           contentPadding: EdgeInsets.all(8),
                           title: AutoSizeText(
                             "Stay safe.",
                             style: TextStyle(
-                                fontSize: 18,
+                                fontSize: Get.height * 0.027,
                                 fontFamily: Global.font,
                                 fontWeight: FontWeight.bold
                             ),
@@ -101,31 +126,36 @@ class _WelcomeState extends State<Welcome> {
                           subtitle: AutoSizeText(
                             "Don't be too quick to give out personal information.",
                             style: TextStyle(
-                              fontSize: 18,
+                              fontSize: Get.height * 0.025,
                               fontFamily: Global.font,
                             ),
                           ),
                         ),
-                        ListTile(
+                      ),
+
+                      Expanded(
+                        flex: 2,
+                        child: ListTile(
                           contentPadding: EdgeInsets.all(8),
                           title: AutoSizeText(
                             "Be proactive.",
                             style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                              fontSize: Get.height * 0.027,
+                              fontWeight: FontWeight.bold,
                               fontFamily: Global.font,
                             ),
                           ),
                           subtitle: AutoSizeText(
                             "Always report bad behavior.",
                             style: TextStyle(
-                              fontSize: 18,
+                              fontSize: Get.height * 0.025,
                               fontFamily: Global.font,
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+
+                    ],
                   ),
                 ),
               ),

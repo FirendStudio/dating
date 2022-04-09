@@ -1,7 +1,7 @@
 // import 'package:firebase_admob/firebase_admob.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hookup4u/Screens/UserDOB.dart';
+import 'package:hookup4u/Screens/Welcome/UserDOB.dart';
 import 'package:hookup4u/ads/ads.dart';
 import 'package:hookup4u/util/color.dart';
 // import 'package:easy_localization/easy_localization.dart';

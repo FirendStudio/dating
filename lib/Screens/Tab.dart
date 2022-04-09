@@ -332,20 +332,40 @@ class TabbarState extends State<Tabbar> {
     List checkedUser = [];
     FirebaseFirestore.instance
         .collection('/Users/${currentUser.id}/CheckedUser')
+        // .collection('/Users/${currentUser.id}')
         .get()
         .then((data) {
       // var cek = data.docs.map((doc) => doc.get('DislikedUser')).toList();
       // print(cek);
-      // var dataDislike = data.docs.map((f) => f['DislikedUser']);
-      // if(dataDislike != null){
+      // var dataDislike = data.docs.map((f) {
+      //   f['DislikedUser'] ?? "";
+      // });
+      // print(dataDislike);
+      print("Cek");
+      var dataAll;
+      dataAll = data.docs.map((e) => e.data());
+      // print(dataAll.get("LikedUser"));
+      data.docs.forEach((element) {
+        print(element.data()["LikedUser"]);
+        if(element.data()["LikedUser"] == null){
+          checkedUser.add(element.data()["DislikedUser"]);
+        }else{
+          checkedUser.add(element.data()["LikedUser"]);
+        }
+      });
+      print(checkedUser);
+      // checkedUser.addAll(data.docs.map((f) => f['DislikedUser']) ?? []);
+      // print(dataAll.get('LikedUser'));
+
+      // if(dataDislike. != null){
       //   // checkedUser.addAll(data.docs.map((f) => f['DislikedUser']));
       //   checkedUser.addAll(dataDislike);
       // }
-      var dataLike = data.docs.map((f) => f['LikedUser']);
-      if(dataLike != null){
-        // checkedUser.addAll(data.docs.map((f) => f['LikedUser']));
-        checkedUser.addAll(dataLike);
-      }
+      // var dataLike = data.docs.map((f) => f['LikedUser']);
+      // if(dataLike != null){
+      //   // checkedUser.addAll(data.docs.map((f) => f['LikedUser']));
+      //   checkedUser.addAll(dataLike);
+      // }
 
     }).then((_) {
       query().get().then((data) async {
@@ -365,15 +385,43 @@ class TabbarState extends State<Tabbar> {
               temp.coordinates['latitude'],
               temp.coordinates['longitude']);
           temp.distanceBW = distance.round();
-          if (checkedUser.any(
-            (value) => value == temp.id,
-          )) {
+          if (checkedUser.any((value) => value == temp.id,)) {
+
           } else {
+            print(distance);
+            print(currentUser.maxDistance);
             if (distance <= currentUser.maxDistance &&
-                temp.id != currentUser.id &&
-                !temp.isBlocked) {
-              users.add(temp);
+                temp.id != currentUser.id && !temp.isBlocked) {
+              if(temp.imageUrl.isNotEmpty){
+                List imageUrlTemp = [];
+                for(int i =0; i <= temp.imageUrl.length-1; i++){
+                  if(temp.imageUrl[i].runtimeType == String){
+                    imageUrlTemp.add({
+                      "url": temp.imageUrl[i],
+                      "show": "true"
+                    });
+
+                  }else{
+                    if(temp.imageUrl[i]['show'] == "true"){
+                      imageUrlTemp.add(temp.imageUrl[i]);
+
+                    }
+                  }
+
+                }
+                users.add(UserModel(
+                    id: temp.id,
+                    age: temp.age,
+                    address: temp.address,
+                    name: temp.name,
+                    imageUrl: imageUrlTemp
+                ));
+              }else{
+                users.add(temp);
+              }
+
             }
+            print(users);
           }
         }
         if (mounted) setState(() {});
@@ -402,11 +450,11 @@ class TabbarState extends State<Tabbar> {
               title: Text('Exit'),
               content: Text('Do you want to exit the app?'),
               actions: <Widget>[
-                FlatButton(
+                ElevatedButton(
                   onPressed: () => Navigator.of(context).pop(false),
                   child: Text('No'),
                 ),
-                FlatButton(
+                ElevatedButton(
                   onPressed: () => SystemChannels.platform
                       .invokeMethod('SystemNavigator.pop'),
                   child: Text('Yes'),
@@ -417,6 +465,11 @@ class TabbarState extends State<Tabbar> {
         );
       },
       child: Scaffold(
+        // floatingActionButton: FloatingActionButton(
+        //   onPressed: () async {
+        //     await getUserList();
+        //   },
+        // ),
         body: currentUser == null
             ? Center(child: Splash())
             : currentUser.isBlocked

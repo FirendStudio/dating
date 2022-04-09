@@ -3,11 +3,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hookup4u/Screens/Tab.dart';
-import 'package:hookup4u/Screens/seach_location.dart';
+import 'package:hookup4u/Screens/Welcome/seach_location.dart';
 import 'package:hookup4u/util/color.dart';
 // import 'package:easy_localization/easy_localization.dart';
 
-import '../UpdateLocation.dart';
+import 'UpdateLocation.dart';
 //import 'package:geolocator/geolocator.dart';
 
 class AllowLocation extends StatelessWidget {
@@ -156,6 +156,7 @@ class AllowLocation extends StatelessWidget {
                     print("Cek");
                     var currentLocation = await getLocationCoordinates();
                     print(currentLocation);
+                    // print(userData);
                     if (currentLocation != null) {
                       userData.addAll(
                         {

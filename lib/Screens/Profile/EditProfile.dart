@@ -1,5 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
+import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:get/get.dart';
 // import 'package:firebase_admob/firebase_admob.dart';
 import 'package:hookup4u/ads/ads.dart';
 import 'package:image/image.dart' as i;
@@ -12,6 +15,8 @@ import 'package:hookup4u/util/color.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+
+import '../../util/Global.dart';
 // import 'package:easy_localization/easy_localization.dart';
 
 class EditProfile extends StatefulWidget {
@@ -30,9 +35,81 @@ class EditProfileState extends State<EditProfile> {
   final TextEditingController universityCtlr = new TextEditingController();
   bool visibleAge = false;
   bool visibleDistance = true;
+  List<String> choice = [
+    "Yes", "No"
+  ];
+
+  List<Map<String, dynamic>> listGender = [
+    {'name': 'man', 'ontap': false},
+    {'name': 'woman', 'ontap': false},
+    {'name': 'other', 'ontap': false},
+    {'name': 'agender', 'ontap': false},
+    {'name': 'androgynous', 'ontap': false},
+    {'name': 'bigender', 'ontap': false},
+    {'name': 'gender fluid', 'ontap': false},
+    {'name': 'gender non conforming', 'ontap': false},
+    {'name': 'gender queer', 'ontap': false},
+    {'name': 'gender questioning', 'ontap': false},
+    {'name': 'intersex', 'ontap': false},
+    {'name': 'non-binary', 'ontap': false},
+    {'name': 'pangender', 'ontap': false},
+    {'name': 'trans human', 'ontap': false},
+    {'name': 'trans man', 'ontap': false},
+    {'name': 'trans woman', 'ontap': false},
+    {'name': 'transfeminime', 'ontap': false},
+    {'name': 'transmasculine', 'ontap': false},
+    {'name': 'two-spirit', 'ontap': false},
+  ];
+  List<Map<String, dynamic>> orientationlist = [
+    {'name': 'straight', 'ontap': false},
+    {'name': 'gay', 'ontap': false},
+    {'name': 'lesbian', 'ontap': false},
+    {'name': 'bisexual', 'ontap': false},
+    {'name': 'bi-curious', 'ontap': false},
+    {'name': 'pansexual', 'ontap': false},
+    {'name': 'polysexual', 'ontap': false},
+    {'name': 'queer', 'ontap': false},
+    {'name': 'androgynobexual', 'ontap': false},
+    {'name': 'androsexual', 'ontap': false},
+    {'name': 'asexual', 'ontap': false},
+    {'name': 'autosexual', 'ontap': false},
+    {'name': 'demisexual', 'ontap': false},
+    {'name': 'gray a', 'ontap': false},
+    {'name': 'gynosexual', 'ontap': false},
+    {'name': 'heteroflexible', 'ontap': false},
+    {'name': 'homoflexible', 'ontap': false},
+    {'name': 'objectumsexual', 'ontap': false},
+    {'name': 'omnisexual', 'ontap': false},
+    {'name': 'skoliosexual', 'ontap': false},
+  ];
+  List<Map<String, dynamic>> listStatus = [
+    {'name': 'single', 'ontap': false},
+    {'name': 'man + woman couple', 'ontap': false},
+    {'name': 'man + man couple', 'ontap': false},
+    {'name': 'woman + woman couple', 'ontap': false},
+  ];
+  List<Map<String, dynamic>> listDesire = [
+    {'name': 'relationship', 'ontap': false},
+    {'name': 'friendship', 'ontap': false},
+    {'name': 'casual', 'ontap': false},
+    {'name': 'fwb', 'ontap': false},
+    {'name': 'fun', 'ontap': false},
+    {'name': 'dates', 'ontap': false},
+    {'name': 'texting', 'ontap': false},
+    {'name': 'threesome', 'ontap': false},
+  ];
+
+  var selectionGender, selectionOrientation, selectionStatus;
+  List selectedDesire = [];
+
+  int selectionChoice = 0;
 
   var showMe;
   Map editInfo = {};
+  Map<String, dynamic> orientationMap = {};
+  Map<String, dynamic> statusMap = {};
+  Map<String, dynamic> desiresMap = {};
+  int indexImage = 0;
   // Ads _ads = new Ads();
   // BannerAd _ad;
   @override
@@ -50,32 +127,76 @@ class EditProfileState extends State<EditProfile> {
     });
     // _ad = _ads.myBanner();
     super.initState();
+    initData();
     // _ad
     //   ..load()
     //   ..show();
+  }
+
+  initData(){
+
+    // print(widget.currentUser.gender);
+    selectionGender = widget.currentUser.gender;
+    selectionOrientation = widget.currentUser.sexualOrientation;
+    selectionStatus = widget.currentUser.status;
+    print(widget.currentUser.desires);
+    for(int i = 0; i<=widget.currentUser.desires.length-1; i++){
+      selectedDesire.add(widget.currentUser.desires[i]);
+
+      for(int j=0; j<=listDesire.length-1; j++){
+        if(widget.currentUser.desires[i] == listDesire[j]['name']){
+          listDesire[j]['ontap'] = true;
+          break;
+        }
+      }
+
+    }
+
   }
 
   @override
   void dispose() {
     super.dispose();
     print(editInfo.length);
-    if (editInfo.length > 0) {
+    // if (editInfo.length > 0) {
       updateData();
-    }
+    // }
     // _ads.disable(_ad);
   }
 
   Future updateData() async {
-    FirebaseFirestore.instance
-        .collection("Users")
-        .doc(widget.currentUser.id)
-        .set({'editInfo': editInfo, 'age': widget.currentUser.age},
-        SetOptions(merge : true)
-    );
+    Map<String, dynamic> updateMap = {};
+
+    if(editInfo.length > 0){
+      updateMap.addAll({'editInfo': editInfo, 'age': widget.currentUser.age});
+    }
+    if(orientationMap.length > 0){
+      updateMap.addAll(orientationMap);
+    }
+
+    if(statusMap.length > 0){
+      updateMap.addAll(statusMap);
+    }
+
+    if(desiresMap.length > 0){
+      updateMap.addAll(desiresMap);
+    }
+
+    if(updateMap.length > 0 ){
+      FirebaseFirestore.instance
+          .collection("Users")
+          .doc(widget.currentUser.id)
+          .set(updateMap,
+          SetOptions(merge : true)
+      );
+    }
+
   }
 
   Future source(
-      BuildContext context, currentUser, bool isProfilePicture) async {
+      BuildContext context, currentUser, bool isProfilePicture, String show) async {
+
+
     return showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -83,12 +204,22 @@ class EditProfileState extends State<EditProfile> {
               title: Text(isProfilePicture
                   ? "Update profile picture"
                   : "Add pictures"),
-              content: Text(
-                "Select source",
+              content: StatefulBuilder(
+                builder: (BuildContext context2, StateSetter setState2){
+                  return Column(
+                    children: [
+                      Text(
+                        "Select source",
+                      ),
+
+                    ],
+                  );
+                },
               ),
               insetAnimationCurve: Curves.decelerate,
               actions: currentUser.imageUrl.length < 9
                   ? <Widget>[
+
                       Padding(
                         padding: const EdgeInsets.all(20.0),
                         child: GestureDetector(
@@ -114,7 +245,7 @@ class EditProfileState extends State<EditProfile> {
                                 context: context,
                                 builder: (context) {
                                   getImage(ImageSource.camera, context,
-                                      currentUser, isProfilePicture);
+                                      currentUser, isProfilePicture, show);
                                   return Center(
                                       child: CircularProgressIndicator(
                                     strokeWidth: 2,
@@ -151,7 +282,7 @@ class EditProfileState extends State<EditProfile> {
                                 context: context,
                                 builder: (context) {
                                   getImage(ImageSource.gallery, context,
-                                      currentUser, isProfilePicture);
+                                      currentUser, isProfilePicture, show);
                                   return Center(
                                       child: CircularProgressIndicator(
                                     strokeWidth: 2,
@@ -185,7 +316,7 @@ class EditProfileState extends State<EditProfile> {
   }
 
   Future getImage(
-      ImageSource imageSource, context, currentUser, isProfilePicture) async {
+      ImageSource imageSource, context, currentUser, isProfilePicture,String show) async {
     try {
       var image = await ImagePicker().pickImage(source: imageSource,
         imageQuality: 10
@@ -206,7 +337,7 @@ class EditProfileState extends State<EditProfile> {
             ));
         if (croppedFile != null) {
           await uploadFile(
-              await compressimage(croppedFile), currentUser, isProfilePicture);
+              await compressimage(croppedFile), currentUser, isProfilePicture, show);
         }
       }
       Navigator.pop(context);
@@ -217,7 +348,7 @@ class EditProfileState extends State<EditProfile> {
     }
   }
 
-  Future uploadFile(File image, UserModel currentUser, isProfilePicture) async {
+  Future uploadFile(File image, UserModel currentUser, isProfilePicture, String show) async {
 
     if(image != null){
       FirebaseStorage storage = FirebaseStorage.instance;
@@ -225,15 +356,31 @@ class EditProfileState extends State<EditProfile> {
       UploadTask uploadTask = ref.putFile(File(image.path));
       uploadTask.then((res) async {
         String fileURL = await res.ref.getDownloadURL();
+
         Map<String, dynamic> updateObject = {
-          "Pictures": FieldValue.arrayUnion([
-            fileURL,
-          ])
+            "Pictures": [
+              {
+                "url": fileURL,
+                "show": show
+              }
+
+            ],
         };
+        print(updateObject);
+        // Map<String, dynamic> updateObject = {
+        //   "Pictures": FieldValue.arrayUnion([
+        //     fileURL,
+        //   ]),
+        // };
         try {
           if (isProfilePicture) {
             //currentUser.imageUrl.removeAt(0);
-            currentUser.imageUrl.insert(0, fileURL);
+            // currentUser.imageUrl.insert(0, fileURL);
+            currentUser.imageUrl.insert(0,{
+              "url": fileURL,
+              "show": show
+            });
+            print(currentUser.imageUrl);
             print("object");
             await FirebaseFirestore.instance
                 .collection("Users")
@@ -243,14 +390,20 @@ class EditProfileState extends State<EditProfile> {
 
             );
           } else {
+            currentUser.imageUrl.add({
+              "url": fileURL,
+              "show": show
+            });
+            print(currentUser.imageUrl[currentUser.imageUrl.length-1]['url']);
+
             await FirebaseFirestore.instance
                 .collection("Users")
                 .doc(currentUser.id)
-                .set(updateObject,
+                .set({"Pictures": currentUser.imageUrl},
                 SetOptions(merge : true)
 
             );
-            widget.currentUser.imageUrl.add(fileURL);
+            // widget.currentUser.imageUrl.add(fileURL);
           }
           if (mounted) setState(() {});
         } catch (err) {
@@ -357,8 +510,7 @@ class EditProfileState extends State<EditProfile> {
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(10),
                               child: Container(
-                                decoration: widget.currentUser.imageUrl.length >
-                                        index
+                                decoration: widget.currentUser.imageUrl.length > index
                                     ? BoxDecoration(
                                         borderRadius: BorderRadius.circular(10),
                                         // image: DecorationImage(
@@ -377,14 +529,10 @@ class EditProfileState extends State<EditProfile> {
                                   children: <Widget>[
                                     widget.currentUser.imageUrl.length > index
                                         ? CachedNetworkImage(
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
+                                            height: MediaQuery.of(context).size.height *
                                                 .2,
                                             fit: BoxFit.cover,
-                                            imageUrl: widget.currentUser
-                                                    .imageUrl[index] ??
-                                                '',
+                                            imageUrl: (widget.currentUser.imageUrl[index].runtimeType == String)? widget.currentUser.imageUrl[index] : widget.currentUser.imageUrl[index]['url'] ?? '',
                                             placeholder: (context, url) =>
                                                 Center(
                                               child: CupertinoActivityIndicator(
@@ -424,34 +572,44 @@ class EditProfileState extends State<EditProfile> {
                                     Align(
                                       alignment: Alignment.bottomRight,
                                       child: Container(
+                                        padding: widget.currentUser.imageUrl.length > index?
+                                          EdgeInsets.all(4):EdgeInsets.all(4),
                                           // width: 12,
                                           // height: 16,
                                           decoration: BoxDecoration(
                                             shape: BoxShape.circle,
-                                            color: widget.currentUser.imageUrl
-                                                        .length >
-                                                    index
-                                                ? Colors.white
-                                                : primaryColor,
+                                            color: primaryColor,
                                           ),
                                           child: widget.currentUser.imageUrl.length > index
                                               ? InkWell(
                                                   child: Icon(
-                                                    Icons.cancel,
-                                                    color: primaryColor,
+                                                    Icons.edit,
+                                                    color: Colors.white,
                                                     size: 22,
                                                   ),
                                                   onTap: () async {
-                                                    if (widget.currentUser
-                                                            .imageUrl.length >
-                                                        1) {
-                                                      _deletePicture(index);
-                                                    } else {
-                                                      source(
-                                                          context,
-                                                          widget.currentUser,
-                                                          true);
+                                                    if(index == 0){
+                                                      ArtSweetAlert.show(
+                                                          context: context,
+                                                          artDialogArgs: ArtDialogArgs(
+                                                              type: ArtSweetAlertType.info,
+                                                              title: "Info",
+                                                              text: "You cannot edit profile image"
+                                                          )
+                                                      );
+
+                                                    }else{
+                                                      indexImage = index;
+                                                      if (widget.currentUser.imageUrl.length > 1) {
+                                                        // _deletePicture(index);
+
+                                                        showPrivateImageDialog(context, true, widget.currentUser, true);
+                                                      } else {
+                                                        showPrivateImageDialog(context, true, widget.currentUser, true);
+                                                        // source(context, widget.currentUser, true);
+                                                      }
                                                     }
+
                                                   },
                                                 )
                                               : InkWell(
@@ -460,12 +618,38 @@ class EditProfileState extends State<EditProfile> {
                                                     size: 22,
                                                     color: Colors.white,
                                                   ),
-                                                  onTap: () => source(
-                                                      context,
-                                                      widget.currentUser,
-                                                      false),
+                                                  onTap: () {
+                                                    showPrivateImageDialog(context, true, widget.currentUser, true);
+                                                    // source(context, widget.currentUser, false);
+                                                  }
                                                 )),
-                                    )
+                                    ),
+
+                                    if(widget.currentUser.imageUrl.length > index)
+                                    Align(
+                                      alignment: Alignment.bottomLeft,
+                                      child: Container(
+                                          padding:EdgeInsets.all(4),
+                                          // width: 12,
+                                          // height: 16,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: primaryColor,
+                                          ),
+                                          child: InkWell(
+                                            child: Icon(
+                                              (widget.currentUser.imageUrl[index].runtimeType == String || widget.currentUser.imageUrl[index]['show'] == "true")?
+                                              Icons.visibility : Icons.visibility_off_rounded,
+                                              color: Colors.white,
+                                              size: 22,
+                                            ),
+                                            onTap: () async {
+
+                                            },
+                                          )
+                                      ),
+                                    ),
+
                                   ],
                                 ),
                               ),
@@ -498,7 +682,9 @@ class EditProfileState extends State<EditProfile> {
                               fontWeight: FontWeight.bold),
                         ))),
                     onTap: () async {
-                      await source(context, widget.currentUser, false);
+                      // showPrivateImageDialog(context, false, widget.currentUser, true);
+                      // await source(context, widget.currentUser, false);
+                      await source(context, widget.currentUser, false, "true");
                     },
                   ),
                   SizedBox(
@@ -603,42 +789,42 @@ class EditProfileState extends State<EditProfile> {
                             },
                           ),
                         ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          child: ListTile(
-                            title: Text(
-                              "I am",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 16,
-                                  color: Colors.black87),
-                            ),
-                            subtitle: DropdownButton(
-                              iconEnabledColor: primaryColor,
-                              iconDisabledColor: secondryColor,
-                              isExpanded: true,
-                              items: [
-                                DropdownMenuItem(
-                                  child: Text("Man"),
-                                  value: "man",
-                                ),
-                                DropdownMenuItem(
-                                    child: Text("Woman"),
-                                    value: "woman"),
-                                DropdownMenuItem(
-                                    child: Text("Other"),
-                                    value: "other"),
-                              ],
-                              onChanged: (val) {
-                                editInfo.addAll({'userGender': val});
-                                setState(() {
-                                  showMe = val;
-                                });
-                              },
-                              value: showMe,
-                            ),
-                          ),
-                        ),
+                        // Padding(
+                        //   padding: const EdgeInsets.symmetric(vertical: 10),
+                        //   child: ListTile(
+                        //     title: Text(
+                        //       "I am",
+                        //       style: TextStyle(
+                        //           fontWeight: FontWeight.w500,
+                        //           fontSize: 16,
+                        //           color: Colors.black87),
+                        //     ),
+                        //     subtitle: DropdownButton(
+                        //       iconEnabledColor: primaryColor,
+                        //       iconDisabledColor: secondryColor,
+                        //       isExpanded: true,
+                        //       items: [
+                        //         DropdownMenuItem(
+                        //           child: Text("Man"),
+                        //           value: "man",
+                        //         ),
+                        //         DropdownMenuItem(
+                        //             child: Text("Woman"),
+                        //             value: "woman"),
+                        //         DropdownMenuItem(
+                        //             child: Text("Other"),
+                        //             value: "other"),
+                        //       ],
+                        //       onChanged: (val) {
+                        //         editInfo.addAll({'userGender': val});
+                        //         setState(() {
+                        //           showMe = val;
+                        //         });
+                        //       },
+                        //       value: showMe,
+                        //     ),
+                        //   ),
+                        // ),
                         SizedBox(
                           height: 10,
                         ),
@@ -699,6 +885,345 @@ class EditProfileState extends State<EditProfile> {
                                 ],
                               ),
                             )),
+
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 5.0, bottom: 5,
+                              right: 10, left: 10
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                "Gender",
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w500),
+                              ),
+
+                              SizedBox(height: 12,),
+
+                              Container(
+                                  height: Get.height * 0.75,
+                                  child: GridView.count(
+                                    physics: NeverScrollableScrollPhysics(),
+                                    // Create a grid with 2 columns. If you change the scrollDirection to
+                                    // horizontal, this produces 2 rows.
+                                    crossAxisCount: 2,
+                                    childAspectRatio: 4/1,
+                                    crossAxisSpacing: 4.0,
+                                    mainAxisSpacing: 8.0,
+                                    // Generate 100 widgets that display their index in the List.
+                                    children: List.generate(listGender.length, (index) {
+                                      return OutlineButton(
+                                        highlightedBorderColor: primaryColor,
+                                        child: Container(
+                                          // height: MediaQuery.of(context).size.height * .055,
+                                          // width: MediaQuery.of(context).size.width * .65,
+                                          padding: EdgeInsets.only(
+                                              top: 8,
+                                              bottom: 8,
+                                              left: 8,
+                                              right: 8
+                                          ),
+                                          child: Center(
+                                              child: Text("${listGender[index]["name"]}".toUpperCase(),
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                      fontSize: 12,
+                                                      fontFamily: Global.font,
+                                                      color: listGender[index]["name"] == selectionGender
+                                                          ? primaryColor
+                                                          : secondryColor,
+                                                      fontWeight: FontWeight.normal
+                                                  )
+                                              )
+                                          ),
+                                        ),
+                                        borderSide: BorderSide(
+                                            width: 1,
+                                            style: BorderStyle.solid,
+                                            color: listGender[index]["name"] == selectionGender
+                                                ? primaryColor
+                                                : secondryColor),
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(25)),
+                                        onPressed: () {
+                                          selectionGender = listGender[index]["name"];
+                                          setState(() {
+
+                                            var userGender = {
+                                              'userGender': selectionGender,
+                                              'showOnProfile': widget.currentUser.showingGender
+                                            };
+                                            editInfo.addAll(userGender);
+
+                                          });
+                                        },
+                                      );
+                                    }),
+                                  )
+                              )
+                            ],
+                          ),
+                        ),
+
+
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 5.0, bottom: 5,
+                              right: 10, left: 10
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                "Sex Orientation",
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w500),
+                              ),
+
+                              SizedBox(height: 12,),
+
+                              Container(
+                                  height: Get.height * 0.75,
+                                  child: GridView.count(
+                                    physics: NeverScrollableScrollPhysics(),
+                                    // Create a grid with 2 columns. If you change the scrollDirection to
+                                    // horizontal, this produces 2 rows.
+                                    crossAxisCount: 2,
+                                    childAspectRatio: 4/1,
+                                    crossAxisSpacing: 4.0,
+                                    mainAxisSpacing: 8.0,
+                                    // Generate 100 widgets that display their index in the List.
+                                    children: List.generate(orientationlist.length, (index) {
+                                      return OutlineButton(
+                                        highlightedBorderColor: primaryColor,
+                                        child: Container(
+                                          // height: MediaQuery.of(context).size.height * .055,
+                                          // width: MediaQuery.of(context).size.width * .65,
+                                          padding: EdgeInsets.only(
+                                              top: 8,
+                                              bottom: 8,
+                                              left: 8,
+                                              right: 8
+                                          ),
+                                          child: Center(
+                                              child: Text("${orientationlist[index]["name"]}".toUpperCase(),
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                      fontSize: 12,
+                                                      fontFamily: Global.font,
+                                                      color: orientationlist[index]["name"] == selectionOrientation
+                                                          ? primaryColor
+                                                          : secondryColor,
+                                                      fontWeight: FontWeight.normal
+                                                  )
+                                              )
+                                          ),
+                                        ),
+                                        borderSide: BorderSide(
+                                            width: 1,
+                                            style: BorderStyle.solid,
+                                            color: orientationlist[index]["name"] == selectionOrientation
+                                                ? primaryColor
+                                                : secondryColor),
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(25)),
+                                        onPressed: () {
+                                          selectionOrientation = orientationlist[index]["name"];
+                                          setState(() {
+
+                                            var userOrientation = {
+                                              "sexualOrientation": {
+                                                'orientation': selectionOrientation,
+                                                'showOnProfile': widget.currentUser.showingOrientation
+                                              },
+                                            };
+                                            orientationMap.addAll(userOrientation);
+                                          });
+                                        },
+                                      );
+                                    }),
+                                  )
+                              )
+                            ],
+                          ),
+                        ),
+
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 5.0, bottom: 5,
+                              right: 10, left: 10
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                "Status",
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w500),
+                              ),
+
+                              SizedBox(height: 12,),
+
+                              Container(
+                                  height: Get.height * 0.15,
+                                  child: GridView.count(
+                                    physics: NeverScrollableScrollPhysics(),
+                                    // Create a grid with 2 columns. If you change the scrollDirection to
+                                    // horizontal, this produces 2 rows.
+                                    crossAxisCount: 2,
+                                    childAspectRatio: 4/1,
+                                    crossAxisSpacing: 4.0,
+                                    mainAxisSpacing: 8.0,
+                                    // Generate 100 widgets that display their index in the List.
+                                    children: List.generate(listStatus.length, (index) {
+                                      return OutlineButton(
+                                        highlightedBorderColor: primaryColor,
+                                        child: Container(
+                                          // height: MediaQuery.of(context).size.height * .055,
+                                          // width: MediaQuery.of(context).size.width * .65,
+                                          padding: EdgeInsets.only(
+                                              top: 8,
+                                              bottom: 8,
+                                              left: 8,
+                                              right: 8
+                                          ),
+                                          child: Center(
+                                              child: Text("${listStatus[index]["name"]}".toUpperCase(),
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                      fontSize: 12,
+                                                      fontFamily: Global.font,
+                                                      color: listStatus[index]["name"] == selectionStatus
+                                                          ? primaryColor
+                                                          : secondryColor,
+                                                      fontWeight: FontWeight.normal
+                                                  )
+                                              )
+                                          ),
+                                        ),
+                                        borderSide: BorderSide(
+                                            width: 1,
+                                            style: BorderStyle.solid,
+                                            color: listStatus[index]["name"] == selectionStatus
+                                                ? primaryColor
+                                                : secondryColor),
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(25)),
+                                        onPressed: () {
+                                          selectionStatus = listStatus[index]["name"];
+                                          setState(() {
+
+                                            var userStatus = {
+                                              'status': selectionStatus,
+                                            };
+                                            statusMap.addAll(userStatus);
+                                          });
+                                        },
+                                      );
+                                    }),
+                                  )
+                              )
+                            ],
+                          ),
+                        ),
+
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 5.0, bottom: 5,
+                              right: 10, left: 10
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                "I am looking for",
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w500),
+                              ),
+
+                              SizedBox(height: 12,),
+
+                              Container(
+                                  height: Get.height * 0.3,
+                                  child: GridView.count(
+                                    physics: NeverScrollableScrollPhysics(),
+                                    // Create a grid with 2 columns. If you change the scrollDirection to
+                                    // horizontal, this produces 2 rows.
+                                    crossAxisCount: 2,
+                                    childAspectRatio: 4/1,
+                                    crossAxisSpacing: 4.0,
+                                    mainAxisSpacing: 8.0,
+                                    // Generate 100 widgets that display their index in the List.
+                                    children: List.generate(listDesire.length, (index) {
+                                      return OutlineButton(
+                                        highlightedBorderColor: primaryColor,
+                                        child: Container(
+                                          // height: MediaQuery.of(context).size.height * .055,
+                                          // width: MediaQuery.of(context).size.width * .65,
+                                          padding: EdgeInsets.only(
+                                              top: 8,
+                                              bottom: 8,
+                                              left: 8,
+                                              right: 8
+                                          ),
+                                          child: Center(
+                                              child: Text("${listDesire[index]["name"]}".toUpperCase(),
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                      fontSize: 12,
+                                                      fontFamily: Global.font,
+                                                      color: listDesire[index]["ontap"]
+                                                          ? primaryColor
+                                                          : secondryColor,
+                                                      fontWeight: FontWeight.normal
+                                                  )
+                                              )
+                                          ),
+                                        ),
+                                        borderSide: BorderSide(
+                                            width: 1,
+                                            style: BorderStyle.solid,
+                                            color: listDesire[index]["ontap"]
+                                                ? primaryColor
+                                                : secondryColor),
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(25)),
+                                        onPressed: () {
+                                          setState(() {
+
+                                            listDesire[index]["ontap"] = !listDesire[index]["ontap"];
+                                            if (listDesire[index]["ontap"]) {
+                                              selectedDesire.add(listDesire[index]["name"]);
+                                              print(listDesire[index]["name"]);
+                                              print(selectedDesire);
+                                            } else {
+                                              selectedDesire.remove(listDesire[index]["name"]);
+                                              print(selectedDesire);
+                                            }
+                                            desiresMap.addAll({
+                                              'desires': selectedDesire,
+                                            });
+
+                                          });
+                                        },
+                                      );
+                                    }),
+                                  )
+                              )
+                            ],
+                          ),
+                        ),
+
                         SizedBox(
                           height: 100,
                         )
@@ -714,11 +1239,184 @@ class EditProfileState extends State<EditProfile> {
     );
   }
 
-  void _deletePicture(index) async {
+  Future showPrivateImageDialog(BuildContext context2, bool isProfilePicture, UserModel userModel, bool deleted) async{
+    // _deletePicture(index);
+    // print(indexImage);
+    await showDialog<String>(
+      context: context2,
+      builder: (BuildContext context){
+        return StatefulBuilder(builder: (BuildContext context3, StateSetter setState2){
+          return CupertinoAlertDialog(
+            // title: Text('Checklist if you want to show'),
+            // actions: <Widget>[
+            //   // CupertinoDialogAction(
+            //   //   // isDestructiveAction: true,
+            //   //   onPressed: (){
+            //   //     Navigator.of(context).pop;
+            //   //   },
+            //   //   child: new Text('Cancel'),
+            //   // ),
+            //   CupertinoDialogAction(
+            //     // isDestructiveAction: true,
+            //     onPressed: (){
+            //       String show = "true";
+            //       if(selectionChoice == 1){
+            //         show = "false";
+            //       }
+            //       Get.back();
+            //       source(context2, userModel, isProfilePicture, show);
+            //     },
+            //     child: new Text('Ok'),
+            //   ),
+            // ],
+            content: Material(
+              color: Colors.transparent,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+
+                    InkWell(
+                      onTap: () async {
+                        var url = "";
+                        if(widget.currentUser.imageUrl[indexImage].runtimeType == String){
+                          url = widget.currentUser.imageUrl[indexImage];
+                        }else{
+                          url = widget.currentUser.imageUrl[indexImage]['url'];
+                        }
+                        var data = {
+                          "url": url,
+                          "show": "true"
+                        };
+
+                        widget.currentUser.imageUrl.removeAt(indexImage);
+                        widget.currentUser.imageUrl.insert(0,data);
+                        await FirebaseFirestore.instance
+                            .collection("Users")
+                            .doc(widget.currentUser.id)
+                            .set({"Pictures": widget.currentUser.imageUrl},
+                            SetOptions(merge : true)
+
+                        );
+                        setState(() {
+                          Get.back();
+                        });
+                      },
+                      child: Container(
+                          padding: EdgeInsets.only(
+                              left: 18,
+                              right: 18,
+                              top: 10,
+                              bottom: 10
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.redAccent,
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                          ),
+                          child: Text("Set as my profile image",
+                            style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.white
+                            ),
+                          )
+                      ),
+                    ),
+
+
+                    SizedBox(height: 12,),
+
+                    InkWell(
+                      onTap: () async {
+
+                        var url = "";
+                        if(widget.currentUser.imageUrl[indexImage].runtimeType == String){
+                          url = widget.currentUser.imageUrl[indexImage];
+                        }else{
+                          url = widget.currentUser.imageUrl[indexImage]['url'];
+                        }
+                        var data = {
+                          "url": url,
+                          "show": "false"
+                        };
+
+                        widget.currentUser.imageUrl[indexImage] = data;
+                        print(widget.currentUser.imageUrl);
+                        await FirebaseFirestore.instance
+                            .collection("Users")
+                            .doc(widget.currentUser.id)
+                            .set({"Pictures": widget.currentUser.imageUrl},
+                            SetOptions(merge : true)
+
+                        );
+                        setState(() {
+                          Get.back();
+                        });
+
+                      },
+                      child: Container(
+                          padding: EdgeInsets.only(
+                              left: 18,
+                              right: 18,
+                              top: 10,
+                              bottom: 10
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.redAccent,
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                          ),
+                          child: Text("Set this image to private",
+                            style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.white
+                            ),
+                          )
+                      ),
+                    ),
+
+                    SizedBox(height: 12,),
+
+                    InkWell(
+                      onTap: () async {
+                        await _deletePicture(indexImage);
+                        Get.back();
+                      },
+                      child: Container(
+                          padding: EdgeInsets.only(
+                              left: 18,
+                              right: 18,
+                              top: 10,
+                              bottom: 10
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.redAccent,
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                          ),
+                          child: Text("Delete this image",
+                            style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.white
+                            ),
+                          )
+                      ),
+                    ),
+
+                  ],
+                ),
+                // child: Material(
+                //   child: _buildList(setState2),
+                // ),
+              )
+            ),
+          );
+        });
+      },
+      barrierDismissible: true,
+    );
+  }
+
+  Future <void> _deletePicture(index) async {
     if (widget.currentUser.imageUrl[index] != null) {
       try {
-        var _ref = FirebaseStorage.instance
-            .ref(widget.currentUser.imageUrl[index]);
+        var _ref = FirebaseStorage.instance.ref(widget.currentUser.imageUrl[index]);
         print(_ref.fullPath);
         await _ref.delete();
       } catch (e) {

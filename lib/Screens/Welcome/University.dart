@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hookup4u/util/color.dart';
-import 'Welcome/AllowLocation.dart';
+import 'AllowLocation.dart';
 // import 'package:easy_localization/easy_localization.dart';
 
 class University extends StatefulWidget {

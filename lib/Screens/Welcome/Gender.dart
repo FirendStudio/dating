@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/Screens/Welcome/SexualOrientation.dart';
-import 'package:hookup4u/Screens/UserName.dart';
+import 'package:hookup4u/Screens/Welcome/UserName.dart';
 import 'package:hookup4u/util/Global.dart';
 import 'package:hookup4u/util/color.dart';
 import 'package:hookup4u/util/snackbar.dart';
@@ -114,7 +114,7 @@ class _GenderState extends State<Gender> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 SizedBox(
-                  height: Get.height * 0.6,
+                  height: Get.height * 0.7,
                   child: Padding(
                     padding: EdgeInsets.only(
                         left: Get.width * 0.1,
@@ -137,7 +137,7 @@ class _GenderState extends State<Gender> {
                               child: Center(
                                   child: Text("${listGender[index]["name"]}".toUpperCase(),
                                       style: TextStyle(
-                                          color: listGender[index] == selection
+                                          color: listGender[index]['name'] == selection
                                               ? primaryColor
                                               : secondryColor,
                                           fontSize: 18,
@@ -148,13 +148,13 @@ class _GenderState extends State<Gender> {
                             borderSide: BorderSide(
                                 width: 1,
                                 style: BorderStyle.solid,
-                                color: listGender[index] == selection
+                                color: listGender[index]['name'] == selection
                                     ? primaryColor
                                     : secondryColor),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(25)),
                             onPressed: () {
-                              selection = listGender[index];
+                              selection = listGender[index]['name'];
                               print(selection);
                               setState(() {
                                 // if (selected.length < 3) {
@@ -189,24 +189,24 @@ class _GenderState extends State<Gender> {
               ],
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 100.0, left: 10),
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: ListTile(
-                leading: Checkbox(
-                  activeColor: primaryColor,
-                  value: select,
-                  onChanged: (bool newValue) {
-                    setState(() {
-                      select = newValue;
-                    });
-                  },
-                ),
-                title: Text("Show my gender on my profile"),
-              ),
-            ),
-          ),
+          // Padding(
+          //   padding: const EdgeInsets.only(bottom: 100.0, left: 10),
+          //   child: Align(
+          //     alignment: Alignment.bottomCenter,
+          //     child: ListTile(
+          //       leading: Checkbox(
+          //         activeColor: primaryColor,
+          //         value: select,
+          //         onChanged: (bool newValue) {
+          //           setState(() {
+          //             select = newValue;
+          //           });
+          //         },
+          //       ),
+          //       title: Text("Show my gender on my profile"),
+          //     ),
+          //   ),
+          // ),
           selection != null
               ? Padding(
                   padding: const EdgeInsets.only(bottom: 40),
@@ -255,7 +255,7 @@ class _GenderState extends State<Gender> {
                         //   };
                         // }
                         userGender = {
-                          'userGender': "man",
+                          'userGender': selection,
                           'showOnProfile': select
                         };
                         widget.userData.addAll(userGender);

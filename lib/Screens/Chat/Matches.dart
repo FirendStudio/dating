@@ -73,7 +73,9 @@ class Matches extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(90),
                                     child: CachedNetworkImage(
                                       imageUrl:
-                                          matches[index].imageUrl[0] ?? '',
+                                      (matches[index].imageUrl[0].runtimeType == String)?
+                                          matches[index].imageUrl[0]
+                                          :matches[index].imageUrl[0]['url']?? '',
                                       useOldImageOnUrlChange: true,
                                       placeholder: (context, url) =>
                                           CupertinoActivityIndicator(

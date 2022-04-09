@@ -1,16 +1,20 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:firebase_admob/firebase_admob.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:hookup4u/Screens/Tab.dart';
-import 'package:hookup4u/Screens/UpdateLocation.dart';
+import 'package:hookup4u/Screens/Welcome/UpdateLocation.dart';
 import 'package:hookup4u/Screens/auth/login.dart';
 import 'package:hookup4u/ads/ads.dart';
 import 'package:hookup4u/models/user_model.dart';
 import 'package:hookup4u/util/color.dart';
 import 'package:share/share.dart';
+import '../../util/Global.dart';
 import 'UpdateNumber.dart';
 // import 'package:easy_localization/easy_localization.dart';
 
@@ -26,7 +30,31 @@ class Settings extends StatefulWidget {
 
 class _SettingsState extends State<Settings> {
   Map<String, dynamic> changeValues = {};
+  List<Map<String, dynamic>> listShowMe = [
+    {'name': 'men', 'ontap': false},
+    {'name': 'women', 'ontap': false},
+    {'name': 'man + woman couples', 'ontap': false},
+    {'name': 'man + man couples', 'ontap': false},
+    {'name': 'woman + woman couples', 'ontap': false},
+    {'name': 'gender fluid', 'ontap': false},
+    {'name': 'gender non conforming', 'ontap': false},
+    {'name': 'gender queer', 'ontap': false},
+    {'name': 'agender', 'ontap': false},
+    {'name': 'androgynous', 'ontap': false},
+    {'name': 'bigender', 'ontap': false},
+    {'name': 'gender questioning', 'ontap': false},
+    {'name': 'intersex', 'ontap': false},
+    {'name': 'non-binary', 'ontap': false},
+    {'name': 'pangender', 'ontap': false},
+    {'name': 'trans human', 'ontap': false},
+    {'name': 'trans man', 'ontap': false},
+    {'name': 'trans woman', 'ontap': false},
+    {'name': 'transfeminime', 'ontap': false},
+    {'name': 'transmasculine', 'ontap': false},
+    {'name': 'two-spirit', 'ontap': false},
+  ];
 
+  List selected = [];
   RangeValues ageRange;
   var _showMe;
   int distance;
@@ -60,13 +88,35 @@ class _SettingsState extends State<Settings> {
   int freeR;
   int paidR;
 
+  initData(){
+
+    print(widget.currentUser.showMe);
+    for(int i = 0; i<=widget.currentUser.showMe.length-1; i++){
+      selected.add(widget.currentUser.showMe[i]);
+
+      for(int j=0; j<=listShowMe.length-1; j++){
+        if(widget.currentUser.showMe[i] == listShowMe[j]['name']){
+          listShowMe[j]['ontap'] = true;
+          break;
+        }
+      }
+
+    }
+
+  }
+
   @override
   void initState() {
     // _ad = _ads.myBanner();
     super.initState();
+    initData();
     // _ad
     //   ..load()
     //   ..show();
+    // var a = jsonDecode(widget.currentUser.showGender);
+    // print(a[0]); // print one
+
+
     freeR = widget.items['free_radius'] != null
         ? int.parse(widget.items['free_radius'])
         : 400;
@@ -82,7 +132,7 @@ class _SettingsState extends State<Settings> {
         widget.currentUser.maxDistance = paidR.round();
         changeValues.addAll({'maximum_distance': paidR.round()});
       }
-      _showMe = widget.currentUser.showGender;
+      _showMe = widget.currentUser.showMe;
       distance = widget.currentUser.maxDistance.round();
       ageRange = RangeValues(double.parse(widget.currentUser.ageRange['min']),
           (double.parse(widget.currentUser.ageRange['max'])));
@@ -122,7 +172,7 @@ class _SettingsState extends State<Settings> {
                   padding: const EdgeInsets.all(12.0),
                   child: Text(
                     "Account settings",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
                 ListTile(
@@ -168,7 +218,7 @@ class _SettingsState extends State<Settings> {
                   padding: const EdgeInsets.all(10.0),
                   child: Text(
                     "Discovery settings",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
                 Padding(
@@ -242,60 +292,101 @@ class _SettingsState extends State<Settings> {
                     style: TextStyle(color: Colors.black54),
                   ),
                 ),
+
                 Padding(
                   padding: const EdgeInsets.all(10.0),
-                  child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            "Show me",
-                            style: TextStyle(
-                                fontSize: 18,
-                                color: primaryColor,
-                                fontWeight: FontWeight.w500),
-                          ),
-                          // ListTile(
-                          //   title: DropdownButton(
-                          //     iconEnabledColor: primaryColor,
-                          //     iconDisabledColor: secondryColor,
-                          //     isExpanded: true,
-                          //     items: [
-                          //       DropdownMenuItem(
-                          //         child: Text("Man"),
-                          //         value: "man",
-                          //       ),
-                          //       DropdownMenuItem(
-                          //           child: Text("Woman"),
-                          //           value: "woman"),
-                          //       DropdownMenuItem(
-                          //           child: Text("Everyone"),
-                          //           value: "everyone"),
-                          //       {'name': 'men', 'ontap': false},
-                          //       {'name': 'woman', 'ontap': false},
-                          //       {'name': 'man + woman couples', 'ontap': false},
-                          //       {'name': 'man + man couples', 'ontap': false},
-                          //       {'name': 'woman + woman couples', 'ontap': false},
-                          //       {'name': 'gender fluid', 'ontap': false},
-                          //       {'name': 'gender non conforming', 'ontap': false},
-                          //       {'name': 'gender queer', 'ontap': false},
-                          //     ],
-                          //     onChanged: (val) {
-                          //       changeValues.addAll({
-                          //         'showGender': val,
-                          //       });
-                          //       setState(() {
-                          //         _showMe = val;
-                          //       });
-                          //     },
-                          //     value: _showMe,
-                          //   ),
-                          // ),
-                        ],
+                  child: Text(
+                    "Search Settings",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ),
+
+                Padding(
+                  padding: const EdgeInsets.only(
+                      top: 5.0, bottom: 5,
+                    right: 10, left: 10
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Text(
+                        "Show me",
+                        style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500),
                       ),
-                    ),
+
+                      SizedBox(height: 12,),
+
+                      Container(
+                        height: Get.height * 0.9,
+                        child: GridView.count(
+                          physics: NeverScrollableScrollPhysics(),
+                          // Create a grid with 2 columns. If you change the scrollDirection to
+                          // horizontal, this produces 2 rows.
+                          crossAxisCount: 2,
+                          childAspectRatio: 4/1,
+                          crossAxisSpacing: 4.0,
+                          mainAxisSpacing: 8.0,
+                          // Generate 100 widgets that display their index in the List.
+                          children: List.generate(listShowMe.length, (index) {
+                            return OutlineButton(
+                              highlightedBorderColor: primaryColor,
+                              child: Container(
+                                // height: MediaQuery.of(context).size.height * .055,
+                                // width: MediaQuery.of(context).size.width * .65,
+                                padding: EdgeInsets.only(
+                                    top: 8,
+                                    bottom: 8,
+                                    left: 8,
+                                    right: 8
+                                ),
+                                child: Center(
+                                    child: Text("${listShowMe[index]["name"]}".toUpperCase(),
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 12,
+                                            fontFamily: Global.font,
+                                            color: listShowMe[index]["ontap"]
+                                                ? primaryColor
+                                                : secondryColor,
+                                            fontWeight: FontWeight.normal
+                                        )
+                                    )
+                                ),
+                              ),
+                              borderSide: BorderSide(
+                                  width: 1,
+                                  style: BorderStyle.solid,
+                                  color: listShowMe[index]["ontap"]
+                                      ? primaryColor
+                                      : secondryColor),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(25)),
+                              onPressed: () {
+                                setState(() {
+
+                                  listShowMe[index]["ontap"] = !listShowMe[index]["ontap"];
+                                  if (listShowMe[index]["ontap"]) {
+                                    selected.add(listShowMe[index]["name"]);
+                                    print(listShowMe[index]["name"]);
+                                    print(selected);
+                                  } else {
+                                    selected.remove(listShowMe[index]["name"]);
+                                    print(selected);
+                                  }
+                                  changeValues.addAll({
+                                    'showGender': selected,
+                                  });
+
+                                });
+                              },
+                            );
+                          }),
+                        )
+                      )
+                    ],
                   ),
                 ),
                 Padding(
@@ -378,7 +469,7 @@ class _SettingsState extends State<Settings> {
                 ListTile(
                   title: Text(
                     "App settings",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   subtitle: Card(
                     child: Padding(

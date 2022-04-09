@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mapbox_autocomplete/flutter_mapbox_autocomplete.dart';
-import 'package:hookup4u/Screens/seach_location.dart';
+import 'package:hookup4u/Screens/Welcome/seach_location.dart';
 import 'package:location/location.dart' as loc;
 import 'package:geocoder/geocoder.dart';
 // import 'package:easy_localization/easy_localization.dart';

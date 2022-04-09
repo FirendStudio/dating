@@ -109,7 +109,9 @@ class _ProfileState extends State<Profile> {
                                 width: 150,
                                 fit: BoxFit.fill,
                                 imageUrl: widget.currentUser.imageUrl.length > 0
-                                    ? widget.currentUser.imageUrl[0] ?? ''
+                                    ?widget.currentUser.imageUrl[0].runtimeType == String?
+                                    widget.currentUser.imageUrl[0] :
+                                    widget.currentUser.imageUrl[0]['url']?? ''
                                     : '',
                                 useOldImageOnUrlChange: true,
                                 placeholder: (context, url) =>
@@ -150,8 +152,9 @@ class _ProfileState extends State<Profile> {
                                   color: Colors.white,
                                 ),
                                 onPressed: () {
+                                  // _editProfileState.showPrivateImageDialog(context, true, widget.currentUser);
                                   _editProfileState.source(
-                                      context, widget.currentUser, true);
+                                      context, widget.currentUser, true, "true");
                                 }),
                           ),
                         ),
@@ -213,8 +216,9 @@ class _ProfileState extends State<Profile> {
                                   size: 32,
                                 ),
                                 onPressed: () {
+                                  // _editProfileState.showPrivateImageDialog(context, false, widget.currentUser, false);
                                   _editProfileState.source(
-                                      context, widget.currentUser, false);
+                                      context, widget.currentUser, false, "true");
                                 }),
                           ),
                           Padding(

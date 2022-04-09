@@ -120,21 +120,10 @@ class _CardPicturesState extends State<CardPictures>
                                                         (BuildContext context,
                                                             int index2) {
                                                       return Container(
-                                                        height: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .height *
-                                                            .78,
-                                                        width: MediaQuery.of(
-                                                                context)
-                                                            .size
-                                                            .width,
-                                                        child:
-                                                            CachedNetworkImage(
-                                                          imageUrl:
-                                                              index.imageUrl[
-                                                                      index2] ??
-                                                                  "",
+                                                        height: MediaQuery.of(context).size.height * .78,
+                                                        width: MediaQuery.of(context).size.width,
+                                                        child: CachedNetworkImage(
+                                                            imageUrl: index.imageUrl[index2]['url'] ?? "",
                                                           fit: BoxFit.cover,
                                                           useOldImageOnUrlChange:
                                                               true,
@@ -153,17 +142,13 @@ class _CardPicturesState extends State<CardPictures>
                                                         // ),
                                                       );
                                                     },
-                                                    itemCount:
-                                                        index.imageUrl.length,
+                                                    itemCount: index.imageUrl.length,
                                                     pagination: new SwiperPagination(
-                                                        alignment: Alignment
-                                                            .bottomCenter,
+                                                        alignment: Alignment.bottomCenter,
                                                         builder: DotSwiperPaginationBuilder(
                                                             activeSize: 13,
-                                                            color:
-                                                                secondryColor,
-                                                            activeColor:
-                                                                primaryColor)),
+                                                            color: secondryColor,
+                                                            activeColor: primaryColor)),
                                                     control: new SwiperControl(
                                                       color: primaryColor,
                                                       disableColor:
@@ -271,7 +256,8 @@ class _CardPicturesState extends State<CardPictures>
                                                                 });
                                                           },
                                                           title: Text(
-                                                            "${index.name}, ${index.editInfo['showMyAge'] != null ? !index.editInfo['showMyAge'] ? index.age : "" : index.age}",
+                                                            // "${index.name}, ${index.editInfo['showMyAge'] != null ? !index.editInfo['showMyAge'] ? index.age : "" : index.age}",
+                                                            index.age.toString(),
                                                             style: TextStyle(
                                                                 color: Colors
                                                                     .white,
@@ -377,12 +363,9 @@ class _CardPicturesState extends State<CardPictures>
                                           {
                                             'Matches': widget.users[index].id,
                                             'isRead': false,
-                                            'userName':
-                                                widget.users[index].name,
-                                            'pictureUrl':
-                                                widget.users[index].imageUrl[0],
-                                            'timestamp':
-                                                FieldValue.serverTimestamp()
+                                            'userName': widget.users[index].name,
+                                            'pictureUrl': (widget.users[index].imageUrl[0].runtimeType == String)?widget.users[index].imageUrl[0]:widget.users[index].imageUrl[0]['url'],
+                                            'timestamp': FieldValue.serverTimestamp()
                                           },
                                             SetOptions(merge : true)
                                         );
@@ -394,11 +377,9 @@ class _CardPicturesState extends State<CardPictures>
                                           {
                                             'Matches': widget.currentUser.id,
                                             'userName': widget.currentUser.name,
-                                            'pictureUrl':
-                                                widget.currentUser.imageUrl[0],
+                                            'pictureUrl': (widget.currentUser.imageUrl[0].runtimeType == String)?widget.currentUser.imageUrl[0] : widget.currentUser.imageUrl[0]['url'],
                                             'isRead': false,
-                                            'timestamp':
-                                                FieldValue.serverTimestamp()
+                                            'timestamp': FieldValue.serverTimestamp()
                                           },
                                             SetOptions(merge : true)
                                         );
@@ -547,7 +528,7 @@ class _CardPicturesState extends State<CardPictures>
                                       color: primaryColor,
                                     ),
                                     Text(
-                                      "you have already used the maximum number of free available swipes for 24 hrs.",
+                                      "You have already used the maximum number of free available swipes for 24 hrs.",
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
@@ -563,7 +544,7 @@ class _CardPicturesState extends State<CardPictures>
                                       ),
                                     ),
                                     Text(
-                                      "For swipe more users just subscribe our premium plans.",
+                                      "To swipe more users please subscribe to one of our premium plans",
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
                                           color: primaryColor,

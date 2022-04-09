@@ -41,7 +41,7 @@ class _SexualOrientationState extends State<SexualOrientation> {
   String other_text = "other";
   var selection;
 
-  List selected = [];
+  // List selected = [];
   bool select = false;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
@@ -184,20 +184,20 @@ class _SexualOrientationState extends State<SexualOrientation> {
                 ),
                 child: Column(
                   children: <Widget>[
-                    ListTile(
-                      leading: Checkbox(
-                        activeColor: primaryColor,
-                        value: select,
-                        onChanged: (bool newValue) {
-                          setState(() {
-                            select = newValue;
-                          });
-                        },
-                      ),
-                      title: Text("Show my orientation on my profile",
-
-                      ),
-                    ),
+                    // ListTile(
+                    //   leading: Checkbox(
+                    //     activeColor: primaryColor,
+                    //     value: select,
+                    //     onChanged: (bool newValue) {
+                    //       setState(() {
+                    //         select = newValue;
+                    //       });
+                    //     },
+                    //   ),
+                    //   title: Text("Show my orientation on my profile",
+                    //
+                    //   ),
+                    // ),
                     selection != null
                         ? Padding(
                       padding: const EdgeInsets.only(bottom: 40),
@@ -232,7 +232,7 @@ class _SexualOrientationState extends State<SexualOrientation> {
                           onTap: () {
                             widget.userData.addAll({
                               "sexualOrientation": {
-                                'orientation': selected,
+                                'orientation': selection,
                                 'showOnProfile': select
                               },
                             });

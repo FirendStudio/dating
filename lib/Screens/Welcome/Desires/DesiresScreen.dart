@@ -220,52 +220,12 @@ class _DesiresScreen extends State<DesiresScreen> {
                                     ),
                                   ))),
                           onTap: () {
-                            // widget.userData.addAll({
-                            //   "showMe": {
-                            //     'showme': selected,
-                            //     // 'showOnProfile': select
-                            //   },
-                            // });
-                            // print(widget.userData);
-                            // Navigator.push(
-                            //     context,
-                            //     CupertinoPageRoute(
-                            //         builder: (context) =>
-                            //             ShowMe(widget.userData)
-                            //     )
-                            // );
-
-                            // if (man) {
-                            //   widget.userData.addAll({'showGender': "man"});
-                            // } else if (woman) {
-                            //   widget.userData.addAll({'showGender': "woman"});
-                            // } else if(eyeryone){
-                            //   widget.userData.addAll({'showGender': "everyone"});
-                            // }else{
-                            //   widget.userData.addAll({'showGender': more_text});
-                            // }
                             widget.userData.addAll(
                                 {
                                   'desires': selected,
                                   'showdesires': select
                                 }
                             );
-                            print(widget.userData);
-                            // Navigator.push(
-                            //     context,
-                            //     CupertinoPageRoute(
-                            //         builder: (context) =>
-                            //             University(widget.userData)));
-                            // widget.userData.addAll({
-                            //   'editInfo': {
-                            //     'university': "",
-                            //     'userGender': widget.userData['userGender'],
-                            //     'showOnProfile':
-                            //     widget.userData['showOnProfile']
-                            //   }
-                            // });
-                            // widget.userData.remove('showOnProfile');
-                            // widget.userData.remove('userGender');
 
                             print(widget.userData);
                             Navigator.push(

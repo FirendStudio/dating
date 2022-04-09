@@ -54,7 +54,7 @@ class Info extends StatelessWidget {
                             ? Hero(
                                 tag: "abc",
                                 child: CachedNetworkImage(
-                                  imageUrl: user.imageUrl[index2] ?? '',
+                                  imageUrl: (user.imageUrl[index2].runtimeType == String)?user.imageUrl[0] : user.imageUrl[index2]['url'] ?? '',
                                   fit: BoxFit.cover,
                                   useOldImageOnUrlChange: true,
                                   placeholder: (context, url) =>

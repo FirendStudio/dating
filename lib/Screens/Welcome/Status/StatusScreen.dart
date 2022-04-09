@@ -92,7 +92,7 @@ class _StatusScreen extends State<StatusScreen> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     SizedBox(
-                      height: Get.height * 0.6,
+                      height: Get.height * 0.7,
                       child: Padding(
                         padding: EdgeInsets.only(
                             left: Get.width * 0.1,
@@ -115,7 +115,7 @@ class _StatusScreen extends State<StatusScreen> {
                                   child: Center(
                                       child: Text("${listStatus[index]["name"]}".toUpperCase(),
                                           style: TextStyle(
-                                              color: listStatus[index] == selection
+                                              color: listStatus[index]["name"] == selection
                                                   ? primaryColor
                                                   : secondryColor,
                                               fontSize: 18,
@@ -126,13 +126,13 @@ class _StatusScreen extends State<StatusScreen> {
                                 borderSide: BorderSide(
                                     width: 1,
                                     style: BorderStyle.solid,
-                                    color: listStatus[index] == selection
+                                    color: listStatus[index]["name"] == selection
                                         ? primaryColor
                                         : secondryColor),
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(25)),
                                 onPressed: () {
-                                  selection = listStatus[index];
+                                  selection = listStatus[index]["name"];
                                   print(selection);
                                   setState(() {
                                     // if (selected.length < 3) {
@@ -176,18 +176,18 @@ class _StatusScreen extends State<StatusScreen> {
                 ),
                 child: Column(
                   children: <Widget>[
-                    ListTile(
-                      leading: Checkbox(
-                        activeColor: primaryColor,
-                        value: select,
-                        onChanged: (bool newValue) {
-                          setState(() {
-                            select = newValue;
-                          });
-                        },
-                      ),
-                      title: Text("Show my status on my profile"),
-                    ),
+                    // ListTile(
+                    //   leading: Checkbox(
+                    //     activeColor: primaryColor,
+                    //     value: select,
+                    //     onChanged: (bool newValue) {
+                    //       setState(() {
+                    //         select = newValue;
+                    //       });
+                    //     },
+                    //   ),
+                    //   title: Text("Show my status on my profile"),
+                    // ),
                     selection != null
                         ? Padding(
                       padding: const EdgeInsets.only(bottom: 40),
@@ -220,52 +220,12 @@ class _StatusScreen extends State<StatusScreen> {
                                         fontWeight: FontWeight.bold),
                                   ))),
                           onTap: () {
-                            // widget.userData.addAll({
-                            //   "showMe": {
-                            //     'showme': selected,
-                            //     // 'showOnProfile': select
-                            //   },
-                            // });
-                            // print(widget.userData);
-                            // Navigator.push(
-                            //     context,
-                            //     CupertinoPageRoute(
-                            //         builder: (context) =>
-                            //             ShowMe(widget.userData)
-                            //     )
-                            // );
-
-                            // if (man) {
-                            //   widget.userData.addAll({'showGender': "man"});
-                            // } else if (woman) {
-                            //   widget.userData.addAll({'showGender': "woman"});
-                            // } else if(eyeryone){
-                            //   widget.userData.addAll({'showGender': "everyone"});
-                            // }else{
-                            //   widget.userData.addAll({'showGender': more_text});
-                            // }
                             widget.userData.addAll(
                                 {
                                   'status': selection,
                                   'showstatus': select
                                 }
                             );
-                            print(widget.userData);
-                            // Navigator.push(
-                            //     context,
-                            //     CupertinoPageRoute(
-                            //         builder: (context) =>
-                            //             University(widget.userData)));
-                            // widget.userData.addAll({
-                            //   'editInfo': {
-                            //     'university': "",
-                            //     'userGender': widget.userData['userGender'],
-                            //     'showOnProfile':
-                            //     widget.userData['showOnProfile']
-                            //   }
-                            // });
-                            // widget.userData.remove('showOnProfile');
-                            // widget.userData.remove('userGender');
 
                             print(widget.userData);
                             Navigator.push(
