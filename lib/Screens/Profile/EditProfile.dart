@@ -15,7 +15,6 @@ import 'package:hookup4u/util/color.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
-
 import '../../util/Global.dart';
 // import 'package:easy_localization/easy_localization.dart';
 
@@ -99,8 +98,25 @@ class EditProfileState extends State<EditProfile> {
     {'name': 'threesome', 'ontap': false},
   ];
 
+  List<Map<String, dynamic>> listKinks = [
+    {'name': 'role play', 'ontap': false},
+    {'name': 'rope bondage', 'ontap': false},
+    {'name': 'voyeurisms', 'ontap': false},
+    {'name': 'exhibitionism', 'ontap': false},
+    {'name': 'foot fetish', 'ontap': false},
+    {'name': 'bdsm', 'ontap': false},
+    {'name': 'dominant', 'ontap': false},
+    {'name': 'submissive', 'ontap': false},
+    {'name': 'switch', 'ontap': false},
+    {'name': 'edge play', 'ontap': false},
+    {'name': 'hot wifer', 'ontap': false},
+    {'name': 'cuckolding', 'ontap': false},
+  ];
+
   var selectionGender, selectionOrientation, selectionStatus;
   List selectedDesire = [];
+  List selectedKinks = [];
+  List selectedInterest = [];
 
   int selectionChoice = 0;
 
@@ -109,6 +125,8 @@ class EditProfileState extends State<EditProfile> {
   Map<String, dynamic> orientationMap = {};
   Map<String, dynamic> statusMap = {};
   Map<String, dynamic> desiresMap = {};
+  Map<String, dynamic> kinksMap = {};
+  Map<String, dynamic> interestMap = {};
   int indexImage = 0;
   // Ads _ads = new Ads();
   // BannerAd _ad;
@@ -140,16 +158,41 @@ class EditProfileState extends State<EditProfile> {
     selectionOrientation = widget.currentUser.sexualOrientation;
     selectionStatus = widget.currentUser.status;
     print(widget.currentUser.desires);
-    for(int i = 0; i<=widget.currentUser.desires.length-1; i++){
-      selectedDesire.add(widget.currentUser.desires[i]);
+    //init Desires
+    if(widget.currentUser.desires.isNotEmpty){
+      for(int i = 0; i<=widget.currentUser.desires.length-1; i++){
+        selectedDesire.add(widget.currentUser.desires[i]);
 
-      for(int j=0; j<=listDesire.length-1; j++){
-        if(widget.currentUser.desires[i] == listDesire[j]['name']){
-          listDesire[j]['ontap'] = true;
-          break;
+        for(int j=0; j<=listDesire.length-1; j++){
+          if(widget.currentUser.desires[i] == listDesire[j]['name']){
+            listDesire[j]['ontap'] = true;
+            break;
+          }
         }
-      }
 
+      }
+    }
+
+    //init Interest
+    if(widget.currentUser.interest.isNotEmpty){
+      for(int i = 0; i<=widget.currentUser.interest.length-1; i++){
+        selectedInterest.add(widget.currentUser.interest[i]);
+      }
+    }
+
+    //init Desires
+    if(widget.currentUser.desires.isNotEmpty){
+      for(int i = 0; i<=widget.currentUser.desires.length-1; i++){
+        selectedDesire.add(widget.currentUser.desires[i]);
+
+        for(int j=0; j<=listDesire.length-1; j++){
+          if(widget.currentUser.desires[i] == listDesire[j]['name']){
+            listDesire[j]['ontap'] = true;
+            break;
+          }
+        }
+
+      }
     }
 
   }
@@ -180,6 +223,14 @@ class EditProfileState extends State<EditProfile> {
 
     if(desiresMap.length > 0){
       updateMap.addAll(desiresMap);
+    }
+
+    if(interestMap.length > 0){
+      updateMap.addAll(interestMap);
+    }
+
+    if(kinksMap.length > 0){
+      updateMap.addAll(kinksMap);
     }
 
     if(updateMap.length > 0 ){
@@ -600,12 +651,18 @@ class EditProfileState extends State<EditProfile> {
 
                                                     }else{
                                                       indexImage = index;
+                                                      bool show = true;
+                                                      if(widget.currentUser.imageUrl[index].runtimeType == String || widget.currentUser.imageUrl[index]['show'] == "true"){
+                                                        show = true;
+                                                      }else{
+                                                        show = false;
+                                                      }
                                                       if (widget.currentUser.imageUrl.length > 1) {
                                                         // _deletePicture(index);
 
-                                                        showPrivateImageDialog(context, true, widget.currentUser, true);
+                                                        showPrivateImageDialog(context, true, widget.currentUser, true, show);
                                                       } else {
-                                                        showPrivateImageDialog(context, true, widget.currentUser, true);
+                                                        showPrivateImageDialog(context, true, widget.currentUser, true, show);
                                                         // source(context, widget.currentUser, true);
                                                       }
                                                     }
@@ -619,7 +676,13 @@ class EditProfileState extends State<EditProfile> {
                                                     color: Colors.white,
                                                   ),
                                                   onTap: () {
-                                                    showPrivateImageDialog(context, true, widget.currentUser, true);
+                                                    bool show = false;
+                                                    if(widget.currentUser.imageUrl[index].runtimeType == String || widget.currentUser.imageUrl[index]['show'] == "true"){
+                                                      show = true;
+                                                    }else{
+                                                      show = false;
+                                                    }
+                                                    showPrivateImageDialog(context, true, widget.currentUser, true, show);
                                                     // source(context, widget.currentUser, false);
                                                   }
                                                 )),
@@ -979,7 +1042,7 @@ class EditProfileState extends State<EditProfile> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
                               Text(
-                                "Sex Orientation",
+                                "Sexual Orientation",
                                 style: TextStyle(
                                     fontSize: 18,
                                     color: Colors.black,
@@ -1148,7 +1211,8 @@ class EditProfileState extends State<EditProfile> {
                                 style: TextStyle(
                                     fontSize: 18,
                                     color: Colors.black,
-                                    fontWeight: FontWeight.w500),
+                                    fontWeight: FontWeight.w500
+                                ),
                               ),
 
                               SizedBox(height: 12,),
@@ -1224,6 +1288,202 @@ class EditProfileState extends State<EditProfile> {
                           ),
                         ),
 
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 5.0, bottom: 5,
+                              right: 10, left: 10
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                "Kinks & Desires",
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w500
+                                ),
+                              ),
+
+                              SizedBox(height: 12,),
+
+                              Container(
+                                  height: Get.height * 0.45,
+                                  child: GridView.count(
+                                    physics: NeverScrollableScrollPhysics(),
+                                    // Create a grid with 2 columns. If you change the scrollDirection to
+                                    // horizontal, this produces 2 rows.
+                                    crossAxisCount: 2,
+                                    childAspectRatio: 4/1,
+                                    crossAxisSpacing: 4.0,
+                                    mainAxisSpacing: 8.0,
+                                    // Generate 100 widgets that display their index in the List.
+                                    children: List.generate(listKinks.length, (index) {
+                                      return OutlineButton(
+                                        highlightedBorderColor: primaryColor,
+                                        child: Container(
+                                          // height: MediaQuery.of(context).size.height * .055,
+                                          // width: MediaQuery.of(context).size.width * .65,
+                                          padding: EdgeInsets.only(
+                                              top: 8,
+                                              bottom: 8,
+                                              left: 8,
+                                              right: 8
+                                          ),
+                                          child: Center(
+                                              child: Text(listKinks[index]["name"].toUpperCase(),
+                                                  textAlign: TextAlign.center,
+                                                  style: TextStyle(
+                                                      fontSize: 12,
+                                                      fontFamily: Global.font,
+                                                      color: listKinks[index]["ontap"]
+                                                          ? primaryColor
+                                                          : secondryColor,
+                                                      fontWeight: FontWeight.normal
+                                                  )
+                                              )
+                                          ),
+                                        ),
+                                        borderSide: BorderSide(
+                                            width: 1,
+                                            style: BorderStyle.solid,
+                                            color: listKinks[index]["ontap"]
+                                                ? primaryColor
+                                                : secondryColor),
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(25)),
+                                        onPressed: () {
+                                          setState(() {
+
+                                            listKinks[index]["ontap"] = !listKinks[index]["ontap"];
+                                            if (listKinks[index]["ontap"]) {
+                                              selectedKinks.add(listKinks[index]["name"]);
+                                              print(listKinks[index]["name"]);
+                                              print(selectedKinks);
+                                            } else {
+                                              selectedKinks.remove(listKinks[index]["name"]);
+                                              print(selectedKinks);
+                                            }
+                                            kinksMap.addAll({
+                                              'kinks': selectedKinks,
+                                            });
+
+                                          });
+                                        },
+                                      );
+                                    }),
+                                  )
+                              )
+                            ],
+                          ),
+                        ),
+
+                        Padding(
+                          padding: const EdgeInsets.only(
+                              top: 5.0, bottom: 5,
+                              right: 10, left: 10
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                "Interest",
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    color: Colors.black,
+                                    fontWeight: FontWeight.w500
+                                ),
+                              ),
+
+                              SizedBox(height:12),
+
+                              if(selectedInterest.isNotEmpty)
+                                for(int i=0; i<=selectedInterest.length-1; i++)
+                                  Container(
+                                    padding: EdgeInsets.only(
+                                        left: 8,
+                                        right: 8,
+                                        top: 8,
+                                        bottom: 8
+                                    ),
+                                    margin: EdgeInsets.only(
+                                      bottom: 10
+                                    ),
+                                    decoration: BoxDecoration(
+                                        border: Border.all(
+                                          color: Colors.grey[500],
+                                        ),
+                                        borderRadius: BorderRadius.all(Radius.circular(5))
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          flex: 5,
+                                          child: Text(
+                                              selectedInterest[i]
+                                          )
+                                        ),
+                                        Expanded(
+                                            flex: 1,
+                                            child: IconButton(
+                                              onPressed:(){
+                                                print("Cek");
+                                                selectedInterest.removeAt(i);
+                                                print(selectedInterest);
+                                                interestMap.addAll({
+                                                  'interest': selectedInterest,
+                                                });
+                                                setState(() {
+
+                                                });
+                                              },
+                                              icon:Icon(Icons.cancel)
+                                            )
+                                        )
+
+                                      ],
+                                    ),
+                                  ),
+
+                              SizedBox(
+                                height: 5,
+                              ),
+
+
+                              InkWell(
+                                onTap: () async {
+                                  await dialogInterest(context);
+                                },
+                                child: Row(
+                                  children: [
+
+                                    Expanded(
+                                        flex: 1,
+                                        child:Icon(
+                                          Icons.add,
+                                          color: Colors.green[600],
+                                        )
+                                    ),
+
+                                    Expanded(
+                                        flex: 5,
+                                        child:Text(
+                                          "Add new interest",
+                                          style: TextStyle(
+                                              color: Colors.green[600],
+                                              fontSize: 15
+                                          ),
+                                        )
+                                    ),
+
+                                  ],
+                                )
+                              )
+
+                            ],
+                          ),
+                        ),
+
                         SizedBox(
                           height: 100,
                         )
@@ -1239,36 +1499,73 @@ class EditProfileState extends State<EditProfile> {
     );
   }
 
-  Future showPrivateImageDialog(BuildContext context2, bool isProfilePicture, UserModel userModel, bool deleted) async{
-    // _deletePicture(index);
-    // print(indexImage);
+  dialogInterest(BuildContext context2) async {
+    TextEditingController interestText = TextEditingController();
+    ArtDialogResponse response = await ArtSweetAlert.show(
+        barrierDismissible: false,
+        context: context2,
+        artDialogArgs: ArtDialogArgs(
+          showCancelBtn: true,
+          // denyButtonText: "Cancel",
+          title: "Enter your interest",
+          confirmButtonText: "Save",
+          customColumns: [
+
+            Container(
+              padding: EdgeInsets.fromLTRB(10,2,10,2),
+              decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(5),
+                  border: Border.all(color: Colors.red)
+              ),
+              child: TextField(
+
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  labelText: "Your interest",
+                ),
+                controller: interestText,
+              ),
+            ),
+
+            SizedBox(height: 20,)
+
+          ]
+        )
+    );
+
+    if(response==null) {
+      return;
+    }
+
+    if(response.isTapConfirmButton) {
+      setState(() {
+        selectedInterest.add(interestText.text);
+
+        interestMap.addAll({
+          'interest': selectedInterest,
+        });
+      });
+      ArtSweetAlert.show(
+          context: context,
+          artDialogArgs: ArtDialogArgs(
+              type: ArtSweetAlertType.success,
+              title: "Saved!"
+          )
+      );
+      return;
+    }
+
+  }
+
+  Future showPrivateImageDialog(BuildContext context2, bool isProfilePicture, UserModel userModel, bool deleted,
+      bool show) async{
+
+    // print(show);
     await showDialog<String>(
       context: context2,
       builder: (BuildContext context){
         return StatefulBuilder(builder: (BuildContext context3, StateSetter setState2){
           return CupertinoAlertDialog(
-            // title: Text('Checklist if you want to show'),
-            // actions: <Widget>[
-            //   // CupertinoDialogAction(
-            //   //   // isDestructiveAction: true,
-            //   //   onPressed: (){
-            //   //     Navigator.of(context).pop;
-            //   //   },
-            //   //   child: new Text('Cancel'),
-            //   // ),
-            //   CupertinoDialogAction(
-            //     // isDestructiveAction: true,
-            //     onPressed: (){
-            //       String show = "true";
-            //       if(selectionChoice == 1){
-            //         show = "false";
-            //       }
-            //       Get.back();
-            //       source(context2, userModel, isProfilePicture, show);
-            //     },
-            //     child: new Text('Ok'),
-            //   ),
-            // ],
             content: Material(
               color: Colors.transparent,
               child: SingleChildScrollView(
@@ -1333,9 +1630,10 @@ class EditProfileState extends State<EditProfile> {
                         }else{
                           url = widget.currentUser.imageUrl[indexImage]['url'];
                         }
+                        bool showPhotos = !show;
                         var data = {
                           "url": url,
-                          "show": "false"
+                          "show": showPhotos.toString()
                         };
 
                         widget.currentUser.imageUrl[indexImage] = data;
@@ -1363,7 +1661,9 @@ class EditProfileState extends State<EditProfile> {
                             color: Colors.redAccent,
                             borderRadius: BorderRadius.all(Radius.circular(10)),
                           ),
-                          child: Text("Set this image to private",
+                          child: Text((!show)?
+                            "Set this image to public":
+                            "Set this image to private",
                             style: TextStyle(
                                 fontSize: 14,
                                 color: Colors.white
@@ -1401,9 +1701,7 @@ class EditProfileState extends State<EditProfile> {
 
                   ],
                 ),
-                // child: Material(
-                //   child: _buildList(setState2),
-                // ),
+
               )
             ),
           );

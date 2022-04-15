@@ -22,6 +22,8 @@ class UserModel {
   var distanceBW;
   final String status;
   final List desires;
+  final List kinks;
+  final List interest;
   UserModel({
     @required this.id,
     @required this.age,
@@ -43,11 +45,10 @@ class UserModel {
     this.showingOrientation,
     this.status,
     this.desires,
+    this.kinks,
+    this.interest,
   });
   factory UserModel.fromDocument(DocumentSnapshot doc) {
-    // print("Cek bro");
-    // print(doc['editInfo']);
-    // DateTime date = DateTime.parse(doc["user_DOB"]);
     return UserModel(
         id: doc['userId'],
         // isBlocked: doc['isBlocked'] != null ? doc['isBlocked'] : false,
@@ -64,11 +65,10 @@ class UserModel {
         showingOrientation: doc['sexualOrientation']['showOnProfile'] ?? "",
         status: doc['status'] ?? 'single',
         desires: doc['desires'] ?? [],
-        age: ((DateTime.now()
-                    .difference(DateTime.parse(doc["user_DOB"]))
-                    .inDays) /
-                365.2425)
-            .truncate(),
+        kinks: doc.data().toString().contains('kinks') ? doc['kinks'] : [],
+        interest: doc.data().toString().contains('interest') ? doc['interest'] : [],
+        age: ((DateTime.now().difference(DateTime.parse(doc["user_DOB"]))
+            .inDays) / 365.2425).truncate(),
         address: doc['location']['address'],
         coordinates: doc['location'],
         // university: doc['editInfo']['university'],

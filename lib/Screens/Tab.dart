@@ -342,8 +342,7 @@ class TabbarState extends State<Tabbar> {
       // });
       // print(dataDislike);
       print("Cek");
-      var dataAll;
-      dataAll = data.docs.map((e) => e.data());
+
       // print(dataAll.get("LikedUser"));
       data.docs.forEach((element) {
         print(element.data()["LikedUser"]);
