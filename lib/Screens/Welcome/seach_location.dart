@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:hookup4u/util/color.dart';
 import 'package:hookup4u/util/snackbar.dart';
+import '../../Controller/LoginController.dart';
 import 'AllowLocation.dart';
 import 'package:flutter_mapbox_autocomplete/flutter_mapbox_autocomplete.dart';
 // import 'package:easy_localization/easy_localization.dart';
@@ -149,7 +151,7 @@ class _SearchLocationState extends State<SearchLocation> {
                               );
 
                               // showWelcomDialog(context);
-                              setUserData(widget.userData);
+                              Get.find<LoginController>().setUserData(widget.userData);
                             },
                           ),
                         ),

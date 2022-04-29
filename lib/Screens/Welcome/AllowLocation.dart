@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:hookup4u/Controller/LoginController.dart';
 import 'package:hookup4u/Screens/Tab.dart';
 import 'package:hookup4u/Screens/Welcome/seach_location.dart';
 import 'package:hookup4u/util/color.dart';
@@ -174,7 +176,7 @@ class AllowLocation extends StatelessWidget {
                       );
                       print(userData);
                       showWelcomDialog(context);
-                      setUserData(userData);
+                      Get.find<LoginController>().setUserData(userData);
                     }
                   },
                 ),
@@ -186,22 +188,13 @@ class AllowLocation extends StatelessWidget {
     );
   }
 }
-
-Future setUserData(Map<String, dynamic> userData) async {
-  User user = FirebaseAuth.instance.currentUser;
-  await FirebaseFirestore.instance
-      .collection("Users")
-      .doc(user.uid)
-      .set(userData,
-      SetOptions(merge : true)
-  );
   // await FirebaseAuth.instance.currentUser().then((FirebaseUser user) async {
   //   await Firestore.instance
   //       .collection("Users")
   //       .document(user.uid)
   //       .setData(userData, merge: true);
   // });
-}
+
 
 Future showWelcomDialog(context) async {
   showDialog(

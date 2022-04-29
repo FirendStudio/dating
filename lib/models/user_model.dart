@@ -21,6 +21,8 @@ class UserModel {
   List imageUrl = [];
   var distanceBW;
   final String status;
+  final Map LoginID;
+  final String metode;
   final List desires;
   final List kinks;
   final List interest;
@@ -47,6 +49,8 @@ class UserModel {
     this.desires,
     this.kinks,
     this.interest,
+    @required this.LoginID,
+    @required this.metode,
   });
   factory UserModel.fromDocument(DocumentSnapshot doc) {
     return UserModel(
@@ -71,6 +75,8 @@ class UserModel {
             .inDays) / 365.2425).truncate(),
         address: doc['location']['address'],
         coordinates: doc['location'],
+        LoginID : doc.data().toString().contains('LoginID') ? doc['LoginID'] : {},
+        metode : doc.data().toString().contains('metode') ? doc['metode'] : "",
         // university: doc['editInfo']['university'],
         imageUrl: doc['Pictures'] != null
             ? List.generate(doc['Pictures'].length, (index) {

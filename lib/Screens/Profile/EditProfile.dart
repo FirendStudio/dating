@@ -15,6 +15,7 @@ import 'package:hookup4u/util/color.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import '../../Controller/LoginController.dart';
 import '../../util/Global.dart';
 // import 'package:easy_localization/easy_localization.dart';
 
@@ -180,14 +181,14 @@ class EditProfileState extends State<EditProfile> {
       }
     }
 
-    //init Desires
-    if(widget.currentUser.desires.isNotEmpty){
-      for(int i = 0; i<=widget.currentUser.desires.length-1; i++){
-        selectedDesire.add(widget.currentUser.desires[i]);
+    //init kinks
+    if(widget.currentUser.kinks.isNotEmpty){
+      for(int i = 0; i<=widget.currentUser.kinks.length-1; i++){
+        selectedKinks.add(widget.currentUser.kinks[i]);
 
-        for(int j=0; j<=listDesire.length-1; j++){
-          if(widget.currentUser.desires[i] == listDesire[j]['name']){
-            listDesire[j]['ontap'] = true;
+        for(int j=0; j<=listKinks.length-1; j++){
+          if(widget.currentUser.kinks[i] == listKinks[j]['name']){
+            listKinks[j]['ontap'] = true;
             break;
           }
         }
@@ -236,7 +237,7 @@ class EditProfileState extends State<EditProfile> {
     if(updateMap.length > 0 ){
       FirebaseFirestore.instance
           .collection("Users")
-          .doc(widget.currentUser.id)
+          .doc(Get.find<LoginController>().userId)
           .set(updateMap,
           SetOptions(merge : true)
       );
@@ -1589,7 +1590,7 @@ class EditProfileState extends State<EditProfile> {
                         widget.currentUser.imageUrl.insert(0,data);
                         await FirebaseFirestore.instance
                             .collection("Users")
-                            .doc(widget.currentUser.id)
+                            .doc(Get.find<LoginController>().userId)
                             .set({"Pictures": widget.currentUser.imageUrl},
                             SetOptions(merge : true)
 
@@ -1640,7 +1641,7 @@ class EditProfileState extends State<EditProfile> {
                         print(widget.currentUser.imageUrl);
                         await FirebaseFirestore.instance
                             .collection("Users")
-                            .doc(widget.currentUser.id)
+                            .doc(Get.find<LoginController>().userId)
                             .set({"Pictures": widget.currentUser.imageUrl},
                             SetOptions(merge : true)
 
@@ -1728,7 +1729,7 @@ class EditProfileState extends State<EditProfile> {
     temp.add(widget.currentUser.imageUrl);
     await FirebaseFirestore.instance
         .collection("Users")
-        .doc("${widget.currentUser.id}")
+        .doc("${Get.find<LoginController>().userId}")
         .set({"Pictures": temp[0]},
         SetOptions(merge : true)
     );

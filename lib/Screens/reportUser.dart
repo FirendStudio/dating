@@ -1,8 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:hookup4u/models/user_model.dart';
 import 'package:hookup4u/util/color.dart';
+
+import '../Controller/LoginController.dart';
 // import 'package:easy_localization/easy_localization.dart';
 
 class ReportUser extends StatefulWidget {
@@ -136,7 +139,7 @@ class _ReportUserState extends State<ReportUser> {
 
   Future _newReport(context, String reason) async {
     await FirebaseFirestore.instance.collection("Reports").add({
-      'reported_by': widget.currentUser.id,
+      'reported_by': Get.find<LoginController>().userId,
       'victim_id': widget.seconduser.id,
       'reason': reason,
       'timestamp': FieldValue.serverTimestamp()

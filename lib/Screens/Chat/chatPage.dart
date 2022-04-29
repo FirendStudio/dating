@@ -239,7 +239,7 @@ class _ChatPageState extends State<ChatPage> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(90),
                 child: CachedNetworkImage(
-                  imageUrl: widget.second.imageUrl[0] ?? '',
+                  imageUrl: (widget.second.imageUrl.runtimeType == String)?widget.second.imageUrl[0] : widget.second.imageUrl[0]['url'],
                   useOldImageOnUrlChange: true,
                   placeholder: (context, url) => CupertinoActivityIndicator(
                     radius: 15,

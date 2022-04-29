@@ -232,7 +232,7 @@ class _SexualOrientationState extends State<SexualOrientation> {
                           onTap: () {
                             widget.userData.addAll({
                               "sexualOrientation": {
-                                'orientation': selection,
+                                'orientation': selection['name'],
                                 'showOnProfile': select
                               },
                             });

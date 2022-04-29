@@ -94,12 +94,14 @@ class _SubscriptionState extends State<Subscription> {
 
   void _initialize() async {
     isAvailable = await _iap.isAvailable();
+    // print(isAvailable);
     if (isAvailable) {
       List<Future> futures = [
         _getProducts(await _fetchPackageIds()),
         //_getpastPurchases(false),
       ];
       await Future.wait(futures);
+      // print(futures);
 
       /// removing all the pending puchases.
       // if (Platform.isIOS) {
@@ -561,6 +563,7 @@ class _SubscriptionState extends State<Subscription> {
       ProductDetailsResponse response = await _iap.queryProductDetails(ids);
       setState(() {
         products = response.productDetails;
+        print("Print Produk");
         print(products.length);
       });
 

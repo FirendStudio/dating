@@ -2,12 +2,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:hookup4u/Screens/Information.dart';
 import 'package:hookup4u/models/user_model.dart';
 import 'package:hookup4u/util/color.dart';
 import 'package:intl/intl.dart';
 // import 'package:easy_localization/easy_localization.dart';
 
+import '../Controller/LoginController.dart';
 import 'Tab.dart';
 
 class Notifications extends StatefulWidget {
@@ -26,7 +28,7 @@ class _NotificationsState extends State<Notifications> {
   void initState() {
     matchReference = db
         .collection("Users")
-        .doc(widget.currentUser.id)
+        .doc(Get.find<LoginController>().userId)
         .collection('Matches');
 
     super.initState();
@@ -259,7 +261,7 @@ class _NotificationsState extends State<Notifications> {
                                                     if (!doc["isRead"]) {
                                                       FirebaseFirestore.instance
                                                           .collection(
-                                                              "/Users/${widget.currentUser.id}/Matches")
+                                                              "/Users/${Get.find<LoginController>().userId}/Matches")
                                                           // .doc('${doc.data["Matches"]}')
                                                           .doc('${doc["Matches"]}')
                                                           .update(

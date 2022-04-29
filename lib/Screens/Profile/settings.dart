@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:firebase_admob/firebase_admob.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -14,6 +16,7 @@ import 'package:hookup4u/ads/ads.dart';
 import 'package:hookup4u/models/user_model.dart';
 import 'package:hookup4u/util/color.dart';
 import 'package:share/share.dart';
+import '../../Controller/LoginController.dart';
 import '../../util/Global.dart';
 import 'UpdateNumber.dart';
 // import 'package:easy_localization/easy_localization.dart';
@@ -29,6 +32,7 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   Map<String, dynamic> changeValues = {};
   List<Map<String, dynamic>> listShowMe = [
     {'name': 'men', 'ontap': false},
@@ -77,7 +81,7 @@ class _SettingsState extends State<Settings> {
   Future updateData() async {
     FirebaseFirestore.instance
         .collection("Users")
-        .doc(widget.currentUser.id)
+        .doc(Get.find<LoginController>().userId)
         .set(changeValues,
         SetOptions(merge : true)
     );
@@ -212,8 +216,169 @@ class _SettingsState extends State<Settings> {
                       },
                     ),
                   )),
-                  subtitle: Text("Verify a phone number to secure your account"),
+                  // subtitle: Text("Verify a phone number to secure your account"),
                 ),
+
+                ListTile(
+                  title: Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: InkWell(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Text("Connected Account"),
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  left: 20,
+                                ),
+                                child: Text("",
+                                  style: TextStyle(color: secondryColor),
+                                ),
+                              ),
+                              Icon(
+                                Icons.arrow_forward_ios,
+                                color: secondryColor,
+                                size: 15,
+                              ),
+                            ],
+                          ),
+                          onTap: () {
+
+                            ArtSweetAlert.show(
+                                context: context,
+                                artDialogArgs: ArtDialogArgs(
+                                    title: "Connected Account",
+                                    text: "",
+                                    customColumns: [
+                                      InkWell(
+                                        onTap: () async {
+                                          if(widget.currentUser.LoginID['fb'] == ""){
+                                            showDialog(
+                                                context: context,
+                                                builder: (context) => Container(
+                                                    height: 30,
+                                                    width: 30,
+                                                    child: Center(
+                                                        child: CupertinoActivityIndicator(
+                                                          key: UniqueKey(),
+                                                          radius: 20,
+                                                          animating: true,
+                                                        ))));
+                                            await Get.find<LoginController>().handleFacebookLogin(context).then((user) async {
+                                              var LoginID = {
+                                                "fb" : user.uid,
+                                              };
+                                              await FirebaseFirestore.instance.collection("Users").doc(Get.find<LoginController>().userId).set(
+                                                  {
+                                                    "LoginID" : LoginID,
+                                                  },
+                                                  SetOptions(merge : true)
+
+                                              );
+                                              print("done");
+                                            }).then((_) {
+                                              Navigator.pop(context);
+                                              Get.to(()=>Tabbar(null, null));
+                                            }).catchError((e) {
+                                              Navigator.pop(context);
+                                            });
+                                          }else{
+                                            Get.snackbar("Information", "You have connected to Facebook");
+                                          }
+
+                                        },
+                                        child: Container(
+                                          padding: EdgeInsets.only(
+                                            left: 8, right: 8,
+                                            bottom: 8, top: 8
+                                          ),
+                                            decoration: BoxDecoration(
+                                              color: (widget.currentUser.LoginID['fb'] == "")?Colors.red : Colors.greenAccent,
+                                                border: Border.all(
+                                                  color: Colors.red[500],
+                                                ),
+                                                borderRadius: BorderRadius.all(Radius.circular(20))
+                                            ),
+                                            child: Text("Facebook",
+                                              style: TextStyle(
+                                                color: (widget.currentUser.LoginID['fb'] == "")?Colors.white : Colors.black
+                                              ),
+                                            ),
+                                        )
+                                      ),
+
+                                      SizedBox(height: 20,),
+
+                                      Platform.isIOS?
+                                      InkWell(
+                                          onTap: () async {
+                                            if(widget.currentUser.LoginID['apple'] == "") {
+                                              final User currentUser = await Get.find<LoginController>().handleAppleLogin(_scaffoldKey).catchError((onError) {
+                                                SnackBar snackBar = SnackBar(content: Text(onError.toString()));
+                                                _scaffoldKey.currentState.showSnackBar(snackBar);
+                                              });
+                                              if (currentUser != null) {
+                                                print('userName ${currentUser.displayName} \n photourl ${currentUser.photoURL}');
+                                                var LoginID = {
+                                                  "apple": currentUser.uid,
+                                                };
+                                                await FirebaseFirestore.instance
+                                                    .collection("Users").doc(Get.find<LoginController>().userId).set(
+                                                    {
+                                                      "LoginID": LoginID,
+                                                    },
+                                                    SetOptions(merge: true)
+
+                                                );
+                                                Get.to(() => Tabbar(null, null));
+                                                // await _setDataUser(currentUser);
+
+                                                // Get.find<LoginController>().navigationCheck(currentUser, context, "apple.com");
+                                              }
+                                            }else{
+                                              Get.snackbar("Information", "You have connected to Apple");
+                                            }
+
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.only(
+                                                left: 8, right: 8,
+                                                bottom: 8, top: 8
+                                            ),
+                                            decoration: BoxDecoration(
+                                                color: (widget.currentUser.LoginID['apple'] == "")?Colors.red : Colors.greenAccent,
+                                                border: Border.all(
+                                                  color: Colors.red[500],
+                                                ),
+                                                borderRadius: BorderRadius.all(Radius.circular(20))
+                                            ),
+                                            child: Text("Apple",
+                                              style: TextStyle(
+                                                  color: (widget.currentUser.LoginID['apple'] == "")?Colors.white : Colors.black
+                                              ),
+                                            ),
+                                          )
+                                      ):Container(),
+
+                                      SizedBox(height: 50,),
+
+                                    ]
+                                )
+                            );
+
+                            //   Navigator.push(
+                          //       context,
+                          //       CupertinoPageRoute(
+                          //           builder: (context) =>
+                          //               UpdateNumber(widget.currentUser)));
+                          //   // _ads.disable(_ad);
+                          },
+                        ),
+                      )),
+                  // subtitle: Text("Verify a phone number to secure your account"),
+                ),
+
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: Text(
@@ -849,7 +1014,7 @@ class _SettingsState extends State<Settings> {
                     Navigator.pop(context);
                     await FirebaseFirestore.instance
                         .collection("Users")
-                        .doc('${widget.currentUser.id}')
+                        .doc('${Get.find<LoginController>().userId}')
                         .update({
                           'location': {
                             'latitude': _address['latitude'],
@@ -915,6 +1080,6 @@ class _SettingsState extends State<Settings> {
   }
 
   Future _deleteUser(User user) async {
-    await FirebaseFirestore.instance.collection("Users").doc(user.uid).delete();
+    await FirebaseFirestore.instance.collection("Users").doc(Get.find<LoginController>().userId).delete();
   }
 }

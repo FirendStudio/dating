@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/Controller/HomeController.dart';
+import 'package:hookup4u/Controller/LoginController.dart';
 import 'package:hookup4u/Screens/Calling/incomingCall.dart';
 import 'package:hookup4u/Screens/Profile/profile.dart';
 import 'package:hookup4u/Screens/Splash.dart';
@@ -191,7 +192,8 @@ class TabbarState extends State<Tabbar> {
 
   _getCurrentUser() async {
     User user = _firebaseAuth.currentUser;
-    return docRef.doc("${user.uid}").snapshots().listen((data) async {
+    // return docRef.doc("${user.uid}").snapshots().listen((data) async {
+    return docRef.doc(Get.find<LoginController>().userId).snapshots().listen((data) async {
       print(data);
       currentUser = UserModel.fromDocument(data);
       if (mounted) setState(() {});

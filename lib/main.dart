@@ -10,7 +10,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:hookup4u/Controller/HomeController.dart';
+import 'package:hookup4u/Controller/LoginController.dart';
+import 'package:hookup4u/Controller/WelcomeController.dart';
 import 'package:hookup4u/Screens/Splash.dart';
 import 'package:hookup4u/Screens/Tab.dart';
 import 'package:hookup4u/Screens/Welcome.dart';
@@ -26,16 +29,11 @@ FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // await EasyLocalization.ensureInitialized();
+
   if(kIsWeb){
     await Firebase.initializeApp(options: DefaultFirebaseConfig.platformOptions);
   }else{
     await Firebase.initializeApp();
-    // if(Platform.isIOS){
-    //   await Firebase.initializeApp(options: DefaultFirebaseConfig.platformOptions);
-    //
-    //
-    // }else{
-    // }
   }
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
@@ -97,9 +95,11 @@ Future<void> main() async {
     badge: true,
     sound: true,
   );
+  await GetStorage.init();
 
   Get.put(HomeController());
-
+  Get.put(WelcomeController());
+  Get.put(LoginController());
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitDown,
     DeviceOrientation.portraitUp,
@@ -150,41 +150,37 @@ class _MyAppState extends State<MyApp> {
     print(user);
     if (user != null) {
       print("ID User : " + user.uid);
-      await FirebaseFirestore.instance
-      .collection('Users')
-      .where('userId', isEqualTo: user.uid)
-      .limit(1)
-      .get()
-      .then((QuerySnapshot snapshot) async {
+      String metode = "";
+      String cek = user.providerData[0].providerId;
+      print(cek);
+      QuerySnapshot userAuth = await Get.find<LoginController>().getUser(user, cek);
 
-        // var data = snapshot.data();
+      if (userAuth.docs.length > 0) {
 
-        if (snapshot.docs.length > 0) {
-
-          print(snapshot.docs);
-          var docs = snapshot.docs.first;
-          print(docs.data());
-          Map<String, dynamic> data = docs.data();
-          // var data['']
-          // if (snapshot.docs[0].data['location'] != null) {
-          if (data['location'] != null) {
-            setState(() {
-              isRegistered = true;
-              isLoading = false;
-            });
-          } else {
-            setState(() {
-              isAuth = true;
-              isLoading = false;
-            });
-          }
-          print("loggedin ${user.uid}");
+        print(userAuth.docs);
+        var docs = userAuth.docs.first;
+        print(docs.data());
+        Map<String, dynamic> data = docs.data();
+        Get.find<LoginController>().storage.write("userId", data['userId']);
+        Get.find<LoginController>().userId = data['userId'];
+        if (data['location'] != null) {
+          setState(() {
+            isRegistered = true;
+            isLoading = false;
+          });
         } else {
           setState(() {
+            isAuth = true;
             isLoading = false;
           });
         }
-      });
+        print("loggedin ${data['userId']}");
+      } else {
+        setState(() {
+          isLoading = false;
+        });
+      }
+
     } else {
       setState(() {
         isLoading = false;

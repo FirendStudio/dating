@@ -6,6 +6,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:hookup4u/Controller/LoginController.dart';
 import 'package:hookup4u/Screens/Tab.dart';
 import 'package:hookup4u/Screens/Welcome.dart';
 import 'package:hookup4u/Screens/auth/otp.dart';
@@ -16,11 +17,8 @@ import 'package:url_launcher/url_launcher.dart';
 // import 'package:easy_localization/easy_localization.dart';
 
 class Login extends StatelessWidget {
-  static const your_client_id = '709280423766575';
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  static const your_redirect_url = 'https://jablesscupid.firebaseapp.com/__/auth/handler';
-
-  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+  LoginController loginController = Get.put(LoginController());
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
@@ -176,8 +174,8 @@ class Login extends StatelessWidget {
                                     radius: 20,
                                     animating: true,
                                   ))));
-                          await handleFacebookLogin(context).then((user) {
-                            navigationCheck(user, context);
+                          await loginController.handleFacebookLogin(context).then((user) {
+                            loginController.navigationCheck(user, context, 'fb');
                           }).then((_) {
                             Navigator.pop(context);
                           }).catchError((e) {
@@ -200,16 +198,15 @@ class Login extends StatelessWidget {
                           cornerRadius: 50,
                           type: i.ButtonType.defaultButton,
                           onPressed: () async {
-                            final User currentUser = await handleAppleLogin().catchError((onError) {
+                            final User currentUser = await loginController.handleAppleLogin(_scaffoldKey).catchError((onError) {
                               SnackBar snackBar =
                                   SnackBar(content: Text(onError.toString()));
                               _scaffoldKey.currentState.showSnackBar(snackBar);
                             });
                             if (currentUser != null) {
-                              print(
-                                  'usernaem ${currentUser.displayName} \n photourl ${currentUser.photoURL}');
+                              print('usernaem ${currentUser.displayName} \n photourl ${currentUser.photoURL}');
                               // await _setDataUser(currentUser);
-                              navigationCheck(currentUser, context);
+                              loginController.navigationCheck(currentUser, context, "apple.com");
                             }
                           },
                         ),
@@ -247,52 +244,10 @@ class Login extends StatelessWidget {
                                 fontWeight: FontWeight.bold)
                         ),
                       )
-                    // child: OutlineButton(
-                    //
-                    //   child: Container(
-                    //     height: MediaQuery.of(context).size.height * .065,
-                    //     width: MediaQuery.of(context).size.width * .75,
-                    //     // padding: EdgeInsets.only(),
-                    //     child: Center(
-                    //         child: Text("LOGIN WITH PHONE NUMBER".toString(),
-                    //             style: TextStyle(
-                    //                 fontSize: 16,
-                    //                 fontFamily: Global.font,
-                    //                 color: primaryColor,
-                    //                 fontWeight: FontWeight.bold))),
-                    //   ),
-                    //   color: primaryColor,
-                    //   borderSide: BorderSide(
-                    //       width: 1, style: BorderStyle.solid, color: primaryColor),
-                    //   shape: RoundedRectangleBorder(
-                    //       borderRadius: BorderRadius.circular(25)),
-                    //   onPressed: () {
-                    //     bool updateNumber = false;
-                    //     Navigator.push(
-                    //         context,
-                    //         CupertinoPageRoute(
-                    //             builder: (context) => OTP(updateNumber)));
-                    //   },
-                    // ),
                   )
                 ),
 
               ]),
-              // Padding(
-              //   padding: const EdgeInsets.symmetric(vertical: 10),
-              //   child: Row(
-              //     mainAxisAlignment: MainAxisAlignment.center,
-              //     children: <Widget>[
-              //       Text(
-              //         "Trouble logging in?".toString(),
-              //         style: TextStyle(
-              //             color: Colors.black,
-              //             fontSize: Get.height * 0.018,
-              //             fontWeight: FontWeight.normal),
-              //       ),
-              //     ],
-              //   ),
-              // ),
               SizedBox(height: Get.height * 0.01,),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -302,7 +257,7 @@ class Login extends StatelessWidget {
                       "Privacy Policy",
                       style: TextStyle(color: Colors.blue),
                     ),
-                    onTap: () => _launchURL(
+                    onTap: () => loginController.launchURL(
                         "https://jablesscupid.com/privacy-policy/"), //TODO: add privacy policy
                   ),
                   Container(
@@ -318,7 +273,7 @@ class Login extends StatelessWidget {
                       "Terms & Conditions",
                       style: TextStyle(color: Colors.blue),
                     ),
-                    onTap: () => _launchURL(
+                    onTap: () => loginController.launchURL(
                         "https://jablesscupid.com/terms-conditions/"), //TODO: add Terms and conditions
                   ),
                 ],
@@ -411,144 +366,6 @@ class Login extends StatelessWidget {
     );
   }
 
-  Future<User> handleFacebookLogin(context) async {
-    User user;
-    String result = await Navigator.push(
-      context,
-      MaterialPageRoute(
-          builder: (context) => CustomWebView(
-                selectedUrl:
-                    'https://www.facebook.com/dialog/oauth?client_id=$your_client_id&redirect_uri=$your_redirect_url&response_type=token&scope=email,public_profile,',
-              ),
-          maintainState: true),
-    );
-    if (result != null) {
-      try {
-        final facebookAuthCred =
-            FacebookAuthProvider.credential(result);
-        user =
-            (await FirebaseAuth.instance.signInWithCredential(facebookAuthCred))
-                .user;
-
-        print('user $user');
-      } catch (e) {
-        print('Error $e');
-      }
-    }
-    return user;
-  }
-
-  _launchURL(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
-
-  Future navigationCheck(User currentUser, context) async {
-    await FirebaseFirestore.instance.collection('Users')
-        .where('userId', isEqualTo: currentUser.uid).get().then((QuerySnapshot snapshot) async {
-          print("masuk sini 1");
-          print(snapshot.docs);
-          if (snapshot.docs.length > 0) {
-            print("masuk sini 2");
-            var location;
-            // snapshot.docs.map((e) {
-            //   print(e.get('phoneNumber'));
-            //   location = e.get('location');
-            //   print(e['location']);
-            // });
-
-            try {
-              var data = snapshot.docs.map((doc) => doc.get('location')).toList();
-              print(data);
-              Navigator.push(context,
-                  CupertinoPageRoute(builder: (context) => Tabbar(null, null)));
-            } on StateError catch (e) {
-              Navigator.push(
-                  context, CupertinoPageRoute(builder: (context) => Welcome()));
-            }
-
-
-            // print("Location : " + location.toString());
-            // if (data == null) {
-            //
-            //
-            // } else {
-            //
-            // }
-
-          } else {
-            print("masuk sini 3");
-            await _setDataUser(currentUser);
-            Navigator.push(
-                context, CupertinoPageRoute(builder: (context) => Welcome()));
-          }
-
-        // if (snapshot.docs[0].data['location'] != null) {
-
-    });
-  }
-
-  Future<User> handleAppleLogin() async {
-    User user;
-    if (await i.AppleSignIn.isAvailable()) {
-      try {
-        final i.AuthorizationResult result = await i.AppleSignIn.performRequests([i.AppleIdRequest(requestedScopes: [i.Scope.email, i.Scope.fullName])
-        ]).catchError((onError) {
-          print("inside $onError");
-        });
-
-        print("masuk sini cuy");
-
-        switch (result.status) {
-          case i.AuthorizationStatus.authorized:
-            try {
-              print("successfull sign in");
-              final i.AppleIdCredential appleIdCredential = result.credential;
-
-              OAuthProvider oAuthProvider =
-                  new OAuthProvider("apple.com");
-              final AuthCredential credential = oAuthProvider.credential(
-                idToken: String.fromCharCodes(appleIdCredential.identityToken),
-                accessToken: String.fromCharCodes(appleIdCredential.authorizationCode),
-              );
-
-              user = (await _auth.signInWithCredential(credential)).user;
-              print("signed in as " + user.toString());
-            } catch (error) {
-              print("Error $error");
-            }
-            break;
-          case i.AuthorizationStatus.error:
-            // do something
-
-            _scaffoldKey.currentState.showSnackBar(SnackBar(
-              content: Text('An error occured. Please Try again.'),
-              duration: Duration(seconds: 8),
-            ));
-            break;
-
-          case i.AuthorizationStatus.cancelled:
-            print('User cancelled');
-            break;
-        }
-      } catch (error) {
-        _scaffoldKey.currentState.showSnackBar(SnackBar(
-          content: Text('$error.'),
-          duration: Duration(seconds: 8),
-        ));
-        print("error with apple sign in");
-      }
-    } else {
-      _scaffoldKey.currentState.showSnackBar(SnackBar(
-        content: Text('Apple SignIn is not available for your device'),
-        duration: Duration(seconds: 8),
-      ));
-    }
-    return user;
-  }
 }
 
 class WaveClipper1 extends CustomClipper<Path> {
@@ -630,26 +447,6 @@ class WaveClipper2 extends CustomClipper<Path> {
   bool shouldReclip(CustomClipper<Path> oldClipper) {
     return false;
   }
-}
-
-Future _setDataUser(User user) async {
-  await FirebaseFirestore.instance.collection("Users").doc(user.uid).set(
-    {
-      'userId': user.uid,
-      'UserName': user.displayName ?? '',
-      'Pictures': FieldValue.arrayUnion([
-        user.photoURL != null
-            ? user.photoURL + '?width=9999'
-            : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSxUC64VZctJ0un9UBnbUKtj-blhw02PeDEQIMOqovc215LWYKu&s'
-      ]),
-      'phoneNumber': user.phoneNumber,
-      'timestamp': FieldValue.serverTimestamp()
-    },
-      SetOptions(merge : true)
-
-  );
-
-
 }
 
 class FirstLogin extends StatefulWidget {

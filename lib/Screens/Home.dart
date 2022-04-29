@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:get/get.dart';
 import 'package:hookup4u/Screens/Information.dart';
 import 'package:hookup4u/Screens/Payment/subscriptions.dart';
 import 'package:hookup4u/Screens/Tab.dart';
@@ -11,6 +12,8 @@ import 'package:hookup4u/ads/ads.dart';
 import 'package:hookup4u/models/user_model.dart';
 import 'package:hookup4u/util/color.dart';
 import 'package:swipe_stack/swipe_stack.dart';
+
+import '../Controller/LoginController.dart';
 // import 'package:easy_localization/easy_localization.dart';
 
 List userRemoved = [];
@@ -296,7 +299,7 @@ class _CardPicturesState extends State<CardPictures>
                                     CollectionReference docRef = FirebaseFirestore.instance.collection("Users");
                                     if (position == SwiperPosition.Left) {
                                       await docRef
-                                        .doc(widget.currentUser.id)
+                                        .doc(Get.find<LoginController>().userId)
                                         .collection("CheckedUser")
                                         .doc(widget.users[index].id)
                                         .set({
@@ -356,7 +359,7 @@ class _CardPicturesState extends State<CardPictures>
                                               );
                                             });
                                         await docRef
-                                            .doc(widget.currentUser.id)
+                                            .doc(Get.find<LoginController>().userId)
                                             .collection("Matches")
                                             .doc(widget.users[index].id)
                                             .set(
@@ -372,10 +375,10 @@ class _CardPicturesState extends State<CardPictures>
                                         await docRef
                                             .doc(widget.users[index].id)
                                             .collection("Matches")
-                                            .doc(widget.currentUser.id)
+                                            .doc(Get.find<LoginController>().userId)
                                             .set(
                                           {
-                                            'Matches': widget.currentUser.id,
+                                            'Matches': Get.find<LoginController>().userId,
                                             'userName': widget.currentUser.name,
                                             'pictureUrl': (widget.currentUser.imageUrl[0].runtimeType == String)?widget.currentUser.imageUrl[0] : widget.currentUser.imageUrl[0]['url'],
                                             'isRead': false,
@@ -386,7 +389,7 @@ class _CardPicturesState extends State<CardPictures>
                                       }
 
                                       await docRef
-                                          .doc(widget.currentUser.id)
+                                          .doc(Get.find<LoginController>().userId)
                                           .collection("CheckedUser")
                                           .doc(widget.users[index].id)
                                           .set(
@@ -400,10 +403,10 @@ class _CardPicturesState extends State<CardPictures>
                                       await docRef
                                           .doc(widget.users[index].id)
                                           .collection("LikedBy")
-                                          .doc(widget.currentUser.id)
+                                          .doc(Get.find<LoginController>().userId)
                                           .set(
                                         {
-                                          'LikedBy': widget.currentUser.id,
+                                          'LikedBy': Get.find<LoginController>().userId,
                                           'timestamp':
                                               FieldValue.serverTimestamp()
                                         },
