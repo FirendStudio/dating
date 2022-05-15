@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:get/get.dart';
 import 'package:hookup4u/Screens/Chat/Matches.dart';
 import 'package:hookup4u/Screens/Profile/EditProfile.dart';
 import 'package:hookup4u/Screens/reportUser.dart';
@@ -10,6 +11,7 @@ import 'package:hookup4u/util/color.dart';
 import 'package:swipe_stack/swipe_stack.dart';
 // import 'package:easy_localization/easy_localization.dart';
 
+import '../Controller/TabsController.dart';
 import 'Chat/chatPage.dart';
 
 class Info extends StatelessWidget {
@@ -22,14 +24,36 @@ class Info extends StatelessWidget {
     this.currentUser,
     this.swipeKey,
   );
+  String interestText = "";
+  String desiresText = "";
+
+  TabsController tabsController = Get.put(TabsController());
 
   @override
   Widget build(BuildContext context) {
     bool isMe = user.id == currentUser.id;
     bool isMatched = swipeKey == null;
-    //  if()
-
     //matches.any((value) => value.id == user.id);
+    if(user.desires.isNotEmpty){
+      for(int index=0; index<= user.desires.length-1; index++){
+        if(desiresText.isEmpty){
+          desiresText = tabsController.capitalize(user.desires[index]);
+          print(desiresText);
+        }else{
+          desiresText += ", " + tabsController.capitalize(user.desires[index]);
+        }
+      }
+    }
+
+    if(user.interest.isNotEmpty){
+      for(int index=0; index<= user.interest.length-1; index++){
+        if(interestText.isEmpty){
+          interestText = tabsController.capitalize(user.interest[index]);
+        }else{
+          interestText += ", " + tabsController.capitalize(user.interest[index]);
+        }
+      }
+    }
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -88,13 +112,16 @@ class Info extends StatelessWidget {
                       child: Column(
                         children: <Widget>[
                           ListTile(
-                            subtitle: Text("${user.address}"),
                             title: Text(
-                              "${user.name}, ${user.editInfo['showMyAge'] != null ? !user.editInfo['showMyAge'] ? user.age : "" : user.age}",
+                              "${user.name},",
                               style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 25,
                                   fontWeight: FontWeight.bold),
+                            ),
+                            subtitle: Text(
+                                " ${user.editInfo['showMyAge'] != null ? !user.editInfo['showMyAge'] ? user.age : "" : user.age}" +
+                                ", " + user.gender + ", " + user.sexualOrientation + ", " + user.status + ", " + "${user.address}"
                             ),
                             trailing: FloatingActionButton(
                                 backgroundColor: Colors.white,
@@ -120,20 +147,18 @@ class Info extends StatelessWidget {
                                   ),
                                 )
                               : Container(),
-                          user.editInfo['university'] != null
-                              ? ListTile(
-                                  dense: true,
-                                  leading:
-                                      Icon(Icons.stars, color: primaryColor),
-                                  title: Text(
-                                    "${user.editInfo['university']}",
-                                    style: TextStyle(
-                                        color: secondryColor,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                )
-                              : Container(),
+                          ListTile(
+                            dense: true,
+                            leading: Icon(Icons.book, color: primaryColor),
+                            title: Text(
+                              "About Me",
+                              style: TextStyle(
+                                  color: secondryColor,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                            subtitle: Text(user.editInfo['about'] ?? ""),
+                          ),
                           user.editInfo['living_in'] != null
                               ? ListTile(
                                   dense: true,
@@ -165,29 +190,51 @@ class Info extends StatelessWidget {
                                   ),
                                 )
                               : Container(),
-                          Divider(),
                         ],
                       ),
                     ),
                   ),
+
                   SizedBox(
                     height: 20,
                   ),
-                  user.editInfo['about'] != null
-                      ? Text(
-                          "${user.editInfo['about']}",
-                          style: TextStyle(
-                              color: secondryColor,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500),
-                        )
-                      : Container(),
-                  SizedBox(
-                    height: 20,
+                  ListTile(
+                    dense: true,
+                    title: Text(
+                      "Desires",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(desiresText),
                   ),
-                  user.editInfo['about'] != null ? Divider() : Container(),
-                  !isMe
-                      ? InkWell(
+
+                  SizedBox(
+                    height: 10,
+                  ),
+
+                  ListTile(
+                    dense: true,
+                    title: Text(
+                      "Interest",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(interestText),
+                  ),
+
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Divider(),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  !isMe ?
+                  InkWell(
                           onTap: () => showDialog(
                               barrierDismissible: true,
                               context: context,

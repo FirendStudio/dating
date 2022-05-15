@@ -781,60 +781,60 @@ class EditProfileState extends State<EditProfile> {
                             },
                           ),
                         ),
-                        ListTile(
-                          title: Text(
-                            "Job title",
-                            style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 16,
-                                color: Colors.black87),
-                          ),
-                          subtitle: CupertinoTextField(
-                            controller: jobCtlr,
-                            cursorColor: primaryColor,
-                            placeholder: "Add job title",
-                            padding: EdgeInsets.all(10),
-                            onChanged: (text) {
-                              editInfo.addAll({'job_title': text});
-                            },
-                          ),
-                        ),
-                        ListTile(
-                          title: Text(
-                            "Company",
-                            style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 16,
-                                color: Colors.black87),
-                          ),
-                          subtitle: CupertinoTextField(
-                            controller: companyCtlr,
-                            cursorColor: primaryColor,
-                            placeholder: "Add company",
-                            padding: EdgeInsets.all(10),
-                            onChanged: (text) {
-                              editInfo.addAll({'company': text});
-                            },
-                          ),
-                        ),
-                        ListTile(
-                          title: Text(
-                            "University",
-                            style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 16,
-                                color: Colors.black87),
-                          ),
-                          subtitle: CupertinoTextField(
-                            controller: universityCtlr,
-                            cursorColor: primaryColor,
-                            placeholder: "Add university",
-                            padding: EdgeInsets.all(10),
-                            onChanged: (text) {
-                              editInfo.addAll({'university': text});
-                            },
-                          ),
-                        ),
+                        // ListTile(
+                        //   title: Text(
+                        //     "Job title",
+                        //     style: TextStyle(
+                        //         fontWeight: FontWeight.w500,
+                        //         fontSize: 16,
+                        //         color: Colors.black87),
+                        //   ),
+                        //   subtitle: CupertinoTextField(
+                        //     controller: jobCtlr,
+                        //     cursorColor: primaryColor,
+                        //     placeholder: "Add job title",
+                        //     padding: EdgeInsets.all(10),
+                        //     onChanged: (text) {
+                        //       editInfo.addAll({'job_title': text});
+                        //     },
+                        //   ),
+                        // ),
+                        // ListTile(
+                        //   title: Text(
+                        //     "Company",
+                        //     style: TextStyle(
+                        //         fontWeight: FontWeight.w500,
+                        //         fontSize: 16,
+                        //         color: Colors.black87),
+                        //   ),
+                        //   subtitle: CupertinoTextField(
+                        //     controller: companyCtlr,
+                        //     cursorColor: primaryColor,
+                        //     placeholder: "Add company",
+                        //     padding: EdgeInsets.all(10),
+                        //     onChanged: (text) {
+                        //       editInfo.addAll({'company': text});
+                        //     },
+                        //   ),
+                        // ),
+                        // ListTile(
+                        //   title: Text(
+                        //     "University",
+                        //     style: TextStyle(
+                        //         fontWeight: FontWeight.w500,
+                        //         fontSize: 16,
+                        //         color: Colors.black87),
+                        //   ),
+                        //   subtitle: CupertinoTextField(
+                        //     controller: universityCtlr,
+                        //     cursorColor: primaryColor,
+                        //     placeholder: "Add university",
+                        //     padding: EdgeInsets.all(10),
+                        //     onChanged: (text) {
+                        //       editInfo.addAll({'university': text});
+                        //     },
+                        //   ),
+                        // ),
                         ListTile(
                           title: Text(
                             "Living in",

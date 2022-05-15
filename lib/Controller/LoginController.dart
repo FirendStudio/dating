@@ -238,9 +238,10 @@ class LoginController extends GetxController{
 
   Future setUserData(Map<String, dynamic> userData) async {
     User user = FirebaseAuth.instance.currentUser;
+    userId = user.uid;
     await FirebaseFirestore.instance
         .collection("Users")
-        .doc(Get.find<LoginController>().userId)
+        .doc(user.uid)
         .set(userData,
         SetOptions(merge: true)
     );

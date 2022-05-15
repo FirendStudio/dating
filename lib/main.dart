@@ -13,6 +13,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:hookup4u/Controller/HomeController.dart';
 import 'package:hookup4u/Controller/LoginController.dart';
+import 'package:hookup4u/Controller/TabsController.dart';
 import 'package:hookup4u/Controller/WelcomeController.dart';
 import 'package:hookup4u/Screens/Splash.dart';
 import 'package:hookup4u/Screens/Tab.dart';
@@ -22,6 +23,8 @@ import 'package:hookup4u/ads/ads.dart';
 import 'package:hookup4u/util/color.dart';
 import 'package:hookup4u/util/firebase_config.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+
+import 'Controller/NotificationController.dart';
 // import 'package:easy_localization/easy_localization.dart';
 
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
@@ -100,6 +103,8 @@ Future<void> main() async {
   Get.put(HomeController());
   Get.put(WelcomeController());
   Get.put(LoginController());
+  Get.put(NotificationController());
+  Get.put(TabsController());
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitDown,
     DeviceOrientation.portraitUp,

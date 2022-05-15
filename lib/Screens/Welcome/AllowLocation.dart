@@ -175,8 +175,9 @@ class AllowLocation extends StatelessWidget {
                         },
                       );
                       print(userData);
-                      showWelcomDialog(context);
-                      Get.find<LoginController>().setUserData(userData);
+                      print(Get.find<LoginController>().userId);
+                      await Get.find<LoginController>().setUserData(userData);
+                      await showWelcomDialog(context);
                     }
                   },
                 ),
