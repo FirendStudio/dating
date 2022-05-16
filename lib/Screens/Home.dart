@@ -117,21 +117,16 @@ class _CardPicturesState extends State<CardPictures>
                                               startIndex: 0,
                                             ),
                                             key: UniqueKey(),
-                                            physics:
-                                            NeverScrollableScrollPhysics(),
-                                            itemBuilder:
-                                                (BuildContext context,
-                                                int index2) {
+                                            physics: NeverScrollableScrollPhysics(),
+                                            itemBuilder: (BuildContext context, int index2) {
                                               return Container(
                                                 height: MediaQuery.of(context).size.height * .78,
                                                 width: MediaQuery.of(context).size.width,
                                                 child: CachedNetworkImage(
                                                   imageUrl: index.imageUrl[index2]['url'] ?? "",
                                                   fit: BoxFit.cover,
-                                                  useOldImageOnUrlChange:
-                                                  true,
-                                                  placeholder: (context,
-                                                      url) =>
+                                                  useOldImageOnUrlChange: true,
+                                                  placeholder: (context, url) =>
                                                       CupertinoActivityIndicator(
                                                         radius: 20,
                                                       ),

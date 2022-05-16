@@ -37,6 +37,7 @@ class TabsController extends GetxController{
       getAccessItems();
       getCurrentUser(context);
       getMatches();
+      Get.find<NotificationController>().initNotification();
       init = 1;
     }
 
