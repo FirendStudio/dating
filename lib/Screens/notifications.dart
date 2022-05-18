@@ -34,13 +34,6 @@ class Notifications extends StatelessWidget {
     return GetBuilder<NotificationController>(builder: (data){
 
       return Scaffold(
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.redAccent,
-          onPressed: (){
-            showSearch(context: context, delegate: CustomSearch());
-          },
-          child: Icon(Icons.add, color: Colors.white,),
-        ),
           appBar: AppBar(
             backgroundColor: primaryColor,
             automaticallyImplyLeading: false,
@@ -122,9 +115,12 @@ class Notifications extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Container(
                 decoration: BoxDecoration(
-                    borderRadius:
-                    BorderRadius.circular(20),
-                    color:secondryColor.withOpacity(.15)),
+                    borderRadius: BorderRadius.circular(20),
+                    // color: !doc.data['isRead']
+                    color: data.relationUser.partner.partnerId == data.listPendingReq[index].reqUid
+                        ? primaryColor.withOpacity(.15)
+                        : secondryColor
+                        .withOpacity(.15)),
                 child:Row(
                   children: [
 
@@ -134,8 +130,7 @@ class Notifications extends StatelessWidget {
                         radius: 25,
                         backgroundColor: secondryColor,
                         child: ClipRRect(
-                          borderRadius:
-                          BorderRadius.circular(
+                          borderRadius: BorderRadius.circular(
                             25,
                           ),
                           child: CachedNetworkImage(
@@ -158,7 +153,10 @@ class Notifications extends StatelessWidget {
                     Expanded(
                         flex: 6,
                         child:ListTile(
-                          title: Text("You are requested partner by " + data.listPendingReq[index].userName,
+                          title: Text(
+                            (data.relationUser.partner.partnerId != data.listPendingReq[index].reqUid)?
+                            "You are requested partner by " + data.listPendingReq[index].userName
+                            :"You are in relationship with " + data.listPendingReq[index].userName,
                             style: TextStyle(
                                 fontSize: 15
                             ),
@@ -173,17 +171,19 @@ class Notifications extends StatelessWidget {
                     ),
 
                     Expanded(
-                        flex: 1,
+                        flex: 2,
                         child:Row(
                           children: [
 
+                            if(data.relationUser.partner.partnerId != data.listPendingReq[index].reqUid)
                             Expanded(
                               child: FloatingActionButton(
                                 backgroundColor: Colors.greenAccent,
                                 onPressed: () async {
 
-
-
+                                  await data.acceptPartner(context2: context, Uid: data.listPendingReq[index].reqUid,
+                                      imageUrl: data.listPendingReq[index].imageUrl,
+                                      userName: data.listPendingReq[index].userName);
                                   // if (Get.find<TabsController>().likedByList.contains(doc['LikedBy'])) {
                                   //   print("Masuk sini");
                                   //   showDialog(
@@ -296,37 +296,43 @@ class Notifications extends StatelessWidget {
                               ),
                             ),
 
-                            // SizedBox(
-                            //   width: 10,
-                            // ),
-                            //
-                            // Expanded(
-                            //   child:FloatingActionButton(
-                            //     backgroundColor: Colors.redAccent,
-                            //     onPressed: () async {
-                            //       await data.docReference
-                            //           .doc(Get.find<LoginController>().userId)
-                            //           .collection("CheckedUser")
-                            //           .doc(doc['LikedBy'])
-                            //           .set({
-                            //         'userName': doc["userName"],
-                            //         'pictureUrl': doc["pictureUrl"],
-                            //         'DislikedUser': doc['LikedBy'],
-                            //         'timestamp': DateTime.now(),
-                            //       },
-                            //           SetOptions(merge : true)
-                            //       );
-                            //
-                            //       data.removeUserSwipe(index);
-                            //
-                            //     },
-                            //     child: Icon(
-                            //       Icons.close,
-                            //       size: 25,
-                            //       color: Colors.black,
-                            //     ),
-                            //   ),
-                            // ),
+                            SizedBox(
+                              width: 10,
+                            ),
+
+                            Expanded(
+                              child:FloatingActionButton(
+                                backgroundColor: Colors.redAccent,
+                                onPressed: () async {
+
+                                  await data.deletePartner(Uid: data.listPendingReq[index].reqUid);
+                                  // await data.docReference
+                                  //     .doc(Get.find<LoginController>().userId)
+                                  //     .collection("CheckedUser")
+                                  //     .doc(doc['LikedBy'])
+                                  //     .set({
+                                  //   'userName': doc["userName"],
+                                  //   'pictureUrl': doc["pictureUrl"],
+                                  //   'DislikedUser': doc['LikedBy'],
+                                  //   'timestamp': DateTime.now(),
+                                  // },
+                                  //     SetOptions(merge : true)
+                                  // );
+                                  //
+                                  // data.removeUserSwipe(index);
+
+                                },
+                                child: Icon(
+                                  Icons.close,
+                                  size: 25,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+
+                            SizedBox(
+                              width: 10,
+                            ),
 
                           ],
                         )
@@ -354,8 +360,7 @@ class Notifications extends StatelessWidget {
               padding: const EdgeInsets.all(8.0),
               child: Container(
                   decoration: BoxDecoration(
-                      borderRadius:
-                      BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(20),
                       // color: !doc.data['isRead']
                       color: !doc['isRead']
                           ? primaryColor.withOpacity(.15)
@@ -439,6 +444,8 @@ class Notifications extends StatelessWidget {
                     onTap: () async {
                       // print(doc.data["Matches"]);
                       print(doc["Matches"]);
+                      await data.initRelationPartner(Uid: doc['Matches']);
+
                       showDialog(
                           context: context,
                           builder: (context) {
@@ -453,10 +460,7 @@ class Notifications extends StatelessWidget {
                                 ));
                           });
                       DocumentSnapshot userdoc = await data.db
-                          .collection("Users")
-                      // .doc(doc.data["Matches"])
-                          .doc(doc["Matches"])
-                          .get();
+                          .collection("Users").doc(doc["Matches"]).get();
                       if (userdoc.exists) {
                         Navigator.pop(context);
                         UserModel tempuser =
@@ -475,12 +479,8 @@ class Notifications extends StatelessWidget {
                               // if (!doc.data["isRead"]) {
                               if (!doc["isRead"]) {
                                 FirebaseFirestore.instance
-                                    .collection(
-                                    "/Users/${Get.find<LoginController>().userId}/Matches")
-                                // .doc('${doc.data["Matches"]}')
-                                    .doc('${doc["Matches"]}')
-                                    .update(
-                                    {'isRead': true});
+                                    .collection("/Users/${Get.find<LoginController>().userId}/Matches")
+                                    .doc('${doc["Matches"]}').update({'isRead': true});
                               }
                               return Info(
                                   tempuser,

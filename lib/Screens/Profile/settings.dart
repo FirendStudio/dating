@@ -18,6 +18,7 @@ import 'package:hookup4u/util/color.dart';
 import 'package:share/share.dart';
 import '../../Controller/LoginController.dart';
 import '../../util/Global.dart';
+import '../Widget/CustomSearch.dart';
 import 'UpdateNumber.dart';
 // import 'package:easy_localization/easy_localization.dart';
 
@@ -455,6 +456,41 @@ class _SettingsState extends State<Settings> {
                   child: Text(
                     "Change your location to see members in other city",
                     style: TextStyle(color: Colors.black54),
+                  ),
+                ),
+
+                Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Text(
+                    "Partner",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ),
+
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: InkWell(
+                    child: Card(
+                      color: Colors.redAccent,
+                      child: Padding(
+                        padding: const EdgeInsets.all(18.0),
+                        child: Center(
+                          child: Text(
+                            "Add Partner",
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                      ),
+                    ),
+                    onTap: () {
+                      showSearch(context: context, delegate: CustomSearch());
+                      // Share.share(
+                      //     'check out my website https://deligence.com', //Replace with your dynamic link and msg for invite users
+                      //     subject: 'Look what I made!');
+                    },
                   ),
                 ),
 

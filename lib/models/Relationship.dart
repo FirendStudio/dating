@@ -19,14 +19,18 @@ class Relationship {
   List<Pending> pendingAcc;
   DateTime updateAt;
 
-  factory Relationship.fromDocument(Map<String, dynamic> json) => Relationship(
-    userId: json["userId"],
-    partner: Partner.fromDocument(json["partner"]),
-    inRelationship: json["inRelationship"],
-    pendingReq: List<Pending>.from(json["pendingReq"].map((x) => Pending.fromDocument(x))),
-    pendingAcc: List<Pending>.from(json["pendingAcc"].map((x) => Pending.fromDocument(x))),
-    updateAt: (json['updateAt'] as Timestamp).toDate(),
-  );
+  factory Relationship.fromDocument(Map<String, dynamic> json) {
+    // print("Cek updateAt");
+    // print(json['updateAt']);
+    return Relationship(
+      userId: json["userId"],
+      partner: Partner.fromDocument(json["partner"]),
+      inRelationship: json["inRelationship"],
+      pendingReq: List<Pending>.from(json["pendingReq"].map((x) => Pending.fromDocument(x))),
+      pendingAcc: List<Pending>.from(json["pendingAcc"].map((x) => Pending.fromDocument(x))),
+      updateAt: (json['updateAt'] as Timestamp).toDate(),
+    );
+  }
 
   Map<String, dynamic> toJson() => {
     "userId": userId,
@@ -71,18 +75,22 @@ class Partner {
   Partner({
     this.partnerId,
     this.partnerImage,
+    this.partnerName,
   });
 
   String partnerId;
   String partnerImage;
+  String partnerName;
 
   factory Partner.fromDocument(Map<String, dynamic> json) => Partner(
     partnerId: json["partnerId"],
     partnerImage: json["partnerImage"],
+    partnerName: json["partnerName"],
   );
 
   Map<String, dynamic> toJson() => {
     "partnerId": partnerId,
     "partnerImage": partnerImage,
+    "partnerName": partnerName,
   };
 }

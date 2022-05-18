@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:get/get.dart';
+import 'package:hookup4u/Controller/NotificationController.dart';
 import 'package:hookup4u/Screens/Chat/Matches.dart';
 import 'package:hookup4u/Screens/Profile/EditProfile.dart';
 import 'package:hookup4u/Screens/reportUser.dart';
@@ -126,6 +127,7 @@ class Info extends StatelessWidget {
                             trailing: FloatingActionButton(
                                 backgroundColor: Colors.white,
                                 onPressed: () {
+                                  Get.find<NotificationController>().relationUserPartner = null;
                                   Navigator.pop(context);
                                 },
                                 child: Icon(
@@ -229,6 +231,56 @@ class Info extends StatelessWidget {
                   SizedBox(
                     height: 10,
                   ),
+                  if(Get.find<NotificationController>().relationUserPartner.partner.partnerId.isNotEmpty)
+                    ListTile(
+                        dense: true,
+                        title: Text(
+                          "Partner",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold),
+                        ),
+                    ),
+                  if(Get.find<NotificationController>().relationUserPartner.partner.partnerId.isNotEmpty)
+                    ListTile(
+                      dense: true,
+                      title: Text(
+                        Get.find<NotificationController>().relationUserPartner.partner.partnerName,
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      // subtitle: Text(user.),
+                      leading: CircleAvatar(
+                        radius: 25,
+                        backgroundColor: secondryColor,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(
+                            25,
+                          ),
+                          child: CachedNetworkImage(
+                            imageUrl: Get.find<NotificationController>().relationUserPartner.partner.partnerImage,
+                            fit: BoxFit.cover,
+                            useOldImageOnUrlChange: true,
+                            placeholder: (context, url) => CupertinoActivityIndicator(
+                              radius: 20,
+                            ),
+                            errorWidget: (context, url, error) =>
+                                Icon(
+                                  Icons.error,
+                                  color: Colors.black,
+                                ),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                  SizedBox(
+                    height: 10,
+                  ),
+
                   Divider(),
                   SizedBox(
                     height: 10,
