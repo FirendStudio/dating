@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:get/get.dart';
+import 'package:hookup4u/Controller/NotificationController.dart';
 import 'package:hookup4u/Controller/TabsController.dart';
 import 'package:hookup4u/Screens/Information.dart';
 import 'package:hookup4u/Screens/Payment/subscriptions.dart';
@@ -234,22 +235,28 @@ class _CardPicturesState extends State<CardPictures>
                                               alignment:
                                               Alignment.bottomLeft,
                                               child: ListTile(
-                                                  onTap: () {
-                                                    print("coba");
+                                                  onTap: () async {
+                                                    print("test");
+                                                    await Get.find<NotificationController>().db
+                                                        .collection("Users").doc(index.id).get();
                                                     // _ads.myInterstitial()
                                                     //   ..load()
                                                     //   ..show();
+                                                    DocumentSnapshot userdoc = await Get.find<NotificationController>().db
+                                                        .collection("Users").doc(index.id).get();
+                                                    UserModel tempuser = UserModel.fromDocument(userdoc);
+                                                    tempuser.distanceBW = Get.find<TabsController>().calculateDistance(
+                                                        Get.find<TabsController>().currentUser.coordinates['latitude'],
+                                                        Get.find<TabsController>().currentUser.coordinates['longitude'],
+                                                        tempuser.coordinates['latitude'],
+                                                        tempuser.coordinates['longitude']).round();
                                                     showDialog(
-                                                        barrierDismissible:
-                                                        false,
-                                                        context:
-                                                        context,
-                                                        builder:
-                                                            (context) {
+                                                        barrierDismissible: false,
+                                                        context: context,
+                                                        builder: (context) {
                                                           return Info(
-                                                              index,
-                                                              widget
-                                                                  .currentUser,
+                                                              tempuser,
+                                                              widget.currentUser,
                                                               swipeKey);
                                                         });
                                                   },
@@ -257,8 +264,7 @@ class _CardPicturesState extends State<CardPictures>
                                                     // "${index.name}, ${index.editInfo['showMyAge'] != null ? !index.editInfo['showMyAge'] ? index.age : "" : index.age}",
                                                     index.age.toString(),
                                                     style: TextStyle(
-                                                        color: Colors
-                                                            .white,
+                                                        color: Colors.white,
                                                         fontSize: 25,
                                                         fontWeight:
                                                         FontWeight
@@ -404,11 +410,10 @@ class _CardPicturesState extends State<CardPictures>
                                   .doc(Get.find<LoginController>().userId)
                                   .set(
                                   {
-                                    'userName': widget.users[index].name,
+                                    'userName': Get.find<TabsController>().currentUser.name,
                                     'pictureUrl': (widget.currentUser.imageUrl[0].runtimeType == String)?widget.currentUser.imageUrl[0] : widget.currentUser.imageUrl[0]['url'],
                                     'LikedBy': Get.find<LoginController>().userId,
-                                    'timestamp':
-                                    FieldValue.serverTimestamp()
+                                    'timestamp': FieldValue.serverTimestamp()
                                   },
                                   SetOptions(merge : true)
                               );

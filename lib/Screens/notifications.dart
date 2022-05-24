@@ -49,24 +49,24 @@ class Notifications extends StatelessWidget {
             elevation: 0,
           ),
           backgroundColor: primaryColor,
-          bottomNavigationBar: CurvedNavigationBar(
-            color: Colors.redAccent,
-            index: data.indexNotif,
-            backgroundColor: Colors.white,
-            items: <Widget>[
-              Icon(Icons.volunteer_activism, size: 30,
-                color: Colors.white,
-              ),
-              Icon(Icons.add_to_photos, size: 30,
-                color: Colors.white,
-              ),
-            ],
-            onTap: (index) {
-              data.indexNotif = index;
-              data.update();
-              //Handle button tap
-            },
-          ),
+          // bottomNavigationBar: CurvedNavigationBar(
+          //   color: Colors.redAccent,
+          //   index: data.indexNotif,
+          //   backgroundColor: Colors.white,
+          //   items: <Widget>[
+          //     Icon(Icons.volunteer_activism, size: 30,
+          //       color: Colors.white,
+          //     ),
+          //     Icon(Icons.add_to_photos, size: 30,
+          //       color: Colors.white,
+          //     ),
+          //   ],
+          //   onTap: (index) {
+          //     data.indexNotif = index;
+          //     data.update();
+          //     //Handle button tap
+          //   },
+          // ),
           body: Container(
             width: Get.width,
             decoration: BoxDecoration(
@@ -83,11 +83,11 @@ class Notifications extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-
-                  if(data.indexNotif == 0)
-                    matchesWidget(data),
-                  if(data.indexNotif == 1)
-                    pendingWidget(data),
+                  matchesWidget(data),
+                  // if(data.indexNotif == 0)
+                  //   matchesWidget(data),
+                  // if(data.indexNotif == 1)
+                  //   pendingWidget(data),
 
                 ],
               ),

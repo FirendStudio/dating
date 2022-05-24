@@ -1,16 +1,6 @@
-import 'package:art_sweetalert/art_sweetalert.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/Controller/NotificationController.dart';
-import 'package:hookup4u/Controller/TabsController.dart';
-import 'package:hookup4u/models/Relationship.dart';
-
-import '../../Controller/LoginController.dart';
-import '../../util/color.dart';
-import '../Tab.dart';
-
 class CustomSearch extends SearchDelegate<String>{
 
   NotificationController notificationController = Get.put(NotificationController());

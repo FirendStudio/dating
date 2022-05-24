@@ -9,6 +9,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hookup4u/Controller/NotificationController.dart';
 import 'package:hookup4u/Screens/Tab.dart';
 import 'package:hookup4u/Screens/Welcome/UpdateLocation.dart';
 import 'package:hookup4u/Screens/auth/login.dart';
@@ -33,6 +34,8 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
+
+  NotificationController notificationController = Get.put(NotificationController());
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   Map<String, dynamic> changeValues = {};
   List<Map<String, dynamic>> listShowMe = [
@@ -146,6 +149,7 @@ class _SettingsState extends State<Settings> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: primaryColor,
       appBar: AppBar(
@@ -467,32 +471,23 @@ class _SettingsState extends State<Settings> {
                   ),
                 ),
 
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: InkWell(
-                    child: Card(
-                      color: Colors.redAccent,
-                      child: Padding(
-                        padding: const EdgeInsets.all(18.0),
-                        child: Center(
-                          child: Text(
-                            "Add Partner",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500),
-                          ),
-                        ),
-                      ),
-                    ),
-                    onTap: () {
-                      showSearch(context: context, delegate: CustomSearch());
-                      // Share.share(
-                      //     'check out my website https://deligence.com', //Replace with your dynamic link and msg for invite users
-                      //     subject: 'Look what I made!');
-                    },
-                  ),
-                ),
+                GetBuilder<NotificationController>(builder: (data){
+                  return Column(
+                    children: [
+                      if(data.relationUser.pendingAcc.isEmpty && data.relationUser.pendingReq.isEmpty)
+                        newPartnerWidget(),
+
+                      if(data.relationUser.pendingAcc.isNotEmpty && data.relationUser.pendingReq.isEmpty)
+                        pendingWidget(),
+
+                      if(data.relationUser.pendingAcc.isEmpty && data.relationUser.pendingReq.isNotEmpty)
+                        acceptWidget(),
+
+                      if(notificationController.relationUser.pendingAcc.isNotEmpty && notificationController.relationUser.pendingReq.isNotEmpty)
+                        relationWidget(),
+                    ],
+                  );
+                }),
 
                 Padding(
                   padding: const EdgeInsets.all(10.0),
@@ -992,6 +987,304 @@ class _SettingsState extends State<Settings> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget newPartnerWidget(){
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: InkWell(
+        child: Card(
+          color: Colors.redAccent,
+          child: Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: Center(
+              child: Text(
+                "Add Partner",
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500),
+              ),
+            ),
+          ),
+        ),
+        onTap: () {
+          showSearch(context: context, delegate: CustomSearch());
+          // Share.share(
+          //     'check out my website https://deligence.com', //Replace with your dynamic link and msg for invite users
+          //     subject: 'Look what I made!');
+        },
+      ),
+    );
+  }
+
+  Widget pendingWidget(){
+    return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+
+            Text(
+              notificationController.relationUser.pendingAcc[0].userName + " (Pending)",
+              style: TextStyle(
+                  fontSize: 16
+              ),
+            ),
+
+            InkWell(
+              child: SizedBox(
+                height: 50,
+                child: Card(
+                  color: Colors.redAccent,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Center(
+                      child: Text(
+                        "Cancel",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              onTap: () async {
+                await notificationController.deletePartner(Uid: notificationController.relationUser.pendingAcc[0].reqUid);
+              },
+            ),
+
+          ],
+        )
+    );
+  }
+
+  Widget acceptWidget(){
+    return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+
+            Expanded(
+              flex : 7,
+              child: Text(
+                notificationController.relationUser.pendingReq[0].userName + " (Requested)",
+                style: TextStyle(
+                    fontSize: 16
+                ),
+              ),
+            ),
+
+
+            Expanded(
+              flex: 1,
+              child: FloatingActionButton(
+                backgroundColor: Colors.greenAccent,
+                onPressed: () async {
+
+                  await notificationController.acceptPartner(context2: context, Uid: notificationController.listPendingReq[0].reqUid,
+                      imageUrl: notificationController.listPendingReq[0].imageUrl,
+                      userName: notificationController.listPendingReq[0].userName);
+                  // if (Get.find<TabsController>().likedByList.contains(doc['LikedBy'])) {
+                  //   print("Masuk sini");
+                  //   showDialog(
+                  //       context: context,
+                  //       builder: (ctx) {
+                  //         Future.delayed(
+                  //             Duration(milliseconds: 1700),
+                  //                 () {
+                  //               Navigator.pop(ctx);
+                  //             });
+                  //         return Padding(
+                  //           padding: const EdgeInsets.only(
+                  //               top: 80),
+                  //           child: Align(
+                  //             alignment:
+                  //             Alignment.topCenter,
+                  //             child: Card(
+                  //               child: Container(
+                  //                 height: 100,
+                  //                 width: 300,
+                  //                 child: Center(
+                  //                     child: Text(
+                  //                       "It's a match\n With ",
+                  //                       textAlign:
+                  //                       TextAlign.center,
+                  //                       style: TextStyle(
+                  //                           color:
+                  //                           primaryColor,
+                  //                           fontSize: 30,
+                  //                           decoration:
+                  //                           TextDecoration
+                  //                               .none),
+                  //                     )
+                  //                   // .tr(args: ['${widget.users[index].name}']),
+                  //                 ),
+                  //               ),
+                  //             ),
+                  //           ),
+                  //         );
+                  //       });
+                  //   print(Get.find<LoginController>().userId);
+                  //   print(doc['LikedBy']);
+                  //   await data.docReference
+                  //       .doc(Get.find<LoginController>().userId)
+                  //       .collection("Matches")
+                  //       .doc(doc['LikedBy'])
+                  //       .set(
+                  //       {
+                  //         'Matches': doc['LikedBy'],
+                  //         'isRead': false,
+                  //         'userName': doc['userName'],
+                  //         'pictureUrl': doc['pictureUrl'],
+                  //         'timestamp': FieldValue.serverTimestamp()
+                  //       },
+                  //       SetOptions(merge : true)
+                  //   );
+                  //   await data.docReference
+                  //       .doc(doc['LikedBy'])
+                  //       .collection("Matches")
+                  //       .doc(Get.find<LoginController>().userId)
+                  //       .set(
+                  //       {
+                  //         'Matches': Get.find<LoginController>().userId,
+                  //         'userName': currentUser.name,
+                  //         'pictureUrl': (currentUser.imageUrl[0].runtimeType == String)?currentUser.imageUrl[0] : currentUser.imageUrl[0]['url'],
+                  //         'isRead': false,
+                  //         'timestamp': FieldValue.serverTimestamp()
+                  //       },
+                  //       SetOptions(merge : true)
+                  //   );
+                  // }
+                  //
+                  // await data.docReference
+                  //     .doc(Get.find<LoginController>().userId)
+                  //     .collection("CheckedUser")
+                  //     .doc(doc['LikedBy'])
+                  //     .set(
+                  //     {
+                  //       'userName': doc['userName'],
+                  //       'pictureUrl': doc['pictureUrl'],
+                  //       'LikedUser': doc['LikedBy'],
+                  //       'timestamp':
+                  //       FieldValue.serverTimestamp(),
+                  //     },
+                  //     SetOptions(merge : true)
+                  // );
+                  // await data.docReference
+                  //     .doc(doc['LikedBy'])
+                  //     .collection("LikedBy")
+                  //     .doc(Get.find<LoginController>().userId)
+                  //     .set(
+                  //     {
+                  //       'userName': doc['userName'],
+                  //       'pictureUrl': doc['pictureUrl'],
+                  //       'LikedBy': Get.find<LoginController>().userId,
+                  //       'timestamp':
+                  //       FieldValue.serverTimestamp()
+                  //     },
+                  //     SetOptions(merge : true)
+                  // );
+                  //
+                  // data.removeUserSwipe(index);
+
+                },
+                child: Icon(
+                  Icons.add,
+                  size: 25,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+
+            SizedBox(
+              width: 10,
+            ),
+
+            Expanded(
+              flex: 1,
+              child:FloatingActionButton(
+                backgroundColor: Colors.redAccent,
+                onPressed: () async {
+
+                  await notificationController.deletePartner(Uid: notificationController.listPendingReq[0].reqUid);
+                  // await data.docReference
+                  //     .doc(Get.find<LoginController>().userId)
+                  //     .collection("CheckedUser")
+                  //     .doc(doc['LikedBy'])
+                  //     .set({
+                  //   'userName': doc["userName"],
+                  //   'pictureUrl': doc["pictureUrl"],
+                  //   'DislikedUser': doc['LikedBy'],
+                  //   'timestamp': DateTime.now(),
+                  // },
+                  //     SetOptions(merge : true)
+                  // );
+                  //
+                  // data.removeUserSwipe(index);
+
+                },
+                child: Icon(
+                  Icons.close,
+                  size: 25,
+                  color: Colors.black,
+                ),
+              ),
+            ),
+
+            SizedBox(
+              width: 10,
+            ),
+
+          ],
+        )
+    );
+  }
+
+  Widget relationWidget(){
+    return Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+
+            Text(
+              notificationController.relationUser.partner.partnerName,
+              style: TextStyle(
+                  fontSize: 16
+              ),
+            ),
+
+            InkWell(
+              child: SizedBox(
+                height: 50,
+                child: Card(
+                  color: Colors.redAccent,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Center(
+                      child: Text(
+                        "Cancel",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              onTap: () async {
+                await notificationController.deletePartner(Uid: notificationController.relationUser.partner.partnerId);
+              },
+            ),
+
+          ],
+        )
     );
   }
 

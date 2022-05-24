@@ -264,6 +264,7 @@ class _MyAppState extends State<MyApp> {
           data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
         );
       },
+      defaultTransition: Transition.leftToRightWithFade,
       title: "JablessCupid",
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

@@ -35,23 +35,26 @@ class Info extends StatelessWidget {
     bool isMe = user.id == currentUser.id;
     bool isMatched = swipeKey == null;
     //matches.any((value) => value.id == user.id);
-    if(user.desires.isNotEmpty){
-      for(int index=0; index<= user.desires.length-1; index++){
-        if(desiresText.isEmpty){
-          desiresText = tabsController.capitalize(user.desires[index]);
-          print(desiresText);
-        }else{
-          desiresText += ", " + tabsController.capitalize(user.desires[index]);
+    print(user);
+    if(user != null){
+      if(user.desires.isNotEmpty){
+        for(int index=0; index<= user.desires.length-1; index++){
+          if(desiresText.isEmpty){
+            desiresText = tabsController.capitalize(user.desires[index]);
+            print(desiresText);
+          }else{
+            desiresText += ", " + tabsController.capitalize(user.desires[index]);
+          }
         }
       }
-    }
 
-    if(user.interest.isNotEmpty){
-      for(int index=0; index<= user.interest.length-1; index++){
-        if(interestText.isEmpty){
-          interestText = tabsController.capitalize(user.interest[index]);
-        }else{
-          interestText += ", " + tabsController.capitalize(user.interest[index]);
+      if(user.interest.isNotEmpty){
+        for(int index=0; index<= user.interest.length-1; index++){
+          if(interestText.isEmpty){
+            interestText = tabsController.capitalize(user.interest[index]);
+          }else{
+            interestText += ", " + tabsController.capitalize(user.interest[index]);
+          }
         }
       }
     }
@@ -200,38 +203,42 @@ class Info extends StatelessWidget {
                   SizedBox(
                     height: 20,
                   ),
-                  ListTile(
-                    dense: true,
-                    title: Text(
-                      "Desires",
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold),
+
+                  if(desiresText.isNotEmpty)
+                    ListTile(
+                      dense: true,
+                      title: Text(
+                        "Desires",
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text(desiresText),
                     ),
-                    subtitle: Text(desiresText),
-                  ),
 
                   SizedBox(
                     height: 10,
                   ),
 
-                  ListTile(
-                    dense: true,
-                    title: Text(
-                      "Interest",
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold),
+                  if(interestText.isNotEmpty)
+                    ListTile(
+                      dense: true,
+                      title: Text(
+                        "Interest",
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text(interestText),
                     ),
-                    subtitle: Text(interestText),
-                  ),
 
                   SizedBox(
                     height: 10,
                   ),
-                  if(Get.find<NotificationController>().relationUserPartner.partner.partnerId.isNotEmpty)
+
+                  if(Get.find<NotificationController>().relationUserPartner != null && Get.find<NotificationController>().relationUserPartner.partner.partnerId.isNotEmpty)
                     ListTile(
                         dense: true,
                         title: Text(
@@ -242,7 +249,7 @@ class Info extends StatelessWidget {
                               fontWeight: FontWeight.bold),
                         ),
                     ),
-                  if(Get.find<NotificationController>().relationUserPartner.partner.partnerId.isNotEmpty)
+                  if(Get.find<NotificationController>().relationUserPartner != null && Get.find<NotificationController>().relationUserPartner.partner.partnerId.isNotEmpty)
                     ListTile(
                       dense: true,
                       title: Text(

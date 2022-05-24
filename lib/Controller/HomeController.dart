@@ -37,13 +37,13 @@ class HomeController extends GetxController{
           callInfo['channel_id'] = message.data['channel_id'];
           callInfo['senderName'] = message.data['senderName'];
           callInfo['senderPicture'] = message.data['senderPicture'];
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => Incoming(callInfo)));
+          // Navigator.push(context,
+          //     MaterialPageRoute(builder: (context) => Incoming(callInfo)));
         } else if (Platform.isAndroid && message.data['data']['type'] == 'Call') {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => Incoming(message.data['data'])));
+          // Navigator.push(
+          //     context,
+          //     MaterialPageRoute(
+          //         builder: (context) => Incoming(message.data['data'])));
         } else
           print("object");
       });
@@ -60,18 +60,18 @@ class HomeController extends GetxController{
           bool iscallling = await _checkcallState(message.data['channel_id']);
           print("=================$iscallling");
           if (iscallling) {
-            await Navigator.push(context,
-                MaterialPageRoute(builder: (context) => Incoming(message)));
+            // await Navigator.push(context,
+            //     MaterialPageRoute(builder: (context) => Incoming(message)));
           }
         } else if (Platform.isAndroid && message.data['data']['type'] == 'Call') {
           bool iscallling =
           await _checkcallState(message.data['data']['channel_id']);
           print("=================$iscallling");
           if (iscallling) {
-            await Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => Incoming(message.data['data'])));
+            // await Navigator.push(
+            //     context,
+            //     MaterialPageRoute(
+            //         builder: (context) => Incoming(message.data['data'])));
           } else {
             print("Timeout");
           }

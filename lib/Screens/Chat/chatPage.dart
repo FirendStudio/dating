@@ -699,15 +699,15 @@ class _ChatPageState extends State<ChatPage> {
       });
 
       // push video page with given channel name
-      await Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => DialCall(
-              channelName: widget.chatId,
-              receiver: widget.second,
-              callType: callType),
-        ),
-      );
+      // await Navigator.push(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (context) => DialCall(
+      //         channelName: widget.chatId,
+      //         receiver: widget.second,
+      //         callType: callType),
+      //   ),
+      // );
     } else {
       CustomSnackbar.snackbar("Blocked !", _scaffoldKey);
     }

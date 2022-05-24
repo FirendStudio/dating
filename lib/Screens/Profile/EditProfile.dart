@@ -628,10 +628,10 @@ class EditProfileState extends State<EditProfile> {
                                           EdgeInsets.all(4):EdgeInsets.all(4),
                                           // width: 12,
                                           // height: 16,
-                                          decoration: BoxDecoration(
+                                          decoration: (widget.currentUser.imageUrl.length > index)?BoxDecoration(
                                             shape: BoxShape.circle,
                                             color: primaryColor,
-                                          ),
+                                          ):null,
                                           child: widget.currentUser.imageUrl.length > index
                                               ? InkWell(
                                                   child: Icon(
@@ -670,23 +670,25 @@ class EditProfileState extends State<EditProfile> {
 
                                                   },
                                                 )
-                                              : InkWell(
-                                                  child: Icon(
-                                                    Icons.add_circle_outline,
-                                                    size: 22,
-                                                    color: Colors.white,
-                                                  ),
-                                                  onTap: () {
-                                                    bool show = false;
-                                                    if(widget.currentUser.imageUrl[index].runtimeType == String || widget.currentUser.imageUrl[index]['show'] == "true"){
-                                                      show = true;
-                                                    }else{
-                                                      show = false;
-                                                    }
-                                                    showPrivateImageDialog(context, true, widget.currentUser, true, show);
-                                                    // source(context, widget.currentUser, false);
-                                                  }
-                                                )),
+                                              : Container(color: Colors.white,),
+                                              // : InkWell(
+                                              //     child: Icon(
+                                              //       Icons.add_circle_outline,
+                                              //       size: 22,
+                                              //       color: Colors.white,
+                                              //     ),
+                                              //     onTap: () {
+                                              //       bool show = false;
+                                              //       if(widget.currentUser.imageUrl[index].runtimeType == String || widget.currentUser.imageUrl[index]['show'] == "true"){
+                                              //         show = true;
+                                              //       }else{
+                                              //         show = false;
+                                              //       }
+                                              //       showPrivateImageDialog(context, true, widget.currentUser, true, show);
+                                              //       // source(context, widget.currentUser, false);
+                                              //     }
+                                              //   )
+                                      ),
                                     ),
 
                                     if(widget.currentUser.imageUrl.length > index)
