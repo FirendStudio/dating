@@ -6,8 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/Controller/TabsController.dart';
-import 'package:hookup4u/Screens/auth/login.dart';
-
+import 'package:hookup4u/models/user_model.dart';
 import '../models/Relationship.dart';
 import '../util/color.dart';
 import 'LoginController.dart';
@@ -18,6 +17,7 @@ class NotificationController extends GetxController{
   CollectionReference docReference;
   Relationship relationUser;
   Relationship relationUserPartner;
+  UserModel userPartner;
   List <Pending> listPendingReq = [];
   List <Pending> listPendingAcc = [];
   int indexNotif = 0;
@@ -67,6 +67,15 @@ class NotificationController extends GetxController{
       data = await FirebaseFirestore.instance.collection("Relationship").doc(Uid).get();
     }
     relationUserPartner = Relationship.fromDocument(data.data());
+  }
+
+  initUserPartner({@required String Uid}) async {
+    var data = await FirebaseFirestore.instance.collection("Users").doc(Uid).get();
+    // if(!data.exists){
+    //   await setNewRelationship(Uid);
+    //   data = await FirebaseFirestore.instance.collection("Relationship").doc(Uid).get();
+    // }
+    userPartner = UserModel.fromDocument(data);
   }
 
   Future <bool> deletePartner({@required String Uid}) async{

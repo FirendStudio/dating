@@ -7,7 +7,7 @@ import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/Controller/NotificationController.dart';
 import 'package:hookup4u/Controller/TabsController.dart';
-import 'package:hookup4u/Screens/Information.dart';
+import 'package:hookup4u/Screens/Info/Information.dart';
 import 'package:hookup4u/Screens/Payment/subscriptions.dart';
 import 'package:hookup4u/Screens/Tab.dart';
 import 'package:hookup4u/ads/ads.dart';
@@ -237,11 +237,15 @@ class _CardPicturesState extends State<CardPictures>
                                               child: ListTile(
                                                   onTap: () async {
                                                     print("test");
-                                                    await Get.find<NotificationController>().db
-                                                        .collection("Users").doc(index.id).get();
+                                                    // await Get.find<NotificationController>().db
+                                                    //     .collection("Users").doc(index.id).get();
                                                     // _ads.myInterstitial()
                                                     //   ..load()
                                                     //   ..show();
+                                                    await Get.find<NotificationController>().initRelationPartner(Uid: index.id);
+                                                    if(Get.find<NotificationController>().relationUser.inRelationship){
+                                                      await Get.find<NotificationController>().initUserPartner(Uid: Get.find<NotificationController>().relationUser.partner.partnerId);
+                                                    }
                                                     DocumentSnapshot userdoc = await Get.find<NotificationController>().db
                                                         .collection("Users").doc(index.id).get();
                                                     UserModel tempuser = UserModel.fromDocument(userdoc);

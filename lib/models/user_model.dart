@@ -56,7 +56,7 @@ class UserModel {
     return UserModel(
         id: doc['userId'],
         // isBlocked: doc['isBlocked'] != null ? doc['isBlocked'] : false,
-        isBlocked: false,
+        isBlocked: doc.data().toString().contains('isBlocked') ? doc['isBlocked'] : false,
         phoneNumber: doc['phoneNumber'],
         name: doc['UserName'],
         editInfo: doc['editInfo'],

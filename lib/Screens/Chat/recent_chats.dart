@@ -1,12 +1,17 @@
+import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:hookup4u/Screens/Chat/Matches.dart';
 import 'package:hookup4u/Screens/Chat/chatPage.dart';
 import 'package:hookup4u/models/user_model.dart';
 import 'package:hookup4u/util/color.dart';
 import 'package:intl/intl.dart';
+
+import '../../Controller/TabsController.dart';
+import '../Payment/subscriptions.dart';
 
 class RecentChats extends StatelessWidget {
   final db = FirebaseFirestore.instance;
@@ -35,16 +40,51 @@ class RecentChats extends StatelessWidget {
                   physics: ScrollPhysics(),
                   children: matches
                       .map((index) => GestureDetector(
-                            onTap: () => Navigator.push(
-                              context,
-                              CupertinoPageRoute(
-                                builder: (_) => ChatPage(
-                                  chatId: chatId(currentUser, index),
-                                  sender: currentUser,
-                                  second: index,
-                                ),
-                              ),
-                            ),
+                            onTap: () async {
+                              if(!Get.find<TabsController>().isPuchased){
+                                ArtDialogResponse response = await ArtSweetAlert.show(
+                                    barrierDismissible: false,
+                                    context: context,
+                                    artDialogArgs: ArtDialogArgs(
+                                        denyButtonText: "Cancel",
+                                        title: "Information",
+                                        text: "Upgrade now to start chatting with this member!",
+                                        confirmButtonText: "Subscribe Now",
+                                        type: ArtSweetAlertType.warning
+                                    )
+                                );
+
+                                if(response==null) {
+                                  return;
+                                }
+
+                                if(response.isTapDenyButton) {
+                                  return;
+                                }
+
+                                if(response.isTapConfirmButton){
+                                  Navigator.push(
+                                    context,
+                                    CupertinoPageRoute(
+                                        builder: (context) => Subscription(
+                                            Get.find<TabsController>().currentUser, null, Get.find<TabsController>().items)),
+                                  );
+                                }
+
+                              }else{
+                                Navigator.push(
+                                  context,
+                                  CupertinoPageRoute(
+                                    builder: (_) => ChatPage(
+                                      chatId: chatId(currentUser, index),
+                                      sender: currentUser,
+                                      second: index,
+                                    ),
+                                  ),
+                                );
+                              }
+
+                            },
                             child: StreamBuilder(
                                 stream: db.collection("chats")
                                     .doc(chatId(currentUser, index))

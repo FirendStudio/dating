@@ -4,11 +4,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:hookup4u/models/user_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:apple_sign_in/apple_sign_in.dart' as i;
 import '../Screens/Tab.dart';
 import '../Screens/Welcome.dart';
 import '../models/custom_web_view.dart';
+import 'NotificationController.dart';
+import 'TabsController.dart';
 
 class LoginController extends GetxController{
   static const your_client_id = '709280423766575';
@@ -147,7 +150,8 @@ class LoginController extends GetxController{
         print(data['userId']);
         storage.write("userId", data['userId']);
         userId = data['userId'];
-
+        Get.put(NotificationController());
+        Get.put(TabsController());
         Navigator.push(context,
             CupertinoPageRoute(builder: (context) => Tabbar(null, null)));
       } on StateError catch (e) {

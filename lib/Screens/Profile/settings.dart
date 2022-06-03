@@ -10,6 +10,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/Controller/NotificationController.dart';
+import 'package:hookup4u/Controller/TabsController.dart';
 import 'package:hookup4u/Screens/Tab.dart';
 import 'package:hookup4u/Screens/Welcome/UpdateLocation.dart';
 import 'package:hookup4u/Screens/auth/login.dart';
@@ -897,6 +898,8 @@ class _SettingsState extends State<Settings> {
                               FlatButton(
                                 onPressed: () async {
                                   await _auth.signOut().whenComplete(() {
+                                    Get.delete<NotificationController>();
+                                    Get.delete<TabsController>();
                                     // _firebaseMessaging.deleteInstanceID();
                                     Navigator.pushReplacement(
                                       context,

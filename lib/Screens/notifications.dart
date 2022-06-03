@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/Controller/NotificationController.dart';
 import 'package:hookup4u/Controller/TabsController.dart';
-import 'package:hookup4u/Screens/Information.dart';
+import 'package:hookup4u/Screens/Info/Information.dart';
 import 'package:hookup4u/Screens/Widget/CustomSearch.dart';
 import 'package:hookup4u/models/user_model.dart';
 import 'package:hookup4u/util/color.dart';
@@ -162,10 +162,7 @@ class Notifications extends StatelessWidget {
                             ),
                           ),
                           subtitle: Text(
-                            DateFormat.MMMd('en_US')
-                                .add_jm().format(data.listPendingReq[index].createdAt)
-                                // doc['timestamp'].toDate())
-                                .toString(),
+                            DateFormat.MMMd('en_US').add_jm().format(data.listPendingReq[index].createdAt),
                           ),
                         )
                     ),
@@ -443,8 +440,6 @@ class Notifications extends StatelessWidget {
                     ),
                     onTap: () async {
                       // print(doc.data["Matches"]);
-                      print(doc["Matches"]);
-                      await data.initRelationPartner(Uid: doc['Matches']);
 
                       showDialog(
                           context: context,
@@ -459,6 +454,12 @@ class Notifications extends StatelessWidget {
                                       Colors.white),
                                 ));
                           });
+                      print(doc["Matches"]);
+                      await data.initRelationPartner(Uid: doc['Matches']);
+                      print("Cek Relation : " + data.relationUserPartner.inRelationship.toString());
+                      if(data.relationUserPartner.inRelationship){
+                        await data.initUserPartner(Uid: data.relationUserPartner.partner.partnerId);
+                      }
                       DocumentSnapshot userdoc = await data.db
                           .collection("Users").doc(doc["Matches"]).get();
                       if (userdoc.exists) {

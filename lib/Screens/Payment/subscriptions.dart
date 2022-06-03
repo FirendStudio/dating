@@ -5,11 +5,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:get/get.dart';
+import 'package:hookup4u/Controller/TabsController.dart';
 import 'package:hookup4u/models/user_model.dart';
 import 'package:hookup4u/util/color.dart';
 import 'package:hookup4u/util/snackbar.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
-// import 'package:in_app_purchase/store_kit_wrappers.dart';
+import 'package:in_app_purchase_android/in_app_purchase_android.dart';
+import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
+import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../Profile/profile.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
@@ -30,6 +34,7 @@ class Subscription extends StatefulWidget {
 class _SubscriptionState extends State<Subscription> {
   /// if the api is available or not.
   bool isAvailable = true;
+  TabsController tabsController = Get.put(TabsController());
 
   /// products for sale
   List<ProductDetails> products = [];
@@ -94,7 +99,7 @@ class _SubscriptionState extends State<Subscription> {
 
   void _initialize() async {
     isAvailable = await _iap.isAvailable();
-    // print(isAvailable);
+    print(isAvailable);
     if (isAvailable) {
       List<Future> futures = [
         _getProducts(await _fetchPackageIds()),
@@ -104,26 +109,24 @@ class _SubscriptionState extends State<Subscription> {
       // print(futures);
 
       /// removing all the pending puchases.
-      // if (Platform.isIOS) {
-      //   var paymentWrapper = SKPaymentQueueWrapper();
-      //   var transactions = await paymentWrapper.transactions();
-      //   transactions.forEach((transaction) async {
-      //     print(transaction.transactionState);
-      //     await paymentWrapper
-      //         .finishTransaction(transaction)
-      //         .catchError((onError) {
-      //       print('finishTransaction Error $onError');
-      //     });
-      //   });
-      // }
+      if (Platform.isIOS) {
+        var paymentWrapper = SKPaymentQueueWrapper();
+        var transactions = await paymentWrapper.transactions();
+        transactions.forEach((transaction) async {
+          print(transaction.transactionState);
+          await paymentWrapper
+              .finishTransaction(transaction)
+              .catchError((onError) {
+            print('finishTransaction Error $onError');
+          });
+        });
+      }
 
       _streamSubscription = _iap.purchaseStream.listen((data) {
-        setState(
-          () {
-            purchases.addAll(data);
-
-            purchases.forEach(
-              (purchase) async {
+        print(purchases);
+        setState(() {
+            purchases.assignAll(data);
+            purchases.forEach((purchase) async {
                 await _verifyPuchase(purchase.productID);
               },
             );
@@ -149,6 +152,7 @@ class _SubscriptionState extends State<Subscription> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       key: _scaffoldKey,
       body: SingleChildScrollView(
@@ -329,6 +333,14 @@ class _SubscriptionState extends State<Subscription> {
                                                 });
                                               },
                                               children: products.map((product) {
+                                                String duration = "0";
+                                                if(product.id == "monthly"){
+                                                  duration = "1";
+                                                }else if(product.id == "quarterly"){
+                                                  duration = "3";
+                                                }else{
+                                                  duration = "0";
+                                                }
                                                 return Transform.rotate(
                                                   angle: pi / 2,
                                                   child: Center(
@@ -337,12 +349,8 @@ class _SubscriptionState extends State<Subscription> {
                                                         productList(
                                                           context: context,
                                                           product: product,
-                                                          // interval: Platform.isIOS
-                                                          //     ? getInterval(product)
-                                                          //     : getIntervalAndroid(product),
-                                                          // intervalCount: Platform.isIOS
-                                                          //     ? product.skProduct.subscriptionPeriod.numberOfUnits.toString()
-                                                          //     : product.skuDetail.subscriptionPeriod.split("")[1],
+                                                          interval: getInterval(product),
+                                                          intervalCount: duration,
                                                           price: product.price,
                                                         ),
                                                       ],
@@ -412,6 +420,7 @@ class _SubscriptionState extends State<Subscription> {
                         ))),
                     onTap: () async {
                       if (selectedProduct != null)
+
                         _buyProduct(selectedProduct);
                       else {
                         CustomSnackbar.snackbar(
@@ -478,7 +487,7 @@ class _SubscriptionState extends State<Subscription> {
                       style: TextStyle(color: Colors.blue),
                     ),
                     onTap: () => launch(
-                        "https://www.deligence.com/apps/hookup4u/Privacy-Policy.html"), //TODO: add privacy policy
+                        "https://jablesscupid.com/privacy-policy/"),
                   ),
                   GestureDetector(
                     child: Text(
@@ -486,7 +495,7 @@ class _SubscriptionState extends State<Subscription> {
                       style: TextStyle(color: Colors.blue),
                     ),
                     onTap: () => launch(
-                        "https://www.deligence.com/apps/hookup4u/Terms-Service.html"), //TODO: add Terms and conditions
+                        "https://jablesscupid.com/terms-conditions/"),
                   ),
                 ],
               ),
@@ -524,15 +533,14 @@ class _SubscriptionState extends State<Subscription> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
           SizedBox(height: MediaQuery.of(context).size.height * .02),
-          Text(intervalCount,
+          Text(intervalCount ?? "",
               style: TextStyle(
-                  color: selectedProduct !=
-                          product //setting up color if product get selected
+                  color: selectedProduct != product //setting up color if product get selected
                       ? Colors.black
                       : primaryColor,
                   fontSize: 25,
                   fontWeight: FontWeight.bold)),
-          Text(interval,
+          Text(interval ?? "",
               style: TextStyle(
                   color: selectedProduct !=
                           product //setting up color if product get selected
@@ -604,15 +612,26 @@ class _SubscriptionState extends State<Subscription> {
   }
 
   ///verifying opurhcase of user
-  Future<void> _verifyPuchase(
-    String id,
-  ) async {
+  Future<void> _verifyPuchase(String id) async {
     PurchaseDetails purchase = _hasPurchased(id);
+    print(purchase.status);
     if (purchase != null && purchase.status == PurchaseStatus.purchased) {
       print(purchase.productID);
 
       // if (Platform.isIOS) {
       await _iap.completePurchase(purchase);
+      DateTime date;
+      var now = new DateTime.now();
+      if(purchase.productID == "quarterly"){
+        date = DateTime(now.year, now.month + 3, now.day);
+      }else if(purchase.productID == "monthly"){
+        date = DateTime(now.year, now.month + 1, now.day);
+      }
+      print("Masuk Sini");
+      tabsController.isPuchased = true;
+      await tabsController.setUpdatePayment(uid:Get.find<TabsController>().currentUser.id, status: true,
+          packageId: purchase.productID, date: date, purchasedId: purchase.purchaseID);
+      tabsController.update();
       //}
       Navigator.pushReplacement(
         context,
@@ -637,20 +656,42 @@ class _SubscriptionState extends State<Subscription> {
   ///buying a product
   void _buyProduct(ProductDetails product) async {
     final PurchaseParam purchaseParam = PurchaseParam(productDetails: product);
-    await _iap.buyNonConsumable(purchaseParam: purchaseParam);
+    try{
+      await _iap.buyNonConsumable(purchaseParam: purchaseParam);
+    }catch (e){
+      print(e);
+      // Map<String, PurchaseDetails> purchases =
+      // Map.fromEntries(Get.find<TabsController>().purchases.map((PurchaseDetails purchase) {
+      //   if (purchase.pendingCompletePurchase) {
+      //     _iap.completePurchase(purchase);
+      //   }
+      //   return MapEntry<String, PurchaseDetails>(purchase.productID, purchase);
+      // }));
+      // print(purchases);
+      Get.snackbar("Information", "You've already Subcribed");
+      return;
+    }
+
   }
 
-  // String getInterval(ProductDetails product) {
-  //   SKSubscriptionPeriodUnit periodUnit =
-  //       product.skProduct.subscriptionPeriod.unit;
-  //   if (SKSubscriptionPeriodUnit.month == periodUnit) {
-  //     return "Month(s)";
-  //   } else if (SKSubscriptionPeriodUnit.week == periodUnit) {
-  //     return "Week(s)";
-  //   } else {
-  //     return "Year";
-  //   }
-  // }
+  String getInterval(ProductDetails product) {
+    if(product.id == "monthly"){
+      return "Month(s)";
+    }else if(product.id == "quarterly"){
+      return "Month(s)";
+    }else{
+      return "Year";
+    }
+    // SKSubscriptionPeriodUnit periodUnit =
+    //     product.skProduct.subscriptionPeriod.unit;
+    // if (SKSubscriptionPeriodUnit.month == periodUnit) {
+    //   return "Month(s)";
+    // } else if (SKSubscriptionPeriodUnit.week == periodUnit) {
+    //   return "Week(s)";
+    // } else {
+    //   return "Year";
+    // }
+  }
   //
   // String getIntervalAndroid(ProductDetails product) {
   //   String durCode = product.skuDetail.subscriptionPeriod.split("")[2];

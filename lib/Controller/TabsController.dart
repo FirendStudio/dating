@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
@@ -7,11 +8,17 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/Controller/NotificationController.dart';
+import 'package:hookup4u/models/Payment.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 
 import '../models/user_model.dart';
+import '../util/consumable_store.dart';
 import 'HomeController.dart';
 import 'LoginController.dart';
+import 'package:in_app_purchase_android/billing_client_wrappers.dart';
+import 'package:in_app_purchase_android/in_app_purchase_android.dart';
+import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
+import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 
 class TabsController extends GetxController{
   CollectionReference docRef = FirebaseFirestore.instance.collection('Users');
@@ -25,22 +32,228 @@ class TabsController extends GetxController{
   List<UserModel> users = [];
   List likedByList = [];
   /// Past purchases
-  List<PurchaseDetails> purchases = [];
+  // List<PurchaseDetails> purchases = [];
   InAppPurchase _iap = InAppPurchase.instance;
+  final InAppPurchase _inAppPurchase = InAppPurchase.instance;
+  StreamSubscription<List<PurchaseDetails>> _subscription;
+  List<String> notFoundIds = [];
+  List<ProductDetails> products = [];
+  List<PurchaseDetails> purchases = [];
+  List<String> listCheck = ["A"];
+  List<String> consumables = [];
+  bool isAvailable = false;
+  bool purchasePending = false;
+  bool loading = true;
+  String queryProductError;
   bool isPuchased = false;
+  bool kAutoConsume = true;
+  String kConsumableId = 'consumable';
+  Payment paymentModel;
 
   Map<String, dynamic> items = {};
   int init = 0;
   List checkedUser = [];
+
+  List<String> kProductIds = <String>[
+    "monthly",
+    "quarterly",
+  ];
+
   initAllTab(BuildContext context){
     if(init == 0){
       getAccessItems();
       getCurrentUser(context);
       getMatches();
       Get.find<NotificationController>().initNotification();
+      initPayment();
+      initNewCheckPayment();
       init = 1;
     }
 
+  }
+
+  initNewCheckPayment(){
+    final Stream<List<PurchaseDetails>> purchaseUpdated = _iap.purchaseStream;
+    _subscription = purchaseUpdated.listen((purchaseDetailsList) {
+      print(purchaseDetailsList);
+      listenToPurchaseUpdated(purchaseDetailsList);
+    }, onDone: () {
+      print("done");
+      _subscription.cancel();
+    }, onError: (error) {
+      print(error);
+      // handle error here.
+    });
+    initStoreInfo();
+  }
+
+  void listenToPurchaseUpdated(List<PurchaseDetails> purchaseDetailsList) {
+    purchaseDetailsList.forEach((PurchaseDetails purchaseDetails) async {
+      if (purchaseDetails.status == PurchaseStatus.pending) {
+        // showPendingUI();
+        purchasePending = true;
+        update();
+      } else {
+        if (purchaseDetails.status == PurchaseStatus.error) {
+          // handleError(purchaseDetails.error!);
+          purchasePending = false;
+        } else if (purchaseDetails.status == PurchaseStatus.purchased ||
+            purchaseDetails.status == PurchaseStatus.restored) {
+          bool valid = await verifyPurchase(purchaseDetails);
+          if (valid) {
+            deliverProduct(purchaseDetails);
+          } else {
+            handleInvalidPurchase(purchaseDetails);
+            return;
+          }
+        }
+        if (Platform.isAndroid) {
+          if (!kAutoConsume && purchaseDetails.productID == kConsumableId) {
+            final InAppPurchaseAndroidPlatformAddition androidAddition =
+            _inAppPurchase.getPlatformAddition<
+                InAppPurchaseAndroidPlatformAddition>();
+            await androidAddition.consumePurchase(purchaseDetails);
+          }
+        }
+        if (purchaseDetails.pendingCompletePurchase) {
+          await _inAppPurchase.completePurchase(purchaseDetails);
+        }
+      }
+    });
+  }
+
+  void handleInvalidPurchase(PurchaseDetails purchaseDetails) {
+    // handle invalid purchase here if  _verifyPurchase` failed.
+  }
+
+  void deliverProduct(PurchaseDetails purchaseDetails) async {
+    // IMPORTANT!! Always verify purchase details before delivering the product.
+    if (purchaseDetails.productID == kConsumableId) {
+      await ConsumableStore.save(purchaseDetails.purchaseID);
+      List<String> consumables = await ConsumableStore.load();
+      purchasePending = false;
+      consumables = consumables;
+      update();
+    } else {
+      purchases.add(purchaseDetails);
+      purchasePending = false;
+      update();
+    }
+  }
+
+  Future<bool> verifyPurchase(PurchaseDetails purchaseDetails) {
+    // IMPORTANT!! Always verify a purchase before delivering the product.
+    // For the purpose of an example, we directly return true.
+    return Future<bool>.value(true);
+  }
+
+  Future<void> initStoreInfo() async {
+    final bool check = await _inAppPurchase.isAvailable();
+    if (!check) {
+      isAvailable = check;
+      products = [];
+      purchases = [];
+      notFoundIds = [];
+      consumables = [];
+      purchasePending = false;
+      loading = false;
+      update();
+      return;
+    }
+
+
+    if (Platform.isIOS) {
+      var iosPlatformAddition = _inAppPurchase.getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
+      await iosPlatformAddition.setDelegate(ExamplePaymentQueueDelegate());
+    }
+
+    ProductDetailsResponse productDetailResponse = await _inAppPurchase.queryProductDetails(kProductIds.toSet());
+    // print("Detail produk ");
+    // print(productDetailResponse.productDetails[1].title);
+    if (productDetailResponse.error != null) {
+
+      queryProductError = productDetailResponse.error.message;
+      isAvailable = isAvailable;
+      products = productDetailResponse.productDetails;
+      purchases = [];
+      notFoundIds = productDetailResponse.notFoundIDs;
+      consumables = [];
+      purchasePending = false;
+      loading = false;
+      update();
+      return;
+    }
+
+    if (productDetailResponse.productDetails.isEmpty) {
+      queryProductError = null;
+      isAvailable = isAvailable;
+      products = productDetailResponse.productDetails;
+      purchases = [];
+      notFoundIds = productDetailResponse.notFoundIDs;
+      consumables = [];
+      purchasePending = false;
+      loading = false;
+      update();
+      return;
+    }
+    // print(consumables);
+    List<String> listconsumables = await ConsumableStore.load();
+    isAvailable = isAvailable;
+    products = productDetailResponse.productDetails;
+    print(products);
+    notFoundIds = productDetailResponse.notFoundIDs;
+    consumables = listconsumables;
+    // print(consumables);
+    purchasePending = false;
+    loading = false;
+    // update();
+  }
+
+  initPayment(){
+    print("Init Payment");
+    FirebaseFirestore.instance.collection("Payment")
+        .doc(Get.find<LoginController>().userId)
+        .snapshots().listen((event) async {
+      print("Payment");
+      if(!event.exists){
+        await setUpdatePayment(uid: Get.find<LoginController>().userId, packageId: "", status: false, date: DateTime.now(), purchasedId: "");
+        return;
+      }
+      paymentModel = Payment.fromDocument(event.data());
+      if(paymentModel.status == false){
+        isPuchased = false;
+      }
+      if(paymentModel.status && paymentModel.date.isBefore(DateTime.now())){
+        isPuchased = false;
+        await setUpdatePayment(uid: Get.find<LoginController>().userId, packageId: "", status: false, date: DateTime.now(), purchasedId: "");
+      }
+      if(paymentModel.status && paymentModel.date.isAfter(DateTime.now())){
+        isPuchased = true;
+      }
+      print(isPuchased);
+      update();
+
+    });
+
+  }
+
+  setUpdatePayment({@required String uid, @required String packageId, @required bool status, @required DateTime date,
+    @required String purchasedId
+  }) async {
+    Map <String, dynamic> newRelation = {
+      "userId" : uid,
+      "packageId" : packageId,
+      "purchasedId" : purchasedId,
+      "status" : status,
+      "date" : date.toString(),
+    };
+
+    await FirebaseFirestore.instance
+        .collection("Payment")
+        .doc(uid)
+        .set(newRelation,
+        SetOptions(merge : true)
+    );
   }
 
   String capitalize(String text) {
@@ -261,13 +474,10 @@ class TabsController extends GetxController{
   query() {
 
     return docRef
-        .where(
-      'age',
-      isGreaterThanOrEqualTo: int.parse(currentUser.ageRange['min']),
-    )
-        .where('age',
-        isLessThanOrEqualTo: int.parse(currentUser.ageRange['max']))
-        .orderBy('age', descending: false);
+    .where('age', isGreaterThanOrEqualTo: int.parse(currentUser.ageRange['min']),)
+    .where('age',
+    isLessThanOrEqualTo: int.parse(currentUser.ageRange['max']))
+    .orderBy('age', descending: false);
 
     // if (currentUser.showGender == 'everyone') {
     //   return docRef
@@ -301,12 +511,6 @@ class TabsController extends GetxController{
     // .collection('/Users/${currentUser.id}')
         .get()
         .then((data) {
-      // var cek = data.docs.map((doc) => doc.get('DislikedUser')).toList();
-      // print(cek);
-      // var dataDislike = data.docs.map((f) {
-      //   f['DislikedUser'] ?? "";
-      // });
-      // print(dataDislike);
       print("Cek");
 
       // print(dataAll.get("LikedUser"));
@@ -319,18 +523,6 @@ class TabsController extends GetxController{
         }
       });
       print(checkedUser);
-      // checkedUser.addAll(data.docs.map((f) => f['DislikedUser']) ?? []);
-      // print(dataAll.get('LikedUser'));
-
-      // if(dataDislike. != null){
-      //   // checkedUser.addAll(data.docs.map((f) => f['DislikedUser']));
-      //   checkedUser.addAll(dataDislike);
-      // }
-      // var dataLike = data.docs.map((f) => f['LikedUser']);
-      // if(dataLike != null){
-      //   // checkedUser.addAll(data.docs.map((f) => f['LikedUser']));
-      //   checkedUser.addAll(dataLike);
-      // }
 
     }).then((_) {
       query().get().then((data) async {
@@ -416,5 +608,17 @@ class TabsController extends GetxController{
     return 12742 * asin(sqrt(a));
   }
 
+}
 
+class ExamplePaymentQueueDelegate implements SKPaymentQueueDelegateWrapper {
+  @override
+  bool shouldContinueTransaction(
+      SKPaymentTransactionWrapper transaction, SKStorefrontWrapper storefront) {
+    return true;
+  }
+
+  @override
+  bool shouldShowPriceConsent() {
+    return false;
+  }
 }

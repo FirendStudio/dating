@@ -1,10 +1,13 @@
+import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/Controller/NotificationController.dart';
 import 'package:hookup4u/Screens/Chat/Matches.dart';
+import 'package:hookup4u/Screens/Info/InformationPartner.dart';
 import 'package:hookup4u/Screens/Profile/EditProfile.dart';
 import 'package:hookup4u/Screens/reportUser.dart';
 import 'package:hookup4u/models/user_model.dart';
@@ -12,8 +15,10 @@ import 'package:hookup4u/util/color.dart';
 import 'package:swipe_stack/swipe_stack.dart';
 // import 'package:easy_localization/easy_localization.dart';
 
-import '../Controller/TabsController.dart';
-import 'Chat/chatPage.dart';
+import '../../Controller/TabsController.dart';
+import '../../models/Relationship.dart';
+import '../Chat/chatPage.dart';
+import '../Payment/subscriptions.dart';
 
 class Info extends StatelessWidget {
   final UserModel currentUser;
@@ -29,12 +34,17 @@ class Info extends StatelessWidget {
   String desiresText = "";
 
   TabsController tabsController = Get.put(TabsController());
+  NotificationController notificationController = Get.put(NotificationController());
+  bool cekpartner = false;
 
   @override
   Widget build(BuildContext context) {
     bool isMe = user.id == currentUser.id;
     bool isMatched = swipeKey == null;
     //matches.any((value) => value.id == user.id);
+    if(Get.find<NotificationController>().relationUserPartner != null && Get.find<NotificationController>().relationUserPartner.partner.partnerId.isNotEmpty){
+      cekpartner = true;
+    }
     print(user);
     if(user != null){
       if(user.desires.isNotEmpty){
@@ -123,9 +133,15 @@ class Info extends StatelessWidget {
                                   fontSize: 25,
                                   fontWeight: FontWeight.bold),
                             ),
-                            subtitle: Text(
-                                " ${user.editInfo['showMyAge'] != null ? !user.editInfo['showMyAge'] ? user.age : "" : user.age}" +
-                                ", " + user.gender + ", " + user.sexualOrientation + ", " + user.status + ", " + "${user.address}"
+                            subtitle: (!cekpartner)?Text(
+                                "${user.editInfo['showMyAge'] != null ? !user.editInfo['showMyAge'] ? user.age : "" : user.age}" +
+                                ", " + user.gender + ", " + user.sexualOrientation + "\n " + user.status + ", " + "${user.distanceBW} KM away")
+                                    :Text(
+                            "${user.editInfo['showMyAge'] != null ? !user.editInfo['showMyAge'] ? user.age : "" : user.age}" +
+                            ", " + user.gender + ", " + user.sexualOrientation + ", " +
+                                notificationController.userPartner.age.toString() + ", " + notificationController.userPartner.gender + ", " +  notificationController.userPartner.sexualOrientation
+                                + "\n\nCouple, " + "${user.distanceBW} KM away"
+                                    // + "${user.address}"
                             ),
                             trailing: FloatingActionButton(
                                 backgroundColor: Colors.white,
@@ -141,8 +157,7 @@ class Info extends StatelessWidget {
                           user.editInfo['job_title'] != null
                               ? ListTile(
                                   dense: true,
-                                  leading:
-                                      Icon(Icons.work, color: primaryColor),
+                                  leading: Icon(Icons.work, color: primaryColor),
                                   title: Text(
                                     "${user.editInfo['job_title']}${user.editInfo['company'] != null ? ' at ${user.editInfo['company']}' : ''}",
                                     style: TextStyle(
@@ -152,18 +167,20 @@ class Info extends StatelessWidget {
                                   ),
                                 )
                               : Container(),
-                          ListTile(
-                            dense: true,
-                            leading: Icon(Icons.book, color: primaryColor),
-                            title: Text(
-                              "About Me",
-                              style: TextStyle(
-                                  color: secondryColor,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500),
+                          if(user.editInfo['about'] != null && user.editInfo['about'] != "")
+                            ListTile(
+                              dense: true,
+                              // leading: Icon(Icons.book, color: primaryColor),
+                              title: Text(
+                                "About Me",
+                                style: TextStyle(
+                                    color: secondryColor,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                              subtitle: Text(user.editInfo['about'] ?? ""),
                             ),
-                            subtitle: Text(user.editInfo['about'] ?? ""),
-                          ),
+
                           user.editInfo['living_in'] != null
                               ? ListTile(
                                   dense: true,
@@ -179,29 +196,29 @@ class Info extends StatelessWidget {
                                       // .tr(args: ["${user.editInfo['living_in']}"]),
                                 )
                               : Container(),
-                          !isMe
-                              ? ListTile(
-                                  dense: true,
-                                  leading: Icon(
-                                    Icons.location_on,
-                                    color: primaryColor,
-                                  ),
-                                  title: Text(
-                                    "${user.editInfo['DistanceVisible'] != null ? user.editInfo['DistanceVisible'] ? 'Less than ${user.distanceBW} KM away' : 'Distance not visible' : 'Less than ${user.distanceBW} KM away'}",
-                                    style: TextStyle(
-                                        color: secondryColor,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                )
-                              : Container(),
+                          // !isMe
+                          //     ? ListTile(
+                          //         dense: true,
+                          //         leading: Icon(
+                          //           Icons.location_on,
+                          //           color: primaryColor,
+                          //         ),
+                          //         title: Text(
+                          //           "${user.editInfo['DistanceVisible'] != null ? user.editInfo['DistanceVisible'] ? 'Less than ${user.distanceBW} KM away' : 'Distance not visible' : 'Less than ${user.distanceBW} KM away'}",
+                          //           style: TextStyle(
+                          //               color: secondryColor,
+                          //               fontSize: 16,
+                          //               fontWeight: FontWeight.w500),
+                          //         ),
+                          //       )
+                          //     : Container(),
                         ],
                       ),
                     ),
                   ),
 
                   SizedBox(
-                    height: 20,
+                    height: 10,
                   ),
 
                   if(desiresText.isNotEmpty)
@@ -252,6 +269,52 @@ class Info extends StatelessWidget {
                   if(Get.find<NotificationController>().relationUserPartner != null && Get.find<NotificationController>().relationUserPartner.partner.partnerId.isNotEmpty)
                     ListTile(
                       dense: true,
+                      trailing: IconButton(
+                        onPressed: () async {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return Center(
+                                    child:
+                                    CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor:
+                                      AlwaysStoppedAnimation<
+                                          Color>(
+                                          Colors.white),
+                                    ));
+                              });
+                          var data = await FirebaseFirestore.instance.collection("Relationship").doc(notificationController.userPartner.id).get();
+                          if(!data.exists){
+                            await Get.find<NotificationController>().setNewRelationship(notificationController.userPartner.id);
+                            data = await FirebaseFirestore.instance.collection("Relationship").doc(notificationController.userPartner.id).get();
+                          }
+                          Relationship relationshipTemp = Relationship.fromDocument(data.data());
+                          Get.back();
+                          notificationController.userPartner.distanceBW = Get.find<TabsController>().calculateDistance(
+                              currentUser.coordinates['latitude'],
+                              currentUser.coordinates['longitude'],
+                              notificationController.userPartner.coordinates['latitude'],
+                              notificationController.userPartner.coordinates['longitude']).round();
+                          await showDialog(
+                              barrierDismissible: false,
+                              context: context,
+                              builder: (context) {
+
+                            return InformationPartner(
+                                notificationController.userPartner,
+                                currentUser,
+                                null,
+                                relationshipTemp,
+                                user,
+                            );
+                          });
+
+                        },
+                        icon: Icon(Icons.chevron_right_sharp,
+                          size: 40,
+                        ),
+                      ),
                       title: Text(
                         Get.find<NotificationController>().relationUserPartner.partner.partnerName,
                         style: TextStyle(
@@ -259,7 +322,9 @@ class Info extends StatelessWidget {
                             fontSize: 16,
                             fontWeight: FontWeight.bold),
                       ),
-                      // subtitle: Text(user.),
+                      subtitle: Text(Get.find<NotificationController>().userPartner.status + ", "
+                          + Get.find<NotificationController>().userPartner.sexualOrientation
+                      ),
                       leading: CircleAvatar(
                         radius: 25,
                         backgroundColor: secondryColor,
@@ -339,6 +404,7 @@ class Info extends StatelessWidget {
                                 size: 30,
                               ),
                               onPressed: () {
+
                                 Navigator.pop(context);
                                 swipeKey.currentState.swipeLeft();
                               }),
@@ -385,14 +451,49 @@ class Info extends StatelessWidget {
                                   Icons.message,
                                   color: primaryColor,
                                 ),
-                                onPressed: () => Navigator.push(
-                                    context,
-                                    CupertinoPageRoute(
-                                        builder: (context) => ChatPage(
+                                onPressed: () async {
+                                  if(!Get.find<TabsController>().isPuchased){
+                                    ArtDialogResponse response = await ArtSweetAlert.show(
+                                        barrierDismissible: false,
+                                        context: context,
+                                        artDialogArgs: ArtDialogArgs(
+                                            denyButtonText: "Cancel",
+                                            title: "Information",
+                                            text: "Upgrade now to start chatting with this member!",
+                                            confirmButtonText: "Subscribe Now",
+                                            type: ArtSweetAlertType.warning
+                                        )
+                                    );
+
+                                    if(response==null) {
+                                      return;
+                                    }
+
+                                    if(response.isTapDenyButton) {
+                                      return;
+                                    }
+                                    if(response.isTapConfirmButton){
+                                      Navigator.push(
+                                        context,
+                                        CupertinoPageRoute(
+                                            builder: (context) => Subscription(
+                                                Get.find<TabsController>().currentUser, null, Get.find<TabsController>().items)),
+                                      );
+                                    }
+
+                                  }else{
+                                    Navigator.push(
+                                        context,
+                                        CupertinoPageRoute(
+                                            builder: (context) => ChatPage(
                                               sender: currentUser,
                                               second: user,
                                               chatId: chatId(user, currentUser),
-                                            ))))),
+                                            )));
+                                  }
+
+                                }
+                            )),
                       )
           ],
         ),

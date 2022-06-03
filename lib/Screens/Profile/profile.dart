@@ -2,13 +2,16 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
-import 'package:hookup4u/Screens/Information.dart';
+import 'package:get/get.dart';
+import 'package:hookup4u/Controller/TabsController.dart';
+import 'package:hookup4u/Screens/Info/Information.dart';
 import 'package:hookup4u/Screens/Payment/paymentDetails.dart';
 import 'package:hookup4u/Screens/Profile/EditProfile.dart';
 import 'package:hookup4u/Screens/Profile/settings.dart';
 import 'package:hookup4u/models/user_model.dart';
 import 'package:hookup4u/util/color.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import '../../Controller/NotificationController.dart';
 import '../Payment/subscriptions.dart';
 // import 'package:easy_localization/easy_localization.dart';
 
@@ -92,13 +95,19 @@ class _ProfileState extends State<Profile> {
                     child: Stack(
                       children: <Widget>[
                         InkWell(
-                          onTap: () => showDialog(
-                              barrierDismissible: false,
-                              context: context,
-                              builder: (context) {
-                                return Info(widget.currentUser,
-                                    widget.currentUser, null);
-                              }),
+                          onTap: () async {
+                            await Get.find<NotificationController>().initRelationPartner(Uid: widget.currentUser.id);
+                            if(Get.find<NotificationController>().relationUser.inRelationship){
+                              await Get.find<NotificationController>().initUserPartner(Uid: Get.find<NotificationController>().relationUser.partner.partnerId);
+                            }
+                            showDialog(
+                                barrierDismissible: false,
+                                context: context,
+                                builder: (context) {
+                                  return Info(widget.currentUser,
+                                      widget.currentUser, null);
+                                });
+                          } ,
                           child: Center(
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(
@@ -401,7 +410,7 @@ class _ProfileState extends State<Profile> {
                     width: MediaQuery.of(context).size.width * .75,
                     child: Center(
                         child: Text(
-                      widget.isPuchased && widget.purchases != null
+                          Get.find<TabsController>().isPuchased
                           ? "Check Payment Details"
                           : "Subscribe Plan",
                       style: TextStyle(
@@ -410,14 +419,9 @@ class _ProfileState extends State<Profile> {
                           fontWeight: FontWeight.bold),
                     ))),
                 onTap: () async {
-                  if (widget.isPuchased && widget.purchases != null) {
-                    Navigator.push(
-                      context,
-                      CupertinoPageRoute(
-                          builder: (context) =>
-                              PaymentDetails(widget.purchases)),
-                    );
-                  } else {
+                  if(Get.find<TabsController>().isPuchased){
+                    Get.to(()=>PaymentDetails());
+                  }else{
                     Navigator.push(
                       context,
                       CupertinoPageRoute(
@@ -425,6 +429,22 @@ class _ProfileState extends State<Profile> {
                               widget.currentUser, null, widget.items)),
                     );
                   }
+                  // if (widget.isPuchased && widget.purchases != null) {
+                  //   Get.to(()=>PaymentDetails());
+                  //   // Navigator.push(
+                  //   //   context,
+                  //   //   CupertinoPageRoute(
+                  //   //       builder: (context) =>
+                  //   //           PaymentDetails()),
+                  //   // );
+                  // } else {
+                  //   Navigator.push(
+                  //     context,
+                  //     CupertinoPageRoute(
+                  //         builder: (context) => Subscription(
+                  //             widget.currentUser, null, widget.items)),
+                  //   );
+                  // }
                   // showCupertinoDialog(
                   //     context: context,
                   //     builder: (context) {

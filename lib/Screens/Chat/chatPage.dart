@@ -5,8 +5,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:hookup4u/Screens/Chat/largeImage.dart';
-import 'package:hookup4u/Screens/Information.dart';
+import 'package:hookup4u/Screens/Info/Information.dart';
 import 'package:hookup4u/Screens/reportUser.dart';
 import 'package:hookup4u/ads/ads.dart';
 import 'package:hookup4u/models/user_model.dart';
@@ -17,6 +18,7 @@ import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 // import 'package:easy_localization/easy_localization.dart';
 
+import '../../Controller/NotificationController.dart';
 import '../Calling/dial.dart';
 
 class ChatPage extends StatefulWidget {
@@ -248,12 +250,18 @@ class _ChatPageState extends State<ChatPage> {
                 ),
               ),
             ),
-            onTap: () => showDialog(
-                barrierDismissible: false,
-                context: context,
-                builder: (context) {
-                  return Info(widget.second, widget.sender, null);
-                }),
+            onTap: () async {
+              await Get.find<NotificationController>().initRelationPartner(Uid: widget.second.id);
+              if(Get.find<NotificationController>().relationUser.inRelationship){
+                await Get.find<NotificationController>().initUserPartner(Uid: Get.find<NotificationController>().relationUser.partner.partnerId);
+              }
+              showDialog(
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (context) {
+                    return Info(widget.second, widget.sender, null);
+                  });
+            } ,
           ),
         ],
       ),

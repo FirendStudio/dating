@@ -1,9 +1,14 @@
+import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:hookup4u/Screens/Chat/chatPage.dart';
 import 'package:hookup4u/models/user_model.dart';
 import 'package:hookup4u/util/color.dart';
+
+import '../../Controller/TabsController.dart';
+import '../Payment/subscriptions.dart';
 // import 'package:easy_localization/easy_localization.dart';
 
 class Matches extends StatelessWidget {
@@ -52,16 +57,51 @@ class Matches extends StatelessWidget {
                       itemCount: matches.length,
                       itemBuilder: (BuildContext context, int index) {
                         return GestureDetector(
-                          onTap: () => Navigator.push(
-                            context,
-                            CupertinoPageRoute(
-                              builder: (_) => ChatPage(
-                                sender: currentUser,
-                                chatId: chatId(currentUser, matches[index]),
-                                second: matches[index],
-                              ),
-                            ),
-                          ),
+                          onTap: () async {
+                            if(!Get.find<TabsController>().isPuchased){
+                              ArtDialogResponse response = await ArtSweetAlert.show(
+                                  barrierDismissible: false,
+                                  context: context,
+                                  artDialogArgs: ArtDialogArgs(
+                                      denyButtonText: "Cancel",
+                                      title: "Information",
+                                      text: "Upgrade now to start chatting with this member!",
+                                      confirmButtonText: "Subscribe Now",
+                                      type: ArtSweetAlertType.warning
+                                  )
+                              );
+
+                              if(response==null) {
+                                return;
+                              }
+
+                              if(response.isTapDenyButton) {
+                                return;
+                              }
+
+                              if(response.isTapConfirmButton){
+                                Navigator.push(
+                                  context,
+                                  CupertinoPageRoute(
+                                      builder: (context) => Subscription(
+                                          Get.find<TabsController>().currentUser, null, Get.find<TabsController>().items)),
+                                );
+                              }
+
+                            }else{
+                              Navigator.push(
+                                context,
+                                CupertinoPageRoute(
+                                  builder: (_) => ChatPage(
+                                    sender: currentUser,
+                                    chatId: chatId(currentUser, matches[index]),
+                                    second: matches[index],
+                                  ),
+                                ),
+                              );
+                            }
+
+                          },
                           child: Padding(
                             padding: EdgeInsets.all(10.0),
                             child: Column(
