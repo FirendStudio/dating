@@ -1,3 +1,4 @@
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class Global{
@@ -19,5 +20,9 @@ class Global{
       }
     }
     return time;
+  }
+
+  showDialog(String text){
+    Get.snackbar("Info", text);
   }
 }

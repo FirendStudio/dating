@@ -30,6 +30,7 @@ class TabsController extends GetxController{
   List userRemoved = [];
   int countswipe = 1;
   List<UserModel> users = [];
+  UserModel selectedUser;
   List likedByList = [];
   /// Past purchases
   // List<PurchaseDetails> purchases = [];
@@ -52,6 +53,8 @@ class TabsController extends GetxController{
 
   Map<String, dynamic> items = {};
   int init = 0;
+  int indexUser = 0;
+  int indexImage = 0;
   List checkedUser = [];
 
   List<String> kProductIds = <String>[
@@ -511,7 +514,7 @@ class TabsController extends GetxController{
     // .collection('/Users/${currentUser.id}')
         .get()
         .then((data) {
-      print("Cek");
+      print("Cek User List");
 
       // print(dataAll.get("LikedUser"));
       data.docs.forEach((element) {
