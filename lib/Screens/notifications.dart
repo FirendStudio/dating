@@ -483,6 +483,7 @@ class Notifications extends StatelessWidget {
                                     .collection("/Users/${Get.find<LoginController>().userId}/Matches")
                                     .doc('${doc["Matches"]}').update({'isRead': true});
                               }
+                              Get.find<NotificationController>().cekFirstInfo(tempuser);
                               return Info(
                                   tempuser,
                                   currentUser,

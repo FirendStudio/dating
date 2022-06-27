@@ -18,6 +18,7 @@ import 'package:hookup4u/util/color.dart';
 import 'package:swipe_stack/swipe_stack.dart';
 
 import '../Controller/LoginController.dart';
+import 'Widget/DialogFirstApp.dart';
 // import 'package:easy_localization/easy_localization.dart';
 
 
@@ -52,6 +53,13 @@ class _CardPicturesState extends State<CardPictures>
     return GetBuilder<TabsController>(builder: (data){
       return Scaffold(
         backgroundColor: primaryColor,
+        // floatingActionButton: FloatingActionButton(
+        //   onPressed: () async {
+        //     await Future.delayed(Duration(seconds: 2));
+        //     Get.to(()=>DialogFirstApp());
+        //   },
+        //   child: Icon(Icons.add),
+        // ),
         body: Container(
           decoration: BoxDecoration(
               borderRadius: BorderRadius.only(
@@ -481,6 +489,7 @@ class _CardPicturesState extends State<CardPictures>
                                           Get.find<TabsController>().currentUser.coordinates['longitude'],
                                           tempuser.coordinates['latitude'],
                                           tempuser.coordinates['longitude']).round();
+                                      Get.find<NotificationController>().cekFirstInfo(tempuser);
                                       showDialog(
                                           barrierDismissible: false,
                                           context: context,
@@ -795,6 +804,7 @@ class _CardPicturesState extends State<CardPictures>
                                       Get.find<TabsController>().currentUser.coordinates['longitude'],
                                       tempuser.coordinates['latitude'],
                                       tempuser.coordinates['longitude']).round();
+                                  Get.find<NotificationController>().cekFirstInfo(tempuser);
                                   showDialog(
                                       barrierDismissible: false,
                                       context: context,

@@ -100,6 +100,7 @@ class _ProfileState extends State<Profile> {
                             if(Get.find<NotificationController>().relationUser.inRelationship){
                               await Get.find<NotificationController>().initUserPartner(Uid: Get.find<NotificationController>().relationUser.partner.partnerId);
                             }
+                            Get.find<NotificationController>().cekFirstInfo(widget.currentUser);
                             showDialog(
                                 barrierDismissible: false,
                                 context: context,

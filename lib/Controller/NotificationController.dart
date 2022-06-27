@@ -24,7 +24,8 @@ class NotificationController extends GetxController{
   List listLikedUserAll = [];
   List listLikedUser = [];
   List listMatchUser = [];
-
+  String interestText = "";
+  String desiresText = "";
   initNotification(){
     // print("Jalankan 1 ");
     if(docReference == null){
@@ -634,6 +635,34 @@ class NotificationController extends GetxController{
     Get.find<TabsController>().userRemoved.add(Get.find<TabsController>().users[cekIndex]);
     Get.find<TabsController>().users.removeAt(cekIndex);
     Get.find<TabsController>().update();
+  }
+
+  cekFirstInfo(UserModel user){
+    desiresText = "";
+    interestText = "";
+    print(user);
+    if(user != null){
+      if(user.desires.isNotEmpty){
+        for(int index=0; index<= user.desires.length-1; index++){
+          if(desiresText.isEmpty){
+            desiresText = Get.find<TabsController>().capitalize(user.desires[index]);
+            print(desiresText);
+          }else{
+            desiresText += ", " + Get.find<TabsController>().capitalize(user.desires[index]);
+          }
+        }
+      }
+
+      if(user.interest.isNotEmpty){
+        for(int index=0; index<= user.interest.length-1; index++){
+          if(interestText.isEmpty){
+            interestText = Get.find<TabsController>().capitalize(user.interest[index]);
+          }else{
+            interestText += ", " + Get.find<TabsController>().capitalize(user.interest[index]);
+          }
+        }
+      }
+    }
   }
 
 }

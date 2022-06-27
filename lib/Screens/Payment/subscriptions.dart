@@ -338,6 +338,8 @@ class _SubscriptionState extends State<Subscription> {
                                                   duration = "1";
                                                 }else if(product.id == "quarterly"){
                                                   duration = "3";
+                                                }else if(product.id == "weekly"){
+                                                  duration = "1";
                                                 }else{
                                                   duration = "0";
                                                 }
@@ -626,6 +628,8 @@ class _SubscriptionState extends State<Subscription> {
         date = DateTime(now.year, now.month + 3, now.day);
       }else if(purchase.productID == "monthly"){
         date = DateTime(now.year, now.month + 1, now.day);
+      }else if(purchase.productID == "weekly"){
+        date = DateTime(now.year, now.month, now.day + 7);
       }
       print("Masuk Sini");
       tabsController.isPuchased = true;
@@ -675,12 +679,17 @@ class _SubscriptionState extends State<Subscription> {
   }
 
   String getInterval(ProductDetails product) {
+    // print(product.currencySymbol);
+    // print(product.rawPrice);
+    // print(product.currencyCode);
     if(product.id == "monthly"){
       return "Month(s)";
     }else if(product.id == "quarterly"){
       return "Month(s)";
+    }else if(product.id == "weekly"){
+      return "Week(s)";
     }else{
-      return "Year";
+      return "Year(s)";
     }
     // SKSubscriptionPeriodUnit periodUnit =
     //     product.skProduct.subscriptionPeriod.unit;

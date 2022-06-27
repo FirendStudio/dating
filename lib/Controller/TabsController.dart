@@ -6,12 +6,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:hookup4u/Controller/NotificationController.dart';
 import 'package:hookup4u/models/Payment.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 
+import '../Screens/Widget/DialogFirstApp.dart';
 import '../models/user_model.dart';
+import '../util/Global.dart';
 import '../util/consumable_store.dart';
 import 'HomeController.dart';
 import 'LoginController.dart';
@@ -56,6 +60,7 @@ class TabsController extends GetxController{
   int indexUser = 0;
   int indexImage = 0;
   List checkedUser = [];
+  GetStorage storage = GetStorage();
 
   List<String> kProductIds = <String>[
     "monthly",
@@ -71,8 +76,82 @@ class TabsController extends GetxController{
       initPayment();
       initNewCheckPayment();
       init = 1;
+      firstLoginApp();
     }
 
+  }
+
+  Future <void> firstLoginApp() async {
+    await Future.delayed(Duration(seconds: 4));
+    bool cek = storage.read("isLogin")??false;
+    print("Cek isLogin : "+ cek.toString());
+    if(!cek){
+      await storage.write("isLogin", true);
+      Get.to(()=>DialogFirstApp());
+      // Get.defaultDialog(
+      //     backgroundColor: Colors.black54,
+      //     title:"",
+      //     onConfirm: (){
+      //       Get.back();
+      //     },
+      //     content:Container(
+      //       // height: Get.height,
+      //         width: Get.width,
+      //         color: Colors.transparent,
+      //         child: Column(
+      //           mainAxisAlignment: MainAxisAlignment.center,
+      //           children: [
+      //
+      //             Icon(Icons.replay, color: Colors.yellowAccent,
+      //               size: 60,
+      //             ),
+      //             SizedBox(height: 20,),
+      //             Text("Undo your Like, Pass or Superlikes",
+      //               textAlign: TextAlign.center,
+      //               style: TextStyle(
+      //                   fontSize: 16,
+      //                   color: Colors.white,
+      //                   fontFamily: Global.font,
+      //                   fontWeight: FontWeight.bold
+      //               ),
+      //             ),
+      //
+      //             SizedBox(height: 20,),
+      //             Icon(Icons.star, color: Colors.lightBlueAccent,
+      //               size: 60,
+      //             ),
+      //             SizedBox(height: 20,),
+      //             Text("Slide Up or Tap Super like, if you really Like someone and want to show it",
+      //               textAlign: TextAlign.center,
+      //               style: TextStyle(
+      //                   fontSize: 16,
+      //                   color: Colors.white,
+      //                   fontFamily: Global.font,
+      //                   fontWeight: FontWeight.bold
+      //               ),
+      //             ),
+      //             SizedBox(height: 20,),
+      //             Icon(Icons.bolt, color: Colors.purpleAccent,
+      //               size: 60,
+      //             ),
+      //             SizedBox(height: 20,),
+      //             Text("Tap Boost and get up to 10x more views on your profile",
+      //               textAlign: TextAlign.center,
+      //               style: TextStyle(
+      //                   fontSize: 16,
+      //                   color: Colors.white,
+      //                   fontFamily: Global.font,
+      //                   fontWeight: FontWeight.bold
+      //               ),
+      //             ),
+      //             SizedBox(height: 50,),
+      //
+      //           ],
+      //         )
+      //     )
+      //
+      // );
+    }
   }
 
   initNewCheckPayment(){

@@ -30,8 +30,6 @@ class Info extends StatelessWidget {
     this.currentUser,
     this.swipeKey,
   );
-  String interestText = "";
-  String desiresText = "";
 
   TabsController tabsController = Get.put(TabsController());
   NotificationController notificationController = Get.put(NotificationController());
@@ -45,29 +43,7 @@ class Info extends StatelessWidget {
     if(Get.find<NotificationController>().relationUserPartner != null && Get.find<NotificationController>().relationUserPartner.partner.partnerId.isNotEmpty){
       cekpartner = true;
     }
-    print(user);
-    if(user != null){
-      if(user.desires.isNotEmpty){
-        for(int index=0; index<= user.desires.length-1; index++){
-          if(desiresText.isEmpty){
-            desiresText = tabsController.capitalize(user.desires[index]);
-            print(desiresText);
-          }else{
-            desiresText += ", " + tabsController.capitalize(user.desires[index]);
-          }
-        }
-      }
 
-      if(user.interest.isNotEmpty){
-        for(int index=0; index<= user.interest.length-1; index++){
-          if(interestText.isEmpty){
-            interestText = tabsController.capitalize(user.interest[index]);
-          }else{
-            interestText += ", " + tabsController.capitalize(user.interest[index]);
-          }
-        }
-      }
-    }
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -221,7 +197,7 @@ class Info extends StatelessWidget {
                     height: 10,
                   ),
 
-                  if(desiresText.isNotEmpty)
+                  if(notificationController.desiresText.isNotEmpty)
                     ListTile(
                       dense: true,
                       title: Text(
@@ -231,14 +207,14 @@ class Info extends StatelessWidget {
                             fontSize: 16,
                             fontWeight: FontWeight.bold),
                       ),
-                      subtitle: Text(desiresText),
+                      subtitle: Text(notificationController.desiresText),
                     ),
 
                   SizedBox(
                     height: 10,
                   ),
 
-                  if(interestText.isNotEmpty)
+                  if(notificationController.interestText.isNotEmpty)
                     ListTile(
                       dense: true,
                       title: Text(
@@ -248,7 +224,7 @@ class Info extends StatelessWidget {
                             fontSize: 16,
                             fontWeight: FontWeight.bold),
                       ),
-                      subtitle: Text(interestText),
+                      subtitle: Text(notificationController.interestText),
                     ),
 
                   SizedBox(

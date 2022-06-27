@@ -255,6 +255,7 @@ class _ChatPageState extends State<ChatPage> {
               if(Get.find<NotificationController>().relationUser.inRelationship){
                 await Get.find<NotificationController>().initUserPartner(Uid: Get.find<NotificationController>().relationUser.partner.partnerId);
               }
+              Get.find<NotificationController>().cekFirstInfo(widget.second);
               showDialog(
                   barrierDismissible: false,
                   context: context,

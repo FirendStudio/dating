@@ -1,25 +1,14 @@
-import 'dart:async';
-import 'dart:io';
-import 'dart:math';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter/foundation.dart';
+import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
-import 'package:hookup4u/Controller/HomeController.dart';
-import 'package:hookup4u/Controller/LoginController.dart';
-import 'package:hookup4u/Screens/Calling/incomingCall.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:hookup4u/Screens/Profile/profile.dart';
 import 'package:hookup4u/Screens/Splash.dart';
 import 'package:hookup4u/Screens/blockUserByAdmin.dart';
 import 'package:hookup4u/Screens/notifications.dart';
-import 'package:hookup4u/models/user_model.dart';
-import 'package:in_app_purchase/in_app_purchase.dart';
-import 'package:rflutter_alert/rflutter_alert.dart';
 import '../Controller/TabsController.dart';
+import '../util/Global.dart';
 import 'Chat/home_screen.dart';
 import 'Home.dart';
 import 'package:hookup4u/util/color.dart';
@@ -43,28 +32,39 @@ class TabbarState extends State<Tabbar> {
   void initState() {
     super.initState();
     // Show payment success alert.
+
     if (widget.isPaymentSuccess != null && widget.isPaymentSuccess) {
       WidgetsBinding.instance.addPostFrameCallback((_) async {
-        await Alert(
-          context: context,
-          type: AlertType.success,
-          title: "Confirmation",
-          desc: "You have successfully subscribed to our",
-              // .tr(args: ['${widget.plan}']).toString(),
-          buttons: [
-            DialogButton(
-              child: Text(
-                "Ok",
-                style: TextStyle(color: Colors.white, fontSize: 20),
-              ),
-              onPressed: () => Navigator.pop(context),
-              width: 120,
+        // await Alert(
+        //   context: context,
+        //   type: AlertType.success,
+        //   title: "Confirmation",
+        //   desc: "You have successfully subscribed to our",
+        //       // .tr(args: ['${widget.plan}']).toString(),
+        //   buttons: [
+        //     DialogButton(
+        //       child: Text(
+        //         "Ok",
+        //         style: TextStyle(color: Colors.white, fontSize: 20),
+        //       ),
+        //       onPressed: () => Navigator.pop(context),
+        //       width: 120,
+        //     )
+        //   ],
+        // ).show();
+
+        ArtSweetAlert.show(
+            context: context,
+            artDialogArgs: ArtDialogArgs(
+                type: ArtSweetAlertType.success,
+                title: "Confirmation",
+                text: "You Have successfully subscribed to our"
             )
-          ],
-        ).show();
+        );
       });
     }
     tabsController.initAllTab(context);
+    // firstLoginApp();
     // _getpastPurchases();
   }
 
