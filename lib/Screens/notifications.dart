@@ -390,7 +390,7 @@ class Notifications extends StatelessWidget {
                         ),
                       ),
                     ),
-                    title: Text("you are matched with"),
+                    title: Text("you are matched with ${doc['userName'] ?? ""}"),
                     subtitle: Text(
                       DateFormat.MMMd('en_US')
                           .add_jm()

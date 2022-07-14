@@ -674,6 +674,10 @@ class _ChatPageState extends State<ChatPage> {
       'image_url': '',
       'time': FieldValue.serverTimestamp(),
     }).then((documentReference) {
+      Get.find<NotificationController>().sendChatFCM(
+        idUser: widget.second.id,
+        name: widget.second.name,
+      );
       setState(() {
         _isWritting = false;
       });
@@ -689,7 +693,10 @@ class _ChatPageState extends State<ChatPage> {
       'isRead': false,
       'image_url': imageUrl,
       'time': FieldValue.serverTimestamp(),
-    });
+    }).then((value) => Get.find<NotificationController>().sendChatFCM(
+      idUser: widget.second.id,
+      name: widget.second.name,
+    ));
   }
 
   Future<void> onJoin(callType) async {

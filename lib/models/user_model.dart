@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 
+import 'Relationship.dart';
+
 class UserModel {
   final String id;
   final String name;
@@ -26,6 +28,9 @@ class UserModel {
   final List desires;
   final List kinks;
   final List interest;
+  final Relationship relasi;
+  final String fcmToken;
+
   UserModel({
     @required this.id,
     @required this.age,
@@ -51,7 +56,10 @@ class UserModel {
     this.interest,
     @required this.LoginID,
     @required this.metode,
+    @required this.relasi,
+    this.fcmToken
   });
+
   factory UserModel.fromDocument(DocumentSnapshot doc) {
     return UserModel(
         id: doc['userId'],
@@ -82,6 +90,9 @@ class UserModel {
             ? List.generate(doc['Pictures'].length, (index) {
                 return doc['Pictures'][index];
               })
-            : []);
+            : [],
+        relasi: null,
+        fcmToken: doc.data().toString().contains('pushToken') ? doc['pushToken'] : ""
+    );
   }
 }

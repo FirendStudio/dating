@@ -202,7 +202,7 @@ class _SubscriptionState extends State<Subscription> {
                         color: Colors.blue,
                       ),
                       title: Text(
-                        "Unlimited swipe!",
+                        "Unlimited swipes!",
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.w400),
                       ),
@@ -214,10 +214,24 @@ class _SubscriptionState extends State<Subscription> {
                         color: Colors.green,
                       ),
                       title: Text(
-                        "Search users around 1000 kms away!",
+                        "No restriction on distance!",
                         style: TextStyle(
-
                             // Color(0xFF1A1A1A),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400),
+                      ),
+                    ),
+
+                    ListTile(
+                      dense: true,
+                      leading: Icon(
+                        Icons.star,
+                        color: Colors.green,
+                      ),
+                      title: Text(
+                        "Unlimited connections and chat!",
+                        style: TextStyle(
+                          // Color(0xFF1A1A1A),
                             fontSize: 16,
                             fontWeight: FontWeight.w400),
                       ),

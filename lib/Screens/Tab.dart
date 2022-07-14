@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:hookup4u/Screens/Home2.dart';
 import 'package:hookup4u/Screens/Profile/profile.dart';
 import 'package:hookup4u/Screens/Splash.dart';
 import 'package:hookup4u/Screens/blockUserByAdmin.dart';
@@ -152,8 +153,10 @@ class TabbarState extends State<Tabbar> {
                         child: Profile(
                             data.currentUser, data.isPuchased, data.purchases, data.items)),
                     Center(
-                        child: CardPictures(
-                            data.currentUser, data.users, data.swipecount, data.items)),
+                        child: CardPictures2(
+                            data.currentUser,
+                            // data.users,
+                            data.swipecount, data.items)),
                     Center(child: Notifications(data.currentUser)),
                     Center(
                         child: HomeScreen(

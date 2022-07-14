@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
@@ -20,6 +22,11 @@ class Global{
       }
     }
     return time;
+  }
+
+  double dp(double val, int places){
+    num mod = pow(10.0, places);
+    return ((val * mod).round().toDouble() / mod);
   }
 
   showDialog(String text){

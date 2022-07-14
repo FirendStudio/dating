@@ -14,6 +14,7 @@ import 'package:hookup4u/models/Payment.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 
 import '../Screens/Widget/DialogFirstApp.dart';
+import '../models/Relationship.dart';
 import '../models/user_model.dart';
 import '../util/Global.dart';
 import '../util/consumable_store.dart';
@@ -34,6 +35,7 @@ class TabsController extends GetxController{
   List userRemoved = [];
   int countswipe = 1;
   List<UserModel> users = [];
+  List<UserModel> allUsers = [];
   UserModel selectedUser;
   List likedByList = [];
   /// Past purchases
@@ -618,6 +620,7 @@ class TabsController extends GetxController{
         userRemoved.clear();
         for (var doc in result.docs) {
           UserModel temp = UserModel.fromDocument(doc);
+          allUsers.add(temp);
           var distance = calculateDistance(
               currentUser.coordinates['latitude'],
               currentUser.coordinates['longitude'],
@@ -627,10 +630,9 @@ class TabsController extends GetxController{
           if (checkedUser.any((value) => value == temp.id,)) {
 
           } else {
-            print(distance);
+            print("Jarak : " + distance.toString());
             print(currentUser.maxDistance);
-            if (distance <= currentUser.maxDistance &&
-                temp.id != currentUser.id && !temp.isBlocked) {
+            if (distance <= currentUser.maxDistance && temp.id != currentUser.id && !temp.isBlocked) {
               if(temp.imageUrl.isNotEmpty){
                 List imageUrlTemp = [];
                 for(int i =0; i <= temp.imageUrl.length-1; i++){
@@ -648,25 +650,68 @@ class TabsController extends GetxController{
                   }
 
                 }
+                var data = await FirebaseFirestore.instance.collection("Relationship").doc(temp.id).get();
+                if(!data.exists){
+                  await Get.find<NotificationController>().setNewRelationship(temp.id);
+                  data = await FirebaseFirestore.instance.collection("Relationship").doc(temp.id).get();
+                }
+                Relationship relationUserPartner = Relationship.fromDocument(data.data());
+
                 users.add(UserModel(
                     id: temp.id,
                     age: temp.age,
                     address: temp.address,
                     name: temp.name,
-                    imageUrl: imageUrlTemp
+                    imageUrl: imageUrlTemp,
+                    editInfo: temp.editInfo,
+                    LoginID: temp.LoginID,
+                    metode: temp.metode,
+                    gender: temp.gender,
+                    ageRange: temp.ageRange,
+                    coordinates: temp.coordinates,
+                    maxDistance: temp.maxDistance,
+                    interest: temp.interest,
+                    desires: temp.desires,
+                    distanceBW: distance.toStringAsFixed(0),
+                    isBlocked: temp.isBlocked,
+                    phoneNumber: temp.phoneNumber,
+                    showingGender: temp.showingGender,
+                    sexualOrientation: temp.sexualOrientation,
+                    showingOrientation: temp.showingOrientation,
+                    showMe: temp.showMe,
+                    status: temp.status,
+                    kinks: temp.kinks,
+                    lastmsg: temp.lastmsg,
+                    relasi: relationUserPartner,
+                    fcmToken: temp.fcmToken
                 ));
+                // temp.distanceBW = Get.find<TabsController>().calculateDistance(
+                //     Get.find<TabsController>().currentUser.coordinates['latitude'],
+                //     Get.find<TabsController>().currentUser.coordinates['longitude'],
+                //     temp.coordinates['latitude'],
+                //     temp.coordinates['longitude']).round();
               }else{
                 users.add(temp);
               }
 
             }
+            // final List<String> listIDRelationship = users.map((city) => city.id).toList();
+
+            // initListLikedUser();
+
             print(users);
+
           }
         }
         update();
         // if (mounted) setState(() {});
       });
     });
+  }
+
+  UserModel getUserSelected(idUser){
+    UserModel selected = allUsers.firstWhere((element) => element.id == idUser);
+    return selected;
   }
 
   getLikedByList() {

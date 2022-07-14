@@ -135,14 +135,20 @@ class InformationPartner extends StatelessWidget {
                                   fontSize: 25,
                                   fontWeight: FontWeight.bold),
                             ),
-                            subtitle: (!cekpartner)?Text(
-                                "${user.editInfo['showMyAge'] != null ? !user.editInfo['showMyAge'] ? user.age : "" : user.age}" +
-                                    ", " + user.gender + ", " + user.sexualOrientation + "\n " + user.status + ", " + "${user.distanceBW} KM away")
-                                :Text(
-                                "${user.editInfo['showMyAge'] != null ? !user.editInfo['showMyAge'] ? user.age : "" : user.age}" +
+                            subtitle: Text(
+                                (!cekpartner)
+                                ? "${user.editInfo['showMyAge'] != null ? !user.editInfo['showMyAge'] ? user.age : "" : user.age}" +
+                                    ", " + user.gender + ", " + user.sexualOrientation + "\n " + user.status + ", " + "${user.distanceBW} KM away"
+                                : "${user.editInfo['showMyAge'] != null ? !user.editInfo['showMyAge'] ? user.age : "" : user.age}" +
                                     ", " + user.gender + ", " + user.sexualOrientation + ", " +
                                     userPartner.age.toString() + ", " + userPartner.gender + ", " +  userPartner.sexualOrientation
-                                    + "\n\nCouple, " + "${user.distanceBW} KM away"
+                                    + "\n\nCouple, " + "${user.distanceBW} KM away",
+                              style: TextStyle(
+                                // color: Colors.black,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.normal
+                              ),
+
                               // + "${user.address}"
                             ),
                             trailing: FloatingActionButton(

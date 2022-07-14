@@ -43,7 +43,7 @@ Future<void> main() async {
   flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   const AndroidInitializationSettings initializationSettingsAndroid =
-  AndroidInitializationSettings('launcher_icon');
+  AndroidInitializationSettings('ic_notification');
 
   /// Note: permissions aren't requested here just to demonstrate that can be
   /// done later
@@ -58,6 +58,7 @@ Future<void> main() async {
           String body,
           String payload,
           ) async {
+        print(payload);
         // didReceiveLocalNotificationSubject.add(
         //   ReceivedNotification(
         //     id: id,
@@ -138,7 +139,7 @@ class _MyAppState extends State<MyApp> {
     _checkAuth();
     // FirebaseAdMob.instance
     //     .initialize(appId: Platform.isAndroid ? androidAdAppId : iosAdAppId);
-    _getLanguage();
+    // _getLanguage();
   }
 
   Future _checkAuth() async {

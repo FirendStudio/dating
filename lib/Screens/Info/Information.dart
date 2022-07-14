@@ -109,14 +109,20 @@ class Info extends StatelessWidget {
                                   fontSize: 25,
                                   fontWeight: FontWeight.bold),
                             ),
-                            subtitle: (!cekpartner)?Text(
-                                "${user.editInfo['showMyAge'] != null ? !user.editInfo['showMyAge'] ? user.age : "" : user.age}" +
-                                ", " + user.gender + ", " + user.sexualOrientation + "\n " + user.status + ", " + "${user.distanceBW} KM away")
-                                    :Text(
-                            "${user.editInfo['showMyAge'] != null ? !user.editInfo['showMyAge'] ? user.age : "" : user.age}" +
-                            ", " + user.gender + ", " + user.sexualOrientation + ", " +
-                                notificationController.userPartner.age.toString() + ", " + notificationController.userPartner.gender + ", " +  notificationController.userPartner.sexualOrientation
-                                + "\n\nCouple, " + "${user.distanceBW} KM away"
+                            subtitle: Text(
+                              (!cekpartner)
+                              ?"${user.editInfo['showMyAge'] != null ? !user.editInfo['showMyAge'] ? user.age : "" : user.age}" +
+                                  ", " + user.gender + ", " + user.sexualOrientation + "\n " + user.status + ", " + "${user.distanceBW} KM away"
+
+                              : "${user.editInfo['showMyAge'] != null ? !user.editInfo['showMyAge'] ? user.age : "" : user.age}" +
+                                  ", " + user.gender + ", " + user.sexualOrientation + ", " +
+                                  notificationController.userPartner.age.toString() + ", " + notificationController.userPartner.gender + ", " +  notificationController.userPartner.sexualOrientation
+                                  + "\n\nCouple, " + "${user.distanceBW} KM away",
+                              style: TextStyle(
+                                // color: Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.normal
+                              ),
                                     // + "${user.address}"
                             ),
                             trailing: FloatingActionButton(

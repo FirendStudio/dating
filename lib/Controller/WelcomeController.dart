@@ -55,40 +55,43 @@ class WelcomeController extends GetxController{
         print(authResult.user.uid);
         //snackbar("Success!!! UUID is: " + authResult.user.uid);
         showDialog(
-            barrierDismissible: false,
-            context: context,
-            builder: (_) {
-              Future.delayed(Duration(seconds: 2), () async {
-                Navigator.pop(context);
-                await Get.find<LoginController>().navigationCheck(authResult.user, context, "phone");
-              });
-              return Center(
-                  child: Container(
-                      width: 150.0,
-                      height: 160.0,
-                      decoration: BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.circular(20)),
-                      child: Column(
-                        children: <Widget>[
-                          Image.asset(
-                            "asset/auth/verified.jpg",
-                            height: 60,
-                            color: primaryColor,
-                            colorBlendMode: BlendMode.color,
-                          ),
-                          Text(
-                            "Verified\n Successfully",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                decoration: TextDecoration.none,
-                                color: Colors.black,
-                                fontSize: 20),
-                          )
-                        ],
-                      )));
+          barrierDismissible: false,
+          context: context,
+          builder: (_) {
+            Future.delayed(Duration(seconds: 2), () async {
+              Navigator.pop(context);
+              await Get.find<LoginController>().navigationCheck(authResult.user, context, "phone");
             });
+            return Center(
+              child: Container(
+                width: 150.0,
+                height: 160.0,
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.rectangle,
+                    borderRadius: BorderRadius.circular(20)),
+                child: Column(
+                  children: <Widget>[
+                    Image.asset(
+                      "asset/auth/verified.jpg",
+                      height: 60,
+                      color: primaryColor,
+                      colorBlendMode: BlendMode.color,
+                    ),
+                    Text(
+                      "Verified\n Successfully",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          decoration: TextDecoration.none,
+                          color: Colors.black,
+                          fontSize: 20),
+                    )
+                  ],
+                )
+              )
+            );
+          }
+        );
 
         QuerySnapshot snapshot = await Get.find<LoginController>().getUser(authResult.user, "phone");
         await setDataUser(authResult.user);

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
-
+import 'package:hookup4u/Service/FCMService.dart';
+import 'package:http/http.dart' as http;
 import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -663,6 +664,48 @@ class NotificationController extends GetxController{
         }
       }
     }
+  }
+
+  sendMatchedFCM({String idUser, String name}) async {
+
+    UserModel userFCM = Get.find<TabsController>().getUserSelected(idUser);
+
+    var data = {
+      "title": "Matched",
+      "body": "You are matched with $name"
+    };
+    var response = await FCMService().sendFCM(data: data, to: userFCM.fcmToken);
+    if (response.statusCode == 200) {
+      var result = await response.stream.bytesToString();
+      print("Success Request FCM");
+      print(result);
+      var data = jsonDecode(result);
+
+    } else {
+      print(response.reasonPhrase);
+    }
+
+  }
+
+  sendChatFCM({String idUser, String name}) async {
+
+    UserModel userFCM = Get.find<TabsController>().getUserSelected(idUser);
+
+    var data = {
+      "title": "New Chat",
+      "body": "You have new message from $name"
+    };
+    var response = await FCMService().sendFCM(data: data, to: userFCM.fcmToken);
+    if (response.statusCode == 200) {
+      var result = await response.stream.bytesToString();
+      print("Success Request FCM");
+      print(result);
+      var data = jsonDecode(result);
+
+    } else {
+      print(response.reasonPhrase);
+    }
+
   }
 
 }
