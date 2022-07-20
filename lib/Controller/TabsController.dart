@@ -90,69 +90,6 @@ class TabsController extends GetxController{
     if(!cek){
       await storage.write("isLogin", true);
       Get.to(()=>DialogFirstApp());
-      // Get.defaultDialog(
-      //     backgroundColor: Colors.black54,
-      //     title:"",
-      //     onConfirm: (){
-      //       Get.back();
-      //     },
-      //     content:Container(
-      //       // height: Get.height,
-      //         width: Get.width,
-      //         color: Colors.transparent,
-      //         child: Column(
-      //           mainAxisAlignment: MainAxisAlignment.center,
-      //           children: [
-      //
-      //             Icon(Icons.replay, color: Colors.yellowAccent,
-      //               size: 60,
-      //             ),
-      //             SizedBox(height: 20,),
-      //             Text("Undo your Like, Pass or Superlikes",
-      //               textAlign: TextAlign.center,
-      //               style: TextStyle(
-      //                   fontSize: 16,
-      //                   color: Colors.white,
-      //                   fontFamily: Global.font,
-      //                   fontWeight: FontWeight.bold
-      //               ),
-      //             ),
-      //
-      //             SizedBox(height: 20,),
-      //             Icon(Icons.star, color: Colors.lightBlueAccent,
-      //               size: 60,
-      //             ),
-      //             SizedBox(height: 20,),
-      //             Text("Slide Up or Tap Super like, if you really Like someone and want to show it",
-      //               textAlign: TextAlign.center,
-      //               style: TextStyle(
-      //                   fontSize: 16,
-      //                   color: Colors.white,
-      //                   fontFamily: Global.font,
-      //                   fontWeight: FontWeight.bold
-      //               ),
-      //             ),
-      //             SizedBox(height: 20,),
-      //             Icon(Icons.bolt, color: Colors.purpleAccent,
-      //               size: 60,
-      //             ),
-      //             SizedBox(height: 20,),
-      //             Text("Tap Boost and get up to 10x more views on your profile",
-      //               textAlign: TextAlign.center,
-      //               style: TextStyle(
-      //                   fontSize: 16,
-      //                   color: Colors.white,
-      //                   fontFamily: Global.font,
-      //                   fontWeight: FontWeight.bold
-      //               ),
-      //             ),
-      //             SizedBox(height: 50,),
-      //
-      //           ],
-      //         )
-      //     )
-      //
-      // );
     }
   }
 

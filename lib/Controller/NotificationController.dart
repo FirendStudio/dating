@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:hookup4u/Service/FCMService.dart';
 import 'package:http/http.dart' as http;
 import 'package:art_sweetalert/art_sweetalert.dart';
@@ -10,6 +11,7 @@ import 'package:hookup4u/Controller/TabsController.dart';
 import 'package:hookup4u/models/user_model.dart';
 import '../models/Relationship.dart';
 import '../util/color.dart';
+import 'HomeController.dart';
 import 'LoginController.dart';
 
 class NotificationController extends GetxController{
@@ -78,6 +80,8 @@ class NotificationController extends GetxController{
     //   data = await FirebaseFirestore.instance.collection("Relationship").doc(Uid).get();
     // }
     userPartner = UserModel.fromDocument(data);
+    print("Cek");
+    // print(jsonEncode(userPartner));
   }
 
   Future <bool> deletePartner({@required String Uid}) async{
@@ -667,9 +671,8 @@ class NotificationController extends GetxController{
   }
 
   sendMatchedFCM({String idUser, String name}) async {
-
+    Get.find<HomeController>().showSimpleNotification(title: "Matched", body: "You are matched with $name");
     UserModel userFCM = Get.find<TabsController>().getUserSelected(idUser);
-
     var data = {
       "title": "Matched",
       "body": "You are matched with $name"
@@ -690,6 +693,9 @@ class NotificationController extends GetxController{
   sendChatFCM({String idUser, String name}) async {
 
     UserModel userFCM = Get.find<TabsController>().getUserSelected(idUser);
+    if(kDebugMode){
+      print("Send Message FCM");
+    }
 
     var data = {
       "title": "New Chat",

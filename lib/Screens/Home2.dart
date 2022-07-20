@@ -15,6 +15,7 @@ import 'package:hookup4u/models/user_model.dart';
 import 'package:hookup4u/util/color.dart';
 import 'package:swipe_stack/swipe_stack.dart';
 
+import '../Controller/HomeController.dart';
 import '../Controller/LoginController.dart';
 import '../models/Relationship.dart';
 import 'Info/InformationPartner.dart';
@@ -164,6 +165,7 @@ class _CardPicturesState2 extends State<CardPictures2>
                                       print(data.users[data.indexUser].name);
                                       if (data.likedByList.contains(data.users[data.indexUser].id)) {
                                         print("Masuk sini");
+
                                         Get.find<NotificationController>().sendMatchedFCM(
                                           idUser:data.users[data.indexUser].id,
                                           name: data.users[data.indexUser].name
@@ -635,26 +637,32 @@ class _CardPicturesState2 extends State<CardPictures2>
                                     ));
                               });
 
-                          await Get.find<NotificationController>().initRelationPartner(Uid: data.users[index].relasi.partner.partnerId);
-                          if(Get.find<NotificationController>().relationUser.inRelationship){
-                            await Get.find<NotificationController>().initUserPartner(Uid: Get.find<NotificationController>().relationUser.partner.partnerId);
+                          await Get.find<NotificationController>().initUserPartner(Uid: data.users[index].relasi.partner.partnerId);
+                          var relation = await FirebaseFirestore.instance.collection("Relationship").doc(data.users[index].relasi.partner.partnerId).get();
+                          if(!relation.exists){
+                            await Get.find<NotificationController>().setNewRelationship(data.users[index].relasi.partner.partnerId);
+                            relation = await FirebaseFirestore.instance.collection("Relationship").doc(data.users[index].relasi.partner.partnerId).get();
                           }
-                          DocumentSnapshot userdoc = await Get.find<NotificationController>().db
-                              .collection("Users").doc(data.users[index].relasi.partner.partnerId).get();
-                          UserModel tempuser = UserModel.fromDocument(userdoc);
-                          tempuser.distanceBW = Get.find<TabsController>().calculateDistance(
-                              Get.find<TabsController>().currentUser.coordinates['latitude'],
-                              Get.find<TabsController>().currentUser.coordinates['longitude'],
-                              tempuser.coordinates['latitude'],
-                              tempuser.coordinates['longitude']).round();
-                          Get.find<NotificationController>().cekFirstInfo(tempuser);
+                          Relationship relationshipTemp = Relationship.fromDocument(relation.data());
                           Get.back();
-                          showDialog(
-                              barrierDismissible: false,
-                              context: context,
-                              builder: (context) {
-                                return Info(tempuser, data.currentUser, swipeKey);
-                              });
+                          Get.find<NotificationController>().userPartner.distanceBW = Get.find<TabsController>().calculateDistance(
+                              widget.currentUser.coordinates['latitude'],
+                              widget.currentUser.coordinates['longitude'],
+                              Get.find<NotificationController>().userPartner.coordinates['latitude'],
+                              Get.find<NotificationController>().userPartner.coordinates['longitude']).round();
+                          await showDialog(
+                            barrierDismissible: false,
+                            context: context,
+                            builder: (context) {
+                              return InformationPartner(
+                                Get.find<NotificationController>().userPartner,
+                                widget.currentUser,
+                                null,
+                                relationshipTemp,
+                                Get.find<NotificationController>().userPartner,
+                              );
+                            }
+                          );
 
                         },
                         icon: Icon(Icons.chevron_right_sharp,

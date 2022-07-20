@@ -118,6 +118,28 @@ class HomeController extends GetxController{
 
   }
 
+  showSimpleNotification({@required String title, @required String body}) async {
+
+    const AndroidNotificationDetails androidplatformChannelSpecifics =
+    AndroidNotificationDetails(
+        'your channel id', 'your channel name',
+        importance: Importance.max,
+        priority: Priority.high,
+        ticker: 'ticker');
+    const IOSNotificationDetails iOSplatformChannelSpecifics =
+    IOSNotificationDetails(presentSound: false);
+    const NotificationDetails platformChannelSpecifics =
+    NotificationDetails(
+        android: androidplatformChannelSpecifics,
+        iOS: iOSplatformChannelSpecifics
+    );
+    await flutterLocalNotificationsPlugin.show(
+      0, title, body, platformChannelSpecifics,
+      // payload:payload
+    );
+
+  }
+
   _checkcallState(channelId) async {
     bool iscalling = await FirebaseFirestore.instance
         .collection("calls")
