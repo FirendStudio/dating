@@ -41,6 +41,16 @@ class RecentChats extends StatelessWidget {
                   children: matches
                       .map((index) => GestureDetector(
                             onTap: () async {
+                              // Navigator.push(
+                              //   context,
+                              //   CupertinoPageRoute(
+                              //     builder: (_) => ChatPage(
+                              //       chatId: chatId(currentUser, index),
+                              //       sender: currentUser,
+                              //       second: index,
+                              //     ),
+                              //   ),
+                              // );
                               if(!Get.find<TabsController>().isPuchased){
                                 ArtDialogResponse response = await ArtSweetAlert.show(
                                     barrierDismissible: false,

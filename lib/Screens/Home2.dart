@@ -3,6 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:get/get.dart';
@@ -60,11 +61,13 @@ class _CardPicturesState2 extends State<CardPictures2>
         body: Container(
           decoration: BoxDecoration(
               borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(50), topRight: Radius.circular(50)),
+                  // topLeft: Radius.circular(50), topRight: Radius.circular(50)
+              ),
               color: Colors.white),
           child: ClipRRect(
             borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(50), topRight: Radius.circular(50)),
+                // topLeft: Radius.circular(50), topRight: Radius.circular(50)
+            ),
             child: Stack(
               children: [
                 AbsorbPointer(
@@ -387,8 +390,8 @@ class _CardPicturesState2 extends State<CardPictures2>
         return Material(
             elevation: 5,
             borderRadius: BorderRadius.only(
-                topRight: Radius.circular(30),
-                topLeft: Radius.circular(30)
+                // topRight: Radius.circular(30),
+                // topLeft: Radius.circular(30)
             ),
             // borderRadius: BorderRadius.all(Radius.circular(30)),
             child: SingleChildScrollView(
@@ -416,7 +419,7 @@ class _CardPicturesState2 extends State<CardPictures2>
       return ClipRRect(
           // borderRadius: BorderRadius.all(Radius.circular(30)),
           borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(30), topRight: Radius.circular(30)
+            // topLeft: Radius.circular(30), topRight: Radius.circular(30)
           ),
           child:CarouselSlider(
             options: CarouselOptions(
@@ -444,14 +447,14 @@ class _CardPicturesState2 extends State<CardPictures2>
                 userPartner = data.getUserSelected(data.users[index].relasi.partner.partnerId);
                 print("Cek isRelationship : " + userPartner.name);
               }
-              print("Cek isRelationship : " + cekPartner.toString());
-              print(index);
-              print(data.users.length);
-              print(data.indexUser);
-              print(data.users[index].desires.length);
-              print("Jarak : " + data.users[index].distanceBW.toString());
-
-
+              if(kDebugMode){
+                print("Cek isRelationship : " + cekPartner.toString());
+                print(index);
+                print(data.users.length);
+                print(data.indexUser);
+                print(data.users[index].desires.length);
+                print("Jarak : " + data.users[index].distanceBW.toString());
+              }
               String desiresText = "";
               String interestText = "";
               if(data.users[index] != null){
@@ -485,7 +488,7 @@ class _CardPicturesState2 extends State<CardPictures2>
                     height: Get.height * 0.4,
                     child: listImageWidget(index)
                   ),
-
+                  SizedBox(height: 10,),
                   ListTile(
                     title: Text(
                       "${data.users[index].name},",
@@ -750,7 +753,7 @@ class _CardPicturesState2 extends State<CardPictures2>
       return ClipRRect(
           // borderRadius: BorderRadius.all(Radius.circular(30)),
           borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(30), topRight: Radius.circular(30)
+              // topLeft: Radius.circular(30), topRight: Radius.circular(30)
           ),
           child:(data.users[index].imageUrl.length == 1)
               ?Stack(
@@ -784,7 +787,7 @@ class _CardPicturesState2 extends State<CardPictures2>
                       ),
                       decoration: BoxDecoration(
                           color: Colors.black45,
-                          borderRadius: BorderRadius.all(Radius.circular(50))
+                          // borderRadius: BorderRadius.all(Radius.circular(50))
                       ),
                       child:Column(
                         mainAxisAlignment: MainAxisAlignment.center,

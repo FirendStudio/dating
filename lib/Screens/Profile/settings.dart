@@ -862,8 +862,8 @@ class _SettingsState extends State<Settings> {
                     ),
                     onTap: () {
                       Share.share(
-                          'check out my website https://jablesscupid.com', //Replace with your dynamic link and msg for invite users
-                          subject: 'Look what I made!');
+                          'Checkout our brand new dating app! https://jablesscupid.com/', //Replace with your dynamic link and msg for invite users
+                          subject: 'Checkout our brand new dating app! https://jablesscupid.com/');
                     },
                   ),
                 ),

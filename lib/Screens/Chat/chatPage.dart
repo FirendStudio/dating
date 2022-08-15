@@ -19,6 +19,7 @@ import 'package:permission_handler/permission_handler.dart';
 // import 'package:easy_localization/easy_localization.dart';
 
 import '../../Controller/NotificationController.dart';
+import '../../Controller/TabsController.dart';
 import '../Calling/dial.dart';
 
 class ChatPage extends StatefulWidget {
@@ -93,10 +94,8 @@ class _ChatPageState extends State<ChatPage> {
                                       radius: 10,
                                     ),
                                   ),
-                                  errorWidget: (context, url, error) =>
-                                      Icon(Icons.error),
-                                  height:
-                                      MediaQuery.of(context).size.height * .65,
+                                  errorWidget: (context, url, error) => Icon(Icons.error),
+                                  height: MediaQuery.of(context).size.height * .65,
                                   width: MediaQuery.of(context).size.width * .9,
                                   // imageUrl: documentSnapshot.data['image_url'] ?? '',
                                   imageUrl: documentSnapshot['image_url'] ?? '',
@@ -168,58 +167,108 @@ class _ChatPageState extends State<ChatPage> {
                       child: Column(
                         children: <Widget>[
                           Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Expanded(
-                                child: Container(
-                                  child: Text(
-                                    // documentSnapshot.data['text'],
-                                    documentSnapshot['text'],
-                                    style: TextStyle(
-                                      color: Colors.black87,
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.w600,
-                                    ),
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  // documentSnapshot.data['text'],
+                                  documentSnapshot['text'],
+                                  style: TextStyle(
+                                    color: Colors.black87,
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
                               ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: <Widget>[
-                                  Text(
-                                    // documentSnapshot.data["time"] != null
-                                    documentSnapshot["time"] != null
-                                        ? DateFormat.MMMd('en_US')
-                                      // .add_jm().format(documentSnapshot.data["time"]
-                                        .add_jm().format(documentSnapshot["time"]
-                                        .toDate()).toString()
-                                        : "",
-                                    style: TextStyle(
-                                      color: secondryColor,
-                                      fontSize: 13.0,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: 5,
-                                  ),
-                                  // documentSnapshot.data['isRead'] == false
-                                  documentSnapshot['isRead'] == false
-                                      ? Icon(
-                                          Icons.done,
-                                          color: secondryColor,
-                                          size: 15,
-                                        )
-                                      : Icon(
-                                          Icons.done_all,
-                                          color: primaryColor,
-                                          size: 15,
-                                        )
-                                ],
-                              ),
                             ],
                           ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: <Widget>[
+                              Text(
+                                // documentSnapshot.data["time"] != null
+                                documentSnapshot["time"] != null
+                                    ? DateFormat.MMMd('en_US')
+                                // .add_jm().format(documentSnapshot.data["time"]
+                                    .add_jm().format(documentSnapshot["time"]
+                                    .toDate()).toString()
+                                    : "",
+                                style: TextStyle(
+                                  color: secondryColor,
+                                  fontSize: 13.0,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              // documentSnapshot.data['isRead'] == false
+                              documentSnapshot['isRead'] == false
+                                  ? Icon(
+                                Icons.done,
+                                color: secondryColor,
+                                size: 15,
+                              )
+                                  : Icon(
+                                Icons.done_all,
+                                color: primaryColor,
+                                size: 15,
+                              )
+                            ],
+                          ),
+                          // Row(
+                          //   crossAxisAlignment: CrossAxisAlignment.end,
+                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          //   children: <Widget>[
+                          //     Expanded(
+                          //       child: Container(
+                          //         child: Text(
+                          //           // documentSnapshot.data['text'],
+                          //           documentSnapshot['text'],
+                          //           style: TextStyle(
+                          //             color: Colors.black87,
+                          //             fontSize: 16.0,
+                          //             fontWeight: FontWeight.w600,
+                          //           ),
+                          //         ),
+                          //       ),
+                          //     ),
+                          //     Row(
+                          //       mainAxisAlignment: MainAxisAlignment.end,
+                          //       children: <Widget>[
+                          //         Text(
+                          //           // documentSnapshot.data["time"] != null
+                          //           documentSnapshot["time"] != null
+                          //               ? DateFormat.MMMd('en_US')
+                          //             // .add_jm().format(documentSnapshot.data["time"]
+                          //               .add_jm().format(documentSnapshot["time"]
+                          //               .toDate()).toString()
+                          //               : "",
+                          //           style: TextStyle(
+                          //             color: secondryColor,
+                          //             fontSize: 13.0,
+                          //             fontWeight: FontWeight.w600,
+                          //           ),
+                          //         ),
+                          //         SizedBox(
+                          //           width: 5,
+                          //         ),
+                          //         // documentSnapshot.data['isRead'] == false
+                          //         documentSnapshot['isRead'] == false
+                          //             ? Icon(
+                          //                 Icons.done,
+                          //                 color: secondryColor,
+                          //                 size: 15,
+                          //               )
+                          //             : Icon(
+                          //                 Icons.done_all,
+                          //                 color: primaryColor,
+                          //                 size: 15,
+                          //               )
+                          //       ],
+                          //     ),
+                          //   ],
+                          // ),
                         ],
                       )),
             ),
@@ -272,107 +321,104 @@ class _ChatPageState extends State<ChatPage> {
           children: <Widget>[
             Container(
               child: documentSnapshot['image_url'] != ''
-                  ? InkWell(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: <Widget>[
-                          new Container(
-                            margin: EdgeInsets.only(
-                                top: 2.0, bottom: 2.0, right: 15),
-                            child: CachedNetworkImage(
-                              placeholder: (context, url) => Center(
-                                child: CupertinoActivityIndicator(
-                                  radius: 10,
-                                ),
-                              ),
-                              errorWidget: (context, url, error) =>
-                                  Icon(Icons.error),
-                              height: MediaQuery.of(context).size.height * .65,
-                              width: MediaQuery.of(context).size.width * .9,
-                              imageUrl:
-                                  documentSnapshot['image_url'] ?? '',
-                              fit: BoxFit.fitWidth,
+                ? InkWell(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: <Widget>[
+                      new Container(
+                        margin: EdgeInsets.only(
+                            top: 2.0, bottom: 2.0, right: 15),
+                        child: CachedNetworkImage(
+                          placeholder: (context, url) => Center(
+                            child: CupertinoActivityIndicator(
+                              radius: 10,
                             ),
-                            height: 150,
-                            width: 150.0,
-                            color: Color.fromRGBO(0, 0, 0, 0.2),
-                            padding: EdgeInsets.all(5),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(right: 10),
+                          errorWidget: (context, url, error) =>
+                              Icon(Icons.error),
+                          height: MediaQuery.of(context).size.height * .65,
+                          width: MediaQuery.of(context).size.width * .9,
+                          imageUrl: documentSnapshot['image_url'] ?? '',
+                          fit: BoxFit.fitWidth,
+                        ),
+                        height: 150,
+                        width: 150.0,
+                        color: Color.fromRGBO(0, 0, 0, 0.2),
+                        padding: EdgeInsets.all(5),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(right: 10),
+                        child: Text(
+                            documentSnapshot["time"] != null
+                                ? DateFormat.yMMMd('en_US').add_jm()
+                                .format(documentSnapshot["time"]
+                                        .toDate())
+                                    .toString()
+                                : "",
+                            style: TextStyle(
+                              color: secondryColor,
+                              fontSize: 13.0,
+                              fontWeight: FontWeight.w600,
+                            )),
+                      )
+                    ],
+                  ),
+                  onTap: () {
+                    Navigator.of(context).push(CupertinoPageRoute(
+                      builder: (context) => LargeImage(
+                        documentSnapshot['image_url'],
+                      ),
+                    ));
+                  },
+                )
+              : Container(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: 15.0, vertical: 10.0),
+                  width: MediaQuery.of(context).size.width * 0.65,
+                  margin: EdgeInsets.only(top: 8.0, bottom: 8.0, right: 10),
+                  decoration: BoxDecoration(
+                      color: secondryColor.withOpacity(.3),
+                      borderRadius: BorderRadius.circular(20)),
+                  child: Column(
+                    children: <Widget>[
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Flexible(
                             child: Text(
-                                documentSnapshot["time"] != null
-                                    ? DateFormat.yMMMd('en_US')
-                                        .add_jm()
-                                        .format(documentSnapshot["time"]
-                                            .toDate())
-                                        .toString()
-                                    : "",
-                                style: TextStyle(
-                                  color: secondryColor,
-                                  fontSize: 13.0,
-                                  fontWeight: FontWeight.w600,
-                                )),
-                          )
+                              documentSnapshot['text'],
+                              style: TextStyle(
+                                color: Colors.black87,
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
                         ],
                       ),
-                      onTap: () {
-                        Navigator.of(context).push(CupertinoPageRoute(
-                          builder: (context) => LargeImage(
-                            documentSnapshot['image_url'],
-                          ),
-                        ));
-                      },
-                    )
-                  : Container(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 15.0, vertical: 10.0),
-                      width: MediaQuery.of(context).size.width * 0.65,
-                      margin: EdgeInsets.only(top: 8.0, bottom: 8.0, right: 10),
-                      decoration: BoxDecoration(
-                          color: secondryColor.withOpacity(.3),
-                          borderRadius: BorderRadius.circular(20)),
-                      child: Column(
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
                         children: <Widget>[
-                          Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Expanded(
-                                child: Container(
-                                  child: Text(
-                                    documentSnapshot['text'],
-                                    style: TextStyle(
-                                      color: Colors.black87,
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: <Widget>[
-                                  Text(
-                                    documentSnapshot["time"] != null
-                                        ? DateFormat.MMMd('en_US')
-                                            .add_jm()
-                                            .format(documentSnapshot["time"]
-                                                .toDate())
-                                            .toString()
-                                        : "",
-                                    style: TextStyle(
-                                      color: secondryColor,
-                                      fontSize: 13.0,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
+                          Text(
+                            documentSnapshot["time"] != null
+                                ? DateFormat.MMMd('en_US')
+                                .add_jm()
+                                .format(documentSnapshot["time"]
+                                .toDate())
+                                .toString()
+                                : "",
+                            style: TextStyle(
+                              color: secondryColor,
+                              fontSize: 13.0,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ],
-                      )),
+                      ),
+                    ],
+                  )
+              ),
             ),
           ],
         ),
@@ -395,34 +441,30 @@ class _ChatPageState extends State<ChatPage> {
 
   generateMessages(AsyncSnapshot<QuerySnapshot> snapshot) {
     return snapshot.data.docs.map<Widget>((doc) => Container(
-              margin: const EdgeInsets.symmetric(vertical: 10.0),
-              child: new Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  // children: doc.data['type'] == "Call"
-                // children: doc.data['type'] == "Call"
-                  children: doc['type'] == "Call"
-                      ? [
-                          // Text(doc.data["time"] != null
-                          //     ? "${doc.data['text']} : " +
-                          Text(doc["time"] != null
-                              ? "${doc['text']} : " +
-                                  DateFormat.yMMMd('en_US')
-                                      .add_jm()
-                                      // .format(doc.data["time"].toDate())
-                                      .format(doc["time"].toDate())
-                                      .toString() +
-                                  // " by ${doc.data['sender_id'] == widget.sender.id ? "You" : "${widget.second.name}"}"
-                                  " by ${doc['sender_id'] == widget.sender.id ? "You" : "${widget.second.name}"}"
-                              : "")
-                        ]
-                      // : doc.data['sender_id'] != widget.sender.id
-                      : doc['sender_id'] != widget.sender.id
-                          ? generateReceiverLayout(
-                              doc,
-                            )
-                          : generateSenderLayout(doc)),
-            ))
-        .toList();
+      margin: const EdgeInsets.symmetric(vertical: 10.0),
+      child: new Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        // children: doc.data['type'] == "Call"
+      // children: doc.data['type'] == "Call"
+        children: doc['type'] == "Call" ? [
+                // Text(doc.data["time"] != null
+                //     ? "${doc.data['text']} : " +
+                Text(doc["time"] != null
+                    ? "${doc['text']} : " +
+                        DateFormat.yMMMd('en_US')
+                            .add_jm()
+                            // .format(doc.data["time"].toDate())
+                            .format(doc["time"].toDate())
+                            .toString() +
+                        // " by ${doc.data['sender_id'] == widget.sender.id ? "You" : "${widget.second.name}"}"
+                        " by ${doc['sender_id'] == widget.sender.id ? "You" : "${widget.second.name}"}"
+                    : "")
+              ]
+            // : doc.data['sender_id'] != widget.sender.id
+            : doc['sender_id'] != widget.sender.id
+                ? generateReceiverLayout(doc)
+                : generateSenderLayout(doc)),
+    )).toList();
   }
 
   @override
@@ -676,7 +718,7 @@ class _ChatPageState extends State<ChatPage> {
     }).then((documentReference) {
       Get.find<NotificationController>().sendChatFCM(
         idUser: widget.second.id,
-        name: widget.second.name,
+        name: Get.find<TabsController>().currentUser.name,
       );
       setState(() {
         _isWritting = false;
@@ -695,7 +737,7 @@ class _ChatPageState extends State<ChatPage> {
       'time': FieldValue.serverTimestamp(),
     }).then((value) => Get.find<NotificationController>().sendChatFCM(
       idUser: widget.second.id,
-      name: widget.second.name,
+      name: Get.find<TabsController>().currentUser.name,
     ));
   }
 

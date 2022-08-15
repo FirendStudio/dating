@@ -59,7 +59,7 @@ class TabbarState extends State<Tabbar> {
             artDialogArgs: ArtDialogArgs(
                 type: ArtSweetAlertType.success,
                 title: "Confirmation",
-                text: "You Have successfully subscribed to our"
+                text: "You have now successfully subscribed to our app!"
             )
         );
       });

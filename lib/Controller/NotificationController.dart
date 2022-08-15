@@ -672,12 +672,13 @@ class NotificationController extends GetxController{
 
   sendMatchedFCM({String idUser, String name}) async {
     Get.find<HomeController>().showSimpleNotification(title: "Matched", body: "You are matched with $name");
-    UserModel userFCM = Get.find<TabsController>().getUserSelected(idUser);
+    // UserModel userFCM = Get.find<TabsController>().getUserSelected(idUser);
+    String toParams = "/topics/"+idUser;
     var data = {
       "title": "Matched",
       "body": "You are matched with $name"
     };
-    var response = await FCMService().sendFCM(data: data, to: userFCM.fcmToken);
+    var response = await FCMService().sendFCM(data: data, to: toParams);
     if (response.statusCode == 200) {
       var result = await response.stream.bytesToString();
       print("Success Request FCM");
@@ -692,16 +693,16 @@ class NotificationController extends GetxController{
 
   sendChatFCM({String idUser, String name}) async {
 
-    UserModel userFCM = Get.find<TabsController>().getUserSelected(idUser);
+    // UserModel userFCM = Get.find<TabsController>().getUserSelected(idUser);
     if(kDebugMode){
       print("Send Message FCM");
     }
-
+    String toParams = "/topics/"+idUser;
     var data = {
       "title": "New Chat",
       "body": "You have new message from $name"
     };
-    var response = await FCMService().sendFCM(data: data, to: userFCM.fcmToken);
+    var response = await FCMService().sendFCM(data: data, to: toParams);
     if (response.statusCode == 200) {
       var result = await response.stream.bytesToString();
       print("Success Request FCM");

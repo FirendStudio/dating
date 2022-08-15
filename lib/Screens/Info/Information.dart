@@ -95,6 +95,7 @@ class Info extends StatelessWidget {
                       loop: false,
                     ),
                   ),
+                  SizedBox(height: 10,),
                   Align(
                     alignment: Alignment.bottomCenter,
                     child: Container(

@@ -224,7 +224,7 @@ Future showWelcomDialog(context) async {
                       colorBlendMode: BlendMode.color,
                     ),
                     Text(
-                      "You'r in",
+                      "You're in!",
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           decoration: TextDecoration.none,

@@ -29,7 +29,7 @@ class _DesiresScreen extends State<DesiresScreen> {
   String other_text = "other";
 
   List selected = [];
-  bool select = false;
+  bool select = true;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -175,18 +175,18 @@ class _DesiresScreen extends State<DesiresScreen> {
                 ),
                 child: Column(
                   children: <Widget>[
-                    ListTile(
-                      leading: Checkbox(
-                        activeColor: primaryColor,
-                        value: select,
-                        onChanged: (bool newValue) {
-                          setState(() {
-                            select = newValue;
-                          });
-                        },
-                      ),
-                      title: Text("Show my desires on my profile"),
-                    ),
+                    // ListTile(
+                    //   leading: Checkbox(
+                    //     activeColor: primaryColor,
+                    //     value: select,
+                    //     onChanged: (bool newValue) {
+                    //       setState(() {
+                    //         select = newValue;
+                    //       });
+                    //     },
+                    //   ),
+                    //   title: Text("Show my desires on my profile"),
+                    // ),
                     selected.length > 0
                         ? Padding(
                       padding: const EdgeInsets.only(bottom: 40),

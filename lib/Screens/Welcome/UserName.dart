@@ -91,7 +91,7 @@ class _UserNameState extends State<UserName> {
                       child: TextFormField(
                         style: TextStyle(fontSize: 23),
                         decoration: InputDecoration(
-                          hintText: "Enter your first name",
+                          hintText: "Enter your username",
                           focusedBorder: UnderlineInputBorder(
                               borderSide: BorderSide(color: primaryColor)),
                           // helperText: "This is the name others member will see on the App",

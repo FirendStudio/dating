@@ -23,16 +23,18 @@ class HomeController extends GetxController{
         }
         // _serialiseAndNavigate(message);
       });
-      String fcmToken = GetStorage().read("fcmToken") ?? "";
-      if(fcmToken.isEmpty){
-        FirebaseMessaging.instance.getToken().then((token) {
-          print(token);
-          GetStorage().write("fcmToken", token);
-          docRef.doc(user.id).update({
-            'pushToken': token,
-          });
-        });
-      }
+      FirebaseMessaging.instance.subscribeToTopic("${user.id}");
+      print("Subcribe to ${user.id}");
+      // String fcmToken = GetStorage().read("fcmToken") ?? "";
+      // if(fcmToken.isEmpty){
+      //   FirebaseMessaging.instance.getToken().then((token) {
+      //     print(token);
+      //     GetStorage().write("fcmToken", token);
+      //     docRef.doc(user.id).update({
+      //       'pushToken': token,
+      //     });
+      //   });
+      // }
 
       FirebaseMessaging.onMessage.listen((RemoteMessage message) {
         print("onmessage$message");
