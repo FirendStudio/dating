@@ -162,11 +162,14 @@ class _CardPicturesState2 extends State<CardPictures2>
                                     size: 30,
                                   ),
                                   onPressed: () async {
+
                                     if (data.users.length > 0) {
+                                      bool cek = false;
                                       print(data.users[data.indexUser].name);
                                       // swipeKey.currentState.swipeRight();
                                       print(data.users[data.indexUser].name);
                                       if (data.likedByList.contains(data.users[data.indexUser].id)) {
+                                        cek = true;
                                         print("Masuk sini");
 
                                         Get.find<NotificationController>().sendMatchedFCM(
@@ -238,6 +241,13 @@ class _CardPicturesState2 extends State<CardPictures2>
                                               'timestamp': FieldValue.serverTimestamp()
                                             },
                                             SetOptions(merge : true)
+                                        );
+                                      }
+
+                                      if(cek){
+                                        Get.find<NotificationController>().sendLikedFCM(
+                                            idUser:data.users[data.indexUser].id,
+                                            name: data.users[data.indexUser].name
                                         );
                                       }
 
