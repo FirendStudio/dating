@@ -278,7 +278,7 @@ class _CardPicturesState2 extends State<CardPictures2>
                                           },
                                           SetOptions(merge : true)
                                       );
-                                      // print("Data User index ke : " + data.indexUser.toString());
+                                      print("Data User index ke : " + data.indexUser.toString());
                                       data.users.removeAt(data.indexUser);
                                       data.indexImage = 0;
                                       if(data.indexUser != 0){
@@ -293,7 +293,7 @@ class _CardPicturesState2 extends State<CardPictures2>
 
                                       // data.userRemoved.clear();
                                       // data.userRemoved.add(data.users[data.indexUser]);
-                                      // print("selesai");
+                                      print("selesai");
                                       // if (data.indexUser < (data.users.length + 1)) {
                                       //   print("clear");
                                       //   data.userRemoved.clear();
@@ -392,8 +392,8 @@ class _CardPicturesState2 extends State<CardPictures2>
   Widget carouselWidget(){
     return GetBuilder<TabsController>(
       builder: (data) {
-        // print("Index User : " + data.indexUser.toString());
-        // print(data.indexUser);
+        print("Index User : " + data.indexUser.toString());
+        print(data.indexUser);
         data.selectedUser = data.users[data.indexUser];
         // print(data.users.length);
         // final double height = Get.height;
@@ -438,7 +438,7 @@ class _CardPicturesState2 extends State<CardPictures2>
               enlargeCenterPage: false,
               scrollDirection: Axis.horizontal,
               onPageChanged: (index, reason){
-                // print("Index User : " + index.toString());
+                print("Index User : " + index.toString());
                 data.indexUser = index;
                 data.indexImage = 0;
                 data.update();
@@ -455,15 +455,15 @@ class _CardPicturesState2 extends State<CardPictures2>
               if(data.users[index].relasi != null && data.users[index].relasi.partner.partnerId.isNotEmpty){
                 cekPartner = true;
                 userPartner = data.getUserSelected(data.users[index].relasi.partner.partnerId);
-                // print("Cek isRelationship : " + userPartner.name);
+                print("Cek isRelationship : " + userPartner.name);
               }
               if(kDebugMode){
-                // print("Cek isRelationship : " + cekPartner.toString());
-                // print(index);
-                // print(data.users.length);
-                // print(data.indexUser);
-                // print(data.users[index].desires.length);
-                // print("Jarak : " + data.users[index].distanceBW.toString());
+                print("Cek isRelationship : " + cekPartner.toString());
+                print(index);
+                print(data.users.length);
+                print(data.indexUser);
+                print(data.users[index].desires.length);
+                print("Jarak : " + data.users[index].distanceBW.toString());
               }
               String desiresText = "";
               String interestText = "";
@@ -472,7 +472,7 @@ class _CardPicturesState2 extends State<CardPictures2>
                   for(int index2=0; index2<= data.users[index].desires.length-1; index2++){
                     if(desiresText.isEmpty){
                       desiresText = Get.find<TabsController>().capitalize(data.users[index].desires[index2]);
-                      // print(desiresText);
+                      print(desiresText);
                     }else{
                       desiresText += ", " + Get.find<TabsController>().capitalize(data.users[index].desires[index2]);
                     }
@@ -759,7 +759,7 @@ class _CardPicturesState2 extends State<CardPictures2>
 
   Widget listImageWidget(int index){
     return GetBuilder<TabsController>(builder: (data){
-      // print("Selected Name : " + data.selectedUser.name);
+      print("Selected Name : " + data.selectedUser.name);
       return ClipRRect(
           // borderRadius: BorderRadius.all(Radius.circular(30)),
           borderRadius: BorderRadius.only(
@@ -834,9 +834,9 @@ class _CardPicturesState2 extends State<CardPictures2>
                   enlargeCenterPage: false,
                   scrollDirection: Axis.vertical,
                   onPageChanged: (index, reason){
-                    // print("Index Image : " + index.toString());
+                    print("Index Image : " + index.toString());
                     data.indexImage = index;
-                    // print("Index Image : " + data.indexImage.toString());
+                    print("Index Image : " + data.indexImage.toString());
                     data.update();
                   },
                   // autoPlay: false,
@@ -884,7 +884,7 @@ class _CardPicturesState2 extends State<CardPictures2>
                       child:Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: data.users[index].imageUrl.asMap().entries.map((entry) {
-                          // print("index entry : " + data.indexImage.toString());
+                          print("index entry : " + data.indexImage.toString());
                           return GestureDetector(
                             onTap: () => carouselController.animateToPage(entry.key),
                             child: Container(
