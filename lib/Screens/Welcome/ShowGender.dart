@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hookup4u/Controller/LoginController.dart';
 import 'package:hookup4u/Screens/Welcome/AllowLocation.dart';
 import 'package:hookup4u/util/Global.dart';
 import 'package:hookup4u/util/color.dart';
@@ -227,7 +228,7 @@ class _ShowMe extends State<ShowMe> {
                                       color: textColor,
                                       fontWeight: FontWeight.bold),
                                 ))),
-                        onTap: () {
+                        onTap: () async {
                           // widget.userData.addAll({
                           //   "showMe": {
                           //     'showme': selected,
@@ -269,7 +270,7 @@ class _ShowMe extends State<ShowMe> {
                           });
                           widget.userData.remove('showOnProfile');
                           widget.userData.remove('userGender');
-
+                          Future.delayed(Duration(milliseconds: 1500)).then((value) => Get.find<LoginController>().updateFirstImageProfil());
                           print(widget.userData);
                           Navigator.push(
                               context,

@@ -495,7 +495,7 @@ class _CardPicturesState2 extends State<CardPictures2>
                 children: <Widget>[
 
                   SizedBox(
-                    height: Get.height * 0.4,
+                    height: Get.height * 0.6,
                     child: listImageWidget(index)
                   ),
                   SizedBox(height: 10,),
@@ -870,7 +870,7 @@ class _CardPicturesState2 extends State<CardPictures2>
 
               if(data.users[index].imageUrl.length > 1)
                 Positioned(
-                    top: Get.height * 0.15,
+                    top: Get.height * 0.30,
                     right: 15,
                     child: Container(
                       padding: EdgeInsets.only(
@@ -888,8 +888,8 @@ class _CardPicturesState2 extends State<CardPictures2>
                           return GestureDetector(
                             onTap: () => carouselController.animateToPage(entry.key),
                             child: Container(
-                              width: 8.0,
-                              height: 8.0,
+                              width: 4.0,
+                              height: 4.0,
                               margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
