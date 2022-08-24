@@ -646,8 +646,9 @@ class TabsController extends GetxController{
     });
   }
 
-  UserModel getUserSelected(idUser){
-    UserModel selected = allUsers.firstWhere((element) => element.id == idUser);
+  dynamic getUserSelected(idUser){
+    UserModel selected;
+    selected = allUsers.firstWhere((element) => element.id == idUser, orElse:()=>selected);
     return selected;
   }
 

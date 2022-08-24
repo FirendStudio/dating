@@ -1,9 +1,16 @@
+import 'dart:io';
+
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../util/color.dart';
+
 class ProfileController extends GetxController {
-  XFile image;
+  // XFile image;
   ImagePicker imagePicker = ImagePicker();
+  File croppedFile;
 
   updateProfileImage() {}
 
@@ -15,8 +22,24 @@ class ProfileController extends GetxController {
       return;
     }
     if (metode) {
-      image = file;
+      croppedFile = await ImageCropper.cropImage(
+          sourcePath: file.path,
+          cropStyle: CropStyle.circle,
+          aspectRatioPresets: [CropAspectRatioPreset.square],
+          androidUiSettings: AndroidUiSettings(
+              toolbarTitle: 'Crop',
+              toolbarColor: primaryColor,
+              toolbarWidgetColor: Colors.white,
+              initAspectRatio: CropAspectRatioPreset.square,
+              lockAspectRatio: true),
+          iosUiSettings: IOSUiSettings(
+            minimumAspectRatio: 1.0,
+          ));
+      // image = file;
+      if(croppedFile != null){
+        update();
+      }
     }
-    update();
+    
   }
 }

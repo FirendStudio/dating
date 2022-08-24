@@ -17,6 +17,7 @@ import 'package:apple_sign_in/apple_sign_in.dart' as i;
 import '../Screens/Profile/EditProfile.dart';
 import '../Screens/Tab.dart';
 import '../Screens/Welcome.dart';
+import '../Screens/Welcome/AllowLocation.dart';
 import '../models/custom_web_view.dart';
 import '../util/color.dart';
 import 'NotificationController.dart';
@@ -264,147 +265,13 @@ class LoginController extends GetxController{
 
   }
 
-  updateFirstImageProfil() async {
+  updateFirstImageProfil(File file) async {
     User user = FirebaseAuth.instance.currentUser;
     String idUser = user.uid;
-
-    await source(Get.context, idUser);
-  }
-
-  Future source(
-      BuildContext context, String idUser) async {
+    await uploadFile(file, idUser);
 
 
-    return await showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return CupertinoAlertDialog(
-              title: Text("Add profile picture"),
-              content: StatefulBuilder(
-                builder: (BuildContext context2, StateSetter setState2){
-                  return Column(
-                    children: [
-                      Text(
-                        "Select source",
-                      ),
-
-                    ],
-                  );
-                },
-              ),
-              insetAnimationCurve: Curves.decelerate,
-              actions: <Widget>[
-
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: GestureDetector(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Icon(
-                          Icons.photo_camera,
-                          size: 28,
-                        ),
-                        Text(
-                          " Camera",
-                          style: TextStyle(
-                              fontSize: 15,
-                              color: Colors.black,
-                              decoration: TextDecoration.none),
-                        ),
-                      ],
-                    ),
-                    onTap: () {
-                      Navigator.pop(context);
-                      getImage(ImageSource.camera, context,
-                          idUser);
-                      // showDialog(
-                      //     context: context,
-                      //     builder: (context) {
-                      //       getImage(ImageSource.camera, context,
-                      //           idUser);
-                      //       return Center(
-                      //           child: CircularProgressIndicator(
-                      //             strokeWidth: 2,
-                      //             valueColor: AlwaysStoppedAnimation<Color>(
-                      //                 Colors.white),
-                      //           ));
-                      //     });
-                    },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: GestureDetector(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Icon(
-                          Icons.photo_library,
-                          size: 28,
-                        ),
-                        Text(
-                          " Gallery",
-                          style: TextStyle(
-                              fontSize: 15,
-                              color: Colors.black,
-                              decoration: TextDecoration.none),
-                        ),
-                      ],
-                    ),
-                    onTap: () {
-                      Navigator.pop(context);
-                      getImage(ImageSource.gallery, context,
-                          idUser);
-                      // showDialog(
-                      //     barrierDismissible: false,
-                      //     context: context,
-                      //     builder: (context) {
-                      //       getImage(ImageSource.gallery, context, idUser);
-                      //       return Center(
-                      //           child: CircularProgressIndicator(
-                      //             strokeWidth: 2,
-                      //             valueColor: AlwaysStoppedAnimation<Color>(
-                      //                 Colors.white),
-                      //           ));
-                      //     });
-                    },
-                  ),
-                ),
-              ]);
-        });
-  }
-
-  Future getImage(
-      ImageSource imageSource, context, String idUser) async {
-    try {
-      var image = await ImagePicker().pickImage(source: imageSource,
-          imageQuality: 10
-      );
-      if (image != null) {
-        File croppedFile = await ImageCropper.cropImage(
-            sourcePath: image.path,
-            cropStyle: CropStyle.circle,
-            aspectRatioPresets: [CropAspectRatioPreset.square],
-            androidUiSettings: AndroidUiSettings(
-                toolbarTitle: 'Crop',
-                toolbarColor: primaryColor,
-                toolbarWidgetColor: Colors.white,
-                initAspectRatio: CropAspectRatioPreset.square,
-                lockAspectRatio: true),
-            iosUiSettings: IOSUiSettings(
-              minimumAspectRatio: 1.0,
-            ));
-        if (croppedFile != null) {
-          await uploadFile(await compressimage(croppedFile), idUser);
-        }
-      }
-      // Navigator.pop(context);
-    } catch (e) {
-      print("error");
-      print(e);
-      // Navigator.pop(context);
-    }
+    // await source(Get.context, idUser);
   }
 
   Future uploadFile(File image, String idUser) async {
@@ -468,22 +335,13 @@ class LoginController extends GetxController{
         Get.back();
         await Future.delayed(Duration(seconds: 1));
         Get.find<LoginController>().progress = 0.0;
+        await showWelcomDialog(Get.context);
         // if (mounted) setState(() {});
       } catch (err) {
         print("Error: $err");
+        
       }
     });
-  }
-
-  Future compressimage(File image) async {
-    final tempdir = await getTemporaryDirectory();
-    final path = tempdir.path;
-    a.Image imagefile = a.decodeImage(image.readAsBytesSync());
-    final compressedImagefile = File('$path.jpg')
-      ..writeAsBytesSync(a.encodeJpg(imagefile, quality: 80));
-    // setState(() {
-    return compressedImagefile;
-    // });
   }
 
 }

@@ -46,36 +46,7 @@ class AllowLocation extends StatelessWidget {
                   Navigator.pop(context);
                 },
               ),
-            ),
-            // Padding(
-            //   padding: const EdgeInsets.only(top: 20, right: 25),
-            //   child: AnimatedOpacity(
-            //       opacity: 1.0,
-            //       duration: Duration(milliseconds: 5000),
-            //       child: Container(
-            //         height: 42,
-            //         child: FloatingActionButton.extended(
-            //           shape: RoundedRectangleBorder(
-            //               borderRadius: BorderRadius.circular(10)),
-            //           elevation: 10,
-            //           heroTag: UniqueKey(),
-            //           backgroundColor: Colors.white,
-            //           onPressed: () => Navigator.push(
-            //               context,
-            //               CupertinoPageRoute(
-            //                   builder: (context) => SearchLocation(userData))),
-            //           label: Text(
-            //             "Skip..",
-            //             style: TextStyle(color: primaryColor),
-            //           ),
-            //           icon: Icon(
-            //             Icons.navigate_next,
-            //             color: primaryColor,
-            //           ),
-            //         ),
-            //       )),
-            // ),
-          ],
+            ),],
         ),
       ),
       body: SingleChildScrollView(

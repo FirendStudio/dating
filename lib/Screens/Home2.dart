@@ -455,7 +455,9 @@ class _CardPicturesState2 extends State<CardPictures2>
               if(data.users[index].relasi != null && data.users[index].relasi.partner.partnerId.isNotEmpty){
                 cekPartner = true;
                 userPartner = data.getUserSelected(data.users[index].relasi.partner.partnerId);
-                print("Cek isRelationship : " + userPartner.name);
+                if(userPartner != null){
+                  print("Cek isRelationship : " + userPartner.name);
+                }
               }
               if(kDebugMode){
                 print("Cek isRelationship : " + cekPartner.toString());

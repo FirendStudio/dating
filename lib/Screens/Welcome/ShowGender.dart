@@ -229,30 +229,6 @@ class _ShowMe extends State<ShowMe> {
                                       fontWeight: FontWeight.bold),
                                 ))),
                         onTap: () async {
-                          // widget.userData.addAll({
-                          //   "showMe": {
-                          //     'showme': selected,
-                          //     // 'showOnProfile': select
-                          //   },
-                          // });
-                          // print(widget.userData);
-                          // Navigator.push(
-                          //     context,
-                          //     CupertinoPageRoute(
-                          //         builder: (context) =>
-                          //             ShowMe(widget.userData)
-                          //     )
-                          // );
-
-                          // if (man) {
-                          //   widget.userData.addAll({'showGender': "man"});
-                          // } else if (woman) {
-                          //   widget.userData.addAll({'showGender': "woman"});
-                          // } else if(eyeryone){
-                          //   widget.userData.addAll({'showGender': "everyone"});
-                          // }else{
-                          //   widget.userData.addAll({'showGender': more_text});
-                          // }
                           widget.userData.addAll({'showGender': selected});
                           print(widget.userData);
                           // Navigator.push(
@@ -270,7 +246,7 @@ class _ShowMe extends State<ShowMe> {
                           });
                           widget.userData.remove('showOnProfile');
                           widget.userData.remove('userGender');
-                          Future.delayed(Duration(milliseconds: 1500)).then((value) => Get.find<LoginController>().updateFirstImageProfil());
+                          // Future.delayed(Duration(milliseconds: 1500)).then((value) => Get.find<LoginController>().updateFirstImageProfil());
                           print(widget.userData);
                           Navigator.push(
                               context,
