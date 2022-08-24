@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/Controller/LoginController.dart';
 import 'package:hookup4u/Screens/Tab.dart';
+import 'package:hookup4u/Screens/Welcome/UploadImage/UploadImageScreen.dart';
 import 'package:hookup4u/Screens/Welcome/seach_location.dart';
 import 'package:hookup4u/util/color.dart';
 // import 'package:easy_localization/easy_localization.dart';
@@ -107,7 +108,8 @@ class AllowLocation extends StatelessWidget {
                         style: TextStyle(color: Colors.black, fontSize: 40),
                         children: [
                           TextSpan(
-                              text: "\nYou'll need to provide a \nlocation\nin order to search users around you.",
+                              text:
+                                  "\nYou'll need to provide a \nlocation\nin order to search users around you.",
                               style: TextStyle(
                                   fontWeight: FontWeight.w400,
                                   color: secondryColor,
@@ -176,8 +178,9 @@ class AllowLocation extends StatelessWidget {
                       );
                       print(userData);
                       print(Get.find<LoginController>().userId);
-                      await Get.find<LoginController>().setUserData(userData);
-                      await showWelcomDialog(context);
+                      Get.to(() => UploadImageScreen(userData));
+                      // await Get.find<LoginController>().setUserData(userData);
+                      // await showWelcomDialog(context);
                     }
                   },
                 ),
@@ -189,13 +192,12 @@ class AllowLocation extends StatelessWidget {
     );
   }
 }
-  // await FirebaseAuth.instance.currentUser().then((FirebaseUser user) async {
-  //   await Firestore.instance
-  //       .collection("Users")
-  //       .document(user.uid)
-  //       .setData(userData, merge: true);
-  // });
-
+// await FirebaseAuth.instance.currentUser().then((FirebaseUser user) async {
+//   await Firestore.instance
+//       .collection("Users")
+//       .document(user.uid)
+//       .setData(userData, merge: true);
+// });
 
 Future showWelcomDialog(context) async {
   showDialog(

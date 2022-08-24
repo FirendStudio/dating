@@ -13,6 +13,7 @@ import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:hookup4u/Controller/HomeController.dart';
 import 'package:hookup4u/Controller/LoginController.dart';
+import 'package:hookup4u/Controller/ProfileController.dart';
 import 'package:hookup4u/Controller/TabsController.dart';
 import 'package:hookup4u/Controller/WelcomeController.dart';
 import 'package:hookup4u/Screens/Splash.dart';
@@ -106,6 +107,7 @@ Future<void> main() async {
   Get.put(LoginController());
   Get.put(NotificationController());
   Get.put(TabsController());
+  Get.put(ProfileController());
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitDown,
     DeviceOrientation.portraitUp,
