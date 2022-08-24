@@ -15,6 +15,7 @@ import 'package:hookup4u/util/color.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 import '../../Controller/LoginController.dart';
 import '../../util/Global.dart';
 // import 'package:easy_localization/easy_localization.dart';
@@ -249,7 +250,7 @@ class EditProfileState extends State<EditProfile> {
       BuildContext context, currentUser, bool isProfilePicture, String show) async {
 
 
-    return showDialog(
+    return await showDialog(
         context: context,
         builder: (BuildContext context) {
           return CupertinoAlertDialog(
@@ -293,18 +294,20 @@ class EditProfileState extends State<EditProfile> {
                           ),
                           onTap: () {
                             Navigator.pop(context);
-                            showDialog(
-                                context: context,
-                                builder: (context) {
-                                  getImage(ImageSource.camera, context,
-                                      currentUser, isProfilePicture, show);
-                                  return Center(
-                                      child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                        Colors.white),
-                                  ));
-                                });
+                            getImage(ImageSource.camera, context,
+                                currentUser, isProfilePicture, show);
+                            // showDialog(
+                            //     context: context,
+                            //     builder: (context) {
+                            //       getImage(ImageSource.camera, context,
+                            //           currentUser, isProfilePicture, show);
+                            //       return Center(
+                            //           child: CircularProgressIndicator(
+                            //         strokeWidth: 2,
+                            //         valueColor: AlwaysStoppedAnimation<Color>(
+                            //             Colors.white),
+                            //       ));
+                            //     });
                           },
                         ),
                       ),
@@ -329,19 +332,21 @@ class EditProfileState extends State<EditProfile> {
                           ),
                           onTap: () {
                             Navigator.pop(context);
-                            showDialog(
-                                barrierDismissible: false,
-                                context: context,
-                                builder: (context) {
-                                  getImage(ImageSource.gallery, context,
-                                      currentUser, isProfilePicture, show);
-                                  return Center(
-                                      child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                        Colors.white),
-                                  ));
-                                });
+                            getImage(ImageSource.gallery, context,
+                                currentUser, isProfilePicture, show);
+                            // showDialog(
+                            //     barrierDismissible: false,
+                            //     context: context,
+                            //     builder: (context) {
+                            //       getImage(ImageSource.gallery, context,
+                            //           currentUser, isProfilePicture, show);
+                            //       return Center(
+                            //           child: CircularProgressIndicator(
+                            //         strokeWidth: 2,
+                            //         valueColor: AlwaysStoppedAnimation<Color>(
+                            //             Colors.white),
+                            //       ));
+                            //     });
                           },
                         ),
                       ),
@@ -392,7 +397,7 @@ class EditProfileState extends State<EditProfile> {
               await compressimage(croppedFile), currentUser, isProfilePicture, show);
         }
       }
-      Navigator.pop(context);
+      // Navigator.pop(context);
     } catch (e) {
       print("error");
       print(e);
@@ -403,9 +408,41 @@ class EditProfileState extends State<EditProfile> {
   Future uploadFile(File image, UserModel currentUser, isProfilePicture, String show) async {
 
     if(image != null){
+
+      Get.dialog(
+          GetBuilder<LoginController>(builder: (data){
+            return CircularPercentIndicator(
+              radius: 120.0,
+              lineWidth: 13.0,
+              animation: true,
+              percent: Get.find<LoginController>().progress,
+              center: Text(
+                "${(Get.find<LoginController>().progress * 100)}%",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0,
+                    color: Colors.white
+                ),
+              ),
+              footer: Text(
+                "Uploading......",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17.0,
+                    color: Colors.white
+                ),
+              ),
+              circularStrokeCap: CircularStrokeCap.round,
+              progressColor: Colors.purple,
+            );
+          })
+      );
       FirebaseStorage storage = FirebaseStorage.instance;
       Reference ref = storage.ref().child('users/${currentUser.id}/${image.hashCode}.jpg');
       UploadTask uploadTask = ref.putFile(File(image.path));
+      // var stream = uploadTask.asStream();
+      uploadTask.snapshotEvents.listen((event) {
+        print("Progress : " + (event.bytesTransferred/event.totalBytes).toString());
+        Get.find<LoginController>().progress = (event.bytesTransferred/event.totalBytes).toDouble();
+        Get.find<LoginController>().update();
+      });
+
       uploadTask.then((res) async {
         String fileURL = await res.ref.getDownloadURL();
 
@@ -419,11 +456,6 @@ class EditProfileState extends State<EditProfile> {
             ],
         };
         print(updateObject);
-        // Map<String, dynamic> updateObject = {
-        //   "Pictures": FieldValue.arrayUnion([
-        //     fileURL,
-        //   ]),
-        // };
         try {
           if (isProfilePicture) {
             //currentUser.imageUrl.removeAt(0);
@@ -457,48 +489,15 @@ class EditProfileState extends State<EditProfile> {
             );
             // widget.currentUser.imageUrl.add(fileURL);
           }
+          Get.back();
+          await Future.delayed(Duration(seconds: 1));
+          Get.find<LoginController>().progress = 0.0;
           if (mounted) setState(() {});
         } catch (err) {
           print("Error: $err");
         }
       });
     }
-
-    // StorageReference storageReference = FirebaseStorage.instance
-    //     .ref()
-    //     .child('users/${currentUser.id}/${image.hashCode}.jpg');
-    // StorageUploadTask uploadTask = storageReference.putFile(image);
-    //
-    // if (uploadTask.isInProgress == true) {}
-    // if (await uploadTask.onComplete != null) {
-    //   storageReference.getDownloadURL().then((fileURL) async {
-    //     Map<String, dynamic> updateObject = {
-    //       "Pictures": FieldValue.arrayUnion([
-    //         fileURL,
-    //       ])
-    //     };
-    //     try {
-    //       if (isProfilePicture) {
-    //         //currentUser.imageUrl.removeAt(0);
-    //         currentUser.imageUrl.insert(0, fileURL);
-    //         print("object");
-    //         await Firestore.instance
-    //             .collection("Users")
-    //             .document(currentUser.id)
-    //             .setData({"Pictures": currentUser.imageUrl}, merge: true);
-    //       } else {
-    //         await Firestore.instance
-    //             .collection("Users")
-    //             .document(currentUser.id)
-    //             .setData(updateObject, merge: true);
-    //         widget.currentUser.imageUrl.add(fileURL);
-    //       }
-    //       if (mounted) setState(() {});
-    //     } catch (err) {
-    //       print("Error: $err");
-    //     }
-    //   });
-    // }
   }
 
   Future compressimage(File image) async {

@@ -692,13 +692,16 @@ class NotificationController extends GetxController{
   }
 
   sendLikedFCM({String idUser, String name}) async {
-    Get.find<HomeController>().showSimpleNotification(title: "Matched", body: "You are matched with $name");
-    // UserModel userFCM = Get.find<TabsController>().getUserSelected(idUser);
+    // Get.find<HomeController>().showSimpleNotification(title: "Liked", body: "You are matched with $name");
+    // UserModel userFCM = Get.find<TabsConstroller>().getUserSelected(idUser);
     String toParams = "/topics/"+idUser;
     var data = {
-      "title": "Matched",
+      "title": "Liked",
       "body": "You are liked by $name"
     };
+    if(kDebugMode){
+      print(data);
+    }
     var response = await FCMService().sendFCM(data: data, to: toParams);
     if (response.statusCode == 200) {
       var result = await response.stream.bytesToString();
