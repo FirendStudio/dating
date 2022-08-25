@@ -6,6 +6,7 @@ import 'package:hookup4u/Controller/ProfileController.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../Controller/LoginController.dart';
+import '../../../util/Global.dart';
 import '../../../util/color.dart';
 import '../AllowLocation.dart';
 
@@ -48,17 +49,34 @@ class UploadImageScreen extends StatelessWidget {
           ),
         ),
         body: Column(children: [
+          
           SizedBox(
-            height: 120,
+            height: 100,
           ),
+
           Expanded(
-            flex: 2,
+            flex: 1,
+            child: Text(
+              "You need to upload at least one image as part of the " + 
+              "registration process. Once you have completed the registration" + 
+              " you will be able to add more photos to your profile." + 
+              "\n\n Your profile image must not contain any nudity and be only of yourself.",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 15,
+                fontFamily: Global.font,
+              ),
+            )
+          ),
+
+          Expanded(
+            flex: 3,
             child: Stack(
               children: [
                 Container(
                     margin: EdgeInsets.all(12),
                     width: Get.width,
-                    height: 300,
+                    height: Get.height,
                     padding: EdgeInsets.all(12),
                     decoration: BoxDecoration(
                         border: Border.all(
@@ -70,7 +88,7 @@ class UploadImageScreen extends StatelessWidget {
                         ? Image.asset("asset/images/logo2.png")
                         : Image.file(data.croppedFile)),
                 Positioned(
-                    bottom: 0,
+                    bottom: 15,
                     left: 0,
                     right: 0,
                     child: Row(
@@ -95,6 +113,9 @@ class UploadImageScreen extends StatelessWidget {
                         ])),
               ],
             ),
+          ),
+          SizedBox(
+            height: 100,
           ),
           Expanded(
             flex: 2,
