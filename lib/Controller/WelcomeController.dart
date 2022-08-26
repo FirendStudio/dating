@@ -12,8 +12,7 @@ import '../Screens/auth/otp_verification.dart';
 import '../util/color.dart';
 import '../util/snackbar.dart';
 
-class WelcomeController extends GetxController{
-
+class WelcomeController extends GetxController {
   TextEditingController phoneNumController = new TextEditingController();
   bool cont = false;
   String _smsVerificationCode;
@@ -37,13 +36,14 @@ class WelcomeController extends GetxController{
     cont = false;
   }
 
-  verificationComplete(
-      AuthCredential authCredential, BuildContext context, updateNumber, scaffoldKey) async {
+  verificationComplete(AuthCredential authCredential, BuildContext context,
+      updateNumber, scaffoldKey) async {
     if (updateNumber) {
       print("Update Phone Number");
       User user = FirebaseAuth.instance.currentUser;
       Get.find<LoginController>().userId = user.uid;
-      user.updatePhoneNumber(authCredential)
+      user
+          .updatePhoneNumber(authCredential)
           .then((_) => updatePhoneNumber(context))
           .catchError((e) {
         CustomSnackbar.snackbar("$e", scaffoldKey);
@@ -55,85 +55,85 @@ class WelcomeController extends GetxController{
         print(authResult.user.uid);
         //snackbar("Success!!! UUID is: " + authResult.user.uid);
         showDialog(
-          barrierDismissible: false,
-          context: context,
-          builder: (_) {
-            Future.delayed(Duration(seconds: 2), () async {
-              Navigator.pop(context);
-              await Get.find<LoginController>().navigationCheck(authResult.user, context, "phone");
+            barrierDismissible: false,
+            context: context,
+            builder: (_) {
+              Future.delayed(Duration(seconds: 2), () async {
+                Navigator.pop(context);
+                await Get.find<LoginController>()
+                    .navigationCheck(authResult.user, context, "phone");
+              });
+              return Center(
+                  child: Container(
+                      width: 150.0,
+                      height: 160.0,
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.circular(20)),
+                      child: Column(
+                        children: <Widget>[
+                          Image.asset(
+                            "asset/auth/verified.jpg",
+                            height: 60,
+                            color: primaryColor,
+                            colorBlendMode: BlendMode.color,
+                          ),
+                          Text(
+                            "Verified\n Successfully",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                decoration: TextDecoration.none,
+                                color: Colors.black,
+                                fontSize: 20),
+                          )
+                        ],
+                      )));
             });
-            return Center(
-              child: Container(
-                width: 150.0,
-                height: 160.0,
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.rectangle,
-                    borderRadius: BorderRadius.circular(20)),
-                child: Column(
-                  children: <Widget>[
-                    Image.asset(
-                      "asset/auth/verified.jpg",
-                      height: 60,
-                      color: primaryColor,
-                      colorBlendMode: BlendMode.color,
-                    ),
-                    Text(
-                      "Verified\n Successfully",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          decoration: TextDecoration.none,
-                          color: Colors.black,
-                          fontSize: 20),
-                    )
-                  ],
-                )
-              )
-            );
-          }
-        );
 
-        QuerySnapshot snapshot = await Get.find<LoginController>().getUser(authResult.user, "phone");
+        QuerySnapshot snapshot =
+            await Get.find<LoginController>().getUser(authResult.user, "phone");
         await setDataUser(authResult.user);
       });
     }
   }
 
   /// method to verify phone number and handle phone auth
-  Future verifyPhoneNumber(String phoneNumber, BuildContext context, updateNumber, GlobalKey<ScaffoldState> scaffoldKey) async {
+  Future verifyPhoneNumber(String phoneNumber, BuildContext context,
+      updateNumber, GlobalKey<ScaffoldState> scaffoldKey) async {
     phoneNumber = countryCode + phoneNumber.toString();
     print(phoneNumber);
     final FirebaseAuth _auth = FirebaseAuth.instance;
     await _auth.verifyPhoneNumber(
         phoneNumber: phoneNumber,
         timeout: Duration(seconds: 30),
-        verificationCompleted: (authCredential) =>
-            verificationComplete(authCredential, context, updateNumber, scaffoldKey),
+        verificationCompleted: (authCredential) => verificationComplete(
+            authCredential, context, updateNumber, scaffoldKey),
         verificationFailed: (authException) {
           print("Masuk Exception");
           print(authException);
           verificationFailed(authException, context, scaffoldKey);
         },
-        codeAutoRetrievalTimeout: (verificationId) => codeAutoRetrievalTimeout(verificationId),
+        codeAutoRetrievalTimeout: (verificationId) =>
+            codeAutoRetrievalTimeout(verificationId),
         // called when the SMS code is sent
-        codeSent: (verificationId, [code]) => smsCodeSent(verificationId, [code], context, updateNumber));
+        codeSent: (verificationId, [code]) =>
+            smsCodeSent(verificationId, [code], context, updateNumber));
   }
 
   Future updatePhoneNumber(BuildContext context) async {
     print("here");
     User user = FirebaseAuth.instance.currentUser;
     var loginID = {
-      "phone" : user.uid,
+      "phone": user.uid,
     };
     await FirebaseFirestore.instance
         .collection("Users")
         .doc(Get.find<LoginController>().userId)
         .set({
       'phoneNumber': user.phoneNumber,
-      "LoginID" : loginID,
-    },
-        SetOptions(merge : true)
-    ).then((_) {
+      "LoginID": loginID,
+    }, SetOptions(merge: true)).then((_) {
       showDialog(
           barrierDismissible: false,
           context: context,
@@ -173,8 +173,8 @@ class WelcomeController extends GetxController{
 
   /// will get an AuthCredential object that will help with logging into Firebase.
 
-
-  smsCodeSent(String verificationId, List<int> code, BuildContext context, updateNumber) async {
+  smsCodeSent(String verificationId, List<int> code, BuildContext context,
+      updateNumber) async {
     // set the verification code so that we can use it to log the user in
     _smsVerificationCode = verificationId;
     showDialog(
@@ -193,9 +193,9 @@ class WelcomeController extends GetxController{
           });
           return Center(
 
-            // Aligns the container to center
+              // Aligns the container to center
               child: Container(
-                // A simplified version of dialog.
+                  // A simplified version of dialog.
                   width: 100.0,
                   height: 120.0,
                   decoration: BoxDecoration(
@@ -223,10 +223,10 @@ class WelcomeController extends GetxController{
         });
   }
 
-  verificationFailed(FirebaseAuthException authException, BuildContext context, GlobalKey<ScaffoldState> scaffoldKey) {
+  verificationFailed(FirebaseAuthException authException, BuildContext context,
+      GlobalKey<ScaffoldState> scaffoldKey) {
     CustomSnackbar.snackbar(
-        "Exception!! message:" + authException.message.toString(),
-        scaffoldKey);
+        "Exception!! message:" + authException.message.toString(), scaffoldKey);
   }
 
   codeAutoRetrievalTimeout(String verificationId) {
@@ -236,7 +236,13 @@ class WelcomeController extends GetxController{
   }
 
   Future setDataUser(User user) async {
-    await FirebaseFirestore.instance.collection("Users").doc(Get.find<LoginController>().userId).set({
+    if (Get.find<LoginController>().userId == "") {
+      return;
+    }
+    await FirebaseFirestore.instance
+        .collection("Users")
+        .doc(Get.find<LoginController>().userId)
+        .set({
       'userId': Get.find<LoginController>().userId,
       'phoneNumber': user.phoneNumber,
       'timestamp': FieldValue.serverTimestamp(),
@@ -246,16 +252,14 @@ class WelcomeController extends GetxController{
 
       // 'name': user.displayName,
       // 'pictureUrl': user.photoUrl,
-    },
-        SetOptions(merge : true)
-    );
+    }, SetOptions(merge: true));
   }
 
   Future updateNumberOTP(BuildContext context) async {
     User user = FirebaseAuth.instance.currentUser;
     print("here2");
     var loginID = {
-      "phone" : user.uid,
+      "phone": user.uid,
     };
     // await FirebaseFirestore.instance
     //     .collection("Users")
@@ -267,12 +271,8 @@ class WelcomeController extends GetxController{
     await FirebaseFirestore.instance
         .collection("Users")
         .doc(Get.find<LoginController>().userId)
-        .set({
-      'phoneNumber': user.phoneNumber,
-      "LoginID" : loginID
-    },
-        SetOptions(merge : true)
-    ).then((_) {
+        .set({'phoneNumber': user.phoneNumber, "LoginID": loginID},
+            SetOptions(merge: true)).then((_) {
       showDialog(
           barrierDismissible: false,
           context: context,
@@ -309,6 +309,4 @@ class WelcomeController extends GetxController{
           });
     });
   }
-
-
 }

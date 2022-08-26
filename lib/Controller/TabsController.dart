@@ -661,6 +661,9 @@ class TabsController extends GetxController{
       likedByList.addAll(data.docs.map((f) => f['LikedBy']));
       Get.find<NotificationController>().listLikedUserAll = [];
       Get.find<NotificationController>().listLikedUserAll = data.docs;
+      print("LikedBy Test");
+      print(Get.find<NotificationController>().listLikedUserAll);
+      update();
     });
   }
 

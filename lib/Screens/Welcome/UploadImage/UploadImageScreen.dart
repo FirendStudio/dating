@@ -55,70 +55,64 @@ class UploadImageScreen extends StatelessWidget {
           ),
 
           Expanded(
-            flex: 1,
-            child: Text(
-              "You need to upload at least one image as part of the " + 
-              "registration process. Once you have completed the registration" + 
-              " you will be able to add more photos to your profile." + 
-              "\n\n Your profile image must not contain any nudity and be only of yourself.",
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 15,
-                fontFamily: Global.font,
-              ),
-            )
-          ),
-
-          Expanded(
-            flex: 3,
-            child: Stack(
+            flex: 7,
+            child:Column(
               children: [
-                Container(
-                    margin: EdgeInsets.all(12),
-                    width: Get.width,
-                    height: Get.height,
-                    padding: EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                        border: Border.all(
-                          width: 10,
-                          color: Colors.redAccent,
-                        ),
-                        borderRadius: BorderRadius.all(Radius.circular(20))),
-                    child: (data.croppedFile == null)
-                        ? Image.asset("asset/images/logo2.png")
-                        : Image.file(data.croppedFile)),
-                Positioned(
-                    bottom: 15,
-                    left: 0,
-                    right: 0,
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          IconButton(
-                              iconSize: 50,
-                              color: Colors.black,
-                              onPressed: () {
-                                data.pickImage(ImageSource.camera,
-                                    metode: true);
-                              },
-                              icon: Icon(Icons.camera)),
-                          IconButton(
-                              iconSize: 50,
-                              color: Colors.black,
-                              onPressed: () {
-                                data.pickImage(ImageSource.gallery,
-                                    metode: true);
-                              },
-                              icon: Icon(Icons.image)),
-                        ])),
+
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(100.0),
+                  child: (data.croppedFile == null)
+                    ? Image.asset("asset/images/ic_profile.png",
+                    height: 200,
+                    )
+                    : Image.file(data.croppedFile,
+                      height: 200,
+                    )
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    IconButton(
+                        iconSize: 50,
+                        color: Colors.black,
+                        onPressed: () {
+                          data.pickImage(ImageSource.camera,
+                              metode: true);
+                        },
+                        icon: Icon(Icons.photo_camera)),
+                    IconButton(
+                        iconSize: 50,
+                        color: Colors.black,
+                        onPressed: () {
+                          data.pickImage(ImageSource.gallery,
+                              metode: true);
+                        },
+                        icon: Icon(Icons.image)),
+                  ]
+                ),
+                SizedBox(
+                  height: 30,
+                ),
+
+                Text(
+                  "You need to upload at least one image as part of the " + 
+                  "registration process. Once you have completed the registration" + 
+                  " you will be able to add more photos to your profile." + 
+                  "\n\n Your profile image must not contain any nudity and be only of yourself.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontFamily: Global.font,
+                  ),
+                ),
               ],
-            ),
+            ) ,
           ),
           SizedBox(
-            height: 100,
+            height: 30,
           ),
           Expanded(
-            flex: 2,
+            flex: 1,
             child: Padding(
               padding: const EdgeInsets.only(bottom: 40.0),
               child: Align(
@@ -141,7 +135,7 @@ class UploadImageScreen extends StatelessWidget {
                       width: MediaQuery.of(context).size.width * .75,
                       child: Center(
                           child: Text(
-                        "SAVE",
+                        "CONTINUE",
                         style: TextStyle(
                             fontSize: 15,
                             color: textColor,
