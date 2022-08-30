@@ -144,16 +144,10 @@ class _MyAppState extends State<MyApp> {
 
   Future _checkAuth() async {
 
-    if(GetPlatform.isIOS){
-      await FirebaseMessaging.instance.requestPermission();
-
-      var iosToken = await FirebaseMessaging.instance.getAPNSToken();
-      print(iosToken);
-    }
-
     final FirebaseAuth _auth = FirebaseAuth.instance;
     User user = _auth.currentUser;
     print(user);
+    
     if (user != null) {
       print("ID User : " + user.uid);
       String metode = "";

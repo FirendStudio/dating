@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hookup4u/Service/FCMService.dart';
 import 'package:http/http.dart' as http;
@@ -29,6 +30,18 @@ class NotificationController extends GetxController {
   List listMatchUser = [];
   String interestText = "";
   String desiresText = "";
+
+  @override
+  onInit() async {
+    super.onInit();
+    if(GetPlatform.isIOS){
+      await FirebaseMessaging.instance.requestPermission();
+
+      var iosToken = await FirebaseMessaging.instance.getAPNSToken();
+      print("Ios Token : " + iosToken);
+    }
+  }
+
   initNotification() {
     // print("Jalankan 1 ");
     if (docReference == null) {

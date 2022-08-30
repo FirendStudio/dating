@@ -414,7 +414,6 @@ class TabsController extends GetxController{
     //         alert: true, sound: true, provisional: false, badge: true)
     // );
     await Get.find<HomeController>().initFCM(docRef, user, context);
-
     // _firebaseMessaging.configure(
     //   onLaunch: (Map<String, dynamic> message) async {
     //     print('===============onLaunch$message');

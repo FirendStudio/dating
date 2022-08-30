@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>320445830507-rmqfclnkr3d182vb5flk1ho3b1ismkn1.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.320445830507-rmqfclnkr3d182vb5flk1ho3b1ismkn1</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>320445830507-4np897s0ir6lj427il1rea2f8voerhae.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyB5T6M2gW8PAleR5rzr0lKAQhMoJLOa7TI</string>
+	<key>GCM_SENDER_ID</key>
+	<string>320445830507</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.jab.jablesscupid</string>
+	<key>PROJECT_ID</key>
+	<string>jablesscupid</string>
+	<key>STORAGE_BUCKET</key>
+	<string>jablesscupid.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:320445830507:ios:3c341f6dd2e56d006e282e</string>
+</dict>
+</plist>

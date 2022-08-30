@@ -10,21 +10,28 @@ import 'package:get_storage/get_storage.dart';
 import 'package:hookup4u/Screens/Calling/incomingCall.dart';
 import 'package:hookup4u/models/user_model.dart';
 
-class HomeController extends GetxController{
+import 'LoginController.dart';
+
+class HomeController extends GetxController {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-  FlutterLocalNotificationsPlugin();
+      FlutterLocalNotificationsPlugin();
   int index = 0;
 
-  initFCM(CollectionReference docRef, UserModel user, BuildContext context) async {
-    if(index == 0){
-      await FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage message) {
+  initFCM(
+      CollectionReference docRef, UserModel user, BuildContext context) async {
+    if (index == 0) {
+      await FirebaseMessaging.instance
+          .getInitialMessage()
+          .then((RemoteMessage message) {
         if (kDebugMode) {
           print('Firebase Connect');
         }
         // _serialiseAndNavigate(message);
       });
-      FirebaseMessaging.instance.subscribeToTopic("${user.id}");
-      print("Subcribe to ${user.id}");
+      // FirebaseMessaging.instance.getToken().then((value) => print("Token : " + value));
+      FirebaseMessaging.instance
+          .subscribeToTopic("${Get.find<LoginController>().userId}");
+      print("Subcribe to ${Get.find<LoginController>().userId}");
       // String fcmToken = GetStorage().read("fcmToken") ?? "";
       // if(fcmToken.isEmpty){
       //   FirebaseMessaging.instance.getToken().then((token) {
@@ -54,10 +61,10 @@ class HomeController extends GetxController{
         // } else{
         //   print("object");
         // }
-
       });
 
-      FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
+      FirebaseMessaging.onMessageOpenedApp
+          .listen((RemoteMessage message) async {
         print('===============onLaunch$message');
         showNotification(message);
         // if (Platform.isIOS && message.data['type'] == 'Call') {
@@ -84,62 +91,49 @@ class HomeController extends GetxController{
         //     print("Timeout");
         //   }
         // }
-
       });
 
       index = 1;
-
-
-    }else{
-
-    }
+    } else {}
   }
 
   showNotification(RemoteMessage message) async {
     RemoteNotification notification = message.notification;
-    String title     = notification.title;
-    String body      = notification.body;
+    String title = notification.title;
+    String body = notification.body;
 
     const AndroidNotificationDetails androidplatformChannelSpecifics =
-    AndroidNotificationDetails(
-        'your channel id', 'your channel name',
-        importance: Importance.max,
-        priority: Priority.high,
-        ticker: 'ticker');
+        AndroidNotificationDetails('your channel id', 'your channel name',
+            importance: Importance.max,
+            priority: Priority.high,
+            ticker: 'ticker');
     const IOSNotificationDetails iOSplatformChannelSpecifics =
-    IOSNotificationDetails(presentSound: false);
-    const NotificationDetails platformChannelSpecifics =
-    NotificationDetails(
+        IOSNotificationDetails(presentSound: false);
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(
         android: androidplatformChannelSpecifics,
-        iOS: iOSplatformChannelSpecifics
-    );
+        iOS: iOSplatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
       0, title, body, platformChannelSpecifics,
       // payload:payload
     );
-
   }
 
-  showSimpleNotification({@required String title, @required String body}) async {
-
+  showSimpleNotification(
+      {@required String title, @required String body}) async {
     const AndroidNotificationDetails androidplatformChannelSpecifics =
-    AndroidNotificationDetails(
-        'your channel id', 'your channel name',
-        importance: Importance.max,
-        priority: Priority.high,
-        ticker: 'ticker');
+        AndroidNotificationDetails('your channel id', 'your channel name',
+            importance: Importance.max,
+            priority: Priority.high,
+            ticker: 'ticker');
     const IOSNotificationDetails iOSplatformChannelSpecifics =
-    IOSNotificationDetails(presentSound: false);
-    const NotificationDetails platformChannelSpecifics =
-    NotificationDetails(
+        IOSNotificationDetails(presentSound: false);
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(
         android: androidplatformChannelSpecifics,
-        iOS: iOSplatformChannelSpecifics
-    );
+        iOS: iOSplatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
       0, title, body, platformChannelSpecifics,
       // payload:payload
     );
-
   }
 
   _checkcallState(channelId) async {
@@ -154,5 +148,4 @@ class HomeController extends GetxController{
     });
     return iscalling;
   }
-
 }

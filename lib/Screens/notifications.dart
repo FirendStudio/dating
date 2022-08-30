@@ -137,18 +137,23 @@ class Notifications extends StatelessWidget {
                   relation = await FirebaseFirestore.instance.collection("Relationship").doc(data.listLikedUserAll[index]["LikedBy"]).get();
                 }
                 Relationship relationshipTemp = Relationship.fromDocument(relation.data());
+                
+                var result = await FirebaseFirestore.instance.collection('Users').doc(data.listLikedUserAll[index]["LikedBy"]).get();
+                print(result);
+                UserModel userSelected = UserModel.fromDocument(result);
                 Get.back();
-                Get.find<NotificationController>().userPartner.distanceBW = Get.find<TabsController>().calculateDistance(
+                userSelected.distanceBW = Get.find<TabsController>().calculateDistance(
                     currentUser.coordinates['latitude'],
                     currentUser.coordinates['longitude'],
                     Get.find<NotificationController>().userPartner.coordinates['latitude'],
                     Get.find<NotificationController>().userPartner.coordinates['longitude']).round();
+                // data.listLikedUserAll[index]["LikedBy"];
                 await showDialog(
                   barrierDismissible: false,
                   context: context,
                   builder: (context) {
                     return InformationPartner(
-                      currentUser,
+                      userSelected,
                       currentUser,
                       null,
                       relationshipTemp,

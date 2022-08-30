@@ -435,6 +435,8 @@ class _SubscriptionState extends State<Subscription> {
                               fontWeight: FontWeight.bold),
                         ))),
                     onTap: () async {
+                      // print(selectedProduct);
+                      // return;
                       if (selectedProduct != null)
 
                         _buyProduct(selectedProduct);
@@ -449,46 +451,46 @@ class _SubscriptionState extends State<Subscription> {
             // SizedBox(
             //   height: 15,
             // ),
-            Platform.isIOS
-                ? InkWell(
-                    child: Container(
-                        decoration: BoxDecoration(
-                            shape: BoxShape.rectangle,
-                            borderRadius: BorderRadius.circular(25),
-                            gradient: LinearGradient(
-                                begin: Alignment.topRight,
-                                end: Alignment.bottomLeft,
-                                colors: [
-                                  primaryColor.withOpacity(.5),
-                                  primaryColor.withOpacity(.8),
-                                  primaryColor,
-                                  primaryColor
-                                ])),
-                        height: MediaQuery.of(context).size.height * .055,
-                        width: MediaQuery.of(context).size.width * .55,
-                        child: Center(
-                            child: Text(
-                          "RESTORE PURCHASE",
-                          style: TextStyle(
-                              fontSize: 15,
-                              color: textColor,
-                              fontWeight: FontWeight.bold),
-                        ))),
-                    onTap: () async {
-                      // var result = await _getpastPurchases();
-                      // if (result.length == 0) {
-                      //   showDialog(
-                      //       context: context,
-                      //       builder: (ctx) {
-                      //         return AlertDialog(
-                      //           content: Text("No purchase found"),
-                      //           title: Text("Past Purchases"),
-                      //         );
-                      //       });
-                      // }
-                    },
-                  )
-                : Container(),
+            // Platform.isIOS
+            //     ? InkWell(
+            //         child: Container(
+            //             decoration: BoxDecoration(
+            //                 shape: BoxShape.rectangle,
+            //                 borderRadius: BorderRadius.circular(25),
+            //                 gradient: LinearGradient(
+            //                     begin: Alignment.topRight,
+            //                     end: Alignment.bottomLeft,
+            //                     colors: [
+            //                       primaryColor.withOpacity(.5),
+            //                       primaryColor.withOpacity(.8),
+            //                       primaryColor,
+            //                       primaryColor
+            //                     ])),
+            //             height: MediaQuery.of(context).size.height * .055,
+            //             width: MediaQuery.of(context).size.width * .55,
+            //             child: Center(
+            //                 child: Text(
+            //               "RESTORE PURCHASE",
+            //               style: TextStyle(
+            //                   fontSize: 15,
+            //                   color: textColor,
+            //                   fontWeight: FontWeight.bold),
+            //             ))),
+            //         onTap: () async {
+            //           // var result = await _getpastPurchases();
+            //           // if (result.length == 0) {
+            //           //   showDialog(
+            //           //       context: context,
+            //           //       builder: (ctx) {
+            //           //         return AlertDialog(
+            //           //           content: Text("No purchase found"),
+            //           //           title: Text("Past Purchases"),
+            //           //         );
+            //           //       });
+            //           // }
+            //         },
+            //       )
+            //     : Container(),
             SizedBox(
               height: 10,
             ),

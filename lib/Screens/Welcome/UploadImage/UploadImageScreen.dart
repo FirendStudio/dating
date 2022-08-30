@@ -48,14 +48,19 @@ class UploadImageScreen extends StatelessWidget {
             ],
           ),
         ),
-        body: Column(children: [
+        body: Container(
+          padding: EdgeInsets.only(
+            top: 8, bottom: 8,
+            left: 16, right: 16
+          ),
+          child: Column(children: [
           
           SizedBox(
             height: 100,
           ),
 
           Expanded(
-            flex: 7,
+            flex: 5,
             child:Column(
               children: [
 
@@ -158,7 +163,8 @@ class UploadImageScreen extends StatelessWidget {
               ),
             ),
           )
-        ]),
+        ])
+        ),
       ));
     });
   }
