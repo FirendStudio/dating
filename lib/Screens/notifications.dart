@@ -76,10 +76,10 @@ class Notifications extends StatelessWidget {
           body: Container(
             width: Get.width,
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(50),
-                  topRight: Radius.circular(50),
-                ),
+                // borderRadius: BorderRadius.only(
+                //   topLeft: Radius.circular(50),
+                //   topRight: Radius.circular(50),
+                // ),
                 color: Colors.white),
             child: ClipRRect(
               borderRadius: BorderRadius.only(

@@ -19,33 +19,39 @@ final List adds = [
   {
     'icon': Icons.whatshot,
     'color': Colors.indigo,
-    'title': "Get matches faster",
-    'subtitle': "Boost your profile once a month",
+    'title': "Subscribe now",
+    'subtitle': "for unlimited matches and contacts",
   },
-  {
-    'icon': Icons.favorite,
-    'color': Colors.lightBlueAccent,
-    'title': "more likes",
-    'subtitle': "Get free rewindes",
-  },
-  {
-    'icon': Icons.star_half,
-    'color': Colors.amber,
-    'title': "Increase your chances",
-    'subtitle': "Get unlimited free likes",
-  },
-  {
-    'icon': Icons.location_on,
-    'color': Colors.purple,
-    'title': "Swipe around the world",
-    'subtitle': "Passport to anywhere with hookup4u",
-  },
-  {
-    'icon': Icons.vpn_key,
-    'color': Colors.orange,
-    'title': "Control your profile",
-    'subtitle': "highly secured",
-  }
+  // {
+  //   'icon': Icons.whatshot,
+  //   'color': Colors.indigo,
+  //   'title': "Get matches faster",
+  //   'subtitle': "Boost your profile once a month",
+  // },
+  // {
+  //   'icon': Icons.favorite,
+  //   'color': Colors.lightBlueAccent,
+  //   'title': "more likes",
+  //   'subtitle': "Get free rewindes",
+  // },
+  // {
+  //   'icon': Icons.star_half,
+  //   'color': Colors.amber,
+  //   'title': "Increase your chances",
+  //   'subtitle': "Get unlimited free likes",
+  // },
+  // {
+  //   'icon': Icons.location_on,
+  //   'color': Colors.purple,
+  //   'title': "Swipe around the world",
+  //   'subtitle': "Passport to anywhere with hookup4u",
+  // },
+  // {
+  //   'icon': Icons.vpn_key,
+  //   'color': Colors.orange,
+  //   'title': "Control your profile",
+  //   'subtitle': "highly secured",
+  // }
 ];
 
 class Profile extends StatefulWidget {
@@ -74,8 +80,8 @@ class _ProfileState extends State<Profile> {
       body: Container(
         height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(50), topRight: Radius.circular(50)),
+            // borderRadius: BorderRadius.only(
+            //     topLeft: Radius.circular(50), topRight: Radius.circular(50)),
             color: Colors.white),
         child: SingleChildScrollView(
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: <
@@ -348,13 +354,13 @@ class _ProfileState extends State<Profile> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.center,
                                       children: <Widget>[
-                                        Icon(
-                                          adds[index2]["icon"],
-                                          color: adds[index2]["color"],
-                                        ),
-                                        SizedBox(
-                                          width: 5,
-                                        ),
+                                        // Icon(
+                                        //   adds[index2]["icon"],
+                                        //   color: adds[index2]["color"],
+                                        // ),
+                                        // SizedBox(
+                                        //   width: 5,
+                                        // ),
                                         Text(
                                           adds[index2]["title"],
                                           textAlign: TextAlign.center,

@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/Controller/TabsController.dart';
 import 'package:hookup4u/models/user_model.dart';
+import '../Screens/Info/InformationPartner.dart';
 import '../models/Relationship.dart';
 import '../util/color.dart';
 import 'HomeController.dart';
@@ -761,12 +762,19 @@ class NotificationController extends GetxController {
     String toParams = "/topics/" + idUser;
     var data = {
       "title": "Liked",
+      "body": "Someone just liked your profile! Tap to see if you're a match!",
+      "idUser" : idUser,
+    };
+    var notif = {
+      "title": "Liked",
       "body": "Someone just liked your profile! Tap to see if you're a match!"
     };
     if (kDebugMode) {
       print(data);
     }
-    var response = await FCMService().sendFCM(data: data, to: toParams);
+    var response = await FCMService().sendCustomFCM(
+      data: data, to: toParams, notif: notif
+    );
     if (response.statusCode == 200) {
       var result = await response.stream.bytesToString();
       print("Success Request FCM");
@@ -793,5 +801,46 @@ class NotificationController extends GetxController {
     } else {
       print(response.reasonPhrase);
     }
+  }
+
+
+  initPayload(String payload) async {
+
+    var split = payload.split("/");
+    if(split[0]== "liked"){
+      String idUser = split[1];
+      await initUserPartner(Uid: idUser);
+      var relation = await FirebaseFirestore.instance.collection("Relationship").doc(idUser).get();
+      if(!relation.exists){
+        await setNewRelationship(idUser);
+        relation = await FirebaseFirestore.instance.collection("Relationship").doc(idUser).get();
+      }
+      Relationship relationshipTemp = Relationship.fromDocument(relation.data());
+      
+      var result = await FirebaseFirestore.instance.collection('Users').doc(idUser).get();
+      print(result);
+      UserModel userSelected = UserModel.fromDocument(result);
+      // Get.back();
+      userSelected.distanceBW = Get.find<TabsController>().calculateDistance(
+          Get.find<TabsController>().currentUser.coordinates['latitude'],
+          Get.find<TabsController>().currentUser.coordinates['longitude'],
+          userPartner.coordinates['latitude'],
+          userPartner.coordinates['longitude']).round();
+      // data.listLikedUserAll[index]["LikedBy"];
+      await showDialog(
+        barrierDismissible: false,
+        context: Get.context,
+        builder: (context) {
+          return InformationPartner(
+            userSelected,
+            Get.find<TabsController>().currentUser,
+            null,
+            relationshipTemp,
+            Get.find<NotificationController>().userPartner,
+          );
+        }
+      );
+    }
+
   }
 }

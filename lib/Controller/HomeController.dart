@@ -16,6 +16,8 @@ class HomeController extends GetxController {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();
   int index = 0;
+  List<int> listAge = [];
+  int ageMin = 0, ageMax = 0;
 
   initFCM(
       CollectionReference docRef, UserModel user, BuildContext context) async {
@@ -94,6 +96,9 @@ class HomeController extends GetxController {
       });
 
       index = 1;
+      for (int i = 0; i <= 100; i++) {
+        listAge.add(i);
+      }
     } else {}
   }
 
@@ -112,8 +117,13 @@ class HomeController extends GetxController {
     const NotificationDetails platformChannelSpecifics = NotificationDetails(
         android: androidplatformChannelSpecifics,
         iOS: iOSplatformChannelSpecifics);
+    String payload = "";
+    if(message.notification.title == "Liked"){
+      payload = "liked/" + message.data['idUser'];
+    }
     await flutterLocalNotificationsPlugin.show(
       0, title, body, platformChannelSpecifics,
+      payload: payload
       // payload:payload
     );
   }

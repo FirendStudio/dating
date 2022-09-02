@@ -493,263 +493,266 @@ class _CardPicturesState2 extends State<CardPictures2>
               }
 
               // print("Index ke : " + index.toString() + " (" +data.users[index].name + ")");
-              return Column(
-                children: <Widget>[
+              return SingleChildScrollView(
+                child: Column(
+                  children: <Widget>[
 
-                  SizedBox(
-                    height: Get.height * 0.6,
-                    child: listImageWidget(index)
-                  ),
-                  SizedBox(height: 10,),
-                  ListTile(
-                    title: Text(
-                      "${data.users[index].name},",
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold),
+                    SizedBox(
+                      height: Get.height * 0.6,
+                      child: listImageWidget(index)
                     ),
-                    subtitle: Text(
-                      (!cekPartner)
-                          ? "${data.users[index].editInfo['showMyAge'] != null ? !data.users[index].editInfo['showMyAge'] ? data.users[index].age : "" : data.users[index].age}" +
-                          ", " + data.users[index].gender + ", " + data.users[index].sexualOrientation + "\n " + data.users[index].status + ", " + "${data.users[index].distanceBW} KM away"
-                          :"${data.users[index].editInfo['showMyAge'] != null ? !data.users[index].editInfo['showMyAge'] ? data.users[index].age : "" : data.users[index].age}" +
-                          ", " + data.users[index].gender + ", " + data.users[index].sexualOrientation + ", " +
-                          userPartner.age.toString() + ", " + userPartner.gender + ", " +  userPartner.sexualOrientation +
-                          "\n\nCouple, " + "${data.users[index].distanceBW} KM away",
-                      style: TextStyle(
-                        // color: Colors.black,
-                          fontSize: 16,
-                          fontWeight: FontWeight.normal
-                      ),
-                      // + "${data.selectedUser.address}"
-                    ),
-                  ),
-                  data.users[index].editInfo['job_title'] != null
-                      ? ListTile(
-                    dense: true,
-                    leading: Icon(Icons.work, color: primaryColor),
-                    title: Text(
-                      "${data.users[index].editInfo['job_title']}${data.users[index].editInfo['company'] != null ? ' at ${data.users[index].editInfo['company']}' : ''}",
-                      style: TextStyle(
-                          color: secondryColor,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500),
-                    ),
-                  )
-                      : Container(),
-                  if(data.users[index].editInfo['about'] != null && data.users[index].editInfo['about'] != "")
+                    SizedBox(height: 10,),
                     ListTile(
-                      dense: true,
-                      // leading: Icon(Icons.book, color: primaryColor),
                       title: Text(
-                        "About Me",
+                        "${data.users[index].name}",
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 25,
+                            fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Text(
+                        (!cekPartner)
+                            ? "${data.users[index].editInfo['showMyAge'] != null ? !data.users[index].editInfo['showMyAge'] ? data.users[index].age : "" : data.users[index].age}" +
+                            ", " + data.users[index].gender + ", " + data.users[index].sexualOrientation + "\n" + data.users[index].status + ", " + "${data.users[index].distanceBW} KM away"
+                            :"${data.users[index].editInfo['showMyAge'] != null ? !data.users[index].editInfo['showMyAge'] ? data.users[index].age : "" : data.users[index].age}" +
+                            ", " + data.users[index].gender + ", " + data.users[index].sexualOrientation + ", " +
+                            userPartner.age.toString() + ", " + userPartner.gender + ", " +  userPartner.sexualOrientation +
+                            "\n\nCouple, " + "${data.users[index].distanceBW} KM away",
+                        style: TextStyle(
+                          // color: Colors.black,
+                            fontSize: 16,
+                            fontWeight: FontWeight.normal
+                        ),
+                        // + "${data.selectedUser.address}"
+                      ),
+                    ),
+                    data.users[index].editInfo['job_title'] != null
+                        ? ListTile(
+                      dense: true,
+                      leading: Icon(Icons.work, color: primaryColor),
+                      title: Text(
+                        "${data.users[index].editInfo['job_title']}${data.users[index].editInfo['company'] != null ? ' at ${data.users[index].editInfo['company']}' : ''}",
                         style: TextStyle(
                             color: secondryColor,
                             fontSize: 16,
                             fontWeight: FontWeight.w500),
                       ),
-                      subtitle: Text(data.users[index].editInfo['about'] ?? ""),
-                    ),
-
-                  data.users[index].editInfo['living_in'] != null
-                      ? ListTile(
-                      dense: true,
-                      leading:
-                      Icon(Icons.home, color: primaryColor),
-                      title: Text(
-                        "Living in " + data.users[index].editInfo['living_in'],
-                        style: TextStyle(
-                            color: secondryColor,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500),
-                      )
-                    // .tr(args: ["${data.selectedUser.editInfo['living_in']}"]),
-                  )
-                      : Container(),
-                  // !isMe
-                  //     ? ListTile(
-                  //         dense: true,
-                  //         leading: Icon(
-                  //           Icons.location_on,
-                  //           color: primaryColor,
-                  //         ),
-                  //         title: Text(
-                  //           "${data.selectedUser.editInfo['DistanceVisible'] != null ? data.selectedUser.editInfo['DistanceVisible'] ? 'Less than ${data.selectedUser.distanceBW} KM away' : 'Distance not visible' : 'Less than ${data.selectedUser.distanceBW} KM away'}",
-                  //           style: TextStyle(
-                  //               color: secondryColor,
-                  //               fontSize: 16,
-                  //               fontWeight: FontWeight.w500),
-                  //         ),
-                  //       )
-                  //     : Container(),
-
-                  SizedBox(
-                    height: 10,
-                  ),
-
-                  if(desiresText.isNotEmpty)
-                    ListTile(
-                      dense: true,
-                      title: Text(
-                        "Desires",
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold),
+                    )
+                        : Container(),
+                    if(data.users[index].editInfo['about'] != null && data.users[index].editInfo['about'] != "")
+                      ListTile(
+                        dense: true,
+                        // leading: Icon(Icons.book, color: primaryColor),
+                        title: Text(
+                          "About Me",
+                          style: TextStyle(
+                              color: secondryColor,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500),
+                        ),
+                        subtitle: Text(data.users[index].editInfo['about'] ?? ""),
                       ),
-                      subtitle: Text(desiresText),
+
+                    data.users[index].editInfo['living_in'] != null
+                        ? ListTile(
+                        dense: true,
+                        leading:
+                        Icon(Icons.home, color: primaryColor),
+                        title: Text(
+                          "Living in " + data.users[index].editInfo['living_in'],
+                          style: TextStyle(
+                              color: secondryColor,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500),
+                        )
+                      // .tr(args: ["${data.selectedUser.editInfo['living_in']}"]),
+                    )
+                        : Container(),
+                    // !isMe
+                    //     ? ListTile(
+                    //         dense: true,
+                    //         leading: Icon(
+                    //           Icons.location_on,
+                    //           color: primaryColor,
+                    //         ),
+                    //         title: Text(
+                    //           "${data.selectedUser.editInfo['DistanceVisible'] != null ? data.selectedUser.editInfo['DistanceVisible'] ? 'Less than ${data.selectedUser.distanceBW} KM away' : 'Distance not visible' : 'Less than ${data.selectedUser.distanceBW} KM away'}",
+                    //           style: TextStyle(
+                    //               color: secondryColor,
+                    //               fontSize: 16,
+                    //               fontWeight: FontWeight.w500),
+                    //         ),
+                    //       )
+                    //     : Container(),
+
+                    SizedBox(
+                      height: 10,
                     ),
 
-                  SizedBox(
-                    height: 10,
-                  ),
-
-                  if(interestText.isNotEmpty)
-                    ListTile(
-                      dense: true,
-                      title: Text(
-                        "Interest",
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold),
+                    if(desiresText.isNotEmpty)
+                      ListTile(
+                        dense: true,
+                        title: Text(
+                          "Desires",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Text(desiresText),
                       ),
-                      subtitle: Text(interestText),
+
+                    SizedBox(
+                      height: 10,
                     ),
 
-                  SizedBox(
-                    height: 10,
-                  ),
-
-                  if(Get.find<NotificationController>().relationUserPartner != null && Get.find<NotificationController>().relationUserPartner.partner.partnerId.isNotEmpty)
-                    ListTile(
-                      dense: true,
-                      title: Text(
-                        "Partner",
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold),
+                    if(interestText.isNotEmpty)
+                      ListTile(
+                        dense: true,
+                        title: Text(
+                          "Interest",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Text(interestText),
                       ),
+
+                    SizedBox(
+                      height: 10,
                     ),
-                  if(cekPartner)
-                    ListTile(
-                      dense: true,
-                      trailing: IconButton(
-                        onPressed: () async {
-                          showDialog(
+
+                    if(Get.find<NotificationController>().relationUserPartner != null && Get.find<NotificationController>().relationUserPartner.partner.partnerId.isNotEmpty)
+                      ListTile(
+                        dense: true,
+                        title: Text(
+                          "Partner",
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    if(cekPartner)
+                      ListTile(
+                        dense: true,
+                        trailing: IconButton(
+                          onPressed: () async {
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return Center(
+                                      child:
+                                      CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        valueColor:
+                                        AlwaysStoppedAnimation<
+                                            Color>(
+                                            Colors.white),
+                                      ));
+                                });
+
+                            await Get.find<NotificationController>().initUserPartner(Uid: data.users[index].relasi.partner.partnerId);
+                            var relation = await FirebaseFirestore.instance.collection("Relationship").doc(data.users[index].relasi.partner.partnerId).get();
+                            if(!relation.exists){
+                              await Get.find<NotificationController>().setNewRelationship(data.users[index].relasi.partner.partnerId);
+                              relation = await FirebaseFirestore.instance.collection("Relationship").doc(data.users[index].relasi.partner.partnerId).get();
+                            }
+                            Relationship relationshipTemp = Relationship.fromDocument(relation.data());
+                            Get.back();
+                            Get.find<NotificationController>().userPartner.distanceBW = Get.find<TabsController>().calculateDistance(
+                                widget.currentUser.coordinates['latitude'],
+                                widget.currentUser.coordinates['longitude'],
+                                Get.find<NotificationController>().userPartner.coordinates['latitude'],
+                                Get.find<NotificationController>().userPartner.coordinates['longitude']).round();
+                            await showDialog(
+                              barrierDismissible: false,
                               context: context,
                               builder: (context) {
-                                return Center(
-                                    child:
-                                    CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      valueColor:
-                                      AlwaysStoppedAnimation<
-                                          Color>(
-                                          Colors.white),
-                                    ));
-                              });
+                                return InformationPartner(
+                                  Get.find<NotificationController>().userPartner,
+                                  widget.currentUser,
+                                  null,
+                                  relationshipTemp,
+                                  Get.find<NotificationController>().userPartner,
+                                );
+                              }
+                            );
 
-                          await Get.find<NotificationController>().initUserPartner(Uid: data.users[index].relasi.partner.partnerId);
-                          var relation = await FirebaseFirestore.instance.collection("Relationship").doc(data.users[index].relasi.partner.partnerId).get();
-                          if(!relation.exists){
-                            await Get.find<NotificationController>().setNewRelationship(data.users[index].relasi.partner.partnerId);
-                            relation = await FirebaseFirestore.instance.collection("Relationship").doc(data.users[index].relasi.partner.partnerId).get();
-                          }
-                          Relationship relationshipTemp = Relationship.fromDocument(relation.data());
-                          Get.back();
-                          Get.find<NotificationController>().userPartner.distanceBW = Get.find<TabsController>().calculateDistance(
-                              widget.currentUser.coordinates['latitude'],
-                              widget.currentUser.coordinates['longitude'],
-                              Get.find<NotificationController>().userPartner.coordinates['latitude'],
-                              Get.find<NotificationController>().userPartner.coordinates['longitude']).round();
-                          await showDialog(
-                            barrierDismissible: false,
-                            context: context,
-                            builder: (context) {
-                              return InformationPartner(
-                                Get.find<NotificationController>().userPartner,
-                                widget.currentUser,
-                                null,
-                                relationshipTemp,
-                                Get.find<NotificationController>().userPartner,
-                              );
-                            }
-                          );
-
-                        },
-                        icon: Icon(Icons.chevron_right_sharp,
-                          size: 40,
-                        ),
-                      ),
-                      title: Text(
-                        data.users[index].relasi.partner.partnerName,
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      subtitle: Text(userPartner.status + ", "
-                          + userPartner.sexualOrientation
-                      ),
-                      leading: CircleAvatar(
-                        radius: 25,
-                        backgroundColor: secondryColor,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(
-                            25,
+                          },
+                          icon: Icon(Icons.chevron_right_sharp,
+                            size: 40,
                           ),
-                          child: CachedNetworkImage(
-                            imageUrl: data.users[index].relasi.partner.partnerImage,
-                            fit: BoxFit.cover,
-                            useOldImageOnUrlChange: true,
-                            placeholder: (context, url) => CupertinoActivityIndicator(
-                              radius: 20,
+                        ),
+                        title: Text(
+                          data.users[index].relasi.partner.partnerName,
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Text(userPartner.status + ", "
+                            + userPartner.sexualOrientation
+                        ),
+                        leading: CircleAvatar(
+                          radius: 25,
+                          backgroundColor: secondryColor,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(
+                              25,
                             ),
-                            errorWidget: (context, url, error) =>
-                                Icon(
-                                  Icons.error,
-                                  color: Colors.black,
-                                ),
+                            child: CachedNetworkImage(
+                              imageUrl: data.users[index].relasi.partner.partnerImage,
+                              fit: BoxFit.cover,
+                              useOldImageOnUrlChange: true,
+                              placeholder: (context, url) => CupertinoActivityIndicator(
+                                radius: 20,
+                              ),
+                              errorWidget: (context, url, error) =>
+                                  Icon(
+                                    Icons.error,
+                                    color: Colors.black,
+                                  ),
+                            ),
                           ),
                         ),
                       ),
+
+                    SizedBox(
+                      height: 10,
                     ),
 
-                  SizedBox(
-                    height: 10,
-                  ),
+                    Divider(),
+                    SizedBox(
+                      height: 10,
+                    ),
 
-                  Divider(),
-                  SizedBox(
-                    height: 10,
-                  ),
+                    InkWell(
+                      onTap: () => showDialog(
+                          barrierDismissible: true,
+                          context: context,
+                          builder: (context) => ReportUser(
+                            currentUser: widget.currentUser,
+                            seconduser: data.users[index],
+                          )),
+                      child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          child: Center(
+                            child: Text(
+                              "REPORT ${data.users[index].name}".toUpperCase(),
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w600,
+                                  color: secondryColor),
+                            ),
+                          )),
+                    ),
+                    SizedBox(height: 100,),
 
-                  InkWell(
-                    onTap: () => showDialog(
-                        barrierDismissible: true,
-                        context: context,
-                        builder: (context) => ReportUser(
-                          currentUser: widget.currentUser,
-                          seconduser: data.users[index],
-                        )),
-                    child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        child: Center(
-                          child: Text(
-                            "REPORT ${data.users[index].name}".toUpperCase(),
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                                color: secondryColor),
-                          ),
-                        )),
-                  )
-
-                ],
+                  ],
+                )
               );
               // return ;
             }).toList(),

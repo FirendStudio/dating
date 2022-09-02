@@ -893,63 +893,63 @@ class EditProfileState extends State<EditProfile> {
                         SizedBox(
                           height: 10,
                         ),
-                        ListTile(
-                            title: Text(
-                              "Control your profile",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 16,
-                                  color: Colors.black87),
-                            ),
-                            subtitle: Card(
-                              child: Column(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  // Row(
-                                  //   mainAxisAlignment:
-                                  //       MainAxisAlignment.spaceBetween,
-                                  //   children: <Widget>[
-                                  //     Padding(
-                                  //       padding: const EdgeInsets.all(8.0),
-                                  //       child: Text("Don't Show My Age"),
-                                  //     ),
-                                  //     Switch(
-                                  //         activeColor: primaryColor,
-                                  //         value: visibleAge,
-                                  //         onChanged: (value) {
-                                  //           editInfo
-                                  //               .addAll({'showMyAge': value});
-                                  //           setState(() {
-                                  //             visibleAge = value;
-                                  //           });
-                                  //         })
-                                  //   ],
-                                  // ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text("Make My Distance Visible"),
-                                      ),
-                                      Switch(
-                                          activeColor: primaryColor,
-                                          value: visibleDistance,
-                                          onChanged: (value) {
-                                            editInfo.addAll(
-                                                {'DistanceVisible': value});
-                                            setState(() {
-                                              visibleDistance = value;
-                                            });
-                                          })
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            )),
+                        // ListTile(
+                        //     title: Text(
+                        //       "Control your profile",
+                        //       style: TextStyle(
+                        //           fontWeight: FontWeight.w500,
+                        //           fontSize: 16,
+                        //           color: Colors.black87),
+                        //     ),
+                        //     subtitle: Card(
+                        //       child: Column(
+                        //         mainAxisAlignment:
+                        //             MainAxisAlignment.spaceAround,
+                        //         crossAxisAlignment: CrossAxisAlignment.start,
+                        //         children: <Widget>[
+                        //           // Row(
+                        //           //   mainAxisAlignment:
+                        //           //       MainAxisAlignment.spaceBetween,
+                        //           //   children: <Widget>[
+                        //           //     Padding(
+                        //           //       padding: const EdgeInsets.all(8.0),
+                        //           //       child: Text("Don't Show My Age"),
+                        //           //     ),
+                        //           //     Switch(
+                        //           //         activeColor: primaryColor,
+                        //           //         value: visibleAge,
+                        //           //         onChanged: (value) {
+                        //           //           editInfo
+                        //           //               .addAll({'showMyAge': value});
+                        //           //           setState(() {
+                        //           //             visibleAge = value;
+                        //           //           });
+                        //           //         })
+                        //           //   ],
+                        //           // ),
+                        //           Row(
+                        //             mainAxisAlignment:
+                        //                 MainAxisAlignment.spaceBetween,
+                        //             children: <Widget>[
+                        //               Padding(
+                        //                 padding: const EdgeInsets.all(8.0),
+                        //                 child: Text("Make My Distance Visible"),
+                        //               ),
+                        //               Switch(
+                        //                   activeColor: primaryColor,
+                        //                   value: visibleDistance,
+                        //                   onChanged: (value) {
+                        //                     editInfo.addAll(
+                        //                         {'DistanceVisible': value});
+                        //                     setState(() {
+                        //                       visibleDistance = value;
+                        //                     });
+                        //                   })
+                        //             ],
+                        //           ),
+                        //         ],
+                        //       ),
+                        //     )),
 
                         Padding(
                           padding: const EdgeInsets.only(

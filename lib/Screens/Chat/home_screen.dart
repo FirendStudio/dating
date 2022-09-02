@@ -57,8 +57,8 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Container(
         height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(50), topRight: Radius.circular(50)),
+            // borderRadius: BorderRadius.only(
+            //     topLeft: Radius.circular(50), topRight: Radius.circular(50)),
             color: Colors.white),
         child: ClipRRect(
           borderRadius: BorderRadius.only(

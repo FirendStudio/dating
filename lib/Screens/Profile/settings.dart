@@ -9,6 +9,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hookup4u/Controller/HomeController.dart';
 import 'package:hookup4u/Controller/NotificationController.dart';
 import 'package:hookup4u/Controller/TabsController.dart';
 import 'package:hookup4u/Screens/Tab.dart';
@@ -99,6 +100,8 @@ class _SettingsState extends State<Settings> {
 
   initData(){
 
+
+    
     print(widget.currentUser.showMe);
     for(int i = 0; i<=widget.currentUser.showMe.length-1; i++){
       selected.add(widget.currentUser.showMe[i]);
@@ -111,20 +114,6 @@ class _SettingsState extends State<Settings> {
       }
 
     }
-
-  }
-
-  @override
-  void initState() {
-    // _ad = _ads.myBanner();
-    super.initState();
-    initData();
-    // _ad
-    //   ..load()
-    //   ..show();
-    // var a = jsonDecode(widget.currentUser.showGender);
-    // print(a[0]); // print one
-
 
     freeR = widget.items['free_radius'] != null
         ? int.parse(widget.items['free_radius'])
@@ -146,6 +135,21 @@ class _SettingsState extends State<Settings> {
       ageRange = RangeValues(double.parse(widget.currentUser.ageRange['min']),
           (double.parse(widget.currentUser.ageRange['max'])));
     });
+    Get.find<HomeController>().ageMin = int.parse(widget.currentUser.ageRange['min']);
+    Get.find<HomeController>().ageMax = int.parse(widget.currentUser.ageRange['max']);
+  }
+
+  @override
+  void initState() {
+    // _ad = _ads.myBanner();
+    super.initState();
+    initData();
+    // _ad
+    //   ..load()
+    //   ..show();
+    // var a = jsonDecode(widget.currentUser.showGender);
+    // print(a[0]); // print one
+    
   }
 
   @override
@@ -295,6 +299,7 @@ class _SettingsState extends State<Settings> {
 
                                         },
                                         child: Container(
+                                          width: 250,
                                           padding: EdgeInsets.only(
                                             left: 8, right: 8,
                                             bottom: 8, top: 8
@@ -306,11 +311,22 @@ class _SettingsState extends State<Settings> {
                                                 ),
                                                 borderRadius: BorderRadius.all(Radius.circular(20))
                                             ),
-                                            child: Text("Facebook",
-                                              style: TextStyle(
-                                                color: (widget.currentUser.LoginID['fb'] == "")?Colors.white : Colors.black
-                                              ),
-                                            ),
+                                            child:Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Image.asset("asset/images/fb.png", height:25),
+                                                Text("Facebook",
+                                                  style: TextStyle(
+                                                    color: (widget.currentUser.LoginID['fb'] == "")?Colors.white : Colors.black
+                                                  ),
+                                                ),
+                                                if(widget.currentUser.LoginID['fb'] == "")
+                                                  Text(""),
+                                                if(widget.currentUser.LoginID['fb'] != "")
+                                                  Icon(Icons.check_box, 
+                                                    size: 20,color: Colors.white,),
+                                              ],
+                                            ) 
                                         )
                                       ),
 
@@ -349,6 +365,7 @@ class _SettingsState extends State<Settings> {
                                           },
                                           child: Container(
                                             padding: EdgeInsets.only(
+                                              
                                                 left: 8, right: 8,
                                                 bottom: 8, top: 8
                                             ),
@@ -359,11 +376,22 @@ class _SettingsState extends State<Settings> {
                                                 ),
                                                 borderRadius: BorderRadius.all(Radius.circular(20))
                                             ),
-                                            child: Text("Apple",
-                                              style: TextStyle(
-                                                  color: (widget.currentUser.LoginID['apple'] == "")?Colors.white : Colors.black
-                                              ),
-                                            ),
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Image.asset("asset/images/apple.png", height:25),
+                                                Text("Apple",
+                                                  style: TextStyle(
+                                                      color: (widget.currentUser.LoginID['apple'] == "")?Colors.white : Colors.black
+                                                  ),
+                                                ),
+                                                if(widget.currentUser.LoginID['apple'] == "")
+                                                  Text(""),
+                                                if(widget.currentUser.LoginID['apple'] != "")
+                                                  Icon(Icons.check_box, 
+                                                    size: 20,color: Colors.white,),
+                                              ],
+                                            ) 
                                           )
                                       ):Container(),
 
@@ -628,72 +656,147 @@ class _SettingsState extends State<Settings> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ListTile(
-                        title: Text(
-                          "Age range",
-                          style: TextStyle(
-                              fontSize: 18,
-                              color: primaryColor,
-                              fontWeight: FontWeight.w500),
+                        contentPadding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0),
+                        
+                        title: Container(
+                          margin: EdgeInsets.only(bottom: 10),
+                          child: Text(
+                            "Age range",
+                            style: TextStyle(
+                                fontSize: 18,
+                                color: primaryColor,
+                                fontWeight: FontWeight.w500),
+                          )
                         ),
-                        trailing: Text(
-                          "${ageRange.start.round()}-${ageRange.end.round()}",
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        subtitle: RangeSlider(
-                            inactiveColor: secondryColor,
-                            values: ageRange,
-                            min: 18.0,
-                            max: 100.0,
-                            divisions: 25,
-                            activeColor: primaryColor,
-                            labels: RangeLabels('${ageRange.start.round()}',
-                                '${ageRange.end.round()}'),
-                            onChanged: (val) {
-                              changeValues.addAll({
-                                'age_range': {
-                                  'min': '${val.start.truncate()}',
-                                  'max': '${val.end.truncate()}'
-                                }
-                              });
-                              setState(() {
-                                ageRange = val;
-                              });
-                            }),
-                      ),
-                    ),
-                  ),
-                ),
-                ListTile(
-                  title: Text(
-                    "App settings",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              "Notifications",
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  color: primaryColor,
-                                  fontWeight: FontWeight.w500),
+                        subtitle: Row(
+                          children: [
+                            Expanded(
+                              flex: 1,
+                              child: Row(
+                                children: [
+                                  Text("From", 
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.black
+                                    ),
+                                  ),
+                                  SizedBox(width: 10,),
+                                  DropdownButton<int>(
+                                    value: Get.find<HomeController>().ageMin,
+                                    items:Get.find<HomeController>().listAge.map((int value) {
+                                      return DropdownMenuItem<int>(
+                                        value: value,
+                                        child: Text(value.toString()),
+                                      );
+                                    }).toList(),
+                                    onChanged: (int valueInt) {
+                                      Get.find<HomeController>().ageMin = valueInt;
+                                      changeValues.addAll({
+                                        'age_range': {
+                                          'min': '${Get.find<HomeController>().ageMin}',
+                                          'max': '${Get.find<HomeController>().ageMax}'
+                                        }
+                                      });
+                                      setState(() {});
+                                    },
+                                  )
+                                ],
+                              )
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text("Push notifications"),
-                          ),
-                        ],
+                            Expanded(
+                              flex: 1,
+                              child: Row(
+                                children: [
+                                  Text("To", 
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.black
+                                    ),
+                                  ),
+                                  SizedBox(width: 10,),
+                                  DropdownButton<int>(
+                                    value: Get.find<HomeController>().ageMax,
+                                    items:Get.find<HomeController>().listAge.map((int value) {
+                                      return DropdownMenuItem<int>(
+                                        value: value,
+                                        child: Text(value.toString()),
+                                      );
+                                    }).toList(),
+                                    onChanged: (int valueInt) {
+                                      Get.find<HomeController>().ageMax = valueInt;
+                                      changeValues.addAll({
+                                        'age_range': {
+                                          'min': '${Get.find<HomeController>().ageMin}',
+                                          'max': '${Get.find<HomeController>().ageMax}'
+                                        }
+                                      });
+                                      setState(() {});
+                                    },
+                                  )
+                                ],
+                              )
+                            ),
+                          ]
+                        ),
+                        // trailing: Text(
+                        //   "${ageRange.start.round()}-${ageRange.end.round()}",
+                        //   style: TextStyle(fontSize: 16),
+                        // ),
+                        // subtitle: RangeSlider(
+                        //     inactiveColor: secondryColor,
+                        //     values: ageRange,
+                        //     min: 18.0,
+                        //     max: 100.0,
+                        //     divisions: 25,
+                        //     activeColor: primaryColor,
+                        //     labels: RangeLabels('${ageRange.start.round()}',
+                        //         '${ageRange.end.round()}'),
+                        //     onChanged: (val) {
+                        //       changeValues.addAll({
+                        //         'age_range': {
+                        //           'min': '${val.start.truncate()}',
+                        //           'max': '${val.end.truncate()}'
+                        //         }
+                        //       });
+                        //       setState(() {
+                        //         ageRange = val;
+                        //       });
+                        //     }),
                       ),
                     ),
                   ),
                 ),
+                // ListTile(
+                //   title: Text(
+                //     "App settings",
+                //     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                //   ),
+                //   subtitle: Card(
+                //     child: Padding(
+                //       padding: const EdgeInsets.all(8.0),
+                //       child: Column(
+                //         crossAxisAlignment: CrossAxisAlignment.start,
+                //         mainAxisAlignment: MainAxisAlignment.spaceAround,
+                //         children: <Widget>[
+                //           Padding(
+                //             padding: const EdgeInsets.all(8.0),
+                //             child: Text(
+                //               "Notifications",
+                //               style: TextStyle(
+                //                   fontSize: 18,
+                //                   color: primaryColor,
+                //                   fontWeight: FontWeight.w500),
+                //             ),
+                //           ),
+                //           Padding(
+                //             padding: const EdgeInsets.all(8.0),
+                //             child: Text("Push notifications"),
+                //           ),
+                //         ],
+                //       ),
+                //     ),
+                //   ),
+                // ),
                 // Container(
                 //   child: StreamBuilder<QuerySnapshot>(
                 //     stream:

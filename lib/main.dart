@@ -32,9 +32,10 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   // await EasyLocalization.ensureInitialized();
 
-  if(kIsWeb){
-    await Firebase.initializeApp(options: DefaultFirebaseConfig.platformOptions);
-  }else{
+  if (kIsWeb) {
+    await Firebase.initializeApp(
+        options: DefaultFirebaseConfig.platformOptions);
+  } else {
     await Firebase.initializeApp();
   }
 
@@ -42,39 +43,39 @@ Future<void> main() async {
   flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   const AndroidInitializationSettings initializationSettingsAndroid =
-  AndroidInitializationSettings('ic_notification');
+      AndroidInitializationSettings('ic_notification');
 
   /// Note: permissions aren't requested here just to demonstrate that can be
   /// done later
   final IOSInitializationSettings initializationSettingsIOS =
-  IOSInitializationSettings(
-      requestAlertPermission: false,
-      requestBadgePermission: false,
-      requestSoundPermission: false,
-      onDidReceiveLocalNotification: (
-          int id,
-          String title,
-          String body,
-          String payload,
+      IOSInitializationSettings(
+          requestAlertPermission: false,
+          requestBadgePermission: false,
+          requestSoundPermission: false,
+          onDidReceiveLocalNotification: (
+            int id,
+            String title,
+            String body,
+            String payload,
           ) async {
-        print(payload);
-        // didReceiveLocalNotificationSubject.add(
-        //   ReceivedNotification(
-        //     id: id,
-        //     title: title,
-        //     body: body,
-        //     payload: payload,
-        //   ),
-        // );
-      });
+            print(payload);
+            // didReceiveLocalNotificationSubject.add(
+            //   ReceivedNotification(
+            //     id: id,
+            //     title: title,
+            //     body: body,
+            //     payload: payload,
+            //   ),
+            // );
+          });
   const MacOSInitializationSettings initializationSettingsMacOS =
-  MacOSInitializationSettings(
+      MacOSInitializationSettings(
     requestAlertPermission: false,
     requestBadgePermission: false,
     requestSoundPermission: false,
   );
   final LinuxInitializationSettings initializationSettingsLinux =
-  LinuxInitializationSettings(
+      LinuxInitializationSettings(
     defaultActionName: 'Open notification',
     defaultIcon: AssetsLinuxIcon('icons/app_icon.png'),
   );
@@ -86,12 +87,13 @@ Future<void> main() async {
   );
   await flutterLocalNotificationsPlugin.initialize(initializationSettings,
       onSelectNotification: (String payload) async {
-        if (payload != null) {
-          debugPrint('notification payload: $payload');
-        }
-        // selectedNotificationPayload = payload;
-        // selectNotificationSubject.add(payload);
-      });
+    if (payload != null && payload.isNotEmpty) {
+      debugPrint('notification payload: $payload');
+      Get.find<NotificationController>().initPayload(payload);
+    }
+    // selectedNotificationPayload = payload;
+    // selectNotificationSubject.add(payload);
+  });
 
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
     alert: true,
@@ -119,7 +121,12 @@ Future<void> main() async {
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   // If you're going to use other Firebase services in the background, such as Firestore,
   // make sure you call `initializeApp` before using other Firebase services.
-  // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  if (kIsWeb) {
+    await Firebase.initializeApp(
+        options: DefaultFirebaseConfig.platformOptions);
+  } else {
+    await Firebase.initializeApp();
+  }
   print('Handling a background message ${message.messageId}');
 }
 
@@ -143,20 +150,19 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future _checkAuth() async {
-
     final FirebaseAuth _auth = FirebaseAuth.instance;
     User user = _auth.currentUser;
     print(user);
-    
+
     if (user != null) {
       print("ID User : " + user.uid);
       String metode = "";
       String cek = user.providerData[0].providerId;
       print(cek);
-      QuerySnapshot userAuth = await Get.find<LoginController>().getUser(user, cek);
+      QuerySnapshot userAuth =
+          await Get.find<LoginController>().getUser(user, cek);
 
       if (userAuth.docs.length > 0) {
-
         print(userAuth.docs);
         var docs = userAuth.docs.first;
         print(docs.data());
@@ -180,7 +186,6 @@ class _MyAppState extends State<MyApp> {
           isLoading = false;
         });
       }
-
     } else {
       setState(() {
         isLoading = false;
@@ -222,14 +227,15 @@ class _MyAppState extends State<MyApp> {
   }
 
   _getLanguage() async {
-    var itemList = await FirebaseFirestore.instance.collection('Language')
+    var itemList = await FirebaseFirestore.instance
+        .collection('Language')
         .doc('present_languages')
         .get();
 
     var data = itemList.data();
     print("Data Language : " + data.toString());
 
-    if(data != null){
+    if (data != null) {
       if (data['spanish'] == true && data['english'] == false) {
         setState(() {
           // EasyLocalization.of(context).locale = Locale('es', 'ES');
@@ -251,7 +257,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    
     return GetMaterialApp(
       builder: (context, child) {
         return MediaQuery(
