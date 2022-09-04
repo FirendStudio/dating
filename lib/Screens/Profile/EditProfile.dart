@@ -532,8 +532,8 @@ class EditProfileState extends State<EditProfile> {
         backgroundColor: primaryColor,
         body: Container(
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(50), topRight: Radius.circular(50)),
+              // borderRadius: BorderRadius.only(
+              //     topLeft: Radius.circular(50), topRight: Radius.circular(50)),
               color: Colors.white),
           child: ClipRRect(
             borderRadius: BorderRadius.only(
@@ -836,24 +836,24 @@ class EditProfileState extends State<EditProfile> {
                         //     },
                         //   ),
                         // ),
-                        ListTile(
-                          title: Text(
-                            "Living in",
-                            style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 16,
-                                color: Colors.black87),
-                          ),
-                          subtitle: CupertinoTextField(
-                            controller: livingCtlr,
-                            cursorColor: primaryColor,
-                            placeholder: "Add city",
-                            padding: EdgeInsets.all(10),
-                            onChanged: (text) {
-                              editInfo.addAll({'living_in': text});
-                            },
-                          ),
-                        ),
+                        // ListTile(
+                        //   title: Text(
+                        //     "Living in",
+                        //     style: TextStyle(
+                        //         fontWeight: FontWeight.w500,
+                        //         fontSize: 16,
+                        //         color: Colors.black87),
+                        //   ),
+                        //   subtitle: CupertinoTextField(
+                        //     controller: livingCtlr,
+                        //     cursorColor: primaryColor,
+                        //     placeholder: "Add city",
+                        //     padding: EdgeInsets.all(10),
+                        //     onChanged: (text) {
+                        //       editInfo.addAll({'living_in': text});
+                        //     },
+                        //   ),
+                        // ),
                         // Padding(
                         //   padding: const EdgeInsets.symmetric(vertical: 10),
                         //   child: ListTile(

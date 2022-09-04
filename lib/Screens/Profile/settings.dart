@@ -171,8 +171,8 @@ class _SettingsState extends State<Settings> {
           backgroundColor: primaryColor),
       body: Container(
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(50), topRight: Radius.circular(50)),
+            // borderRadius: BorderRadius.only(
+            //     topLeft: Radius.circular(50), topRight: Radius.circular(50)),
             color: Colors.white),
         child: ClipRRect(
           borderRadius: BorderRadius.only(
@@ -364,10 +364,10 @@ class _SettingsState extends State<Settings> {
 
                                           },
                                           child: Container(
+                                            width: 250,
                                             padding: EdgeInsets.only(
-                                              
-                                                left: 8, right: 8,
-                                                bottom: 8, top: 8
+                                              left: 8, right: 8,
+                                              bottom: 8, top: 8
                                             ),
                                             decoration: BoxDecoration(
                                                 color: (widget.currentUser.LoginID['apple'] == "")?Colors.red : Colors.greenAccent,

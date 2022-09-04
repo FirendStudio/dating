@@ -19,8 +19,7 @@ class HomeController extends GetxController {
   List<int> listAge = [];
   int ageMin = 0, ageMax = 0;
 
-  initFCM(
-      CollectionReference docRef, UserModel user, BuildContext context) async {
+  initFCM(CollectionReference docRef, UserModel user, BuildContext context) async {
     if (index == 0) {
       await FirebaseMessaging.instance
           .getInitialMessage()
@@ -96,7 +95,7 @@ class HomeController extends GetxController {
       });
 
       index = 1;
-      for (int i = 0; i <= 100; i++) {
+      for (int i = 18; i <= 99; i++) {
         listAge.add(i);
       }
     } else {}
