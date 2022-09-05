@@ -35,7 +35,7 @@ class NotificationController extends GetxController {
   @override
   onInit() async {
     super.onInit();
-    if(GetPlatform.isIOS){
+    if (GetPlatform.isIOS) {
       await FirebaseMessaging.instance.requestPermission();
 
       var iosToken = await FirebaseMessaging.instance.getAPNSToken();
@@ -47,12 +47,13 @@ class NotificationController extends GetxController {
     // print("Jalankan 1 ");
     if (docReference == null) {
       docReference = FirebaseFirestore.instance.collection("Users");
-      db.collection("Users")
-      .doc(Get.find<LoginController>().userId)
-      .collection('Matches')
-      .orderBy('timestamp', descending: true)
-      .snapshots()
-      .listen((event) {
+      db
+          .collection("Users")
+          .doc(Get.find<LoginController>().userId)
+          .collection('Matches')
+          .orderBy('timestamp', descending: true)
+          .snapshots()
+          .listen((event) {
         listMatchUser = event.docs;
         update();
       });
@@ -75,7 +76,6 @@ class NotificationController extends GetxController {
         listPendingAcc.assignAll(relationUser.pendingAcc);
         update();
       });
-
 
       // initListLikedUser();
     }
@@ -744,7 +744,8 @@ class NotificationController extends GetxController {
         title: "Matched", body: "You are matched with $name");
     // UserModel userFCM = Get.find<TabsController>().getUserSelected(idUser);
     String toParams = "/topics/" + idUser;
-    var data = {"title": "Matched", "body": "You are matched with $name"};
+    var data = {"title": "Matched", "body": "You are matched with ${Get.find<TabsController>().currentUser.name}"};
+    print(data);
     var response = await FCMService().sendFCM(data: data, to: toParams);
     if (response.statusCode == 200) {
       var result = await response.stream.bytesToString();
@@ -763,7 +764,7 @@ class NotificationController extends GetxController {
     var data = {
       "title": "Liked",
       "body": "Someone just liked your profile! Tap to see if you're a match!",
-      "idUser" : idUser,
+      "idUser": idUser,
     };
     var notif = {
       "title": "Liked",
@@ -772,9 +773,8 @@ class NotificationController extends GetxController {
     if (kDebugMode) {
       print(data);
     }
-    var response = await FCMService().sendCustomFCM(
-      data: data, to: toParams, notif: notif
-    );
+    var response = await FCMService()
+        .sendCustomFCM(data: data, to: toParams, notif: notif);
     if (response.statusCode == 200) {
       var result = await response.stream.bytesToString();
       print("Success Request FCM");
@@ -803,44 +803,52 @@ class NotificationController extends GetxController {
     }
   }
 
-
   initPayload(String payload) async {
-
     var split = payload.split("/");
-    if(split[0]== "liked"){
+    if (split[0] == "liked") {
       String idUser = split[1];
       await initUserPartner(Uid: idUser);
-      var relation = await FirebaseFirestore.instance.collection("Relationship").doc(idUser).get();
-      if(!relation.exists){
+      var relation = await FirebaseFirestore.instance
+          .collection("Relationship")
+          .doc(idUser)
+          .get();
+      if (!relation.exists) {
         await setNewRelationship(idUser);
-        relation = await FirebaseFirestore.instance.collection("Relationship").doc(idUser).get();
+        relation = await FirebaseFirestore.instance
+            .collection("Relationship")
+            .doc(idUser)
+            .get();
       }
-      Relationship relationshipTemp = Relationship.fromDocument(relation.data());
-      
-      var result = await FirebaseFirestore.instance.collection('Users').doc(idUser).get();
+      Relationship relationshipTemp =
+          Relationship.fromDocument(relation.data());
+
+      var result = await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(idUser)
+          .get();
       print(result);
       UserModel userSelected = UserModel.fromDocument(result);
       // Get.back();
-      userSelected.distanceBW = Get.find<TabsController>().calculateDistance(
-          Get.find<TabsController>().currentUser.coordinates['latitude'],
-          Get.find<TabsController>().currentUser.coordinates['longitude'],
-          userPartner.coordinates['latitude'],
-          userPartner.coordinates['longitude']).round();
+      userSelected.distanceBW = Get.find<TabsController>()
+          .calculateDistance(
+              Get.find<TabsController>().currentUser.coordinates['latitude'],
+              Get.find<TabsController>().currentUser.coordinates['longitude'],
+              userPartner.coordinates['latitude'],
+              userPartner.coordinates['longitude'])
+          .round();
       // data.listLikedUserAll[index]["LikedBy"];
       await showDialog(
-        barrierDismissible: false,
-        context: Get.context,
-        builder: (context) {
-          return InformationPartner(
-            userSelected,
-            Get.find<TabsController>().currentUser,
-            null,
-            relationshipTemp,
-            Get.find<NotificationController>().userPartner,
-          );
-        }
-      );
+          barrierDismissible: false,
+          context: Get.context,
+          builder: (context) {
+            return InformationPartner(
+              userSelected,
+              Get.find<TabsController>().currentUser,
+              null,
+              relationshipTemp,
+              Get.find<NotificationController>().userPartner,
+            );
+          });
     }
-
   }
 }
