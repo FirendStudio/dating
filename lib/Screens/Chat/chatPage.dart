@@ -563,27 +563,26 @@ class _ChatPageState extends State<ChatPage> {
         child: Scaffold(
           backgroundColor: primaryColor,
           body: ClipRRect(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(50.0),
-              topRight: Radius.circular(50.0),
-            ),
+            // borderRadius: BorderRadius.only(
+            //   topLeft: Radius.circular(50.0),
+            //   topRight: Radius.circular(50.0),
+            // ),
             child: Container(
               decoration: BoxDecoration(
-                  // image: DecorationImage(
-                  //     fit: BoxFit.fitWidth,
-                  //     image: AssetImage("asset/chat.jpg")),
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(50),
-                      topRight: Radius.circular(50)),
-                  color: Colors.white),
+                // image: DecorationImage(
+                //     fit: BoxFit.fitWidth,
+                //     image: AssetImage("asset/chat.jpg")),
+                // borderRadius: BorderRadius.only(
+                //     topLeft: Radius.circular(50),
+                //     topRight: Radius.circular(50)),
+                color: Colors.white
+              ),
               padding: EdgeInsets.all(5),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: <Widget>[
                   StreamBuilder<QuerySnapshot>(
-                    stream: chatReference
-                        .orderBy('time', descending: true)
-                        .snapshots(),
+                    stream: chatReference.orderBy('time', descending: true).snapshots(),
                     builder: (BuildContext context,
                         AsyncSnapshot<QuerySnapshot> snapshot) {
                       if (!snapshot.hasData)

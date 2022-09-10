@@ -104,7 +104,7 @@ class Info extends StatelessWidget {
                         children: <Widget>[
                           ListTile(
                             title: Text(
-                              "${user.name},",
+                              "${user.name}",
                               style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 25,
@@ -113,12 +113,12 @@ class Info extends StatelessWidget {
                             subtitle: Text(
                               (!cekpartner)
                               ?"${user.editInfo['showMyAge'] != null ? !user.editInfo['showMyAge'] ? user.age : "" : user.age}" +
-                                  ", " + user.gender + ", " + user.sexualOrientation + "\n " + user.status + ", " + "${user.distanceBW} KM away"
+                                  ", " + user.gender + ", " + user.sexualOrientation + "\n" + user.status + ", " + "${user.distanceBW ?? 0} KM away"
 
                               : "${user.editInfo['showMyAge'] != null ? !user.editInfo['showMyAge'] ? user.age : "" : user.age}" +
                                   ", " + user.gender + ", " + user.sexualOrientation + ", " +
                                   notificationController.userPartner.age.toString() + ", " + notificationController.userPartner.gender + ", " +  notificationController.userPartner.sexualOrientation
-                                  + "\n\nCouple, " + "${user.distanceBW} KM away",
+                                  + "\n\nCouple, " + "${user.distanceBW ?? 0} KM away",
                               style: TextStyle(
                                 // color: Colors.black,
                                 fontSize: 16,

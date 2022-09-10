@@ -143,8 +143,8 @@ class AllowLocation extends StatelessWidget {
                           },
                           'maximum_distance': 20,
                           'age_range': {
-                            'min': "20",
-                            'max': "50",
+                            'min': "18",
+                            'max': "99",
                           },
                         },
                       );

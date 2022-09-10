@@ -144,8 +144,8 @@ class _SearchLocationState extends State<SearchLocation> {
                                   },
                                   'maximum_distance': 20,
                                   'age_range': {
-                                    'min': "20",
-                                    'max': "50",
+                                    'min': "18",
+                                    'max': "99",
                                   },
                                 },
                               );

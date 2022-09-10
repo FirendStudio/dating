@@ -18,19 +18,43 @@ import '../models/Relationship.dart';
 import 'Info/InformationPartner.dart';
 import 'Tab.dart';
 
-// class Notifications extends StatefulWidget {
-//   final UserModel currentUser;
-//   Notifications(this.currentUser);
-//
-//   @override
-//   _NotificationsState createState() => _NotificationsState();
-// }
-
-class Notifications extends StatelessWidget {
-  NotificationController notificationController =
-      Get.put(NotificationController());
+class Notifications extends StatefulWidget {
   final UserModel currentUser;
   Notifications(this.currentUser);
+
+  @override
+  _NotificationsState createState() => _NotificationsState();
+}
+
+class _NotificationsState extends State<Notifications> {
+  NotificationController notificationController =
+      Get.put(NotificationController());
+  List listLikedTemp = [];
+  
+  // final UserModel currentUser;
+  // Notifications(this.currentUser);
+
+  @override
+  void initState() {
+    
+    super.initState();
+    listLikedTemp.assignAll(notificationController.listLikedUserAll);
+    if(notificationController.listMatchUser.isNotEmpty && notificationController.listLikedUserAll.isNotEmpty){
+      for(int i=0; i<=notificationController.listMatchUser.length-1; i++){
+        // print("Masuk sini 1");
+        
+        for(int j=0; j<=notificationController.listLikedUserAll.length-1; j++){
+          // print("Masuk sini 2");
+          if(notificationController.listLikedUserAll[j]['LikedBy'] == notificationController.listMatchUser[i]['Matches']){
+            // print("Masuk sini 3");
+            listLikedTemp.removeWhere((element) => element['LikedBy'] == notificationController.listLikedUserAll[j]['LikedBy']);
+          }
+        }
+
+      }
+    }
+    
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,14 +106,32 @@ class Notifications extends StatelessWidget {
                 // ),
                 color: Colors.white),
             child: ClipRRect(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(50),
-                topRight: Radius.circular(50),
-              ),
+              // borderRadius: BorderRadius.only(
+              //   topLeft: Radius.circular(50),
+              //   topRight: Radius.circular(50),
+              // ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   // matchesWidget(data),
+                  if (data.indexNotif == 1)
+                  Row(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(
+                          left: 15, top: 15,
+                        ),
+                        child: Text("Members that liked your profile!",
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold
+                          ),
+                        ),
+                      ),
+                      
+                    ]
+                  ),
                   if (data.indexNotif == 0) matchesWidget(data),
                   if (data.indexNotif == 1) likedWidget(data),
                 ],
@@ -100,7 +142,7 @@ class Notifications extends StatelessWidget {
   }
 
   Widget likedWidget(NotificationController data) {
-    if (data.listLikedUserAll.isEmpty) {
+    if (listLikedTemp.isEmpty) {
       return Center(
           child: Text(
         "No Liked",
@@ -110,12 +152,13 @@ class Notifications extends StatelessWidget {
 
     return Expanded(
       child: ListView.builder(
-        itemCount: data.listLikedUserAll.length,
+        itemCount: listLikedTemp.length,
         itemBuilder: (BuildContext context, int index) {
           // QueryDocumentSnapshot doc = data.listLikedUser[index];
+          var likedUser = listLikedTemp[index];
           return InkWell(
               onTap: () async {
-                print(data.listLikedUserAll[index]["LikedBy"]);
+                print(likedUser["LikedBy"]);
                 showDialog(
                     context: context,
                     builder: (context) {
@@ -130,21 +173,21 @@ class Notifications extends StatelessWidget {
                           ));
                     });
 
-                await Get.find<NotificationController>().initUserPartner(Uid: data.listLikedUserAll[index]["LikedBy"]);
-                var relation = await FirebaseFirestore.instance.collection("Relationship").doc(data.listLikedUserAll[index]["LikedBy"]).get();
+                await Get.find<NotificationController>().initUserPartner(Uid: likedUser["LikedBy"]);
+                var relation = await FirebaseFirestore.instance.collection("Relationship").doc(likedUser["LikedBy"]).get();
                 if(!relation.exists){
-                  await Get.find<NotificationController>().setNewRelationship(data.listLikedUserAll[index]["LikedBy"]);
-                  relation = await FirebaseFirestore.instance.collection("Relationship").doc(data.listLikedUserAll[index]["LikedBy"]).get();
+                  await Get.find<NotificationController>().setNewRelationship(likedUser["LikedBy"]);
+                  relation = await FirebaseFirestore.instance.collection("Relationship").doc(likedUser["LikedBy"]).get();
                 }
                 Relationship relationshipTemp = Relationship.fromDocument(relation.data());
                 
-                var result = await FirebaseFirestore.instance.collection('Users').doc(data.listLikedUserAll[index]["LikedBy"]).get();
+                var result = await FirebaseFirestore.instance.collection('Users').doc(likedUser["LikedBy"]).get();
                 print(result);
                 UserModel userSelected = UserModel.fromDocument(result);
                 Get.back();
                 userSelected.distanceBW = Get.find<TabsController>().calculateDistance(
-                    currentUser.coordinates['latitude'],
-                    currentUser.coordinates['longitude'],
+                    widget.currentUser.coordinates['latitude'],
+                    widget.currentUser.coordinates['longitude'],
                     Get.find<NotificationController>().userPartner.coordinates['latitude'],
                     Get.find<NotificationController>().userPartner.coordinates['longitude']).round();
                 // data.listLikedUserAll[index]["LikedBy"];
@@ -154,7 +197,7 @@ class Notifications extends StatelessWidget {
                   builder: (context) {
                     return InformationPartner(
                       userSelected,
-                      currentUser,
+                      widget.currentUser,
                       null,
                       relationshipTemp,
                       Get.find<NotificationController>().userPartner,
@@ -181,7 +224,7 @@ class Notifications extends StatelessWidget {
                                 25,
                               ),
                               child: CachedNetworkImage(
-                                imageUrl: data.listLikedUserAll[index]
+                                imageUrl: likedUser
                                     ['pictureUrl'],
                                 fit: BoxFit.cover,
                                 useOldImageOnUrlChange: true,
@@ -202,12 +245,12 @@ class Notifications extends StatelessWidget {
                             child: ListTile(
                               title: Text(
                                 "You are liked by " +
-                                    data.listLikedUserAll[index]['userName'],
+                                    likedUser['userName'],
                                 style: TextStyle(fontSize: 15),
                               ),
                               subtitle: Text(
                                 DateFormat.MMMd('en_US').add_jm().format(
-                                    (data.listLikedUserAll[index]['timestamp'])
+                                    (likedUser['timestamp'])
                                         .toDate()),
                               ),
                             )),
@@ -328,8 +371,8 @@ class Notifications extends StatelessWidget {
                         UserModel tempuser = UserModel.fromDocument(userdoc);
                         tempuser.distanceBW = Get.find<TabsController>()
                             .calculateDistance(
-                                currentUser.coordinates['latitude'],
-                                currentUser.coordinates['longitude'],
+                                widget.currentUser.coordinates['latitude'],
+                                widget.currentUser.coordinates['longitude'],
                                 tempuser.coordinates['latitude'],
                                 tempuser.coordinates['longitude'])
                             .round();
@@ -348,7 +391,7 @@ class Notifications extends StatelessWidget {
                               }
                               Get.find<NotificationController>()
                                   .cekFirstInfo(tempuser);
-                              return Info(tempuser, currentUser, null);
+                              return Info(tempuser, widget.currentUser, null);
                             });
                       }
                     },

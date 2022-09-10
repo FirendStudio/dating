@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
@@ -249,6 +250,11 @@ class TabsController extends GetxController{
         await setUpdatePayment(uid: Get.find<LoginController>().userId, packageId: "", status: false, date: DateTime.now(), purchasedId: "");
       }
       if(paymentModel.status && paymentModel.date.isAfter(DateTime.now())){
+        isPuchased = true;
+      }
+
+      //if debug then payment always true
+      if(kDebugMode){
         isPuchased = true;
       }
       print(isPuchased);
