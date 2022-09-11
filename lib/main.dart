@@ -23,6 +23,7 @@ import 'package:hookup4u/util/color.dart';
 import 'package:hookup4u/util/firebase_config.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 
+import 'Controller/ChatController.dart';
 import 'Controller/NotificationController.dart';
 // import 'package:easy_localization/easy_localization.dart';
 
@@ -108,6 +109,7 @@ Future<void> main() async {
   Get.put(NotificationController());
   Get.put(TabsController());
   Get.put(ProfileController());
+  Get.put(ChatController());
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitDown,
     DeviceOrientation.portraitUp,

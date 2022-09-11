@@ -13,6 +13,7 @@ import 'package:hookup4u/util/color.dart';
 import 'package:swipe_stack/swipe_stack.dart';
 // import 'package:easy_localization/easy_localization.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../../Controller/ChatController.dart';
 import '../../Controller/TabsController.dart';
 import '../../models/Relationship.dart';
 import '../Chat/chatPage.dart';
@@ -466,6 +467,7 @@ class InformationPartner extends StatelessWidget {
                             }
 
                           }else{
+                            await Get.find<ChatController>().initChatScreen(chatId(user, currentUser));
                             Navigator.push(
                                 context,
                                 CupertinoPageRoute(

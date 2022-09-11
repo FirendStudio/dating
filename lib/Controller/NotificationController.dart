@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:hookup4u/Controller/ChatController.dart';
 import 'package:hookup4u/Service/FCMService.dart';
 import 'package:http/http.dart' as http;
 import 'package:art_sweetalert/art_sweetalert.dart';
@@ -28,9 +29,13 @@ class NotificationController extends GetxController {
   int indexNotif = 0;
   List listLikedUserAll = [];
   List listLikedUser = [];
-  List listMatchUser = [];
+  List listMatchUserAll = [];
+  List listChatRole = [];
   String interestText = "";
   String desiresText = "";
+  List listLikedTemp = [];
+  List listTempMatch = [];
+  List listLeave = [];
 
   @override
   onInit() async {
@@ -47,16 +52,18 @@ class NotificationController extends GetxController {
     // print("Jalankan 1 ");
     if (docReference == null) {
       docReference = FirebaseFirestore.instance.collection("Users");
-      db
-          .collection("Users")
-          .doc(Get.find<LoginController>().userId)
-          .collection('Matches')
-          .orderBy('timestamp', descending: true)
-          .snapshots()
-          .listen((event) {
-        listMatchUser = event.docs;
-        update();
-      });
+      // db.collection("Users")
+      //   .doc(Get.find<LoginController>().userId)
+      //   .collection('Matches')
+      //   .orderBy('timestamp', descending: true)
+      //   .snapshots()
+      //   .listen((event) {
+      //     listMatchUserAll = event.docs;
+      //     listMatchTemp = event.docs;
+      //     filterLiked();
+      //     update();
+      //   }
+      // );
       FirebaseFirestore.instance
           .collection("Relationship")
           .doc(Get.find<LoginController>().userId)
@@ -803,6 +810,60 @@ class NotificationController extends GetxController {
     }
   }
 
+  sendLeaveFCM({String idUser, String name}) async {
+    // UserModel userFCM = Get.find<TabsController>().getUserSelected(idUser);
+    if (kDebugMode) {
+      print("Send Leave FCM");
+    }
+    String toParams = "/topics/" + idUser;
+    var data = {"title": "Leaving Chat", "body": "$name has left the conversation"};
+    var response = await FCMService().sendFCM(data: data, to: toParams);
+    if (response.statusCode == 200) {
+      var result = await response.stream.bytesToString();
+      print("Success Request FCM");
+      print(result);
+      var data = jsonDecode(result);
+    } else {
+      print(response.reasonPhrase);
+    }
+  }
+
+  sendRestoreLeaveFCM({String idUser, String name}) async {
+    // UserModel userFCM = Get.find<TabsController>().getUserSelected(idUser);
+    if (kDebugMode) {
+      print("Send Restore Leave FCM");
+    }
+    String toParams = "/topics/" + idUser;
+    var data = {"title": "Resume Chat", "body": "$name has resumed the conversation"};
+    var response = await FCMService().sendFCM(data: data, to: toParams);
+    if (response.statusCode == 200) {
+      var result = await response.stream.bytesToString();
+      print("Success Request FCM");
+      print(result);
+      var data = jsonDecode(result);
+    } else {
+      print(response.reasonPhrase);
+    }
+  }
+
+  sendDisconnectFCM({String idUser, String name}) async {
+    // UserModel userFCM = Get.find<TabsController>().getUserSelected(idUser);
+    if (kDebugMode) {
+      print("Send Blocked FCM");
+    }
+    String toParams = "/topics/" + idUser;
+    var data = {"title": "Blocked Chat", "body": "$name has blocked you"};
+    var response = await FCMService().sendFCM(data: data, to: toParams);
+    if (response.statusCode == 200) {
+      var result = await response.stream.bytesToString();
+      print("Success Request FCM");
+      print(result);
+      var data = jsonDecode(result);
+    } else {
+      print(response.reasonPhrase);
+    }
+  }
+
   initPayload(String payload) async {
     var split = payload.split("/");
     if (split[0] == "liked") {
@@ -851,4 +912,110 @@ class NotificationController extends GetxController {
           });
     }
   }
+
+  filterMatches() async {
+    
+    // listMatchTemp.assignAll(listMatchUserAll);
+    listTempMatch = [];
+    listMatchUserAll.forEach((element) {
+      var mapTemp = {
+        "Matches"     : element['Matches'],
+        "isRead"      : element['isRead'],
+        "pictureUrl"  : element['pictureUrl'],
+        "timestamp"   : element['timestamp'],
+        "userName"    : element['userName'],
+        "isLeave"     : false,
+      };
+      listTempMatch.add(mapTemp);
+    });
+    Get.find<TabsController>().newmatches.assignAll(Get.find<TabsController>().Allmatches);
+    Get.find<TabsController>().matches.assignAll(Get.find<TabsController>().Allmatches);
+    if(Get.find<ChatController>().listChatSnapshot.isEmpty || listMatchUserAll.isEmpty){
+      if(listTempMatch.isNotEmpty){
+        print("Masuk sini");
+        for(var list in listTempMatch){
+          list['isLeave'] = await getNotifLeave(Get.find<ChatController>().
+          chatIdCustom(Get.find<TabsController>().currentUser.id, list['Matches']));
+          print(list['isLeave']);
+          // var map = {
+          //   "id" : list.id,
+          //   "isLeave" : cek
+          // };
+          // listLeave.add(map);
+        }
+      }
+      return;
+    }
+    for(var list in Get.find<ChatController>().listChatSnapshot){
+      listTempMatch.removeWhere((element) => 
+        Get.find<ChatController>().chatIdCustom(Get.find<TabsController>().currentUser.id, element.id) == list['docId']
+      );
+      Get.find<TabsController>().newmatches.removeWhere((element) {
+          // print("Masuk sini : ${element.id}");
+          return Get.find<ChatController>().chatIdCustom(Get.find<TabsController>().currentUser.id, element.id) == list['docId'];
+      });
+      Get.find<TabsController>().matches.removeWhere((element) {
+          print("Masuk sini : ${element.id}");
+          return Get.find<ChatController>().chatIdCustom(Get.find<TabsController>().currentUser.id, element.id) == list['docId'];
+      });
+    }
+    if(listTempMatch.isNotEmpty){
+      for(var list in listTempMatch){
+          list['isLeave'] = await getNotifLeave(Get.find<ChatController>().
+          chatIdCustom(Get.find<TabsController>().currentUser.id, list['Matches']));
+          print(list['isLeave']);
+          // var map = {
+          //   "id" : list.id,
+          //   "isLeave" : cek
+          // };
+          // listLeave.add(map);
+        }
+    }
+  }
+
+  bool filterLeave(String idMatch){
+    if(listLeave.isNotEmpty){
+      var data = listLeave.firstWhereOrNull((element) => element['id'] == idMatch);
+      print(data);
+      if(data != null){
+        return data['isLeave'];
+      }
+    }
+    return false;
+  }
+
+  filterLiked(){
+    listLikedTemp.assignAll(listLikedUserAll);
+    if(listMatchUserAll.isNotEmpty && listLikedUserAll.isNotEmpty){
+      for(int i=0; i<=listMatchUserAll.length-1; i++){
+        // print("Masuk sini 1");
+        if(listLikedUserAll.isEmpty){
+          return;
+        }
+        for(int j=0; j<=listLikedUserAll.length-1; j++){
+          // print("Masuk sini 2");
+          if(listLikedUserAll[j]['LikedBy'] == listMatchUserAll[i]['Matches']){
+            // print("Masuk sini 3");
+            if(listLikedTemp.isNotEmpty){
+              listLikedTemp.removeWhere((element) => element['LikedBy'] == listLikedUserAll[j]['LikedBy']);
+            }
+            
+          }
+        }
+
+      }
+      
+    }
+  }
+
+  Future <bool> getNotifLeave(String idChat) async {
+    var result = await FirebaseFirestore.instance.collection("chats").
+    doc(idChat).collection("messages").limit(1).orderBy('time', descending: true).get();
+    if(result.docs.isNotEmpty && result.docs.first['type'] == "Leave"){
+      return true;
+    }
+
+    return false;
+  }
+
 }

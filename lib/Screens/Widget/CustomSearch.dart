@@ -38,8 +38,8 @@ class CustomSearch extends SearchDelegate<String>{
   @override
   Widget buildSuggestions(BuildContext context) {
     // show when someone searches for something
-    final suggestionSearches = query.isEmpty? Get.find<NotificationController>().listMatchUser
-        : Get.find<NotificationController>().listMatchUser.where((p) => p['userName'].toLowerCase().startsWith(query)).toList();
+    final suggestionSearches = query.isEmpty? Get.find<NotificationController>().listMatchUserAll
+        : Get.find<NotificationController>().listMatchUserAll.where((p) => p['userName'].toLowerCase().startsWith(query)).toList();
     return ListView.builder(itemBuilder: (context, index)=> ListTile(
       onTap: () async {
         print("Test");

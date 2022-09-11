@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hookup4u/Controller/ChatController.dart';
 import 'package:hookup4u/Screens/Chat/Matches.dart';
 import 'package:hookup4u/Screens/Chat/chatPage.dart';
 import 'package:hookup4u/models/user_model.dart';
@@ -22,7 +23,8 @@ class RecentChats extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
+    return GetBuilder<TabsController>(builder: (data){
+      return Expanded(
         child: Container(
             decoration: BoxDecoration(
               color: Colors.white,
@@ -38,7 +40,7 @@ class RecentChats extends StatelessWidget {
               ),
               child: ListView(
                   physics: ScrollPhysics(),
-                  children: matches
+                  children: data.matches
                       .map((index) => GestureDetector(
                             onTap: () async {
                               // Navigator.push(
@@ -82,6 +84,7 @@ class RecentChats extends StatelessWidget {
                                 }
 
                               }else{
+                                await Get.find<ChatController>().initChatScreen(chatId(currentUser, index));
                                 Navigator.push(
                                   context,
                                   CupertinoPageRoute(
@@ -100,7 +103,6 @@ class RecentChats extends StatelessWidget {
                                     .doc(chatId(currentUser, index))
                                     .collection('messages')
                                     .orderBy('time', descending: true)
-                                    // .get()
                                     .snapshots(),
                                 builder: (context, AsyncSnapshot snapshot) {
                                   // print(snapshot.data.docs[0].data()['time']);
@@ -252,5 +254,6 @@ class RecentChats extends StatelessWidget {
                           ))
                       .toList()),
             )));
+    });
   }
 }

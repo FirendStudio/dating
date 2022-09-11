@@ -10,10 +10,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:hookup4u/Controller/ChatController.dart';
 import 'package:hookup4u/Controller/NotificationController.dart';
 import 'package:hookup4u/models/Payment.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 
+import '../Screens/Chat/Matches.dart';
 import '../Screens/Widget/DialogFirstApp.dart';
 import '../models/Relationship.dart';
 import '../models/user_model.dart';
@@ -30,6 +32,7 @@ class TabsController extends GetxController{
   CollectionReference docRef = FirebaseFirestore.instance.collection('Users');
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   UserModel currentUser;
+  List<UserModel> Allmatches = [];
   List<UserModel> matches = [];
   List<UserModel> newmatches = [];
   FirebaseMessaging _firebaseMessaging;
@@ -362,36 +365,49 @@ class TabsController extends GetxController{
         .collection('/Users/${user.uid}/Matches')
         .orderBy('timestamp', descending: true)
         .snapshots()
-        .listen((ondata) {
+        .listen((ondata) async {
       matches.clear();
       newmatches.clear();
       print(ondata.docs.length);
+      List<String> listIDChat = [];
       if (ondata.docs.length > 0) {
-        ondata.docs.forEach((f) async {
-          await docRef
-          // .doc(f.data['Matches'])
-              .doc(f['Matches'])
-              .get()
-              .then((DocumentSnapshot doc) {
-            if (doc.exists) {
-              UserModel tempuser = UserModel.fromDocument(doc);
-              tempuser.distanceBW = calculateDistance(
-                  currentUser.coordinates['latitude'],
-                  currentUser.coordinates['longitude'],
-                  tempuser.coordinates['latitude'],
-                  tempuser.coordinates['longitude'])
-                  .round();
+        if(Get.find<ChatController>().checkStreamChat){
+          Get.find<ChatController>().streamChat.cancel();
+        }
+        Get.find<NotificationController>().listMatchUserAll = ondata.docs;
+        // Get.find<NotificationController>().listTempMatch = ondata.docs;
+        Get.find<NotificationController>().filterLiked();
 
-              matches.add(tempuser);
-              newmatches.add(tempuser);
-              update();
-              // if (mounted) setState(() {});
-            }
-          });
-        });
+        for(var i in ondata.docs){
+          listIDChat.add(Get.find<ChatController>().chatIdCustom(currentUser.id, i.id));
+          var doc = await docRef.doc(i['Matches']).get();
+          if (doc.exists) {
+            UserModel tempuser = UserModel.fromDocument(doc);
+            tempuser.distanceBW = calculateDistance(
+                currentUser.coordinates['latitude'],
+                currentUser.coordinates['longitude'],
+                tempuser.coordinates['latitude'],
+                tempuser.coordinates['longitude'])
+                .round();
+
+            matches.add(tempuser);
+            newmatches.add(tempuser);
+            Allmatches.add(tempuser);
+            update();
+            // if (mounted) setState(() {});
+          }
+        }
+        if(kDebugMode){
+          print("List ID Chat : " + listIDChat.length.toString());
+          print("List ListMatches : " + newmatches.length.toString());
+        }
+        
+        Get.find<ChatController>().initListChat(listIDChat);
       }
     });
   }
+
+  
 
   getCurrentUser(BuildContext context) async {
     User user = _firebaseAuth.currentUser;
@@ -668,6 +684,7 @@ class TabsController extends GetxController{
       Get.find<NotificationController>().listLikedUserAll = data.docs;
       print("LikedBy Test");
       print(Get.find<NotificationController>().listLikedUserAll);
+      Get.find<NotificationController>().filterLiked();
       update();
     });
   }

@@ -6,6 +6,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hookup4u/Controller/ChatController.dart';
 import 'package:hookup4u/Screens/Chat/largeImage.dart';
 import 'package:hookup4u/Screens/Info/Information.dart';
 import 'package:hookup4u/Screens/reportUser.dart';
@@ -32,45 +33,266 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
-  bool isBlocked = false;
-  final db = FirebaseFirestore.instance;
-  CollectionReference chatReference;
-  final TextEditingController _textController = new TextEditingController();
-  bool _isWritting = false;
+  // final UserModel sender;
+  // final String chatId;
+  // final UserModel widget.second;
+  // ChatPage({this.widget.sender, this.chatId, this.widget.second});
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  ChatController chatController = Get.put(ChatController());
   // Ads _ads = new Ads();
 
-  @override
+  // @override
   void initState() {
     // _ads.myInterstitial()
     //   ..load()
     //   ..show();
-    print("object    -${widget.chatId}");
+    // print("object    -${chatId}");
     super.initState();
-    chatReference = db.collection("chats").doc(widget.chatId).collection('messages');
     // checkblock();
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+      onWillPop: () async {
+        chatController.onback();
+        return await true;
+      },
+      child: Scaffold(
+          key: _scaffoldKey,
+          backgroundColor: Colors.white,
+          appBar: AppBar(
+              backgroundColor: Colors.red,
+              centerTitle: true,
+              elevation: 0,
+              title: Text(widget.second.name),
+              leading: IconButton(
+                icon: Icon(Icons.arrow_back_ios),
+                color: Colors.white,
+                onPressed: () => Navigator.pop(Get.context),
+              ),
+              actions: <Widget>[
+                // IconButton(
+                //     icon: Icon(Icons.call), onPressed: () => onJoin("AudioCall")),
+                // IconButton(
+                //     icon: Icon(Icons.video_call),
+                //     onPressed: () => onJoin("VideoCall")),
+                PopupMenuButton(itemBuilder: (ct) {
+                  return [
+                    PopupMenuItem(
+                      value: 'value1',
+                      child: InkWell(
+                        onTap: () => showDialog(
+                            barrierDismissible: true,
+                            context: Get.context,
+                            builder: (context) => ReportUser(
+                                  currentUser: widget.sender,
+                                  seconduser: widget.second,
+                                )).then((value) => Navigator.pop(ct)),
+                        child: Container(
+                            // width: 150,
+                            height: 30,
+                            child: Text(
+                              "Report Member",
+                            )),
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: 'value2',
+                      child: InkWell(
+                        onTap: () {
+                          chatController.leaveWidget(widget.sender, widget.second, widget.chatId, "chat");
+                        },
+                        child: Container(
+                            // width: 150,
+                            height: 30,
+                            child: Text(
+                              "Leave Conversation",
+                            )),
+                      ),
+                    ),
+                    PopupMenuItem(
+                      value: 'value3',
+                      child: InkWell(
+                        onTap: (){
+                          chatController.disconnectWidget(widget.sender, widget.second, widget.chatId, "chat");
+                        },
+                        child: Container(
+                            // width: 150,
+                            height: 30,
+                            child: Text(
+                              "Permanently Disconnect",
+                            )),
+                      ),
+                    ),
+                    // PopupMenuItem(
+                    //   height: 30,
+                    //   value: 'value2',
+                    //   child: InkWell(
+                    //     child: Text(isBlocked ? "Unblock user" : "Block user"),
+                    //     onTap: () {
+                    //       Navigator.pop(ct);
+                    //       showDialog(
+                    //         Get.context: Get.context,
+                    //         builder: (BuildContext ctx) {
+                    //           return AlertDialog(
+                    //             title: Text(isBlocked ? 'Unblock' : 'Block'),
+                    //             content: Text('Do you want to ' + "${isBlocked ? 'Unblock' : 'Block'} " "${widget.second.name}"),
+                    //             actions: <Widget>[
+                    //               TextButton(
+                    //                 onPressed: () =>
+                    //                     Navigator.of(Get.context).pop(false),
+                    //                 child: Text('No'),
+                    //               ),
+                    //               TextButton(
+                    //                 onPressed: () async {
+                    //                   Navigator.pop(ctx);
+                    //                   if (isBlocked &&
+                    //                       blockedBy == sender.id) {
+                    //                     chatReference.doc('blocked').set({
+                    //                       'isBlocked': !isBlocked,
+                    //                       'blockedBy': sender.id,
+                    //                     });
+                    //                   } else if (!isBlocked) {
+                    //                     chatReference.doc('blocked').set({
+                    //                       'isBlocked': !isBlocked,
+                    //                       'blockedBy': sender.id,
+                    //                     });
+                    //                   } else {
+                    //                     CustomSnackbar.snackbar(
+                    //                         "You can't unblock", _scaffoldKey);
+                    //                   }
+                    //                 },
+                    //                 child: Text('Yes'),
+                    //               ),
+                    //             ],
+                    //           );
+                    //         },
+                    //       );
+                    //     },
+                    //   ),
+                    // )
+                  ];
+                })
+              ]),
+          body: GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: Scaffold(
+              backgroundColor: primaryColor,
+              body: ClipRRect(
+                // borderRadius: BorderRadius.only(
+                //   topLeft: Radius.circular(50.0),
+                //   topRight: Radius.circular(50.0),
+                // ),
+                child: Container(
+                  decoration: BoxDecoration(
+                    // image: DecorationImage(
+                    //     fit: BoxFit.fitWidth,
+                    //     image: AssetImage("asset/chat.jpg")),
+                    // borderRadius: BorderRadius.only(
+                    //     topLeft: Radius.circular(50),
+                    //     topRight: Radius.circular(50)),
+                    color: Colors.white
+                  ),
+                  padding: EdgeInsets.all(5),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: <Widget>[
+                      GetBuilder<ChatController>(builder: (data){
+                        if(data.listMessageSnapshot == null){
+                          return Container(
+                            height: 15,
+                            width: 15,
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation(primaryColor),
+                              strokeWidth: 2,
+                            ),
+                          );
+                        }
+                        
+                        return Expanded(
+                          child: ListView(
+                            reverse: true,
+                            children: generateMessages(data.listMessageSnapshot, data),
+                          ),
+                        );
+                      }),
+                      
+                      // StreamBuilder<QuerySnapshot>(
+                      //   stream: chatController.chatReference.orderBy('time', descending: true).snapshots(),
+                      //   builder: (BuildContext Get.context,
+                      //       AsyncSnapshot<QuerySnapshot> snapshot) {
+                      //     if (!snapshot.hasData)
+                      //       return Container(
+                      //         height: 15,
+                      //         width: 15,
+                      //         child: CircularProgressIndicator(
+                      //           valueColor: AlwaysStoppedAnimation(primaryColor),
+                      //           strokeWidth: 2,
+                      //         ),
+                      //       );
+                      //     return Expanded(
+                      //       child: ListView(
+                      //         reverse: true,
+                      //         children: generateMessages(snapshot, data),
+                      //       ),
+                      //     );
+                      //   },
+                      // ),
+                      Divider(height: 1.0),
+                      GetBuilder<ChatController>(builder: (data){
+                        return Container(
+                          alignment: Alignment.bottomCenter,
+                          decoration:
+                              BoxDecoration(color: Theme.of(context).cardColor),
+                          child: messageWidget(data),
+                        );
+                      })
+                      
+                      
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        )
+    );
+  }
+
+  Widget messageWidget(ChatController data){
+    if(data.listMessageSnapshot == null){
+      return  _buildTextComposer(data);
+    }
+    if(chatController.isBlocked){
+      return Text("Sorry You can't send message!");
+    }
+    if(data.listMessageSnapshot.docs.isNotEmpty && data.listMessageSnapshot.docs.first['type'] == "Leave"){
+      return Container();
+    }
+    return  _buildTextComposer(data);
+  }
+
   var blockedBy;
-  checkblock() {
-    chatReference.doc('blocked').snapshots().listen((onData) {
+  checkblock(ChatController data) {
+    chatController.chatReference.doc('blocked').snapshots().listen((onData) {
       if (onData.data != null) {
         // blockedBy = onData.data['blockedBy'];
         // if (onData.data['isBlocked']) {
         blockedBy = onData['blockedBy'];
         if (onData['isBlocked']) {
-          isBlocked = true;
+          chatController.isBlocked = true;
         } else {
-          isBlocked = false;
+          chatController.isBlocked = false;
         }
-
-        if (mounted) setState(() {});
+        data.update();
+        // if (mounted) setState(() {});
       }
       // print(onData.data['blockedBy']);
     });
   }
 
-  List<Widget> generateSenderLayout(DocumentSnapshot documentSnapshot) {
+  List<Widget> generateSenderLayout(DocumentSnapshot documentSnapshot, ChatController data) {
     return <Widget>[
       Expanded(
         child: Column(
@@ -95,8 +317,8 @@ class _ChatPageState extends State<ChatPage> {
                                     ),
                                   ),
                                   errorWidget: (context, url, error) => Icon(Icons.error),
-                                  height: MediaQuery.of(context).size.height * .65,
-                                  width: MediaQuery.of(context).size.width * .9,
+                                  height: Get.height * .65,
+                                  width: Get.width * .9,
                                   // imageUrl: documentSnapshot.data['image_url'] ?? '',
                                   imageUrl: documentSnapshot['image_url'] ?? '',
                                   fit: BoxFit.fitWidth,
@@ -145,7 +367,7 @@ class _ChatPageState extends State<ChatPage> {
                         ],
                       ),
                       onTap: () {
-                        Navigator.of(context).push(
+                        Navigator.of(Get.context).push(
                           CupertinoPageRoute(
                             builder: (context) => LargeImage(
                               // documentSnapshot.data['image_url'],
@@ -158,7 +380,7 @@ class _ChatPageState extends State<ChatPage> {
                   : Container(
                       padding: EdgeInsets.symmetric(
                           horizontal: 15.0, vertical: 10.0),
-                      width: MediaQuery.of(context).size.width * 0.65,
+                      width: MediaQuery.of(Get.context).size.width * 0.65,
                       margin: EdgeInsets.only(
                           top: 8.0, bottom: 8.0, left: 80.0, right: 10),
                       decoration: BoxDecoration(
@@ -245,7 +467,7 @@ class _ChatPageState extends State<ChatPage> {
                           //               .toDate()).toString()
                           //               : "",
                           //           style: TextStyle(
-                          //             color: secondryColor,
+                          //             color: widget.secondryColor,
                           //             fontSize: 13.0,
                           //             fontWeight: FontWeight.w600,
                           //           ),
@@ -257,7 +479,7 @@ class _ChatPageState extends State<ChatPage> {
                           //         documentSnapshot['isRead'] == false
                           //             ? Icon(
                           //                 Icons.done,
-                          //                 color: secondryColor,
+                          //                 color: widget.secondryColor,
                           //                 size: 15,
                           //               )
                           //             : Icon(
@@ -278,7 +500,7 @@ class _ChatPageState extends State<ChatPage> {
     ];
   }
 
-  _messagesIsRead(documentSnapshot) {
+  _messagesIsRead(documentSnapshot, ChatController data) {
     return <Widget>[
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -307,7 +529,7 @@ class _ChatPageState extends State<ChatPage> {
               Get.find<NotificationController>().cekFirstInfo(widget.second);
               showDialog(
                   barrierDismissible: false,
-                  context: context,
+                  context: Get.context,
                   builder: (context) {
                     return Info(widget.second, widget.sender, null);
                   });
@@ -336,8 +558,8 @@ class _ChatPageState extends State<ChatPage> {
                           ),
                           errorWidget: (context, url, error) =>
                               Icon(Icons.error),
-                          height: MediaQuery.of(context).size.height * .65,
-                          width: MediaQuery.of(context).size.width * .9,
+                          height: MediaQuery.of(Get.context).size.height * .65,
+                          width: MediaQuery.of(Get.context).size.width * .9,
                           imageUrl: documentSnapshot['image_url'] ?? '',
                           fit: BoxFit.fitWidth,
                         ),
@@ -364,7 +586,7 @@ class _ChatPageState extends State<ChatPage> {
                     ],
                   ),
                   onTap: () {
-                    Navigator.of(context).push(CupertinoPageRoute(
+                    Navigator.of(Get.context).push(CupertinoPageRoute(
                       builder: (context) => LargeImage(
                         documentSnapshot['image_url'],
                       ),
@@ -374,7 +596,7 @@ class _ChatPageState extends State<ChatPage> {
               : Container(
                   padding: EdgeInsets.symmetric(
                       horizontal: 15.0, vertical: 10.0),
-                  width: MediaQuery.of(context).size.width * 0.65,
+                  width: MediaQuery.of(Get.context).size.width * 0.65,
                   margin: EdgeInsets.only(top: 8.0, bottom: 8.0, right: 10),
                   decoration: BoxDecoration(
                       color: secondryColor.withOpacity(.3),
@@ -426,201 +648,175 @@ class _ChatPageState extends State<ChatPage> {
     ];
   }
 
-  List<Widget> generateReceiverLayout(DocumentSnapshot documentSnapshot) {
+  List<Widget> generateReceiverLayout(DocumentSnapshot documentSnapshot, ChatController data) {
     // if (!documentSnapshot.data['isRead']) {
     if (!documentSnapshot['isRead']) {
       print(documentSnapshot.id);
-      chatReference.doc(documentSnapshot.id).update({
+      chatController.chatReference.doc(documentSnapshot.id).update({
         'isRead': true,
       });
 
-      return _messagesIsRead(documentSnapshot);
+      // return _messagesIsRead(documentSnapshot, data);
     }
-    return _messagesIsRead(documentSnapshot);
+    return _messagesIsRead(documentSnapshot, data);
   }
 
-  generateMessages(AsyncSnapshot<QuerySnapshot> snapshot) {
-    return snapshot.data.docs.map<Widget>((doc) => Container(
+  generateMessages(QuerySnapshot snapshot, ChatController data) {
+    return snapshot.docs.map<Widget>((doc) => Container(
       margin: const EdgeInsets.symmetric(vertical: 10.0),
       child: new Row(
         mainAxisAlignment: MainAxisAlignment.center,
-        // children: doc.data['type'] == "Call"
-      // children: doc.data['type'] == "Call"
         children: doc['type'] == "Call" ? [
-                // Text(doc.data["time"] != null
-                //     ? "${doc.data['text']} : " +
-                Text(doc["time"] != null
-                    ? "${doc['text']} : " +
-                        DateFormat.yMMMd('en_US')
-                            .add_jm()
-                            // .format(doc.data["time"].toDate())
-                            .format(doc["time"].toDate())
-                            .toString() +
-                        // " by ${doc.data['sender_id'] == widget.sender.id ? "You" : "${widget.second.name}"}"
-                        " by ${doc['sender_id'] == widget.sender.id ? "You" : "${widget.second.name}"}"
-                    : "")
-              ]
-            // : doc.data['sender_id'] != widget.sender.id
-            : doc['sender_id'] != widget.sender.id
-                ? generateReceiverLayout(doc)
-                : generateSenderLayout(doc)),
+          Text(doc["time"] != null
+            ? "${doc['text']} : " +
+              DateFormat.yMMMd('en_US')
+                .add_jm()
+                .format(doc["time"].toDate())
+                .toString() +
+              " by ${doc['sender_id'] == widget.sender.id ? "You" : "${widget.second.name}"}"
+            : "")
+          ]
+          // : doc.data['sender_id'] != sender.id
+          :doc['type'] == "Disconnect"?[
+            if(doc['sender_id'] != widget.sender.id)
+            Expanded(
+              child:Container(
+                padding: EdgeInsets.only(
+                  top: 20, bottom: 20,
+                  right: 15, left: 15
+                ),
+                margin: EdgeInsets.only(
+                  right: 15, left: 15
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.yellow[100],
+                  borderRadius: BorderRadius.all(Radius.circular(10))
+                ),
+                child: Column(
+                  children: [
+                    Text(doc['text'],
+                    textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.italic
+                      ),
+                    ),
+                  ],
+                )
+              )
+            ),
+            Container()
+          ]
+          : doc['type'] == "Leave"?[
+            (doc['sender_id'] != widget.sender.id)?
+            Expanded(
+              child:Container(
+                padding: EdgeInsets.only(
+                  top: 20, bottom: 20,
+                  right: 15, left: 15
+                ),
+                margin: EdgeInsets.only(
+                  right: 15, left: 15
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.yellow[100],
+                  borderRadius: BorderRadius.all(Radius.circular(10))
+                ),
+                child: Column(
+                  children: [
+                    Text(doc['text'],
+                    textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.italic
+                      ),
+                    ),
+                    SizedBox(height: 20,),
+                    Text("Leaving the conversation means that this member no longer wants"
+                     + " to chat and can't be contacted unless they decide to resume the conversation",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.normal,
+                        fontStyle: FontStyle.italic
+                      ),
+                    ),
+                  ],
+                )
+              )
+            )
+            :Expanded(
+              child:InkWell(
+                onTap:() async{
+                  data.restoreLeaveWidget(widget.sender, widget.second, data.listMessageSnapshot.docs.first.id, widget.chatId, "chat");
+                },
+                child:Container(
+                  padding: EdgeInsets.only(
+                    top: 20, bottom: 20,
+                    right: 15, left: 15
+                  ),
+                  margin: EdgeInsets.only(
+                    right: 15, left: 15
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.yellow[100],
+                    borderRadius: BorderRadius.all(Radius.circular(10))
+                  ),
+                  child: Column(
+                    children: [
+                      Text("You have left this chat",
+                      textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          fontStyle: FontStyle.italic
+                        ),
+                      ),
+                      SizedBox(height: 20,),
+                      Container(
+                        width:150,
+                        padding:EdgeInsets.only(
+                          left:18, right: 18, top: 12, bottom: 12
+                        ),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(5)),
+                          color:Colors.black
+                        ),
+                        child:Text("Resume chat", 
+                          textAlign:TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold
+                          ),
+                        )
+                      )
+                    ],
+                  )
+                )
+              )
+            )
+          ]
+          : doc['sender_id'] != widget.sender.id
+            ? generateReceiverLayout(doc, data)
+            : generateSenderLayout(doc, data)
+      ),
+      
     )).toList();
   }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-          backgroundColor: Colors.red,
-          centerTitle: true,
-          elevation: 0,
-          title: Text(widget.second.name),
-          leading: IconButton(
-            icon: Icon(Icons.arrow_back_ios),
-            color: Colors.white,
-            onPressed: () => Navigator.pop(context),
-          ),
-          actions: <Widget>[
-            // IconButton(
-            //     icon: Icon(Icons.call), onPressed: () => onJoin("AudioCall")),
-            // IconButton(
-            //     icon: Icon(Icons.video_call),
-            //     onPressed: () => onJoin("VideoCall")),
-            PopupMenuButton(itemBuilder: (ct) {
-              return [
-                PopupMenuItem(
-                  value: 'value1',
-                  child: InkWell(
-                    onTap: () => showDialog(
-                        barrierDismissible: true,
-                        context: context,
-                        builder: (context) => ReportUser(
-                              currentUser: widget.sender,
-                              seconduser: widget.second,
-                            )).then((value) => Navigator.pop(ct)),
-                    child: Container(
-                        width: 100,
-                        height: 30,
-                        child: Text(
-                          "Report",
-                        )),
-                  ),
-                ),
-                PopupMenuItem(
-                  height: 30,
-                  value: 'value2',
-                  child: InkWell(
-                    child: Text(isBlocked ? "Unblock user" : "Block user"),
-                    onTap: () {
-                      Navigator.pop(ct);
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext ctx) {
-                          return AlertDialog(
-                            title: Text(isBlocked ? 'Unblock' : 'Block'),
-                            content: Text('Do you want to ' + "${isBlocked ? 'Unblock' : 'Block'} " "${widget.second.name}"),
-                            actions: <Widget>[
-                              FlatButton(
-                                onPressed: () =>
-                                    Navigator.of(context).pop(false),
-                                child: Text('No'),
-                              ),
-                              FlatButton(
-                                onPressed: () async {
-                                  Navigator.pop(ctx);
-                                  if (isBlocked &&
-                                      blockedBy == widget.sender.id) {
-                                    chatReference.doc('blocked').set({
-                                      'isBlocked': !isBlocked,
-                                      'blockedBy': widget.sender.id,
-                                    });
-                                  } else if (!isBlocked) {
-                                    chatReference.doc('blocked').set({
-                                      'isBlocked': !isBlocked,
-                                      'blockedBy': widget.sender.id,
-                                    });
-                                  } else {
-                                    CustomSnackbar.snackbar(
-                                        "You can't unblock", _scaffoldKey);
-                                  }
-                                },
-                                child: Text('Yes'),
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
-                  ),
-                )
-              ];
-            })
-          ]),
-      body: GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: Scaffold(
-          backgroundColor: primaryColor,
-          body: ClipRRect(
-            // borderRadius: BorderRadius.only(
-            //   topLeft: Radius.circular(50.0),
-            //   topRight: Radius.circular(50.0),
-            // ),
-            child: Container(
-              decoration: BoxDecoration(
-                // image: DecorationImage(
-                //     fit: BoxFit.fitWidth,
-                //     image: AssetImage("asset/chat.jpg")),
-                // borderRadius: BorderRadius.only(
-                //     topLeft: Radius.circular(50),
-                //     topRight: Radius.circular(50)),
-                color: Colors.white
-              ),
-              padding: EdgeInsets.all(5),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  StreamBuilder<QuerySnapshot>(
-                    stream: chatReference.orderBy('time', descending: true).snapshots(),
-                    builder: (BuildContext context,
-                        AsyncSnapshot<QuerySnapshot> snapshot) {
-                      if (!snapshot.hasData)
-                        return Container(
-                          height: 15,
-                          width: 15,
-                          child: CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation(primaryColor),
-                            strokeWidth: 2,
-                          ),
-                        );
-                      return Expanded(
-                        child: ListView(
-                          reverse: true,
-                          children: generateMessages(snapshot),
-                        ),
-                      );
-                    },
-                  ),
-                  Divider(height: 1.0),
-                  Container(
-                    alignment: Alignment.bottomCenter,
-                    decoration:
-                        BoxDecoration(color: Theme.of(context).cardColor),
-                    child: isBlocked
-                        ? Text("Sorry You can't send message!")
-                        : _buildTextComposer(),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
+  List<Widget> generateChatWidget(var doc, ChatController data){
+    if(doc['sender_id'] != widget.sender.id){
+      return generateReceiverLayout(doc, data);
+    }
+    return generateSenderLayout(doc, data);
   }
 
-  Widget getDefaultSendButton() {
+  Widget getDefaultSendButton(ChatController data) {
     return IconButton(
       icon: Transform.rotate(
         angle: -pi / 9,
@@ -630,15 +826,16 @@ class _ChatPageState extends State<ChatPage> {
         ),
       ),
       color: primaryColor,
-      onPressed: _isWritting
-          ? () => _sendText(_textController.text.trimRight())
+      onPressed: data.isWritting
+          ? () => data.sendText(chatController.textController.text.trimRight(), widget.sender, widget.second)
           : null,
     );
   }
 
-  Widget _buildTextComposer() {
+  Widget _buildTextComposer(ChatController data) {
+    
     return IconTheme(
-        data: IconThemeData(color: _isWritting ? primaryColor : secondryColor),
+        data: IconThemeData(color: data.isWritting ? primaryColor : secondryColor),
         child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 8.0),
           child: Row(
@@ -657,7 +854,7 @@ class _ChatPageState extends State<ChatPage> {
                       // StorageReference storageReference = FirebaseStorage
                       //     .instance
                       //     .ref()
-                      //     .child('chats/${widget.chatId}/img_' +
+                      //     .child('chats/${chatId}/img_' +
                       //         timestamp.toString() +
                       //         '.jpg');
                       // StorageUploadTask uploadTask =
@@ -671,7 +868,7 @@ class _ChatPageState extends State<ChatPage> {
                         UploadTask uploadTask = ref.putFile(File(image.path));
                         uploadTask.then((res) async {
                           String fileUrl = await res.ref.getDownloadURL();
-                          _sendImage(messageText: 'Photo', imageUrl: fileUrl);
+                          data.sendImage(messageText: 'Photo', imageUrl: fileUrl, sender: widget.sender, second: widget.second);
                         });
                       }
 
@@ -679,14 +876,14 @@ class _ChatPageState extends State<ChatPage> {
               ),
               new Flexible(
                 child: new TextField(
-                  controller: _textController,
+                  controller: chatController.textController,
                   maxLines: 15,
                   minLines: 1,
                   autofocus: false,
                   onChanged: (String messageText) {
-                    setState(() {
-                      _isWritting = messageText.trim().length > 0;
-                    });
+                    chatController.isWritting = messageText.trim().length > 0;
+                    print("Jalan disini");
+                    data.update();
                   },
                   decoration: new InputDecoration.collapsed(
                       floatingLabelBehavior: FloatingLabelBehavior.auto,
@@ -697,94 +894,13 @@ class _ChatPageState extends State<ChatPage> {
               ),
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 4.0),
-                child: getDefaultSendButton(),
+                child: getDefaultSendButton(data),
               ),
             ],
           ),
         ));
   }
 
-  Future<Null> _sendText(String text) async {
-    _textController.clear();
-    chatReference.add({
-      'type': 'Msg',
-      'text': text,
-      'sender_id': widget.sender.id,
-      'receiver_id': widget.second.id,
-      'isRead': false,
-      'image_url': '',
-      'time': FieldValue.serverTimestamp(),
-    }).then((documentReference) {
-      Get.find<NotificationController>().sendChatFCM(
-        idUser: widget.second.id,
-        name: Get.find<TabsController>().currentUser.name,
-      );
-      setState(() {
-        _isWritting = false;
-      });
-    }).catchError((e) {});
-  }
-
-  void _sendImage({String messageText, String imageUrl}) {
-    chatReference.add({
-      'type': 'Image',
-      'text': messageText,
-      'sender_id': widget.sender.id,
-      'receiver_id': widget.second.id,
-      'isRead': false,
-      'image_url': imageUrl,
-      'time': FieldValue.serverTimestamp(),
-    }).then((value) => Get.find<NotificationController>().sendChatFCM(
-      idUser: widget.second.id,
-      name: Get.find<TabsController>().currentUser.name,
-    ));
-  }
-
-  Future<void> onJoin(callType) async {
-    if (!isBlocked) {
-      // await for camera and mic permissions before pushing video page
-
-      await handleCameraAndMic(callType);
-      await chatReference.add({
-        'type': 'Call',
-        'text': callType,
-        'sender_id': widget.sender.id,
-        'receiver_id': widget.second.id,
-        'isRead': false,
-        'image_url': "",
-        'time': FieldValue.serverTimestamp(),
-      });
-
-      // push video page with given channel name
-      // await Navigator.push(
-      //   context,
-      //   MaterialPageRoute(
-      //     builder: (context) => DialCall(
-      //         channelName: widget.chatId,
-      //         receiver: widget.second,
-      //         callType: callType),
-      //   ),
-      // );
-    } else {
-      CustomSnackbar.snackbar("Blocked !", _scaffoldKey);
-    }
-  }
-}
-
-Future<void> handleCameraAndMic(callType) async {
-
-  if(callType == "VideoCall"){
-    Map<Permission, PermissionStatus> statuses = await [
-      Permission.camera,
-      Permission.microphone,
-    ].request();
-    print(statuses);
-  }else{
-    Map<Permission, PermissionStatus> statuses = await [
-      Permission.microphone,
-    ].request();
-    print(statuses);
-  }
 
 
   // await PermissionHandler().requestPermissions(callType == "VideoCall"
