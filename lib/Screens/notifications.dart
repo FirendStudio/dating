@@ -188,6 +188,7 @@ class Notifications extends StatelessWidget {
                       null,
                       relationshipTemp,
                       Get.find<NotificationController>().userPartner,
+                      "like"
                     );
                   }
                 );
@@ -462,7 +463,7 @@ class Notifications extends StatelessWidget {
                                   }
                                   Get.find<NotificationController>()
                                       .cekFirstInfo(tempuser);
-                                  return Info(tempuser, currentUser, null);
+                                  return Info(tempuser, currentUser, null, "");
                                 });
                           }
                         },

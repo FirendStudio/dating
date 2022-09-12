@@ -24,12 +24,14 @@ import '../Payment/subscriptions.dart';
 class Info extends StatelessWidget {
   final UserModel currentUser;
   final UserModel user;
+  final String type;
 
   final GlobalKey<SwipeStackState> swipeKey;
   Info(
     this.user,
     this.currentUser,
     this.swipeKey,
+    this.type,
   );
 
   TabsController tabsController = Get.put(TabsController());
@@ -290,7 +292,7 @@ class Info extends StatelessWidget {
                                 currentUser,
                                 null,
                                 relationshipTemp,
-                                user,
+                                user,""
                             );
                           });
 

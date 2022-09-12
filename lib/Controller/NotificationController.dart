@@ -908,6 +908,7 @@ class NotificationController extends GetxController {
               null,
               relationshipTemp,
               Get.find<NotificationController>().userPartner,
+              "like"
             );
           });
     }

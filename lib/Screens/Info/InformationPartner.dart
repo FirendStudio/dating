@@ -24,15 +24,16 @@ class InformationPartner extends StatelessWidget {
   final UserModel user;
   final Relationship relation;
   final UserModel userPartner;
-
+  final String type;
   final GlobalKey<SwipeStackState> swipeKey;
   InformationPartner(
-      this.user,
-      this.currentUser,
-      this.swipeKey,
-      this.relation,
-      this.userPartner,
-    );
+    this.user,
+    this.currentUser,
+    this.swipeKey,
+    this.relation,
+    this.userPartner,
+    this.type,
+  );
   String interestText = "";
   String desiresText = "";
 
@@ -81,6 +82,55 @@ class InformationPartner extends StatelessWidget {
             color: Colors.white),
         child: Stack(
           children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.all(25),
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: <Widget>[
+
+                    FloatingActionButton(
+                        heroTag: UniqueKey(),
+                        backgroundColor: Colors.white,
+                        child: Icon(
+                          Icons.clear,
+                          color: Colors.red,
+                          size: 30,
+                        ),
+                        onPressed: () async {
+                          bool cek = Get.find<TabsController>().getSelectedUserIndex(user.id);
+                          if(!cek){
+                            Get.snackbar("Info", "User not exist");
+                            return;
+                          }
+                          await Get.find<TabsController>().disloveFunction();
+                          Get.find<TabsController>().update();
+                          Get.back();
+                        }),
+                    FloatingActionButton(
+                        heroTag: UniqueKey(),
+                        backgroundColor: Colors.white,
+                        child: Icon(
+                          Icons.favorite,
+                          color: Colors.red,
+                          size: 30,
+                        ),
+                        onPressed: () async {
+                          bool cek = Get.find<TabsController>().getSelectedUserIndex(user.id);
+                          if(!cek){
+                            Get.snackbar("Info", "User not exist");
+                            return;
+                          }
+                          await Get.find<TabsController>().loveUserFunction();
+                          Get.find<TabsController>().update();
+                          Get.back();
+                        }),
+                  ],
+                ),
+              ),
+            ),
             SingleChildScrollView(
               child: Column(
                 children: <Widget>[
@@ -413,7 +463,7 @@ class InformationPartner extends StatelessWidget {
                               builder: (context) =>
                                   EditProfile(user))))),
             )
-                : Padding(
+                : (type!='like')?Padding(
               padding: const EdgeInsets.all(18.0),
               child: Align(
                   alignment: Alignment.bottomRight,
@@ -483,7 +533,7 @@ class InformationPartner extends StatelessWidget {
 
                       }
                   )),
-            )
+            ):Container()
           ],
         ),
       ),

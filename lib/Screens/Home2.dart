@@ -126,32 +126,8 @@ class _CardPicturesState2 extends State<CardPictures2>
                                     size: 30,
                                   ),
                                   onPressed: () async {
-                                    if (data.users.length > 0) {
-                                      print("object 1");
-                                      await docRef
-                                          .doc(Get.find<LoginController>().userId)
-                                          .collection("CheckedUser")
-                                          .doc(data.users[data.indexUser].id)
-                                          .set({
-                                        'userName': data.users[data.indexUser].name,
-                                        'pictureUrl': (data.users[data.indexUser].imageUrl[0].runtimeType == String)
-                                            ?data.users[data.indexUser].imageUrl[0]:data.users[data.indexUser].imageUrl[0]['url'],
-                                        'DislikedUser':
-                                        data.users[data.indexUser].id,
-                                        'timestamp': DateTime.now(),
-                                      }, SetOptions(merge : true)
-                                      );
-
-                                      if (data.indexUser < data.users.length) {
-                                        data.userRemoved.clear();
-                                        setState(() {
-                                          data.userRemoved.add(data.users[data.indexUser]);
-                                          data.users.removeAt(data.indexUser);
-                                        });
-                                      }
-                                      // swipeKey.currentState.swipeLeft();
-
-                                    }
+                                    await data.disloveFunction();
+                                    setState(() {});
                                   }),
                               FloatingActionButton(
                                   heroTag: UniqueKey(),
@@ -162,156 +138,8 @@ class _CardPicturesState2 extends State<CardPictures2>
                                     size: 30,
                                   ),
                                   onPressed: () async {
-
-                                    if (data.users.length > 0) {
-                                      bool cek = false;
-                                      print(data.users[data.indexUser].name);
-                                      // swipeKey.currentState.swipeRight();
-                                      print(data.users[data.indexUser].name);
-                                      if (data.likedByList.contains(data.users[data.indexUser].id)) {
-                                        cek = true;
-                                        print("Masuk sini");
-
-                                        Get.find<NotificationController>().sendMatchedFCM(
-                                          idUser:data.users[data.indexUser].id,
-                                          name: data.users[data.indexUser].name
-                                        );
-                                        showDialog(
-                                            context: context,
-                                            builder: (ctx) {
-                                              Future.delayed(
-                                                  Duration(milliseconds: 1700),
-                                                      () {
-                                                    Navigator.pop(ctx);
-                                                  });
-                                              return Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 80),
-                                                child: Align(
-                                                  alignment:
-                                                  Alignment.topCenter,
-                                                  child: Card(
-                                                    child: Container(
-                                                      height: 100,
-                                                      width: 300,
-                                                      child: Center(
-                                                          child: Text(
-                                                            "It's a match\n With ",
-                                                            textAlign:
-                                                            TextAlign.center,
-                                                            style: TextStyle(
-                                                                color:
-                                                                primaryColor,
-                                                                fontSize: 30,
-                                                                decoration:
-                                                                TextDecoration
-                                                                    .none),
-                                                          )
-                                                        // .tr(args: ['${widget.users[index].name}']),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              );
-                                            });
-                                        await docRef
-                                            .doc(Get.find<LoginController>().userId)
-                                            .collection("Matches")
-                                            .doc(data.users[data.indexUser].id)
-                                            .set(
-                                            {
-                                              'Matches': data.users[data.indexUser].id,
-                                              'isRead': false,
-                                              'userName': data.users[data.indexUser].name,
-                                              'pictureUrl': (data.users[data.indexUser].imageUrl[0].runtimeType == String)?data.users[data.indexUser].imageUrl[0]:data.users[data.indexUser].imageUrl[0]['url'],
-                                              'timestamp': FieldValue.serverTimestamp()
-                                            },
-                                            SetOptions(merge : true)
-                                        );
-                                        await docRef
-                                            .doc(data.users[data.indexUser].id)
-                                            .collection("Matches")
-                                            .doc(Get.find<LoginController>().userId)
-                                            .set(
-                                            {
-                                              'Matches': Get.find<LoginController>().userId,
-                                              'userName': data.currentUser.name,
-                                              'pictureUrl': (data.currentUser.imageUrl[0].runtimeType == String)?data.currentUser.imageUrl[0] : data.currentUser.imageUrl[0]['url'],
-                                              'isRead': false,
-                                              'timestamp': FieldValue.serverTimestamp()
-                                            },
-                                            SetOptions(merge : true)
-                                        );
-                                      }
-
-                                      if(!cek){
-                                        Get.find<NotificationController>().sendLikedFCM(
-                                            idUser:data.users[data.indexUser].id,
-                                            name: data.users[data.indexUser].name
-                                        );
-                                      }
-
-                                      await docRef
-                                          .doc(Get.find<LoginController>().userId)
-                                          .collection("CheckedUser")
-                                          .doc(data.users[data.indexUser].id)
-                                          .set(
-                                          {
-                                            'userName': data.users[data.indexUser].name,
-                                            'pictureUrl': (data.users[data.indexUser].imageUrl[0].runtimeType == String)?data.users[data.indexUser].imageUrl[0] : data.users[data.indexUser].imageUrl[0]['url'],
-                                            'LikedUser': data.users[data.indexUser].id,
-                                            'timestamp':
-                                            FieldValue.serverTimestamp(),
-                                          },
-                                          SetOptions(merge : true)
-                                      );
-                                      await docRef
-                                          .doc(data.users[data.indexUser].id)
-                                          .collection("LikedBy")
-                                          .doc(Get.find<LoginController>().userId)
-                                          .set(
-                                          {
-                                            'userName': Get.find<TabsController>().currentUser.name,
-                                            'pictureUrl': (data.currentUser.imageUrl[0].runtimeType == String)?data.currentUser.imageUrl[0] : data.currentUser.imageUrl[0]['url'],
-                                            'LikedBy': Get.find<LoginController>().userId,
-                                            'timestamp': FieldValue.serverTimestamp()
-                                          },
-                                          SetOptions(merge : true)
-                                      );
-                                      print("Data User index ke : " + data.indexUser.toString());
-                                      data.users.removeAt(data.indexUser);
-                                      data.indexImage = 0;
-                                      if(data.indexUser != 0){
-                                        data.indexUser--;
-                                      }
-                                      // if(data.indexUser+1 == data.users.length){
-                                      //
-                                      //   data.indexUser--;
-                                      // }else{
-                                      //   data.users.removeAt(data.indexUser);
-                                      // }
-
-                                      // data.userRemoved.clear();
-                                      // data.userRemoved.add(data.users[data.indexUser]);
-                                      print("selesai");
-                                      // if (data.indexUser < (data.users.length + 1)) {
-                                      //   print("clear");
-                                      //   data.userRemoved.clear();
-                                      //   data.userRemoved.add(data.users[data.indexUser]);
-                                      //   data.users.removeAt(data.indexUser);
-
-                                      //   if(data.users.length == 1){
-                                      //     data.indexUser = 0;
-                                      //   }
-                                      // }
-                                      setState(() {
-
-                                      });
-
-                                    }else{
-                                      print("length 0");
-                                    }
-
+                                    await data.loveUserFunction();
+                                    setState(() {});
                                   }),
                             ],
                           ),
@@ -676,6 +504,7 @@ class _CardPicturesState2 extends State<CardPictures2>
                                   null,
                                   relationshipTemp,
                                   Get.find<NotificationController>().userPartner,
+                                  "like"
                                 );
                               }
                             );

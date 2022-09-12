@@ -112,7 +112,7 @@ class _ProfileState extends State<Profile> {
                                 context: context,
                                 builder: (context) {
                                   return Info(widget.currentUser,
-                                      widget.currentUser, null);
+                                      widget.currentUser, null, "");
                                 });
                           } ,
                           child: Center(

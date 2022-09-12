@@ -531,7 +531,7 @@ class _ChatPageState extends State<ChatPage> {
                   barrierDismissible: false,
                   context: Get.context,
                   builder: (context) {
-                    return Info(widget.second, widget.sender, null);
+                    return Info(widget.second, widget.sender, null, "");
                   });
             } ,
           ),

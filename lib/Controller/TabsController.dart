@@ -20,6 +20,7 @@ import '../Screens/Widget/DialogFirstApp.dart';
 import '../models/Relationship.dart';
 import '../models/user_model.dart';
 import '../util/Global.dart';
+import '../util/color.dart';
 import '../util/consumable_store.dart';
 import 'HomeController.dart';
 import 'LoginController.dart';
@@ -696,6 +697,194 @@ class TabsController extends GetxController{
         c((lat2 - lat1) * p) / 2 +
         c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
     return 12742 * asin(sqrt(a));
+  }
+
+  disloveFunction() async {
+    if (users.length > 0) {
+      print("object 1");
+      await docRef
+          .doc(Get.find<LoginController>().userId)
+          .collection("CheckedUser")
+          .doc(users[indexUser].id)
+          .set({
+        'userName': users[indexUser].name,
+        'pictureUrl': (users[indexUser].imageUrl[0].runtimeType == String)
+            ?users[indexUser].imageUrl[0]:users[indexUser].imageUrl[0]['url'],
+        'DislikedUser':
+        users[indexUser].id,
+        'timestamp': DateTime.now(),
+      }, SetOptions(merge : true)
+      );
+
+      if (indexUser < users.length) {
+        userRemoved.clear();
+        userRemoved.add(users[indexUser]);
+        users.removeAt(indexUser);
+        
+        indexImage = 0;
+        if(indexUser != 0){
+          indexUser--;
+        }
+      }
+      // swipeKey.currentState.swipeLeft();
+
+    }
+  }
+
+  bool getSelectedUserIndex(String idUser){
+
+    var selectedUser = users.firstWhereOrNull((element) => element.id == idUser);
+    if(selectedUser != null){
+      return true;
+    }
+    return false;
+  }
+
+  loveUserFunction() async {
+    if (users.length > 0) {
+      bool cek = false;
+      print(users[indexUser].name);
+      // swipeKey.currentState.swipeRight();
+      print(users[indexUser].name);
+      if (likedByList.contains(users[indexUser].id)) {
+        cek = true;
+        print("Masuk sini");
+
+        Get.find<NotificationController>().sendMatchedFCM(
+          idUser:users[indexUser].id,
+          name: users[indexUser].name
+        );
+        showDialog(
+            context: Get.context,
+            builder: (ctx) {
+              Future.delayed(
+                  Duration(milliseconds: 1700),
+                      () {
+                    Navigator.pop(ctx);
+                  });
+              return Padding(
+                padding: const EdgeInsets.only(
+                    top: 80),
+                child: Align(
+                  alignment:
+                  Alignment.topCenter,
+                  child: Card(
+                    child: Container(
+                      height: 100,
+                      width: 300,
+                      child: Center(
+                          child: Text(
+                            "It's a match\n With ",
+                            textAlign:
+                            TextAlign.center,
+                            style: TextStyle(
+                                color: primaryColor,
+                                fontSize: 30,
+                                decoration:
+                                TextDecoration
+                                    .none),
+                          )
+                        // .tr(args: ['${widget.users[index].name}']),
+                      ),
+                    ),
+                  ),
+                ),
+              );
+            });
+        await docRef
+            .doc(Get.find<LoginController>().userId)
+            .collection("Matches")
+            .doc(users[indexUser].id)
+            .set(
+            {
+              'Matches': users[indexUser].id,
+              'isRead': false,
+              'userName': users[indexUser].name,
+              'pictureUrl': (users[indexUser].imageUrl[0].runtimeType == String)?users[indexUser].imageUrl[0]:users[indexUser].imageUrl[0]['url'],
+              'timestamp': FieldValue.serverTimestamp()
+            },
+            SetOptions(merge : true)
+        );
+        await docRef
+            .doc(users[indexUser].id)
+            .collection("Matches")
+            .doc(Get.find<LoginController>().userId)
+            .set(
+            {
+              'Matches': Get.find<LoginController>().userId,
+              'userName': currentUser.name,
+              'pictureUrl': (currentUser.imageUrl[0].runtimeType == String)?currentUser.imageUrl[0] : currentUser.imageUrl[0]['url'],
+              'isRead': false,
+              'timestamp': FieldValue.serverTimestamp()
+            },
+            SetOptions(merge : true)
+        );
+      }
+
+      if(!cek){
+        Get.find<NotificationController>().sendLikedFCM(
+            idUser:users[indexUser].id,
+            name: users[indexUser].name
+        );
+      }
+
+      await docRef
+          .doc(Get.find<LoginController>().userId)
+          .collection("CheckedUser")
+          .doc(users[indexUser].id)
+          .set(
+          {
+            'userName': users[indexUser].name,
+            'pictureUrl': (users[indexUser].imageUrl[0].runtimeType == String)?users[indexUser].imageUrl[0] : users[indexUser].imageUrl[0]['url'],
+            'LikedUser': users[indexUser].id,
+            'timestamp':
+            FieldValue.serverTimestamp(),
+          },
+          SetOptions(merge : true)
+      );
+      await docRef
+          .doc(users[indexUser].id)
+          .collection("LikedBy")
+          .doc(Get.find<LoginController>().userId)
+          .set(
+          {
+            'userName': Get.find<TabsController>().currentUser.name,
+            'pictureUrl': (currentUser.imageUrl[0].runtimeType == String)?currentUser.imageUrl[0] : currentUser.imageUrl[0]['url'],
+            'LikedBy': Get.find<LoginController>().userId,
+            'timestamp': FieldValue.serverTimestamp()
+          },
+          SetOptions(merge : true)
+      );
+      print("Data User index ke : " + indexUser.toString());
+      users.removeAt(indexUser);
+      indexImage = 0;
+      if(indexUser != 0){
+        indexUser--;
+      }
+      // if(data.indexUser+1 == data.users.length){
+      //
+      //   data.indexUser--;
+      // }else{
+      //   data.users.removeAt(data.indexUser);
+      // }
+
+      // data.userRemoved.clear();
+      // data.userRemoved.add(data.users[data.indexUser]);
+      print("selesai");
+      // if (data.indexUser < (data.users.length + 1)) {
+      //   print("clear");
+      //   data.userRemoved.clear();
+      //   data.userRemoved.add(data.users[data.indexUser]);
+      //   data.users.removeAt(data.indexUser);
+
+      //   if(data.users.length == 1){
+      //     data.indexUser = 0;
+      //   }
+      // }
+
+      }else{
+      print("length 0");
+      }
   }
 
 }
