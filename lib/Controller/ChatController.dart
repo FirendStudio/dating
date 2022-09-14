@@ -290,6 +290,9 @@ class ChatController extends GetxController {
         idUser: second.id,
         name: Get.find<TabsController>().currentUser.name,
       );
+      if(type != "notif"){
+        Get.back();
+      }
       Get.back();
     });
     

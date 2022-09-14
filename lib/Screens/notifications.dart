@@ -267,7 +267,6 @@ class Notifications extends StatelessWidget {
                   extentRatio: 1/4,
                   motion: const ScrollMotion(),
                   dragDismissible: false,
-                  dismissible: DismissiblePane(onDismissed: () {}),
                   children: [
                     SlidableAction(
                       onPressed: (BuildContext context) async {

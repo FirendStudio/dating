@@ -53,211 +53,257 @@ class _ChatPageState extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        chatController.onback();
-        return await true;
-      },
-      child: Scaffold(
-          key: _scaffoldKey,
-          backgroundColor: Colors.white,
-          appBar: AppBar(
-              backgroundColor: Colors.red,
-              centerTitle: true,
-              elevation: 0,
-              title: Text(widget.second.name),
-              leading: IconButton(
-                icon: Icon(Icons.arrow_back_ios),
-                color: Colors.white,
-                onPressed: () => Navigator.pop(Get.context),
-              ),
-              actions: <Widget>[
-                // IconButton(
-                //     icon: Icon(Icons.call), onPressed: () => onJoin("AudioCall")),
-                // IconButton(
-                //     icon: Icon(Icons.video_call),
-                //     onPressed: () => onJoin("VideoCall")),
-                PopupMenuButton(itemBuilder: (ct) {
-                  return [
-                    PopupMenuItem(
-                      value: 'value1',
-                      child: InkWell(
-                        onTap: () => showDialog(
-                            barrierDismissible: true,
-                            context: Get.context,
-                            builder: (context) => ReportUser(
-                                  currentUser: widget.sender,
-                                  seconduser: widget.second,
-                                )).then((value) => Navigator.pop(ct)),
-                        child: Container(
-                            // width: 150,
-                            height: 30,
-                            child: Text(
-                              "Report Member",
-                            )),
+    return GetBuilder<ChatController>(builder: (data){
+      return WillPopScope(
+        onWillPop: () async {
+          chatController.onback();
+          return await true;
+        },
+        child: Scaffold(
+            key: _scaffoldKey,
+            backgroundColor: Colors.white,
+            appBar: AppBar(
+                backgroundColor: Colors.red,
+                centerTitle: true,
+                elevation: 0,
+                title: Text(widget.second.name),
+                leading: IconButton(
+                  icon: Icon(Icons.arrow_back_ios),
+                  color: Colors.white,
+                  onPressed: () => Navigator.pop(Get.context),
+                ),
+                actions: <Widget>[
+                  // IconButton(
+                  //     icon: Icon(Icons.call), onPressed: () => onJoin("AudioCall")),
+                  // IconButton(
+                  //     icon: Icon(Icons.video_call),
+                  //     onPressed: () => onJoin("VideoCall")),
+                  PopupMenuButton(itemBuilder: (ct) {
+                    return [
+                      PopupMenuItem(
+                        value: 'value1',
+                        child: InkWell(
+                          onTap: () => showDialog(
+                              barrierDismissible: true,
+                              context: Get.context,
+                              builder: (context) => ReportUser(
+                                    currentUser: widget.sender,
+                                    seconduser: widget.second,
+                                  )).then((value) => Navigator.pop(ct)),
+                          child: Container(
+                              // width: 150,
+                              height: 30,
+                              child: Text(
+                                "Report Member",
+                              )),
+                        ),
                       ),
-                    ),
-                    PopupMenuItem(
-                      value: 'value2',
-                      child: InkWell(
-                        onTap: () {
-                          chatController.leaveWidget(widget.sender, widget.second, widget.chatId, "chat");
-                        },
-                        child: Container(
-                            // width: 150,
-                            height: 30,
-                            child: Text(
-                              "Leave Conversation",
-                            )),
+                      if(data.listMessageSnapshot == null || data.listMessageSnapshot.docs.isEmpty || data.listMessageSnapshot.docs.first['type'] != "Leave")
+                      PopupMenuItem(
+                        value: 'value2',
+                        child: InkWell(
+                          onTap: () {
+                            chatController.leaveWidget(widget.sender, widget.second, widget.chatId, "chat");
+                          },
+                          child: Container(
+                              // width: 150,
+                              height: 30,
+                              child: Text(
+                                "Leave Conversation",
+                              )),
+                        ),
                       ),
-                    ),
-                    PopupMenuItem(
-                      value: 'value3',
-                      child: InkWell(
-                        onTap: (){
-                          chatController.disconnectWidget(widget.sender, widget.second, widget.chatId, "chat");
-                        },
-                        child: Container(
-                            // width: 150,
-                            height: 30,
-                            child: Text(
-                              "Permanently Disconnect",
-                            )),
-                      ),
-                    ),
-                    // PopupMenuItem(
-                    //   height: 30,
-                    //   value: 'value2',
-                    //   child: InkWell(
-                    //     child: Text(isBlocked ? "Unblock user" : "Block user"),
-                    //     onTap: () {
-                    //       Navigator.pop(ct);
-                    //       showDialog(
-                    //         Get.context: Get.context,
-                    //         builder: (BuildContext ctx) {
-                    //           return AlertDialog(
-                    //             title: Text(isBlocked ? 'Unblock' : 'Block'),
-                    //             content: Text('Do you want to ' + "${isBlocked ? 'Unblock' : 'Block'} " "${widget.second.name}"),
-                    //             actions: <Widget>[
-                    //               TextButton(
-                    //                 onPressed: () =>
-                    //                     Navigator.of(Get.context).pop(false),
-                    //                 child: Text('No'),
-                    //               ),
-                    //               TextButton(
-                    //                 onPressed: () async {
-                    //                   Navigator.pop(ctx);
-                    //                   if (isBlocked &&
-                    //                       blockedBy == sender.id) {
-                    //                     chatReference.doc('blocked').set({
-                    //                       'isBlocked': !isBlocked,
-                    //                       'blockedBy': sender.id,
-                    //                     });
-                    //                   } else if (!isBlocked) {
-                    //                     chatReference.doc('blocked').set({
-                    //                       'isBlocked': !isBlocked,
-                    //                       'blockedBy': sender.id,
-                    //                     });
-                    //                   } else {
-                    //                     CustomSnackbar.snackbar(
-                    //                         "You can't unblock", _scaffoldKey);
-                    //                   }
-                    //                 },
-                    //                 child: Text('Yes'),
-                    //               ),
-                    //             ],
-                    //           );
-                    //         },
-                    //       );
-                    //     },
-                    //   ),
-                    // )
-                  ];
-                })
-              ]),
-          body: GestureDetector(
-            onTap: () => FocusScope.of(context).unfocus(),
-            child: Scaffold(
-              backgroundColor: primaryColor,
-              body: ClipRRect(
-                // borderRadius: BorderRadius.only(
-                //   topLeft: Radius.circular(50.0),
-                //   topRight: Radius.circular(50.0),
-                // ),
-                child: Container(
-                  decoration: BoxDecoration(
-                    // image: DecorationImage(
-                    //     fit: BoxFit.fitWidth,
-                    //     image: AssetImage("asset/chat.jpg")),
-                    // borderRadius: BorderRadius.only(
-                    //     topLeft: Radius.circular(50),
-                    //     topRight: Radius.circular(50)),
-                    color: Colors.white
-                  ),
-                  padding: EdgeInsets.all(5),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: <Widget>[
-                      GetBuilder<ChatController>(builder: (data){
-                        if(data.listMessageSnapshot == null){
-                          return Container(
-                            height: 15,
-                            width: 15,
-                            child: CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation(primaryColor),
-                              strokeWidth: 2,
-                            ),
-                          );
-                        }
-                        
-                        return Expanded(
-                          child: ListView(
-                            reverse: true,
-                            children: generateMessages(data.listMessageSnapshot, data),
+                      if(data.listMessageSnapshot != null && data.listMessageSnapshot.docs.isNotEmpty && data.listMessageSnapshot.docs.first['type'] == "Leave")
+                        PopupMenuItem(
+                          value: 'value2',
+                          child: InkWell(
+                            onTap: () {
+                              if(data.listMessageSnapshot.docs.first['sender_id'] != widget.sender.id){
+                                Get.snackbar("Information", "Sorry you are not authorized");
+                                return;
+                              }
+                              data.restoreLeaveWidget(widget.sender, widget.second, data.listMessageSnapshot.docs.first.id, widget.chatId, "chat");
+                            },
+                            child: Container(
+                                // width: 150,
+                                height: 30,
+                                child: Text(
+                                  "Resume Conversation",
+                                )),
                           ),
-                        );
-                      }),
-                      
-                      // StreamBuilder<QuerySnapshot>(
-                      //   stream: chatController.chatReference.orderBy('time', descending: true).snapshots(),
-                      //   builder: (BuildContext Get.context,
-                      //       AsyncSnapshot<QuerySnapshot> snapshot) {
-                      //     if (!snapshot.hasData)
-                      //       return Container(
-                      //         height: 15,
-                      //         width: 15,
-                      //         child: CircularProgressIndicator(
-                      //           valueColor: AlwaysStoppedAnimation(primaryColor),
-                      //           strokeWidth: 2,
-                      //         ),
+                        ),
+                      PopupMenuItem(
+                        value: 'value3',
+                        child: InkWell(
+                          onTap: (){
+                            chatController.disconnectWidget(widget.sender, widget.second, widget.chatId, "chat");
+                          },
+                          child: Container(
+                              // width: 150,
+                              height: 30,
+                              child: Text(
+                                "Permanently Disconnect",
+                              )),
+                        ),
+                      ),
+                      // PopupMenuItem(
+                      //   height: 30,
+                      //   value: 'value2',
+                      //   child: InkWell(
+                      //     child: Text(isBlocked ? "Unblock user" : "Block user"),
+                      //     onTap: () {
+                      //       Navigator.pop(ct);
+                      //       showDialog(
+                      //         Get.context: Get.context,
+                      //         builder: (BuildContext ctx) {
+                      //           return AlertDialog(
+                      //             title: Text(isBlocked ? 'Unblock' : 'Block'),
+                      //             content: Text('Do you want to ' + "${isBlocked ? 'Unblock' : 'Block'} " "${widget.second.name}"),
+                      //             actions: <Widget>[
+                      //               TextButton(
+                      //                 onPressed: () =>
+                      //                     Navigator.of(Get.context).pop(false),
+                      //                 child: Text('No'),
+                      //               ),
+                      //               TextButton(
+                      //                 onPressed: () async {
+                      //                   Navigator.pop(ctx);
+                      //                   if (isBlocked &&
+                      //                       blockedBy == sender.id) {
+                      //                     chatReference.doc('blocked').set({
+                      //                       'isBlocked': !isBlocked,
+                      //                       'blockedBy': sender.id,
+                      //                     });
+                      //                   } else if (!isBlocked) {
+                      //                     chatReference.doc('blocked').set({
+                      //                       'isBlocked': !isBlocked,
+                      //                       'blockedBy': sender.id,
+                      //                     });
+                      //                   } else {
+                      //                     CustomSnackbar.snackbar(
+                      //                         "You can't unblock", _scaffoldKey);
+                      //                   }
+                      //                 },
+                      //                 child: Text('Yes'),
+                      //               ),
+                      //             ],
+                      //           );
+                      //         },
                       //       );
-                      //     return Expanded(
-                      //       child: ListView(
-                      //         reverse: true,
-                      //         children: generateMessages(snapshot, data),
-                      //       ),
-                      //     );
-                      //   },
-                      // ),
-                      Divider(height: 1.0),
-                      GetBuilder<ChatController>(builder: (data){
-                        return Container(
+                      //     },
+                      //   ),
+                      // )
+                    ];
+                  })
+                ]),
+            body: GestureDetector(
+              onTap: () => FocusScope.of(context).unfocus(),
+              child: Scaffold(
+                backgroundColor: primaryColor,
+                body: ClipRRect(
+                  // borderRadius: BorderRadius.only(
+                  //   topLeft: Radius.circular(50.0),
+                  //   topRight: Radius.circular(50.0),
+                  // ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      // image: DecorationImage(
+                      //     fit: BoxFit.fitWidth,
+                      //     image: AssetImage("asset/chat.jpg")),
+                      // borderRadius: BorderRadius.only(
+                      //     topLeft: Radius.circular(50),
+                      //     topRight: Radius.circular(50)),
+                      color: Colors.white
+                    ),
+                    padding: EdgeInsets.all(5),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: <Widget>[
+                        // GetBuilder<ChatController>(builder: (data){
+                        //   if(data.listMessageSnapshot == null){
+                        //     return Container(
+                        //       height: 15,
+                        //       width: 15,
+                        //       child: CircularProgressIndicator(
+                        //         valueColor: AlwaysStoppedAnimation(primaryColor),
+                        //         strokeWidth: 2,
+                        //       ),
+                        //     );
+                        //   }
+                          
+                        //   return Expanded(
+                        //     child: ListView(
+                        //       reverse: true,
+                        //       children: generateMessages(data.listMessageSnapshot, data),
+                        //     ),
+                        //   );
+                        // }),
+                        
+                        if(data.listMessageSnapshot == null)
+                            Container(
+                              height: 15,
+                              width: 15,
+                              child: CircularProgressIndicator(
+                                valueColor: AlwaysStoppedAnimation(primaryColor),
+                                strokeWidth: 2,
+                              ),
+                            ),
+                        if(data.listMessageSnapshot != null)
+                          Expanded(
+                            child: ListView(
+                              reverse: true,
+                              children: generateMessages(data.listMessageSnapshot, data),
+                            ),
+                          ),
+
+                        // StreamBuilder<QuerySnapshot>(
+                        //   stream: chatController.chatReference.orderBy('time', descending: true).snapshots(),
+                        //   builder: (BuildContext Get.context,
+                        //       AsyncSnapshot<QuerySnapshot> snapshot) {
+                        //     if (!snapshot.hasData)
+                        //       return Container(
+                        //         height: 15,
+                        //         width: 15,
+                        //         child: CircularProgressIndicator(
+                        //           valueColor: AlwaysStoppedAnimation(primaryColor),
+                        //           strokeWidth: 2,
+                        //         ),
+                        //       );
+                        //     return Expanded(
+                        //       child: ListView(
+                        //         reverse: true,
+                        //         children: generateMessages(snapshot, data),
+                        //       ),
+                        //     );
+                        //   },
+                        // ),
+                        Divider(height: 1.0),
+                        // GetBuilder<ChatController>(builder: (data){
+                        //   return Container(
+                        //     alignment: Alignment.bottomCenter,
+                        //     decoration:
+                        //         BoxDecoration(color: Theme.of(context).cardColor),
+                        //     child: messageWidget(data),
+                        //   );
+                        // })
+                        Container(
                           alignment: Alignment.bottomCenter,
                           decoration:
                               BoxDecoration(color: Theme.of(context).cardColor),
                           child: messageWidget(data),
-                        );
-                      })
-                      
-                      
-                    ],
+                        )
+                        
+                        
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        )
-    );
+          )
+      );
+    });
+    
   }
 
   Widget messageWidget(ChatController data){
