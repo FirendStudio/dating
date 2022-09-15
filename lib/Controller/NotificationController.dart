@@ -948,8 +948,9 @@ class NotificationController extends GetxController {
       return;
     }
     for(var list in Get.find<ChatController>().listChatSnapshot){
+      print(listTempMatch.length);
       listTempMatch.removeWhere((element) => 
-        Get.find<ChatController>().chatIdCustom(Get.find<TabsController>().currentUser.id, element.id) == list['docId']
+        Get.find<ChatController>().chatIdCustom(Get.find<TabsController>().currentUser.id, element['Matches']) == list['docId']
       );
       Get.find<TabsController>().newmatches.removeWhere((element) {
           // print("Masuk sini : ${element.id}");

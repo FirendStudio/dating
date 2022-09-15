@@ -119,6 +119,45 @@ class Notifications extends StatelessWidget {
                     ]
                   ),
                   if (data.indexNotif == 0) matchesWidget(data),
+                  if(data.indexNotif == 0 && data.listTempMatch.length < 5)
+                    Container(
+                      padding: EdgeInsets.only(
+                        top: 20, bottom: 20,
+                        right: 15, left: 15
+                      ),
+                      margin: EdgeInsets.only(
+                        right: 15, left: 15,
+                        bottom: 30
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.yellow[100],
+                        borderRadius: BorderRadius.all(Radius.circular(10))
+                      ),
+                      child: Column(
+                        children: [
+                          // Text(doc['text'],
+                          // textAlign: TextAlign.center,
+                          //   style: TextStyle(
+                          //     color: Colors.black,
+                          //     fontSize: 16,
+                          //     fontWeight: FontWeight.bold,
+                          //     fontStyle: FontStyle.italic
+                          //   ),
+                          // ),
+                          SizedBox(height: 20,),
+                          Text("Swipe the match to the left if you would like to permanently delete it or swipe right if you would like to block this member."
+                          + "\n\nYou can unblock the member at any time if you choose.",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                              fontWeight: FontWeight.normal,
+                              fontStyle: FontStyle.normal
+                            ),
+                          ),
+                        ],
+                      )
+                    ),
                   if (data.indexNotif == 1) likedWidget(data),
                 ],
               ),
