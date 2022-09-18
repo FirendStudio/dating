@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/Controller/ChatController.dart';
+import 'package:hookup4u/Controller/NotificationController.dart';
 import 'package:hookup4u/Screens/Chat/chatPage.dart';
 import 'package:hookup4u/models/user_model.dart';
 import 'package:hookup4u/util/color.dart';
@@ -60,6 +61,11 @@ class Matches extends StatelessWidget {
                         itemBuilder: (BuildContext context, int index) {
                           return GestureDetector(
                             onTap: () async {
+                              int cek = Get.find<NotificationController>().filterType(data.newmatches[index].id);
+                              if(cek == 2){
+                                Get.snackbar("Information", "Blocked user");
+                                return;
+                              }
                               if(!Get.find<TabsController>().isPuchased){
                                 ArtDialogResponse response = await ArtSweetAlert.show(
                                     barrierDismissible: false,

@@ -369,6 +369,7 @@ class TabsController extends GetxController{
         .listen((ondata) async {
       matches.clear();
       newmatches.clear();
+      Allmatches.clear();
       print(ondata.docs.length);
       List<String> listIDChat = [];
       if (ondata.docs.length > 0) {

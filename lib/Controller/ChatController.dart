@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/Screens/Tab.dart';
@@ -181,16 +182,17 @@ class ChatController extends GetxController {
       'image_url': "",
       'time': FieldValue.serverTimestamp(),
     }).then((value) async {
-      if(type == "notif"){
-        await Get.find<NotificationController>().filterMatches();
-        Get.find<NotificationController>().update();
-        Get.find<TabsController>().update();
-      }
+      // if(type == "notif"){
+      //   await Get.find<NotificationController>().filterMatches();
+      // }
       Get.find<NotificationController>().sendLeaveFCM(
         idUser: second.id,
         name: Get.find<TabsController>().currentUser.name,
       );
+      await Get.find<NotificationController>().filterMatches();
       update();
+      Get.find<NotificationController>().update();
+      Get.find<TabsController>().update();
       if(type=='chat'){
         Get.back();
       }
@@ -290,9 +292,9 @@ class ChatController extends GetxController {
         idUser: second.id,
         name: Get.find<TabsController>().currentUser.name,
       );
-      if(type != "notif"){
-        Get.back();
-      }
+      // if(type != "notif"){
+      //   Get.back();
+      // }
       Get.back();
     });
     
@@ -384,6 +386,17 @@ class ChatController extends GetxController {
   }
 
   disconnectFunction(UserModel sender, UserModel second, String chatId, String type) async {
+    var result = await FirebaseFirestore.instance.collection("chats").doc(chatId).collection('messages')
+    .orderBy('time', descending: true).limit(1).get();
+    
+    if(result.docs.isNotEmpty && result.docs.first['type']=="Leave"){
+      if(kDebugMode){
+        print(result.docs.first['type']);
+      }
+      await FirebaseFirestore.instance.collection("chats").doc(chatId).collection('messages').doc(result.docs.first.id).delete();
+    }
+    // Get.back();
+    // return;
     await FirebaseFirestore.instance.collection("chats").doc(chatId).collection('messages').add({
       'type': 'Disconnect',
       'text': "${sender.name} has blocked you",

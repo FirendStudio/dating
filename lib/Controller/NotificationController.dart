@@ -925,7 +925,7 @@ class NotificationController extends GetxController {
         "pictureUrl"  : element['pictureUrl'],
         "timestamp"   : element['timestamp'],
         "userName"    : element['userName'],
-        "isLeave"     : false,
+        "type"        : 0,
       };
       listTempMatch.add(mapTemp);
     });
@@ -935,55 +935,45 @@ class NotificationController extends GetxController {
       if(listTempMatch.isNotEmpty){
         print("Masuk sini");
         for(var list in listTempMatch){
-          list['isLeave'] = await getNotifLeave(Get.find<ChatController>().
+          list['type'] = await getNotifLeave(Get.find<ChatController>().
           chatIdCustom(Get.find<TabsController>().currentUser.id, list['Matches']));
-          print(list['isLeave']);
-          // var map = {
-          //   "id" : list.id,
-          //   "isLeave" : cek
-          // };
-          // listLeave.add(map);
+          print(list['type']);
         }
       }
       return;
     }
-    for(var list in Get.find<ChatController>().listChatSnapshot){
-      print(listTempMatch.length);
-      listTempMatch.removeWhere((element) => 
-        Get.find<ChatController>().chatIdCustom(Get.find<TabsController>().currentUser.id, element['Matches']) == list['docId']
-      );
-      Get.find<TabsController>().newmatches.removeWhere((element) {
-          // print("Masuk sini : ${element.id}");
-          return Get.find<ChatController>().chatIdCustom(Get.find<TabsController>().currentUser.id, element.id) == list['docId'];
-      });
-      Get.find<TabsController>().matches.removeWhere((element) {
-          print("Masuk sini : ${element.id}");
-          return Get.find<ChatController>().chatIdCustom(Get.find<TabsController>().currentUser.id, element.id) == list['docId'];
-      });
-    }
+    // for(var list in Get.find<ChatController>().listChatSnapshot){
+    //   print(listTempMatch.length);
+    //   listTempMatch.removeWhere((element) => 
+    //     Get.find<ChatController>().chatIdCustom(Get.find<TabsController>().currentUser.id, element['Matches']) == list['docId']
+    //   );
+    //   Get.find<TabsController>().newmatches.removeWhere((element) {
+    //       // print("Masuk sini : ${element.id}");
+    //       return Get.find<ChatController>().chatIdCustom(Get.find<TabsController>().currentUser.id, element.id) == list['docId'];
+    //   });
+    //   Get.find<TabsController>().matches.removeWhere((element) {
+    //       print("Masuk sini : ${element.id}");
+    //       return Get.find<ChatController>().chatIdCustom(Get.find<TabsController>().currentUser.id, element.id) == list['docId'];
+    //   });
+    // }
     if(listTempMatch.isNotEmpty){
       for(var list in listTempMatch){
-          list['isLeave'] = await getNotifLeave(Get.find<ChatController>().
+          list['type'] = await getNotifLeave(Get.find<ChatController>().
           chatIdCustom(Get.find<TabsController>().currentUser.id, list['Matches']));
-          print(list['isLeave']);
-          // var map = {
-          //   "id" : list.id,
-          //   "isLeave" : cek
-          // };
-          // listLeave.add(map);
+          print(list['type']);
         }
     }
   }
 
-  bool filterLeave(String idMatch){
-    if(listLeave.isNotEmpty){
-      var data = listLeave.firstWhereOrNull((element) => element['id'] == idMatch);
+  int filterType(String idMatch){
+    if(listTempMatch.isNotEmpty){
+      var data = listTempMatch.firstWhereOrNull((element) => element['Matches'] == idMatch);
       print(data);
       if(data != null){
-        return data['isLeave'];
+        return data['type'];
       }
     }
-    return false;
+    return 0;
   }
 
   filterLiked(){
@@ -1010,14 +1000,18 @@ class NotificationController extends GetxController {
     }
   }
 
-  Future <bool> getNotifLeave(String idChat) async {
+  Future <int> getNotifLeave(String idChat) async {
     var result = await FirebaseFirestore.instance.collection("chats").
     doc(idChat).collection("messages").limit(1).orderBy('time', descending: true).get();
+    
     if(result.docs.isNotEmpty && result.docs.first['type'] == "Leave"){
-      return true;
+      return 1;
+    }
+    if(result.docs.isNotEmpty && result.docs.first['type'] == "Disconnect"){
+      return 2;
     }
 
-    return false;
+    return 0;
   }
 
 }

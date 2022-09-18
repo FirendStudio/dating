@@ -24,6 +24,7 @@ class RecentChats extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetBuilder<TabsController>(builder: (data){
+      print( "Jumlah Recent Chat : " + data.matches.length.toString());
       return Expanded(
         child: Container(
             decoration: BoxDecoration(

@@ -296,222 +296,389 @@ class Notifications extends StatelessWidget {
       print( "Jumlah Matches : " + data.listMatchUserAll.length.toString());
       return Expanded(
         child: ListView.builder(
-            itemCount: data.listTempMatch.length,
-            itemBuilder: (BuildContext context, int index) {
-              Map doc = data.listTempMatch[index];
-              // bool cekLeave = data.filterLeave(doc);
-              return Slidable(
-                key: const ValueKey(0),
-                startActionPane: ActionPane(
-                  extentRatio: 1/4,
-                  motion: const ScrollMotion(),
-                  dragDismissible: false,
-                  children: [
-                    SlidableAction(
-                      onPressed: (BuildContext context) async {
-                        var dataUserReceive = await data.db.collection("Users").doc(doc['Matches']).get();
-                        UserModel tempuser;
-                        if (!dataUserReceive.exists) {
-                          Get.snackbar("Info", "User not exist");
-                          return;
-                          // if (mounted) setState(() {});
-                        }
-                        tempuser            = UserModel.fromDocument(dataUserReceive);
-                        tempuser.distanceBW = Get.find<TabsController>().calculateDistance(
-                            currentUser.coordinates['latitude'],
-                            currentUser.coordinates['longitude'],
-                            tempuser.coordinates['latitude'],
-                            tempuser.coordinates['longitude'])
-                            .round();
-                        String idChat = chatId(currentUser, tempuser);
-                        var resultChat = await FirebaseFirestore.instance.collection("chats").doc(idChat).get();
-                        if(!resultChat.exists){
-                          Get.find<ChatController>().setNewOptionMessage(idChat);
-                        }
-
-                        if(!doc['isLeave']){
-                          Get.find<ChatController>().leaveWidget(currentUser, tempuser, idChat, "notif");
-                          return;
-                        }
-                        var chatList = await FirebaseFirestore.instance.collection("chats").doc(idChat).collection("messages").limit(1).orderBy('time', descending: true).get();
-                        print(chatList.docs.length);
-                        if(chatList.docs.isEmpty){
-                          Get.snackbar("Info", "Message Not Found");
-                        }
-                        Get.find<ChatController>().restoreLeaveWidget(currentUser, tempuser, chatList.docs.first.id, idChat, "notif");
-                      },
-                      backgroundColor: (!doc['isLeave'])?Color(0xFFFE4A49) : Colors.green[600],
-                      foregroundColor: Colors.white,
-                      icon: (!doc['isLeave'])?Icons.block : Icons.restore,
-                      // label: 'Delete',
-                    ),
-                  ],
-                ),
-                // The end action pane is the one at the right or the bottom side.
-                endActionPane: ActionPane(
-                  extentRatio: 1/4,
-                  motion: ScrollMotion(),
-                  children: [
-                    SlidableAction(
-                      onPressed: (BuildContext context) async {
-                        var dataUserReceive = await data.db.collection("Users").doc(doc['Matches']).get();
-                        UserModel tempuser;
-                        if (!dataUserReceive.exists) {
-                          Get.snackbar("Info", "User not exist");
-                          return;
-                          // if (mounted) setState(() {});
-                        }
-                        tempuser            = UserModel.fromDocument(dataUserReceive);
-                        tempuser.distanceBW = Get.find<TabsController>().calculateDistance(
-                            currentUser.coordinates['latitude'],
-                            currentUser.coordinates['longitude'],
-                            tempuser.coordinates['latitude'],
-                            tempuser.coordinates['longitude'])
-                            .round();
-                        String idChat = chatId(currentUser, tempuser);
-                        var resultChat = await FirebaseFirestore.instance.collection("chats").doc(idChat).get();
-                        if(!resultChat.exists){
-                          Get.find<ChatController>().setNewOptionMessage(idChat);
-                        }
-                        Get.find<ChatController>().disconnectWidget(currentUser, tempuser, idChat, 'notif');
-                      },
-                      backgroundColor: Color(0xFF0392CF),
-                      foregroundColor: Colors.white,
-                      icon: Icons.delete,
-                      // label: 'Save',
-                    ),
-                  ],
-                ),
-                child:Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        // color: !doc.data['isRead']
-                        color: !doc['isRead']
-                            ? primaryColor.withOpacity(.15)
-                            : secondryColor.withOpacity(.15)),
-                      child: ListTile(
-                        contentPadding: EdgeInsets.all(5),
-                        leading: CircleAvatar(
-                          radius: 25,
-                          backgroundColor: secondryColor,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(
-                              25,
-                            ),
-                            child: CachedNetworkImage(
-                              imageUrl: doc['pictureUrl'] ?? "",
-                              fit: BoxFit.cover,
-                              useOldImageOnUrlChange: true,
-                              placeholder: (context, url) =>
-                                  CupertinoActivityIndicator(
-                                radius: 20,
-                              ),
-                              errorWidget: (context, url, error) => Icon(
-                                Icons.error,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
-                        ),
-                        title:
-                            Text("you are matched with ${doc['userName'] ?? ""}"),
-                        subtitle: Text(
-                          DateFormat.MMMd('en_US')
-                              .add_jm()
-                              .format(doc['timestamp'].toDate())
-                              .toString(),
-                        ),
-                        trailing: Padding(
-                          padding: const EdgeInsets.only(right: 10),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: <Widget>[
-                              // !doc.data['isRead']
-                              !doc['isRead']
-                                  ? Container(
-                                      width: 40.0,
-                                      height: 20.0,
-                                      decoration: BoxDecoration(
-                                        color: primaryColor,
-                                        borderRadius: BorderRadius.circular(30.0),
-                                      ),
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        'NEW',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 12.0,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    )
-                                  : Text(""),
-                            ],
-                          ),
-                        ),
-                        onTap: () async {
-                          // print(doc.data["Matches"]);
-
-                          showDialog(
-                              context: context,
-                              builder: (context) {
-                                return Center(
-                                    child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  valueColor:
-                                      AlwaysStoppedAnimation<Color>(Colors.white),
-                                ));
-                              });
-                          print(doc["Matches"]);
-                          await data.initRelationPartner(Uid: doc['Matches']);
-                          print("Cek Relation : " +
-                              data.relationUserPartner.inRelationship.toString());
-                          if (data.relationUserPartner.inRelationship) {
-                            await data.initUserPartner(
-                                Uid: data.relationUserPartner.partner.partnerId);
-                          }
-                          DocumentSnapshot userdoc = await data.db
-                              .collection("Users")
-                              .doc(doc["Matches"])
-                              .get();
-                          if (userdoc.exists) {
-                            Navigator.pop(context);
-                            UserModel tempuser = UserModel.fromDocument(userdoc);
-                            tempuser.distanceBW = Get.find<TabsController>()
-                                .calculateDistance(
-                                    currentUser.coordinates['latitude'],
-                                    currentUser.coordinates['longitude'],
-                                    tempuser.coordinates['latitude'],
-                                    tempuser.coordinates['longitude'])
-                                .round();
-
-                            await showDialog(
-                                barrierDismissible: false,
-                                context: context,
-                                builder: (context) {
-                                  // if (!doc.data["isRead"]) {
-                                  if (!doc["isRead"]) {
-                                    FirebaseFirestore.instance
-                                        .collection(
-                                            "/Users/${Get.find<LoginController>().userId}/Matches")
-                                        .doc('${doc["Matches"]}')
-                                        .update({'isRead': true});
-                                  }
-                                  Get.find<NotificationController>()
-                                      .cekFirstInfo(tempuser);
-                                  return Info(tempuser, currentUser, null, "");
-                                });
-                          }
-                        },
-                      )
-                      //  : Container()
-                      ),
-                  )
-              );
-            }),
+          itemCount: data.listTempMatch.length,
+          itemBuilder: (BuildContext context, int index) {
+            Map doc = data.listTempMatch[index];
+            // bool cekLeave = data.filterLeave(doc);
+            if(doc['type'] == 2){
+              return blockedWidget(doc, context, data);
+            }
+            return normalWidget(doc, context, data);
+          }),
       );
     });
+  }
+
+  normalWidget(Map<dynamic, dynamic> doc, BuildContext context, NotificationController data){
+    return Slidable(
+      key: const ValueKey(0),
+      startActionPane: ActionPane(
+        extentRatio: 1/4,
+        motion: const ScrollMotion(),
+        dragDismissible: false,
+        children: [
+          SlidableAction(
+            onPressed: (BuildContext context) async {
+              var dataUserReceive = await data.db.collection("Users").doc(doc['Matches']).get();
+              UserModel tempuser;
+              if (!dataUserReceive.exists) {
+                Get.snackbar("Info", "User not exist");
+                return;
+                // if (mounted) setState(() {});
+              }
+              tempuser            = UserModel.fromDocument(dataUserReceive);
+              tempuser.distanceBW = Get.find<TabsController>().calculateDistance(
+                  currentUser.coordinates['latitude'],
+                  currentUser.coordinates['longitude'],
+                  tempuser.coordinates['latitude'],
+                  tempuser.coordinates['longitude'])
+                  .round();
+              String idChat = chatId(currentUser, tempuser);
+              var resultChat = await FirebaseFirestore.instance.collection("chats").doc(idChat).get();
+              if(!resultChat.exists){
+                Get.find<ChatController>().setNewOptionMessage(idChat);
+              }
+
+              if(doc['type'] != 1){
+                Get.find<ChatController>().leaveWidget(currentUser, tempuser, idChat, "notif");
+                return;
+              }
+              var chatList = await FirebaseFirestore.instance.collection("chats").doc(idChat).collection("messages").limit(1).orderBy('time', descending: true).get();
+              print(chatList.docs.length);
+              if(chatList.docs.isEmpty){
+                Get.snackbar("Info", "Message Not Found");
+              }
+              Get.find<ChatController>().restoreLeaveWidget(currentUser, tempuser, chatList.docs.first.id, idChat, "notif");
+            },
+            backgroundColor: (doc['type'] != 1)?Color(0xFFFE4A49) : Colors.green[600],
+            foregroundColor: Colors.white,
+            icon: (doc['type'] != 1)?Icons.block : Icons.restore,
+            // label: 'Delete',
+          ),
+        ],
+      ),
+      // The end action pane is the one at the right or the bottom side.
+      endActionPane: ActionPane(
+        extentRatio: 1/4,
+        motion: ScrollMotion(),
+        children: [
+          SlidableAction(
+            onPressed: (BuildContext context) async {
+              var dataUserReceive = await data.db.collection("Users").doc(doc['Matches']).get();
+              UserModel tempuser;
+              if (!dataUserReceive.exists) {
+                Get.snackbar("Info", "User not exist");
+                return;
+                // if (mounted) setState(() {});
+              }
+              tempuser            = UserModel.fromDocument(dataUserReceive);
+              tempuser.distanceBW = Get.find<TabsController>().calculateDistance(
+                  currentUser.coordinates['latitude'],
+                  currentUser.coordinates['longitude'],
+                  tempuser.coordinates['latitude'],
+                  tempuser.coordinates['longitude'])
+                  .round();
+              String idChat = chatId(currentUser, tempuser);
+              var resultChat = await FirebaseFirestore.instance.collection("chats").doc(idChat).get();
+              if(!resultChat.exists){
+                Get.find<ChatController>().setNewOptionMessage(idChat);
+              }
+              Get.find<ChatController>().disconnectWidget(currentUser, tempuser, idChat, 'notif');
+            },
+            backgroundColor: Color(0xFF0392CF),
+            foregroundColor: Colors.white,
+            icon: Icons.delete,
+            // label: 'Save',
+          ),
+        ],
+      ),
+      child:Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              // color: !doc.data['isRead']
+              color: !doc['isRead']
+                  ? primaryColor.withOpacity(.15)
+                  : secondryColor.withOpacity(.15)),
+            child: ListTile(
+              contentPadding: EdgeInsets.all(5),
+              leading: CircleAvatar(
+                radius: 25,
+                backgroundColor: secondryColor,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(
+                    25,
+                  ),
+                  child: CachedNetworkImage(
+                    imageUrl: doc['pictureUrl'] ?? "",
+                    fit: BoxFit.cover,
+                    useOldImageOnUrlChange: true,
+                    placeholder: (context, url) =>
+                        CupertinoActivityIndicator(
+                      radius: 20,
+                    ),
+                    errorWidget: (context, url, error) => Icon(
+                      Icons.error,
+                      color: Colors.black,
+                    ),
+                  ),
+                ),
+              ),
+              title:
+                  Text("You are matched with ${doc['userName'] ?? ""}"),
+              subtitle: Text(
+                DateFormat.MMMd('en_US')
+                    .add_jm()
+                    .format(doc['timestamp'].toDate())
+                    .toString(),
+              ),
+              trailing: Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    // !doc.data['isRead']
+                    !doc['isRead']
+                        ? Container(
+                            width: 40.0,
+                            height: 20.0,
+                            decoration: BoxDecoration(
+                              color: primaryColor,
+                              borderRadius: BorderRadius.circular(30.0),
+                            ),
+                            alignment: Alignment.center,
+                            child: Text(
+                              'NEW',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          )
+                        : Text(""),
+                  ],
+                ),
+              ),
+              onTap: () async {
+                // print(doc.data["Matches"]);
+
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return Center(
+                          child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(Colors.white),
+                      ));
+                    });
+                print(doc["Matches"]);
+                await data.initRelationPartner(Uid: doc['Matches']);
+                print("Cek Relation : " +
+                    data.relationUserPartner.inRelationship.toString());
+                if (data.relationUserPartner.inRelationship) {
+                  await data.initUserPartner(
+                      Uid: data.relationUserPartner.partner.partnerId);
+                }
+                DocumentSnapshot userdoc = await data.db
+                    .collection("Users")
+                    .doc(doc["Matches"])
+                    .get();
+                if (userdoc.exists) {
+                  Navigator.pop(context);
+                  UserModel tempuser = UserModel.fromDocument(userdoc);
+                  tempuser.distanceBW = Get.find<TabsController>()
+                      .calculateDistance(
+                          currentUser.coordinates['latitude'],
+                          currentUser.coordinates['longitude'],
+                          tempuser.coordinates['latitude'],
+                          tempuser.coordinates['longitude'])
+                      .round();
+
+                  await showDialog(
+                      barrierDismissible: false,
+                      context: context,
+                      builder: (context) {
+                        // if (!doc.data["isRead"]) {
+                        if (!doc["isRead"]) {
+                          FirebaseFirestore.instance
+                              .collection(
+                                  "/Users/${Get.find<LoginController>().userId}/Matches")
+                              .doc('${doc["Matches"]}')
+                              .update({'isRead': true});
+                        }
+                        Get.find<NotificationController>()
+                            .cekFirstInfo(tempuser);
+                        return Info(tempuser, currentUser, null, "");
+                      });
+                }
+              },
+            )
+            //  : Container()
+            ),
+        )
+    );
+  }
+
+  blockedWidget(Map<dynamic, dynamic> doc, BuildContext context, NotificationController data){
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            // color: !doc.data['isRead']
+            color:secondryColor.withOpacity(.15)),
+          child: ListTile(
+            contentPadding: EdgeInsets.all(5),
+            leading: CircleAvatar(
+              radius: 25,
+              backgroundColor: secondryColor,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(
+                  25,
+                ),
+                child: CachedNetworkImage(
+                  imageUrl: doc['pictureUrl'] ?? "",
+                  fit: BoxFit.cover,
+                  useOldImageOnUrlChange: true,
+                  placeholder: (context, url) =>
+                      CupertinoActivityIndicator(
+                    radius: 20,
+                  ),
+                  errorWidget: (context, url, error) => Icon(
+                    Icons.error,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+            ),
+            title:
+                Text("You are matched with ${doc['userName'] ?? ""}"),
+            subtitle:Column(
+              children: [
+                SizedBox(height: 6,),
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child:Container(
+                        width: 40.0,
+                        height: 25.0,
+                        decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.circular(30.0),
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          'Disconnected',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ), 
+                    ),
+                    Expanded(
+                      flex: 4,
+                      child: Text(""))
+                  ],
+                ),
+              ],
+            ),
+            // subtitle: Text(
+            //   DateFormat.MMMd('en_US')
+            //       .add_jm()
+            //       .format(doc['timestamp'].toDate())
+            //       .toString(),
+            // ),
+            // trailing: Padding(
+            //   padding: const EdgeInsets.only(right: 10),
+            //   child: Column(
+            //     mainAxisAlignment: MainAxisAlignment.spaceAround,
+            //     children: <Widget>[
+            //       // !doc.data['isRead']
+            //       !doc['isRead']
+            //           ? Container(
+            //               width: 40.0,
+            //               height: 20.0,
+            //               decoration: BoxDecoration(
+            //                 color: primaryColor,
+            //                 borderRadius: BorderRadius.circular(30.0),
+            //               ),
+            //               alignment: Alignment.center,
+            //               child: Text(
+            //                 'NEW',
+            //                 style: TextStyle(
+            //                   color: Colors.white,
+            //                   fontSize: 12.0,
+            //                   fontWeight: FontWeight.bold,
+            //                 ),
+            //               ),
+            //             )
+            //           : Text(""),
+            //     ],
+            //   ),
+            // ),
+            onTap: () async {
+              // print(doc.data["Matches"]);
+              Get.snackbar("Information", "Blocked user");
+              // showDialog(
+              //     context: context,
+              //     builder: (context) {
+              //       return Center(
+              //           child: CircularProgressIndicator(
+              //         strokeWidth: 2,
+              //         valueColor:
+              //             AlwaysStoppedAnimation<Color>(Colors.white),
+              //       ));
+              //     });
+              // print(doc["Matches"]);
+              // await data.initRelationPartner(Uid: doc['Matches']);
+              // print("Cek Relation : " +
+              //     data.relationUserPartner.inRelationship.toString());
+              // if (data.relationUserPartner.inRelationship) {
+              //   await data.initUserPartner(
+              //       Uid: data.relationUserPartner.partner.partnerId);
+              // }
+              // DocumentSnapshot userdoc = await data.db
+              //     .collection("Users")
+              //     .doc(doc["Matches"])
+              //     .get();
+              // if (userdoc.exists) {
+              //   Navigator.pop(context);
+              //   UserModel tempuser = UserModel.fromDocument(userdoc);
+              //   tempuser.distanceBW = Get.find<TabsController>()
+              //       .calculateDistance(
+              //           currentUser.coordinates['latitude'],
+              //           currentUser.coordinates['longitude'],
+              //           tempuser.coordinates['latitude'],
+              //           tempuser.coordinates['longitude'])
+              //       .round();
+
+              //   await showDialog(
+              //       barrierDismissible: false,
+              //       context: context,
+              //       builder: (context) {
+              //         // if (!doc.data["isRead"]) {
+              //         if (!doc["isRead"]) {
+              //           FirebaseFirestore.instance
+              //               .collection(
+              //                   "/Users/${Get.find<LoginController>().userId}/Matches")
+              //               .doc('${doc["Matches"]}')
+              //               .update({'isRead': true});
+              //         }
+              //         Get.find<NotificationController>()
+              //             .cekFirstInfo(tempuser);
+              //         return Info(tempuser, currentUser, null, "");
+              //       });
+              // }
+            },
+          )
+          //  : Container()
+          ),
+      );
   }
 }
