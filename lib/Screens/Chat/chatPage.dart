@@ -316,6 +316,9 @@ class _ChatPageState extends State<ChatPage> {
     if(data.listMessageSnapshot.docs.isNotEmpty && data.listMessageSnapshot.docs.first['type'] == "Leave"){
       return Container();
     }
+    if(data.listMessageSnapshot.docs.isNotEmpty && data.listMessageSnapshot.docs.first['type'] == "Disconnect"){
+      return Container();
+    }
     return  _buildTextComposer(data);
   }
 
@@ -753,7 +756,59 @@ class _ChatPageState extends State<ChatPage> {
                 )
               )
             ),
-            Container()
+            if(doc['sender_id'] == widget.sender.id)
+            Expanded(
+              child:Container(
+                padding: EdgeInsets.only(
+                  top: 20, bottom: 20,
+                  right: 15, left: 15
+                ),
+                margin: EdgeInsets.only(
+                  right: 15, left: 15
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.yellow[100],
+                  borderRadius: BorderRadius.all(Radius.circular(10))
+                ),
+                child: Column(
+                  children: [
+                    Text("You are now permanently disconnected from this member",
+                    textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        fontStyle: FontStyle.normal
+                      ),
+                    ),
+                    SizedBox(height: 10,),
+                    InkWell(
+                      onTap: (){
+                        data.clearChatHistory();
+                      },
+                      child: Container(
+                        // width:150,
+                        padding:EdgeInsets.only(
+                          left:18, right: 18, top: 12, bottom: 12
+                        ),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(5)),
+                          color:Colors.black
+                        ),
+                        child:Text("Clear Chat History", 
+                          textAlign:TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold
+                          ),
+                        )
+                      )
+                    ),
+                    
+                  ],
+                )
+              )
+            ),
           ]
           : doc['type'] == "Leave"?[
             (doc['sender_id'] != widget.sender.id)?
@@ -826,7 +881,7 @@ class _ChatPageState extends State<ChatPage> {
                       ),
                       SizedBox(height: 20,),
                       Container(
-                        width:150,
+                        // width:150,
                         padding:EdgeInsets.only(
                           left:18, right: 18, top: 12, bottom: 12
                         ),

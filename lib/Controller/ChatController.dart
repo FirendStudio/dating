@@ -492,6 +492,9 @@ class ChatController extends GetxController {
       CustomSnackbar.snackbar("Blocked !", scaffoldKey);
     }
   }
+  clearChatHistory(){
+    print("test");
+  }
 }
 
 Future<void> handleCameraAndMic(callType) async {
