@@ -21,25 +21,34 @@ class ChatController extends GetxController {
   bool isWritting = false;
   StreamSubscription<QuerySnapshot> streamMessage;
   StreamSubscription<QuerySnapshot> streamChat;
-  QuerySnapshot listMessageSnapshot;
+  List<QueryDocumentSnapshot<Map<String, dynamic>>> listMessageSnapshot = [];
+  List<QueryDocumentSnapshot<Map<String, dynamic>>> listMessageSnapshotAll = [];
   List<QueryDocumentSnapshot<Map<String, dynamic>>> listChatSnapshot = [];
   bool checkStreamChat = false;
+  DocumentSnapshot selectedChat;
 
   initChatScreen(String chatId) async {
+    selectedChat = null;
     print("object    -${chatId}");
     streamMessage = null;
-    var check = await FirebaseFirestore.instance.collection("chats").doc(chatId).get();
-    print(check.id);
-    if(!check.exists){
+    selectedChat = await FirebaseFirestore.instance.collection("chats").doc(chatId).get();
+    print(selectedChat.id);
+    if(!selectedChat.exists){
       print("Not Exist");
       setNewOptionMessage(chatId);
+      selectedChat = await FirebaseFirestore.instance.collection("chats").doc(chatId).get();
     }
     chatReference = db.collection("chats").doc(chatId).collection('messages');
     streamMessage = chatReference
       .orderBy('time', descending: true)
       .snapshots()
-      .listen((event) {
-        listMessageSnapshot = event;
+      .listen((event) async {
+        if(event.docs.isNotEmpty){
+          listMessageSnapshot = event.docs;
+          listMessageSnapshotAll = event.docs;
+        }
+        filterChatHistory(chatId);
+        await Get.find<NotificationController>().filterMatches();
         update();
     });
     
@@ -64,10 +73,7 @@ class ChatController extends GetxController {
     streamChat = FirebaseFirestore.instance.collection("chats").where("active", isEqualTo: false).where("docId", whereIn: listIDChat).snapshots().listen((event) async {
       print("Masuk List Chat");
       listChatSnapshot = event.docs;
-      // if(event.docs.isNotEmpty){
-      //   print(event.docs.first.data());
-        
-      // }
+      getSelectedChat(event.docs);
       await Get.find<NotificationController>().filterMatches();
       checkStreamChat = true;
       Get.find<NotificationController>().update();
@@ -76,16 +82,32 @@ class ChatController extends GetxController {
       print("Jumlah docs : " + event.docs.length.toString());
     });
   }
+  
+  getSelectedChat(List<QueryDocumentSnapshot<Map<String, dynamic>>> list){
+    if(list.isEmpty || selectedChat == null){
+      return;
+    }
+    for(var value in list){
+      if(selectedChat.id == value.id){
+        selectedChat = value;
+        filterChatHistory(selectedChat.id);
+        break;
+      }
+    }
+  }
 
   setNewOptionMessage(String chatId){
     FirebaseFirestore.instance.collection("chats").doc(chatId).set({
       "active" : true,
-      "docId" : chatId
+      "docId" : chatId,
+      "isclear1" : false,
+      "isclear2" : false,
     });
   }
 
   onback() {
     streamMessage.cancel();
+    selectedChat = null;
     // Get.back();
   }
   leaveWidget(UserModel sender, UserModel second, String idChat, String type) async {
@@ -409,19 +431,15 @@ class ChatController extends GetxController {
     FirebaseFirestore.instance.collection("chats").doc(chatId).set({
       "active" : false,
       "docId" : chatId
-    }).then((value) {
+    },SetOptions(merge : true)).then((value) {
       Get.find<NotificationController>().sendDisconnectFCM(
         idUser: second.id,
         name: Get.find<TabsController>().currentUser.name,
       );
-      if(type=="notif"){
-        Get.back();
-        return;
-      }
-      Get.to(()=>Tabbar(null, null));
+      Get.back();
+      // Get.to(()=>Tabbar(null, null));
     });
   }
-
 
   Future<Null> sendText(String text, UserModel sender, UserModel second) async {
     textController.clear();
@@ -492,8 +510,64 @@ class ChatController extends GetxController {
       CustomSnackbar.snackbar("Blocked !", scaffoldKey);
     }
   }
-  clearChatHistory(){
-    print("test");
+
+  clearChatHistory(String chatId){
+    Map<String, dynamic> doc = selectedChat.data();
+    String clearID = "";
+    var split = chatId.split("-");
+    if(split[0] == Get.find<TabsController>().currentUser.id){
+      clearID = "isclear1";
+      if(doc['isclear1']){
+        Get.snackbar("Information", "You've already clear history");
+        return;
+      }
+    }
+    if(split[1] == Get.find<TabsController>().currentUser.id){
+      clearID = "isclear2";
+      if(doc['isclear2']){
+        Get.snackbar("Information", "You've already clear history");
+        return;
+      }
+    }
+    FirebaseFirestore.instance.collection("chats").doc(chatId).set({
+      clearID : true,
+    },SetOptions(merge : true)).then((value) async {
+      selectedChat = await FirebaseFirestore.instance.collection("chats").doc(chatId).get();
+      filterChatHistory(chatId);
+    });
+  }
+
+  filterChatHistory(String chatId) {
+    if(listMessageSnapshotAll.isEmpty || selectedChat == null || !selectedChat.exists){
+      return;
+    }
+    listMessageSnapshot = [];
+    listMessageSnapshot.addAll(listMessageSnapshotAll);
+    Map<String, dynamic> doc = selectedChat.data();
+    // print(doc);
+    // print("Masuk sini");
+    bool check = false;
+    var split = chatId.split("-");
+    if(split[0] == Get.find<TabsController>().currentUser.id && doc['isclear1'] == true){
+      check = true;
+    }
+    if(split[1] == Get.find<TabsController>().currentUser.id && doc['isclear2'] == true){
+      check = true;
+    }
+    if(check){
+      listMessageSnapshot.removeWhere((element) {
+        Map<String, dynamic> docElement = element.data();
+        // print(docElement['type']);
+        bool cek = docElement['type']!="Disconnect";
+        // print(cek);
+        
+        return cek;
+      });
+      // print("Jumlah Message : " + listMessageSnapshot.length.toString());
+    }
+    
+    update();
+    
   }
 }
 

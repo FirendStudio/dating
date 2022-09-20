@@ -98,7 +98,7 @@ class _ChatPageState extends State<ChatPage> {
                               )),
                         ),
                       ),
-                      if(data.listMessageSnapshot == null || data.listMessageSnapshot.docs.isEmpty || data.listMessageSnapshot.docs.first['type'] != "Leave")
+                      if(data.listMessageSnapshot.isEmpty || data.listMessageSnapshot.first['type'] != "Leave")
                       PopupMenuItem(
                         value: 'value2',
                         child: InkWell(
@@ -113,16 +113,16 @@ class _ChatPageState extends State<ChatPage> {
                               )),
                         ),
                       ),
-                      if(data.listMessageSnapshot != null && data.listMessageSnapshot.docs.isNotEmpty && data.listMessageSnapshot.docs.first['type'] == "Leave")
+                      if(data.listMessageSnapshot.isNotEmpty && data.listMessageSnapshot.first['type'] == "Leave")
                         PopupMenuItem(
                           value: 'value2',
                           child: InkWell(
                             onTap: () {
-                              if(data.listMessageSnapshot.docs.first['sender_id'] != widget.sender.id){
+                              if(data.listMessageSnapshot.first['sender_id'] != widget.sender.id){
                                 Get.snackbar("Information", "Sorry you are not authorized");
                                 return;
                               }
-                              data.restoreLeaveWidget(widget.sender, widget.second, data.listMessageSnapshot.docs.first.id, widget.chatId, "chat");
+                              data.restoreLeaveWidget(widget.sender, widget.second, data.listMessageSnapshot.first.id, widget.chatId, "chat");
                             },
                             child: Container(
                                 // width: 150,
@@ -313,10 +313,10 @@ class _ChatPageState extends State<ChatPage> {
     if(chatController.isBlocked){
       return Text("Sorry You can't send message!");
     }
-    if(data.listMessageSnapshot.docs.isNotEmpty && data.listMessageSnapshot.docs.first['type'] == "Leave"){
+    if(data.listMessageSnapshot.isNotEmpty && data.listMessageSnapshot.first['type'] == "Leave"){
       return Container();
     }
-    if(data.listMessageSnapshot.docs.isNotEmpty && data.listMessageSnapshot.docs.first['type'] == "Disconnect"){
+    if(data.listMessageSnapshot.isNotEmpty && data.listMessageSnapshot.first['type'] == "Disconnect"){
       return Container();
     }
     return  _buildTextComposer(data);
@@ -710,8 +710,8 @@ class _ChatPageState extends State<ChatPage> {
     return _messagesIsRead(documentSnapshot, data);
   }
 
-  generateMessages(QuerySnapshot snapshot, ChatController data) {
-    return snapshot.docs.map<Widget>((doc) => Container(
+  generateMessages(List<QueryDocumentSnapshot<Map<String, dynamic>>> snapshot, ChatController data) {
+    return snapshot.map<Widget>((doc) => Container(
       margin: const EdgeInsets.symmetric(vertical: 10.0),
       child: new Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -784,7 +784,7 @@ class _ChatPageState extends State<ChatPage> {
                     SizedBox(height: 10,),
                     InkWell(
                       onTap: (){
-                        data.clearChatHistory();
+                        data.clearChatHistory(widget.chatId);
                       },
                       child: Container(
                         // width:150,
@@ -854,7 +854,7 @@ class _ChatPageState extends State<ChatPage> {
             :Expanded(
               child:InkWell(
                 onTap:() async{
-                  data.restoreLeaveWidget(widget.sender, widget.second, data.listMessageSnapshot.docs.first.id, widget.chatId, "chat");
+                  data.restoreLeaveWidget(widget.sender, widget.second, data.listMessageSnapshot.first.id, widget.chatId, "chat");
                 },
                 child:Container(
                   padding: EdgeInsets.only(
