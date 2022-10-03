@@ -1,20 +1,14 @@
 import 'dart:io';
 import 'package:apple_sign_in/apple_sign_in.dart' as i;
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/Controller/LoginController.dart';
-import 'package:hookup4u/Screens/Tab.dart';
-import 'package:hookup4u/Screens/Welcome.dart';
 import 'package:hookup4u/Screens/auth/otp.dart';
-import 'package:hookup4u/models/custom_web_view.dart';
 import 'package:hookup4u/util/Global.dart';
 import 'package:hookup4u/util/color.dart';
-import 'package:url_launcher/url_launcher.dart';
-// import 'package:easy_localization/easy_localization.dart';
 
 class Login extends StatelessWidget {
   LoginController loginController = Get.put(LoginController());
@@ -186,32 +180,91 @@ class Login extends StatelessWidget {
                     ),
                   ),
                 ),
-                Platform.isIOS
-                    ? Padding(
-                        padding: EdgeInsets.only(
-                            bottom: 10.0,
-                          left: Get.width * 0.1,
-                          right: Get.width * 0.1,
-                        ),
-                        child: i.AppleSignInButton(
-                          style: i.ButtonStyle.black,
-                          cornerRadius: 50,
-                          type: i.ButtonType.defaultButton,
-                          onPressed: () async {
-                            final User currentUser = await loginController.handleAppleLogin(_scaffoldKey).catchError((onError) {
-                              SnackBar snackBar =
-                                  SnackBar(content: Text(onError.toString()));
-                              _scaffoldKey.currentState.showSnackBar(snackBar);
-                            });
-                            if (currentUser != null) {
-                              print('usernaem ${currentUser.displayName} \n photourl ${currentUser.photoURL}');
-                              // await _setDataUser(currentUser);
-                              loginController.navigationCheck(currentUser, context, "apple.com");
-                            }
+
+                if(Platform.isIOS)
+                  Padding(
+                    padding: EdgeInsets.only(
+                        bottom: 10.0,
+                      left: Get.width * 0.1,
+                      right: Get.width * 0.1,
+                    ),
+                    child: i.AppleSignInButton(
+                      style: i.ButtonStyle.black,
+                      cornerRadius: 50,
+                      type: i.ButtonType.defaultButton,
+                      onPressed: () async {
+                        final User currentUser = await loginController.handleAppleLogin(_scaffoldKey).catchError((onError) {
+                          SnackBar snackBar =
+                              SnackBar(content: Text(onError.toString()));
+                          _scaffoldKey.currentState.showSnackBar(snackBar);
+                        });
+                        if (currentUser != null) {
+                          print('usernaem ${currentUser.displayName} \n photourl ${currentUser.photoURL}');
+                          // await _setDataUser(currentUser);
+                          loginController.navigationCheck(currentUser, context, "apple.com");
+                        }
+                      },
+                    ),
+                  ),
+                if(Platform.isAndroid)
+                  Padding(
+                    padding: EdgeInsets.only(top: 10, bottom: 10,
+                      left: Get.width * 0.1,
+                      right: Get.width * 0.1,
+                    ),
+                    child: Material(
+                      // color: Colors.greenAccent,
+                      elevation: 2.0,
+                      borderRadius: BorderRadius.all(Radius.circular(30)),
+                      child: Padding(
+                        padding: const EdgeInsets.all(6.0),
+                        child: InkWell(
+                          child: Container(
+                              decoration: BoxDecoration(
+                                // color: Colors.white,
+                                shape: BoxShape.rectangle,
+                                borderRadius: BorderRadius.circular(25),
+                                // gradient: LinearGradient(
+                                //   begin: Alignment.topRight,
+                                //   end: Alignment.bottomLeft,
+                                //   colors: [
+                                //     Colors.white,
+                                //     Colors.white,
+                                //     Colors.white,
+                                //     Colors.white
+                                //   ]
+                                // )
+                              ),
+                              height: MediaQuery.of(context).size.height * .065,
+                              width: MediaQuery.of(context).size.width * .8,
+                              child: Center(
+                                  child: Text(
+                                "LOGIN WITH GOOGLE".toString(),
+                                style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 16,
+                                    fontFamily: Global.font,
+                                    fontWeight: FontWeight.bold),
+                              ))),
+                          onTap: () async {
+                            showDialog(
+                                context: context,
+                                builder: (context) => Container(
+                                    height: 30,
+                                    width: 30,
+                                    child: Center(
+                                        child: CupertinoActivityIndicator(
+                                      key: UniqueKey(),
+                                      radius: 20,
+                                      animating: true,
+                                    ))));
+                            await loginController.handleGoogleLogin(context);
                           },
                         ),
-                      )
-                    : Container(),
+                      ),
+                    ),
+                  ),
+                
                 InkWell(
                   onTap: (){
                     bool updateNumber = false;

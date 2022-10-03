@@ -159,6 +159,9 @@ class _MyAppState extends State<MyApp> {
     if (user != null) {
       print("ID User : " + user.uid);
       String metode = "";
+      user.providerData.forEach((element) {
+        print(element.providerId);
+      });
       String cek = user.providerData[0].providerId;
       print(cek);
       QuerySnapshot userAuth =

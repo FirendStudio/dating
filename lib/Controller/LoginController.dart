@@ -4,13 +4,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:hookup4u/models/user_model.dart';
-import 'package:image_cropper/image_cropper.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:apple_sign_in/apple_sign_in.dart' as i;
@@ -19,10 +17,8 @@ import '../Screens/Tab.dart';
 import '../Screens/Welcome.dart';
 import '../Screens/Welcome/AllowLocation.dart';
 import '../models/custom_web_view.dart';
-import '../util/color.dart';
 import 'NotificationController.dart';
 import 'TabsController.dart';
-import 'package:image/image.dart' as a;
 
 class LoginController extends GetxController{
   static const your_client_id = '709280423766575';
@@ -32,6 +28,14 @@ class LoginController extends GetxController{
   String userId = "";
   final EditProfileState editProfileState = EditProfileState();
   double progress = 0.0;
+  final GoogleSignIn googleSignIn = GoogleSignIn(
+    scopes: <String>[
+      'email',
+      // 'https://www.googleapis.com/auth/contacts.readonly',
+    ],
+  );
+  GoogleSignInAccount googleUser;
+  final FirebaseAuth auth = FirebaseAuth.instance;
 
   Future<User> handleFacebookLogin(context) async {
     User user;
@@ -58,6 +62,35 @@ class LoginController extends GetxController{
     return user;
   }
 
+  handleGoogleLogin(context) async {
+    googleUser = await googleSignIn.signIn();
+
+    if (googleUser == null) {
+      return;
+    }
+
+    if (kDebugMode) {
+      print(googleUser.id);
+    }
+    final googleAuth = await googleUser?.authentication;
+    if (googleAuth == null) {
+      return;
+    }
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+    // Once signed in, return the UserCredential
+    var data = await auth.signInWithCredential(credential);
+    if (kDebugMode) {
+      print(auth.currentUser.providerData[0].uid);
+    }
+    if(data != null){
+      navigationCheck(data.user, context, "google");
+    }
+  }
+
   launchURL(String url) async {
     if (await canLaunch(url)) {
       await launch(url);
@@ -77,6 +110,11 @@ class LoginController extends GetxController{
       data = await FirebaseFirestore.instance.collection('Users')
       // .where('userId', isEqualTo: user.uid)
           .where('LoginID.phone', isEqualTo: user.uid).limit(1)
+          .get();
+    }else if(metode == "google"){
+      data = await FirebaseFirestore.instance.collection('Users')
+      // .where('userId', isEqualTo: user.uid)
+          .where('LoginID.google', isEqualTo: user.uid).limit(1)
           .get();
     }else{
       data = await FirebaseFirestore.instance.collection('Users')
@@ -168,6 +206,7 @@ class LoginController extends GetxController{
         Navigator.push(context,
             CupertinoPageRoute(builder: (context) => Tabbar(null, null)));
       } on StateError catch (e) {
+        await setDataUser(currentUser, metode);
         Navigator.push(
             context, CupertinoPageRoute(builder: (context) => Welcome()));
       }
@@ -197,6 +236,7 @@ class LoginController extends GetxController{
       "fb" : "",
       "apple" : "",
       "phone" : "",
+      "google" : "",
     };
     var userID = "";
     userID = user.uid;
@@ -233,13 +273,30 @@ class LoginController extends GetxController{
           SetOptions(merge : true)
 
       );
+    }else if (metode == "google"){
+      LoginID['google'] = user.uid;
+      print("Login With Google");
+
+      await FirebaseFirestore.instance.collection("Users").doc(userID).set(
+          {
+            "LoginID" : LoginID,
+            "metode" : user.providerData[0].providerId,
+            'userId': user.uid,
+            'UserName': user.displayName ?? '',
+            'Pictures': image,
+            'phoneNumber': user.phoneNumber,
+            'timestamp': FieldValue.serverTimestamp()
+          },
+          SetOptions(merge : true)
+
+      );
     }else{
       LoginID['phone'] = user.uid;
       print("Login With Phone");
       await FirebaseFirestore.instance.collection("Users").doc(userID).set(
           {
             "LoginID" : LoginID,
-            "metode" : user.providerData[0].providerId,
+            "metode" : "google",
             'userId': user.uid,
             'UserName': user.displayName ?? '',
             'Pictures': image,
