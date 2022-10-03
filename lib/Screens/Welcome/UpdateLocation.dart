@@ -104,11 +104,14 @@ Future coordinatesToAddress({latitude, longitude}) async {
         await Geocoder.local.findAddressesFromCoordinates(coordinates);
     String currentAddress =
         "${result.first.locality ?? ''} ${result.first.subLocality ?? ''} ${result.first.subAdminArea ?? ''} ${result.first.countryName ?? ''}, ${result.first.postalCode ?? ''}";
+    print("Address : " + result.first.toMap().toString());
 
     print(currentAddress);
     obj['PlaceName'] = currentAddress;
     obj['latitude'] = latitude;
     obj['longitude'] = longitude;
+    obj['countryName'] = result.first.countryName ?? "";
+    obj['data'] = result.first.toMap();
 
     return obj;
   } catch (_) {

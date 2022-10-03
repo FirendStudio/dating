@@ -30,6 +30,7 @@ class UserModel {
   final List interest;
   final Relationship relasi;
   final String fcmToken;
+  final String countryName;
 
   UserModel({
     @required this.id,
@@ -57,7 +58,8 @@ class UserModel {
     @required this.LoginID,
     @required this.metode,
     @required this.relasi,
-    this.fcmToken
+    this.fcmToken,
+    this.countryName,
   });
 
   factory UserModel.fromDocument(DocumentSnapshot doc) {
@@ -83,6 +85,7 @@ class UserModel {
             .inDays) / 365.2425).truncate(),
         address: doc['location']['address'],
         coordinates: doc['location'],
+        countryName: doc['location']['countryName'] ?? "Unknown",
         LoginID : doc.data().toString().contains('LoginID') ? doc['LoginID'] : {},
         metode : doc.data().toString().contains('metode') ? doc['metode'] : "",
         // university: doc['editInfo']['university'],

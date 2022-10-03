@@ -74,9 +74,15 @@ class TabsController extends GetxController{
     "quarterly",
   ];
 
+  @override
+  onInit(){
+    super.onInit();
+    getAccessItems();
+  }
+
   initAllTab(BuildContext context){
     if(init == 0){
-      getAccessItems();
+      // getAccessItems();
       getCurrentUser(context);
       getMatches();
       Get.find<NotificationController>().initNotification();
@@ -418,7 +424,6 @@ class TabsController extends GetxController{
       print(data);
       currentUser = UserModel.fromDocument(data);
       update();
-      // if (mounted) setState(() {});
       users.clear();
       userRemoved.clear();
       getUserList();
@@ -432,88 +437,8 @@ class TabsController extends GetxController{
   }
 
   configurePushNotification(UserModel user, BuildContext context) async {
-
-    // await FirebaseMessaging.instance.requestPermission(
-    //     IosNotificationSettings(
-    //         alert: true, sound: true, provisional: false, badge: true)
-    // );
     await Get.find<HomeController>().initFCM(docRef, user, context);
-    // _firebaseMessaging.configure(
-    //   onLaunch: (Map<String, dynamic> message) async {
-    //     print('===============onLaunch$message');
-    //     if (Platform.isIOS && message['type'] == 'Call') {
-    //       Map callInfo = {};
-    //       callInfo['channel_id'] = message['channel_id'];
-    //       callInfo['senderName'] = message['senderName'];
-    //       callInfo['senderPicture'] = message['senderPicture'];
-    //       bool iscallling = await _checkcallState(message['channel_id']);
-    //       print("=================$iscallling");
-    //       if (iscallling) {
-    //         await Navigator.push(context,
-    //             MaterialPageRoute(builder: (context) => Incoming(message)));
-    //       }
-    //     } else if (Platform.isAndroid && message['data']['type'] == 'Call') {
-    //       bool iscallling =
-    //       await _checkcallState(message['data']['channel_id']);
-    //       print("=================$iscallling");
-    //       if (iscallling) {
-    //         await Navigator.push(
-    //             context,
-    //             MaterialPageRoute(
-    //                 builder: (context) => Incoming(message['data'])));
-    //       } else {
-    //         print("Timeout");
-    //       }
-    //     }
-    //   },
-    //   onMessage: (Map<String, dynamic> message) async {
-    //     print("onmessage$message");
-    //     if (Platform.isIOS && message['type'] == 'Call') {
-    //       Map callInfo = {};
-    //       callInfo['channel_id'] = message['channel_id'];
-    //       callInfo['senderName'] = message['senderName'];
-    //       callInfo['senderPicture'] = message['senderPicture'];
-    //       await Navigator.push(context,
-    //           MaterialPageRoute(builder: (context) => Incoming(callInfo)));
-    //     } else if (Platform.isAndroid && message['data']['type'] == 'Call') {
-    //       await Navigator.push(
-    //           context,
-    //           MaterialPageRoute(
-    //               builder: (context) => Incoming(message['data'])));
-    //     } else
-    //       print("object");
-    //   },
-    //   onResume: (Map<String, dynamic> message) async {
-    //     print('onResume$message');
-    //     if (Platform.isIOS && message['type'] == 'Call') {
-    //       Map callInfo = {};
-    //       callInfo['channel_id'] = message['channel_id'];
-    //       callInfo['senderName'] = message['senderName'];
-    //       callInfo['senderPicture'] = message['senderPicture'];
-    //       bool iscallling = await _checkcallState(message['channel_id']);
-    //       print("=================$iscallling");
-    //       if (iscallling) {
-    //         await Navigator.push(context,
-    //             MaterialPageRoute(builder: (context) => Incoming(message)));
-    //       }
-    //     } else if (Platform.isAndroid && message['data']['type'] == 'Call') {
-    //       bool iscallling =
-    //       await _checkcallState(message['data']['channel_id']);
-    //       print("=================$iscallling");
-    //       if (iscallling) {
-    //         await Navigator.push(
-    //             context,
-    //             MaterialPageRoute(
-    //                 builder: (context) => Incoming(message['data'])));
-    //       } else {
-    //         print("Timeout");
-    //       }
-    //     }
-    //   },
-    // );
   }
-
-
 
   query() {
 
@@ -555,9 +480,8 @@ class TabsController extends GetxController{
     // .collection('/Users/${currentUser.id}')
         .get()
         .then((data) {
-      print("Cek User List");
+      
 
-      // print(dataAll.get("LikedUser"));
       data.docs.forEach((element) {
         print(element.data()["LikedUser"]);
         if(element.data()["LikedUser"] == null){
@@ -566,8 +490,10 @@ class TabsController extends GetxController{
           checkedUser.add(element.data()["LikedUser"]);
         }
       });
-      print(checkedUser);
-
+      if(kDebugMode){
+        print("Cek User List");
+        print(checkedUser);
+      }
     }).then((_) {
       query().get().then((data) async {
         print(data);

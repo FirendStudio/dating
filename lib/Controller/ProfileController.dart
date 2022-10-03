@@ -22,7 +22,7 @@ class ProfileController extends GetxController {
       return;
     }
     if (metode) {
-      croppedFile = await ImageCropper.cropImage(
+      croppedFile = await ImageCropper().cropImage(
           sourcePath: file.path,
           cropStyle: CropStyle.circle,
           aspectRatioPresets: [CropAspectRatioPreset.square],

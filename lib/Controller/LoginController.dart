@@ -62,70 +62,6 @@ class LoginController extends GetxController{
     return user;
   }
 
-  handleGoogleLogin(context) async {
-    googleUser = await googleSignIn.signIn();
-
-    if (googleUser == null) {
-      return;
-    }
-
-    if (kDebugMode) {
-      print(googleUser.id);
-    }
-    final googleAuth = await googleUser?.authentication;
-    if (googleAuth == null) {
-      return;
-    }
-    // Create a new credential
-    final credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-    // Once signed in, return the UserCredential
-    var data = await auth.signInWithCredential(credential);
-    if (kDebugMode) {
-      print(auth.currentUser.providerData[0].uid);
-    }
-    if(data != null){
-      navigationCheck(data.user, context, "google");
-    }
-  }
-
-  launchURL(String url) async {
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
-
-  Future <QuerySnapshot> getUser(User user, String metode) async {
-    QuerySnapshot data;
-    if(metode == "apple.com" || metode == "apple"){
-      data = await FirebaseFirestore.instance.collection('Users')
-      // .where('userId', isEqualTo: user.uid)
-          .where('LoginID.apple', isEqualTo: user.uid).limit(1)
-          .get();
-    }else if(metode == "phone"){
-      data = await FirebaseFirestore.instance.collection('Users')
-      // .where('userId', isEqualTo: user.uid)
-          .where('LoginID.phone', isEqualTo: user.uid).limit(1)
-          .get();
-    }else if(metode == "google"){
-      data = await FirebaseFirestore.instance.collection('Users')
-      // .where('userId', isEqualTo: user.uid)
-          .where('LoginID.google', isEqualTo: user.uid).limit(1)
-          .get();
-    }else{
-      data = await FirebaseFirestore.instance.collection('Users')
-      // .where('userId', isEqualTo: user.uid)
-          .where('LoginID.fb', isEqualTo: user.uid).limit(1)
-          .get();
-    }
-
-    return data;
-  }
-
   Future<User> handleAppleLogin(GlobalKey<ScaffoldState> scaffoldKey) async {
     User user;
     if (await i.AppleSignIn.isAvailable()) {
@@ -135,7 +71,7 @@ class LoginController extends GetxController{
           print("inside $onError");
         });
 
-        print("masuk sini cuy");
+        // print("masuk sini cuy");
 
         switch (result.status) {
           case i.AuthorizationStatus.authorized:
@@ -184,7 +120,93 @@ class LoginController extends GetxController{
     return user;
   }
 
-  Future navigationCheck(User currentUser, context, String metode) async {
+  handleGoogleLogin(context) async {
+    googleUser = await googleSignIn.signIn();
+
+    if (googleUser == null) {
+      return;
+    }
+
+    if (kDebugMode) {
+      print(googleUser.id);
+    }
+    final googleAuth = await googleUser?.authentication;
+    if (googleAuth == null) {
+      return;
+    }
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth.accessToken,
+      idToken: googleAuth.idToken,
+    );
+    // Once signed in, return the UserCredential
+    var data = await auth.signInWithCredential(credential);
+    if (kDebugMode) {
+      print(auth.currentUser.providerData[0].uid);
+    }
+    if(data != null){
+      if(data.user.providerData.length > 1){
+        for(int index=0; index<=data.user.providerData.length-1; index++){
+          if(data.user.providerData.length-1 == index){
+            navigationCheck(data.user, context, data.user.providerData[index].providerId, false);
+            break;
+          }
+          navigationCheck(data.user, context, data.user.providerData[index].providerId, true);
+        }
+        return;   
+      }
+      navigationCheck(data.user, context, "google", false);
+    }
+  }
+
+  launchURL(String url) async {
+    if (await canLaunchUrl(Uri.parse(url))) {
+      await launchURL(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  Future <QuerySnapshot> getUser(User user, String metode) async {
+    print("metode login ID : " + metode);
+    QuerySnapshot data;
+    String type = getTypeMetode(metode);
+    if(user.providerData.length > 1){
+      for(int index=0; index<=user.providerData.length-1; index++){
+        var userProvider = user.providerData[index];
+        type = getTypeMetode(userProvider.providerId);
+        print("Type : $type" + " ID : " + user.uid);
+        var result = await FirebaseFirestore.instance.collection('Users').where(type, isEqualTo: user.uid).limit(1).get();
+        data = result;
+        if(result != null && result.docs.isNotEmpty){
+          break;
+        }
+      }
+      
+    }else{
+      data = await FirebaseFirestore.instance.collection('Users')
+        .where(type, isEqualTo: user.uid).limit(1)
+        .get();
+    }
+    return data;
+  }
+
+  String getTypeMetode(String metode){
+    String type = '';
+    if(metode == "apple.com" || metode == "apple"){
+      type = 'LoginID.apple';
+      
+    }else if(metode == "phone"){
+      type = 'LoginID.phone';
+    }else if(metode == "google" || metode == "google.com"){
+      type = 'LoginID.google';
+    }else{
+      type = 'LoginID.fb';
+    }
+    return type;
+  }
+
+  Future navigationCheck(User currentUser, context, String metode, bool isDouble) async {
 
     print(currentUser);
     QuerySnapshot snapshot = await getUser(currentUser, metode);
@@ -194,33 +216,53 @@ class LoginController extends GetxController{
       print("masuk sini 2");
       // var location;
       var docs = snapshot.docs.first;
-      print(docs.data());
+      if(kDebugMode){
+        print(docs.data());
+      }
       Map<String, dynamic> data = docs.data();
       try {
         // var data = snapshot.docs.map((doc) => doc.get('location')).toList();
-        print(data['userId']);
         storage.write("userId", data['userId']);
         userId = data['userId'];
+        if(kDebugMode){
+          print(data['userId']);
+          print(data['location']);
+        }
+        if(data['location'] == null){
+          
+          await setDataUser(currentUser, metode, snapshot);
+          Navigator.push(
+            context, CupertinoPageRoute(builder: (context) => Welcome()));
+          return;
+        }
+        
         Get.put(NotificationController());
         Get.put(TabsController());
-        Navigator.push(context,
+        if(!isDouble){
+          Navigator.push(context,
             CupertinoPageRoute(builder: (context) => Tabbar(null, null)));
+        }
+        
       } on StateError catch (e) {
-        await setDataUser(currentUser, metode);
-        Navigator.push(
+        await setDataUser(currentUser, metode, snapshot);
+        if(!isDouble){
+          Navigator.push(
             context, CupertinoPageRoute(builder: (context) => Welcome()));
+        }
       }
 
     } else {
       print("masuk sini 3");
-      await setDataUser(currentUser, metode);
-      Navigator.push(
+      await setDataUser(currentUser, metode, snapshot);
+      if(!isDouble){
+        Navigator.push(
           context, CupertinoPageRoute(builder: (context) => Welcome()));
+      }
     }
   }
 
-  Future setDataUser(User user, String metode) async {
-    print("Metode : " + metode);
+  Future <void> setDataUser(User user, String metode, QuerySnapshot userSnapshot) async {
+    // print("Metode : " + metode);
     String url = "";
     if(user.photoURL != null){
       url = user.photoURL + '?width=9999';
@@ -240,73 +282,95 @@ class LoginController extends GetxController{
     };
     var userID = "";
     userID = user.uid;
+    Map<String, dynamic> data = {};
+    print("Masuk gak ya");
+    if(userSnapshot.docs.length > 0){
+      print("User Exist");
+      Map<String, dynamic> userModel = userSnapshot.docs.first.data();
+      print(userModel);
+      LoginID = {
+        "fb" : userModel['LoginID']['fb'] ?? "",
+        "apple" : userModel['LoginID']['apple'] ?? "",
+        "phone" : userModel['LoginID']['phone'] ?? "",
+        "google" : userModel['LoginID']['google'] ?? "",
+      };
+    }
     if(metode == "apple.com" || metode == "apple"){
       LoginID['apple'] = user.uid;
       print("Login with apple");
-      await FirebaseFirestore.instance.collection("Users").doc(userID).set(
-          {
-            "LoginID" : LoginID,
-            "metode" : user.providerData[0].providerId,
-            'userId': user.uid,
-            'UserName': user.displayName ?? '',
-            'Pictures': image,
-            'phoneNumber': user.phoneNumber,
-            'timestamp': FieldValue.serverTimestamp()
-          },
-          SetOptions(merge : true)
-
-      );
+      if(userSnapshot.docs.length > 0){
+        data = {
+          "LoginID" : LoginID,
+        };
+      }else{
+        data = {
+          "LoginID" : LoginID,
+          "metode" : user.providerData[0].providerId,
+          'userId': user.uid,
+          'UserName': user.displayName ?? '',
+          'Pictures': image,
+          'phoneNumber': user.phoneNumber,
+          'timestamp': FieldValue.serverTimestamp()
+        };
+      }
     }else if (metode == "fb"){
       LoginID['fb'] = user.uid;
       print("Login With Facebook");
-
-      await FirebaseFirestore.instance.collection("Users").doc(userID).set(
-          {
-            "LoginID" : LoginID,
-            "metode" : user.providerData[0].providerId,
-            'userId': user.uid,
-            'UserName': user.displayName ?? '',
-            'Pictures': image,
-            'phoneNumber': user.phoneNumber,
-            'timestamp': FieldValue.serverTimestamp()
-          },
-          SetOptions(merge : true)
-
-      );
-    }else if (metode == "google"){
+      if(userSnapshot.docs.length > 0){
+        data = {
+          "LoginID" : LoginID,
+        };
+      }else{
+        data = {
+          "LoginID" : LoginID,
+          "metode" : user.providerData[0].providerId,
+          'userId': user.uid,
+          'UserName': user.displayName ?? '',
+          'Pictures': image,
+          'phoneNumber': user.phoneNumber,
+          'timestamp': FieldValue.serverTimestamp()
+        };
+      }
+    }else if (metode == "google" || metode =='google.com'){
       LoginID['google'] = user.uid;
       print("Login With Google");
-
-      await FirebaseFirestore.instance.collection("Users").doc(userID).set(
-          {
-            "LoginID" : LoginID,
-            "metode" : user.providerData[0].providerId,
-            'userId': user.uid,
-            'UserName': user.displayName ?? '',
-            'Pictures': image,
-            'phoneNumber': user.phoneNumber,
-            'timestamp': FieldValue.serverTimestamp()
-          },
-          SetOptions(merge : true)
-
-      );
+      if(userSnapshot.docs.length > 0){
+        data = {
+          "LoginID" : LoginID,
+        };
+      }else{
+        data = {
+          "LoginID" : LoginID,
+          "metode" : user.providerData[0].providerId,
+          'userId': user.uid,
+          'UserName': user.displayName ?? '',
+          'Pictures': image,
+          'phoneNumber': user.phoneNumber,
+          'timestamp': FieldValue.serverTimestamp()
+        };
+      }
     }else{
       LoginID['phone'] = user.uid;
       print("Login With Phone");
-      await FirebaseFirestore.instance.collection("Users").doc(userID).set(
-          {
-            "LoginID" : LoginID,
-            "metode" : "google",
-            'userId': user.uid,
-            'UserName': user.displayName ?? '',
-            'Pictures': image,
-            'phoneNumber': user.phoneNumber,
-            'timestamp': FieldValue.serverTimestamp()
-          },
-          SetOptions(merge : true)
-
-      );
+      if(userSnapshot.docs.length > 0){
+        data = {
+          "LoginID" : LoginID,
+        };
+      }else{
+        data = {
+          "LoginID" : LoginID,
+          "metode" : "google",
+          'userId': user.uid,
+          'UserName': user.displayName ?? '',
+          'Pictures': image,
+          'phoneNumber': user.phoneNumber,
+          'timestamp': FieldValue.serverTimestamp()
+        };
+      }
     }
+    await FirebaseFirestore.instance.collection("Users").doc(userID).set(
+        data, SetOptions(merge : true)
+    );
 
   }
 

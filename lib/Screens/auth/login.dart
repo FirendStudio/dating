@@ -168,8 +168,18 @@ class Login extends StatelessWidget {
                                     radius: 20,
                                     animating: true,
                                   ))));
-                          await loginController.handleFacebookLogin(context).then((user) {
-                            loginController.navigationCheck(user, context, 'fb');
+                          await loginController.handleFacebookLogin(context).then((user) async {
+                            if(user.providerData.length > 1){
+                              for(int index=0; index<=user.providerData.length-1; index++){
+                                if(user.providerData.length-1 == index){
+                                  await Get.find<LoginController>().navigationCheck(user, context, user.providerData[index].providerId, false);
+                                  break;
+                                }
+                                await Get.find<LoginController>().navigationCheck(user, context, user.providerData[index].providerId, true);
+                              }
+                              return;   
+                            }
+                            loginController.navigationCheck(user, context, 'fb', false);
                           }).then((_) {
                             Navigator.pop(context);
                           }).catchError((e) {
@@ -199,9 +209,19 @@ class Login extends StatelessWidget {
                           _scaffoldKey.currentState.showSnackBar(snackBar);
                         });
                         if (currentUser != null) {
-                          print('usernaem ${currentUser.displayName} \n photourl ${currentUser.photoURL}');
+                          print('username ${currentUser.displayName} \n photourl ${currentUser.photoURL}');
                           // await _setDataUser(currentUser);
-                          loginController.navigationCheck(currentUser, context, "apple.com");
+                          if(currentUser.providerData.length > 1){
+                            for(int index=0; index<=currentUser.providerData.length-1; index++){
+                              if(currentUser.providerData.length-1 == index){
+                                await Get.find<LoginController>().navigationCheck(currentUser, context, currentUser.providerData[index].providerId, false);
+                                break;
+                              }
+                              await Get.find<LoginController>().navigationCheck(currentUser, context, currentUser.providerData[index].providerId, true);
+                            }
+                            return;   
+                          }
+                          loginController.navigationCheck(currentUser, context, "apple.com", false);
                         }
                       },
                     ),
