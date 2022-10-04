@@ -9,6 +9,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:hookup4u/Controller/HomeController.dart';
 import 'package:hookup4u/Controller/NotificationController.dart';
 import 'package:hookup4u/Controller/TabsController.dart';
@@ -410,6 +411,49 @@ class _SettingsState extends State<Settings> {
                                                             if(widget.currentUser.LoginID['apple'] == "")
                                                               Text(""),
                                                             if(widget.currentUser.LoginID['apple'] != "")
+                                                              Icon(Icons.check_box, 
+                                                                size: 20,color: Colors.black,),
+                                                          ],
+                                                        ) 
+                                                      )
+                                                  ):Container(),
+
+                                                  Platform.isAndroid?
+                                                    InkWell(
+                                                      onTap: () async {
+                                                        if(widget.currentUser.LoginID['google'] == "") {
+                                                          Get.find<LoginController>().addGoogleLogin();
+                                                        }else{
+                                                          Get.snackbar("Information", "You have connected to Google");
+                                                        }
+
+                                                      },
+                                                      child: Container(
+                                                        width: 250,
+                                                        padding: EdgeInsets.only(
+                                                          left: 8, right: 8,
+                                                          bottom: 8, top: 8
+                                                        ),
+                                                        decoration: BoxDecoration(
+                                                            // color: (widget.currentUser.LoginID['apple'] == "")?Colors.red : Colors.greenAccent,
+                                                            // border: Border.all(
+                                                            //   color: Colors.red[500],
+                                                            // ),
+                                                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                                                          color: Colors.grey[400]
+                                                        ),
+                                                        child: Row(
+                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                          children: [
+                                                            Image.asset("asset/images/ic_google.png", height:25),
+                                                            Text("Google",
+                                                              style: TextStyle(
+                                                                  color: (widget.currentUser.LoginID['google'] == "")?Colors.white : Colors.black
+                                                              ),
+                                                            ),
+                                                            if(widget.currentUser.LoginID['google'] == "")
+                                                              Text(""),
+                                                            if(widget.currentUser.LoginID['google'] != "")
                                                               Icon(Icons.check_box, 
                                                                 size: 20,color: Colors.black,),
                                                           ],
@@ -1191,16 +1235,19 @@ class _SettingsState extends State<Settings> {
                             title: Text('Logout'),
                             content: Text('Would you like to logout of your account?'),
                             actions: <Widget>[
-                              FlatButton(
+                              ElevatedButton(
                                 onPressed: () =>
                                     Navigator.of(context).pop(false),
                                 child: Text('No'),
                               ),
-                              FlatButton(
+                              ElevatedButton(
                                 onPressed: () async {
                                   await _auth.signOut().whenComplete(() {
+                                    GetStorage().write("listUidSwiped", []);
                                     Get.delete<NotificationController>();
                                     Get.delete<TabsController>();
+                                    Get.put(NotificationController());
+                                    Get.put(TabsController());
                                     // _firebaseMessaging.deleteInstanceID();
                                     Navigator.pushReplacement(
                                       context,

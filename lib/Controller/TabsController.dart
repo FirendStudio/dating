@@ -68,15 +68,25 @@ class TabsController extends GetxController{
   int indexImage = 0;
   List checkedUser = [];
   GetStorage storage = GetStorage();
+  List<String> listUidSwiped = [];
 
   List<String> kProductIds = <String>[
     "monthly",
     "quarterly",
   ];
 
+  @override
+  onInit(){
+    super.onInit();
+    getAccessItems();
+  }
+
   initAllTab(BuildContext context){
     if(init == 0){
-      getAccessItems();
+      // getAccessItems();
+      if(storage.read("listUidSwiped") != null){
+        listUidSwiped = storage.read("listUidSwiped").cast<String>() ?? [];
+      }
       getCurrentUser(context);
       getMatches();
       Get.find<NotificationController>().initNotification();
@@ -415,10 +425,11 @@ class TabsController extends GetxController{
     User user = _firebaseAuth.currentUser;
     // return docRef.doc("${user.uid}").snapshots().listen((data) async {
     return docRef.doc(Get.find<LoginController>().userId).snapshots().listen((data) async {
-      print(data);
+      if(kDebugMode){
+        print(data);
+      }
       currentUser = UserModel.fromDocument(data);
       update();
-      // if (mounted) setState(() {});
       users.clear();
       userRemoved.clear();
       getUserList();
@@ -432,95 +443,14 @@ class TabsController extends GetxController{
   }
 
   configurePushNotification(UserModel user, BuildContext context) async {
-
-    // await FirebaseMessaging.instance.requestPermission(
-    //     IosNotificationSettings(
-    //         alert: true, sound: true, provisional: false, badge: true)
-    // );
     await Get.find<HomeController>().initFCM(docRef, user, context);
-    // _firebaseMessaging.configure(
-    //   onLaunch: (Map<String, dynamic> message) async {
-    //     print('===============onLaunch$message');
-    //     if (Platform.isIOS && message['type'] == 'Call') {
-    //       Map callInfo = {};
-    //       callInfo['channel_id'] = message['channel_id'];
-    //       callInfo['senderName'] = message['senderName'];
-    //       callInfo['senderPicture'] = message['senderPicture'];
-    //       bool iscallling = await _checkcallState(message['channel_id']);
-    //       print("=================$iscallling");
-    //       if (iscallling) {
-    //         await Navigator.push(context,
-    //             MaterialPageRoute(builder: (context) => Incoming(message)));
-    //       }
-    //     } else if (Platform.isAndroid && message['data']['type'] == 'Call') {
-    //       bool iscallling =
-    //       await _checkcallState(message['data']['channel_id']);
-    //       print("=================$iscallling");
-    //       if (iscallling) {
-    //         await Navigator.push(
-    //             context,
-    //             MaterialPageRoute(
-    //                 builder: (context) => Incoming(message['data'])));
-    //       } else {
-    //         print("Timeout");
-    //       }
-    //     }
-    //   },
-    //   onMessage: (Map<String, dynamic> message) async {
-    //     print("onmessage$message");
-    //     if (Platform.isIOS && message['type'] == 'Call') {
-    //       Map callInfo = {};
-    //       callInfo['channel_id'] = message['channel_id'];
-    //       callInfo['senderName'] = message['senderName'];
-    //       callInfo['senderPicture'] = message['senderPicture'];
-    //       await Navigator.push(context,
-    //           MaterialPageRoute(builder: (context) => Incoming(callInfo)));
-    //     } else if (Platform.isAndroid && message['data']['type'] == 'Call') {
-    //       await Navigator.push(
-    //           context,
-    //           MaterialPageRoute(
-    //               builder: (context) => Incoming(message['data'])));
-    //     } else
-    //       print("object");
-    //   },
-    //   onResume: (Map<String, dynamic> message) async {
-    //     print('onResume$message');
-    //     if (Platform.isIOS && message['type'] == 'Call') {
-    //       Map callInfo = {};
-    //       callInfo['channel_id'] = message['channel_id'];
-    //       callInfo['senderName'] = message['senderName'];
-    //       callInfo['senderPicture'] = message['senderPicture'];
-    //       bool iscallling = await _checkcallState(message['channel_id']);
-    //       print("=================$iscallling");
-    //       if (iscallling) {
-    //         await Navigator.push(context,
-    //             MaterialPageRoute(builder: (context) => Incoming(message)));
-    //       }
-    //     } else if (Platform.isAndroid && message['data']['type'] == 'Call') {
-    //       bool iscallling =
-    //       await _checkcallState(message['data']['channel_id']);
-    //       print("=================$iscallling");
-    //       if (iscallling) {
-    //         await Navigator.push(
-    //             context,
-    //             MaterialPageRoute(
-    //                 builder: (context) => Incoming(message['data'])));
-    //       } else {
-    //         print("Timeout");
-    //       }
-    //     }
-    //   },
-    // );
   }
 
-
-
-  query() {
-
+  Query query() {
+    
     return docRef
-    .where('age', isGreaterThanOrEqualTo: int.parse(currentUser.ageRange['min']),)
-    .where('age',
-    isLessThanOrEqualTo: int.parse(currentUser.ageRange['max']))
+    // .limit(5)
+    .where('age', isGreaterThanOrEqualTo: int.parse(currentUser.ageRange['min']), isLessThanOrEqualTo: int.parse(currentUser.ageRange['max']))
     .orderBy('age', descending: false);
 
     // if (currentUser.showGender == 'everyone') {
@@ -547,6 +477,58 @@ class TabsController extends GetxController{
     //       .orderBy('age', descending: false);
     // }
   }
+  bool filterLastSwiped(String idUID){
+    if(listUidSwiped.isEmpty){
+      return false;
+    }
+    var data = listUidSwiped.firstWhereOrNull((element) => element == idUID);
+    if(data == null){
+      return false;
+    }
+    return true;
+  }
+
+  addLastSwiped(String idUID){
+    if(kDebugMode){
+      print("Adding user to last Swiped : " + idUID);
+    }
+    if(listUidSwiped.isEmpty){
+      listUidSwiped.add(idUID);
+      storage.write("listUidSwiped", listUidSwiped);
+      return;
+    }
+    var data = listUidSwiped.firstWhereOrNull((element) => element == idUID);
+    if(data == null){
+      listUidSwiped.add(idUID);
+      storage.write("listUidSwiped", listUidSwiped);
+      return;
+    }
+    if(kDebugMode){
+      print("User already exist");
+    }
+  }
+
+  List<QueryDocumentSnapshot<Object>> getLastSwipe(List<QueryDocumentSnapshot<Object>> result){
+    List<QueryDocumentSnapshot<Object>> listTempResult = [];
+    List<QueryDocumentSnapshot<Object>> listTemp = [];
+    for (var doc in result) {
+      Map<String, dynamic> map = doc.data();
+      if(kDebugMode){
+        print(doc.id);
+      }
+      bool cek = filterLastSwiped(map['userId']);
+      if(kDebugMode){
+        print(cek);
+      }
+      if(cek){
+        listTemp.add(doc);
+      }else{
+        listTempResult.add(doc);
+      }
+    }
+    listTempResult.addAll(listTemp);
+    return listTempResult;
+  }
 
   Future getUserList() async {
     checkedUser = [];
@@ -555,9 +537,8 @@ class TabsController extends GetxController{
     // .collection('/Users/${currentUser.id}')
         .get()
         .then((data) {
-      print("Cek User List");
+      
 
-      // print(dataAll.get("LikedUser"));
       data.docs.forEach((element) {
         print(element.data()["LikedUser"]);
         if(element.data()["LikedUser"] == null){
@@ -566,19 +547,20 @@ class TabsController extends GetxController{
           checkedUser.add(element.data()["LikedUser"]);
         }
       });
-      print(checkedUser);
-
+      
     }).then((_) {
       query().get().then((data) async {
         print(data);
-        QuerySnapshot result = data;
-        if (result.docs.length < 1) {
+        if (data.docs.length < 1) {
           print("no more data");
           return;
         }
+        List<QueryDocumentSnapshot<Object>> result = data.docs;
+        result = getLastSwipe(result);
         users.clear();
         userRemoved.clear();
-        for (var doc in result.docs) {
+        for (var doc in result) {
+          print(doc.data());
           UserModel temp = UserModel.fromDocument(doc);
           allUsers.add(temp);
           var distance = calculateDistance(
@@ -590,8 +572,11 @@ class TabsController extends GetxController{
           if (checkedUser.any((value) => value == temp.id,)) {
 
           } else {
-            print("Jarak : " + distance.toString());
-            print(currentUser.maxDistance);
+
+            if(kDebugMode){
+              print("Jarak : " + distance.toString());
+              print(currentUser.maxDistance);
+            }
             if (distance <= currentUser.maxDistance && temp.id != currentUser.id && !temp.isBlocked) {
               if(temp.imageUrl.isNotEmpty){
                 List imageUrlTemp = [];
@@ -643,24 +628,21 @@ class TabsController extends GetxController{
                     kinks: temp.kinks,
                     lastmsg: temp.lastmsg,
                     relasi: relationUserPartner,
-                    fcmToken: temp.fcmToken
+                    fcmToken: temp.fcmToken,
+                    listSwipedUser : temp.listSwipedUser,
+                    countryName: temp.countryName,
+                    countryID: temp.countryID,
+                    
                 ));
-                // temp.distanceBW = Get.find<TabsController>().calculateDistance(
-                //     Get.find<TabsController>().currentUser.coordinates['latitude'],
-                //     Get.find<TabsController>().currentUser.coordinates['longitude'],
-                //     temp.coordinates['latitude'],
-                //     temp.coordinates['longitude']).round();
               }else{
                 users.add(temp);
               }
 
             }
-            // final List<String> listIDRelationship = users.map((city) => city.id).toList();
 
-            // initListLikedUser();
-
-            print(users);
-
+            if(kDebugMode){
+              print(users);
+            }
           }
         }
         update();

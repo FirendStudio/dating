@@ -197,8 +197,17 @@ class Verification extends StatelessWidget {
                             builder: (_) {
                               Future.delayed(Duration(seconds: 2), () async {
                                 Navigator.pop(context);
-                                await Get.find<LoginController>().navigationCheck(
-                                    authResult.user, context, "phone");
+                                if(authResult.user.providerData.length > 1){
+                                  for(int index=0; index<=authResult.user.providerData.length-1; index++){
+                                    if(authResult.user.providerData.length-1 == index){
+                                      await Get.find<LoginController>().navigationCheck(authResult.user, context, authResult.user.providerData[index].providerId, false);
+                                      break;
+                                    }
+                                    await Get.find<LoginController>().navigationCheck(authResult.user, context, authResult.user.providerData[index].providerId, true);
+                                  }
+                                  return;   
+                                }
+                                await Get.find<LoginController>().navigationCheck(authResult.user, context, "phone", false);
                               });
                               return Center(
                                   child: Container(

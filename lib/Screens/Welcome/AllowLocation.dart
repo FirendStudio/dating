@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/Controller/LoginController.dart';
+import 'package:hookup4u/Controller/TabsController.dart';
 import 'package:hookup4u/Screens/Tab.dart';
 import 'package:hookup4u/Screens/Welcome/UploadImage/UploadImageScreen.dart';
 import 'package:hookup4u/Screens/Welcome/seach_location.dart';
@@ -132,27 +134,34 @@ class AllowLocation extends StatelessWidget {
                     print("Cek");
                     var currentLocation = await getLocationCoordinates();
                     print(currentLocation);
-                    // print(userData);
+                    print(userData);
                     if (currentLocation != null) {
+                      if(kDebugMode){
+                        print(Get.find<TabsController>().items['free_radius']);
+                      }
+                      int maxDistance = int.parse(Get.find<TabsController>().items['free_radius']  ?? "20");
                       userData.addAll(
                         {
+                          "listSwipedUser" : [],
                           'location': {
                             'latitude': currentLocation['latitude'],
                             'longitude': currentLocation['longitude'],
                             'address': currentLocation['PlaceName'],
+                            'countryName' : currentLocation['countryName'],
+                            'countryID' : currentLocation['countryID'],
                           },
-                          'maximum_distance': 20,
+                          'maximum_distance': maxDistance,
                           'age_range': {
                             'min': "18",
                             'max': "99",
                           },
                         },
                       );
-                      print(userData);
-                      print(Get.find<LoginController>().userId);
+                      if(kDebugMode){
+                        print(userData);
+                        print(Get.find<LoginController>().userId);
+                      }
                       Get.to(() => UploadImageScreen(userData));
-                      // await Get.find<LoginController>().setUserData(userData);
-                      // await showWelcomDialog(context);
                     }
                   },
                 ),
@@ -164,12 +173,6 @@ class AllowLocation extends StatelessWidget {
     );
   }
 }
-// await FirebaseAuth.instance.currentUser().then((FirebaseUser user) async {
-//   await Firestore.instance
-//       .collection("Users")
-//       .document(user.uid)
-//       .setData(userData, merge: true);
-// });
 
 Future showWelcomDialog(context) async {
   showDialog(

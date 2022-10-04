@@ -28,6 +28,8 @@ class ChatController extends GetxController {
   DocumentSnapshot selectedChat;
 
   initChatScreen(String chatId) async {
+    listMessageSnapshot = [];
+    listMessageSnapshotAll = [];
     selectedChat = null;
     print("object    -${chatId}");
     streamMessage = null;
@@ -511,6 +513,87 @@ class ChatController extends GetxController {
     }
   }
 
+  clearHistoryChatWidget(String idChat) async {
+    return await showDialog(
+      context: Get.context,
+      builder: (BuildContext context) {
+        return Material(
+            color: Colors.transparent,
+            child: CupertinoAlertDialog(
+                title: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [Text("Clear History Chat")]),
+                content: Column(
+                  children: [
+                    Text(
+                      "Are you sure you want to clear chat?",
+                      textAlign: TextAlign.start,
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      // mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: InkWell(
+                              onTap: () => clearChatHistory(idChat),
+                              child: Container(
+                                  margin: EdgeInsets.only(
+                                      left: 0, top: 4, bottom: 4, right: 6),
+                                  padding: EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: Colors.grey[400],
+                                    ),
+                                    // borderRadius: BorderRadius.all(Radius.circular(20))
+                                  ),
+                                  child: Text(
+                                    "Yes",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 15),
+                                  ))),
+                        ),
+                        Expanded(
+                          flex: 1,
+                          child: InkWell(
+                              onTap: () {
+                                Get.back();
+                                
+                              },
+                              child: Container(
+                                  margin: EdgeInsets.only(
+                                      left: 6, top: 4, bottom: 4, right: 0),
+                                  padding: EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                      color: Colors.grey[400],
+                                    ),
+                                    // borderRadius: BorderRadius.all(Radius.circular(20))
+                                  ),
+                                  child: Text(
+                                    "No",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 15),
+                                  ))),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                insetAnimationCurve: Curves.decelerate,
+                actions: []));
+      });
+  }
+
   clearChatHistory(String chatId){
     Map<String, dynamic> doc = selectedChat.data();
     String clearID = "";
@@ -518,6 +601,7 @@ class ChatController extends GetxController {
     if(split[0] == Get.find<TabsController>().currentUser.id){
       clearID = "isclear1";
       if(doc['isclear1']){
+        Get.back();
         Get.snackbar("Information", "You've already clear history");
         return;
       }
@@ -525,6 +609,7 @@ class ChatController extends GetxController {
     if(split[1] == Get.find<TabsController>().currentUser.id){
       clearID = "isclear2";
       if(doc['isclear2']){
+        Get.back();
         Get.snackbar("Information", "You've already clear history");
         return;
       }
@@ -534,6 +619,7 @@ class ChatController extends GetxController {
     },SetOptions(merge : true)).then((value) async {
       selectedChat = await FirebaseFirestore.instance.collection("chats").doc(chatId).get();
       filterChatHistory(chatId);
+      Get.to(()=>Tabbar(null, null));
     });
   }
 

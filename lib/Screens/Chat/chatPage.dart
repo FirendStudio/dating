@@ -73,11 +73,6 @@ class _ChatPageState extends State<ChatPage> {
                   onPressed: () => Navigator.pop(Get.context),
                 ),
                 actions: <Widget>[
-                  // IconButton(
-                  //     icon: Icon(Icons.call), onPressed: () => onJoin("AudioCall")),
-                  // IconButton(
-                  //     icon: Icon(Icons.video_call),
-                  //     onPressed: () => onJoin("VideoCall")),
                   PopupMenuButton(itemBuilder: (ct) {
                     return [
                       PopupMenuItem(
@@ -98,7 +93,7 @@ class _ChatPageState extends State<ChatPage> {
                               )),
                         ),
                       ),
-                      if(data.listMessageSnapshot.isEmpty || data.listMessageSnapshot.first['type'] != "Leave")
+                      if(data.listMessageSnapshot.isEmpty || data.listMessageSnapshot.first['type'] != "Leave" && data.listMessageSnapshot.first['type'] != "Disconnect")
                       PopupMenuItem(
                         value: 'value2',
                         child: InkWell(
@@ -113,7 +108,7 @@ class _ChatPageState extends State<ChatPage> {
                               )),
                         ),
                       ),
-                      if(data.listMessageSnapshot.isNotEmpty && data.listMessageSnapshot.first['type'] == "Leave")
+                      if(data.listMessageSnapshot.isNotEmpty && data.listMessageSnapshot.first['type'] == "Leave" && data.listMessageSnapshot.first['sender_id'] == widget.sender.id && data.listMessageSnapshot.first['type'] != "Disconnect")
                         PopupMenuItem(
                           value: 'value2',
                           child: InkWell(
@@ -132,6 +127,8 @@ class _ChatPageState extends State<ChatPage> {
                                 )),
                           ),
                         ),
+
+                      if(data.listMessageSnapshot.isNotEmpty && data.listMessageSnapshot.first['type'] != "Disconnect")
                       PopupMenuItem(
                         value: 'value3',
                         child: InkWell(
@@ -146,53 +143,6 @@ class _ChatPageState extends State<ChatPage> {
                               )),
                         ),
                       ),
-                      // PopupMenuItem(
-                      //   height: 30,
-                      //   value: 'value2',
-                      //   child: InkWell(
-                      //     child: Text(isBlocked ? "Unblock user" : "Block user"),
-                      //     onTap: () {
-                      //       Navigator.pop(ct);
-                      //       showDialog(
-                      //         Get.context: Get.context,
-                      //         builder: (BuildContext ctx) {
-                      //           return AlertDialog(
-                      //             title: Text(isBlocked ? 'Unblock' : 'Block'),
-                      //             content: Text('Do you want to ' + "${isBlocked ? 'Unblock' : 'Block'} " "${widget.second.name}"),
-                      //             actions: <Widget>[
-                      //               TextButton(
-                      //                 onPressed: () =>
-                      //                     Navigator.of(Get.context).pop(false),
-                      //                 child: Text('No'),
-                      //               ),
-                      //               TextButton(
-                      //                 onPressed: () async {
-                      //                   Navigator.pop(ctx);
-                      //                   if (isBlocked &&
-                      //                       blockedBy == sender.id) {
-                      //                     chatReference.doc('blocked').set({
-                      //                       'isBlocked': !isBlocked,
-                      //                       'blockedBy': sender.id,
-                      //                     });
-                      //                   } else if (!isBlocked) {
-                      //                     chatReference.doc('blocked').set({
-                      //                       'isBlocked': !isBlocked,
-                      //                       'blockedBy': sender.id,
-                      //                     });
-                      //                   } else {
-                      //                     CustomSnackbar.snackbar(
-                      //                         "You can't unblock", _scaffoldKey);
-                      //                   }
-                      //                 },
-                      //                 child: Text('Yes'),
-                      //               ),
-                      //             ],
-                      //           );
-                      //         },
-                      //       );
-                      //     },
-                      //   ),
-                      // )
                     ];
                   })
                 ]),
@@ -201,43 +151,14 @@ class _ChatPageState extends State<ChatPage> {
               child: Scaffold(
                 backgroundColor: primaryColor,
                 body: ClipRRect(
-                  // borderRadius: BorderRadius.only(
-                  //   topLeft: Radius.circular(50.0),
-                  //   topRight: Radius.circular(50.0),
-                  // ),
                   child: Container(
                     decoration: BoxDecoration(
-                      // image: DecorationImage(
-                      //     fit: BoxFit.fitWidth,
-                      //     image: AssetImage("asset/chat.jpg")),
-                      // borderRadius: BorderRadius.only(
-                      //     topLeft: Radius.circular(50),
-                      //     topRight: Radius.circular(50)),
                       color: Colors.white
                     ),
                     padding: EdgeInsets.all(5),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: <Widget>[
-                        // GetBuilder<ChatController>(builder: (data){
-                        //   if(data.listMessageSnapshot == null){
-                        //     return Container(
-                        //       height: 15,
-                        //       width: 15,
-                        //       child: CircularProgressIndicator(
-                        //         valueColor: AlwaysStoppedAnimation(primaryColor),
-                        //         strokeWidth: 2,
-                        //       ),
-                        //     );
-                        //   }
-                          
-                        //   return Expanded(
-                        //     child: ListView(
-                        //       reverse: true,
-                        //       children: generateMessages(data.listMessageSnapshot, data),
-                        //     ),
-                        //   );
-                        // }),
                         
                         if(data.listMessageSnapshot == null)
                             Container(
@@ -255,37 +176,7 @@ class _ChatPageState extends State<ChatPage> {
                               children: generateMessages(data.listMessageSnapshot, data),
                             ),
                           ),
-
-                        // StreamBuilder<QuerySnapshot>(
-                        //   stream: chatController.chatReference.orderBy('time', descending: true).snapshots(),
-                        //   builder: (BuildContext Get.context,
-                        //       AsyncSnapshot<QuerySnapshot> snapshot) {
-                        //     if (!snapshot.hasData)
-                        //       return Container(
-                        //         height: 15,
-                        //         width: 15,
-                        //         child: CircularProgressIndicator(
-                        //           valueColor: AlwaysStoppedAnimation(primaryColor),
-                        //           strokeWidth: 2,
-                        //         ),
-                        //       );
-                        //     return Expanded(
-                        //       child: ListView(
-                        //         reverse: true,
-                        //         children: generateMessages(snapshot, data),
-                        //       ),
-                        //     );
-                        //   },
-                        // ),
                         Divider(height: 1.0),
-                        // GetBuilder<ChatController>(builder: (data){
-                        //   return Container(
-                        //     alignment: Alignment.bottomCenter,
-                        //     decoration:
-                        //         BoxDecoration(color: Theme.of(context).cardColor),
-                        //     child: messageWidget(data),
-                        //   );
-                        // })
                         Container(
                           alignment: Alignment.bottomCenter,
                           decoration:
@@ -752,6 +643,29 @@ class _ChatPageState extends State<ChatPage> {
                         fontStyle: FontStyle.italic
                       ),
                     ),
+                    SizedBox(height: 10,),
+                    InkWell(
+                      onTap: (){
+                        data.clearHistoryChatWidget(widget.chatId);
+                      },
+                      child: Container(
+                        // width:150,
+                        padding:EdgeInsets.only(
+                          left:18, right: 18, top: 12, bottom: 12
+                        ),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(5)),
+                          color:Colors.black
+                        ),
+                        child:Text("Clear Chat History", 
+                          textAlign:TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold
+                          ),
+                        )
+                      )
+                    ),
                   ],
                 )
               )
@@ -784,7 +698,7 @@ class _ChatPageState extends State<ChatPage> {
                     SizedBox(height: 10,),
                     InkWell(
                       onTap: (){
-                        data.clearChatHistory(widget.chatId);
+                        data.clearHistoryChatWidget(widget.chatId);
                       },
                       child: Container(
                         // width:150,

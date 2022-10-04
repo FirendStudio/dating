@@ -1,20 +1,14 @@
 import 'dart:io';
 import 'package:apple_sign_in/apple_sign_in.dart' as i;
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/Controller/LoginController.dart';
-import 'package:hookup4u/Screens/Tab.dart';
-import 'package:hookup4u/Screens/Welcome.dart';
 import 'package:hookup4u/Screens/auth/otp.dart';
-import 'package:hookup4u/models/custom_web_view.dart';
 import 'package:hookup4u/util/Global.dart';
 import 'package:hookup4u/util/color.dart';
-import 'package:url_launcher/url_launcher.dart';
-// import 'package:easy_localization/easy_localization.dart';
 
 class Login extends StatelessWidget {
   LoginController loginController = Get.put(LoginController());
@@ -127,37 +121,73 @@ class Login extends StatelessWidget {
                     ),
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(top: 10, bottom: 10,
-                    left: Get.width * 0.1,
-                    right: Get.width * 0.1,
+                if(Platform.isIOS)
+                  Padding(
+                    padding: EdgeInsets.only(
+                        bottom: 10.0,
+                      left: Get.width * 0.1,
+                      right: Get.width * 0.1,
+                    ),
+                    child: i.AppleSignInButton(
+                      style: i.ButtonStyle.black,
+                      cornerRadius: 50,
+                      type: i.ButtonType.defaultButton,
+                      onPressed: () async {
+                        final User currentUser = await loginController.handleAppleLogin(_scaffoldKey).catchError((onError) {
+                          SnackBar snackBar =
+                              SnackBar(content: Text(onError.toString()));
+                          _scaffoldKey.currentState.showSnackBar(snackBar);
+                        });
+                        if (currentUser != null) {
+                          print('username ${currentUser.displayName} \n photourl ${currentUser.photoURL}');
+                          // await _setDataUser(currentUser);
+                          if(currentUser.providerData.length > 1){
+                            for(int index=0; index<=currentUser.providerData.length-1; index++){
+                              if(currentUser.providerData.length-1 == index){
+                                await Get.find<LoginController>().navigationCheck(currentUser, context, currentUser.providerData[index].providerId, false);
+                                break;
+                              }
+                              await Get.find<LoginController>().navigationCheck(currentUser, context, currentUser.providerData[index].providerId, true);
+                            }
+                            return;   
+                          }
+                          loginController.navigationCheck(currentUser, context, "apple.com", false);
+                        }
+                      },
+                    ),
                   ),
-                  child: Material(
-                    elevation: 2.0,
-                    borderRadius: BorderRadius.all(Radius.circular(30)),
+                if(Platform.isAndroid)
+                  Padding(
+                    padding: EdgeInsets.only(top: 10, bottom: 10,
+                      left: Get.width * 0.1,
+                      right: Get.width * 0.1,
+                    ),
                     child: Padding(
                       padding: const EdgeInsets.all(6.0),
                       child: InkWell(
                         child: Container(
                             decoration: BoxDecoration(
-                                shape: BoxShape.rectangle,
-                                borderRadius: BorderRadius.circular(25),
-                                gradient: LinearGradient(
-                                    begin: Alignment.topRight,
-                                    end: Alignment.bottomLeft,
-                                    colors: [
-                                      textBlue,
-                                      textBlue,
-                                      textBlue,
-                                      textBlue
-                                    ])),
+                              // color: Colors.white,
+                              shape: BoxShape.rectangle,
+                              borderRadius: BorderRadius.circular(25),
+                              gradient: LinearGradient(
+                                begin: Alignment.topRight,
+                                end: Alignment.bottomLeft,
+                                colors: [
+                                  Colors.lightBlue,
+                                  Colors.lightBlue,
+                                  Colors.lightBlue,
+                                  Colors.lightBlue
+                                ]
+                              )
+                            ),
                             height: MediaQuery.of(context).size.height * .065,
                             width: MediaQuery.of(context).size.width * .8,
                             child: Center(
                                 child: Text(
-                              "LOGIN WITH FACEBOOK".toString(),
+                              "LOGIN WITH GOOGLE".toString(),
                               style: TextStyle(
-                                  color: textColor,
+                                  color: Colors.white,
                                   fontSize: 16,
                                   fontFamily: Global.font,
                                   fontWeight: FontWeight.bold),
@@ -174,44 +204,12 @@ class Login extends StatelessWidget {
                                     radius: 20,
                                     animating: true,
                                   ))));
-                          await loginController.handleFacebookLogin(context).then((user) {
-                            loginController.navigationCheck(user, context, 'fb');
-                          }).then((_) {
-                            Navigator.pop(context);
-                          }).catchError((e) {
-                            Navigator.pop(context);
-                          });
+                          await loginController.handleGoogleLogin(context);
                         },
                       ),
                     ),
                   ),
-                ),
-                Platform.isIOS
-                    ? Padding(
-                        padding: EdgeInsets.only(
-                            bottom: 10.0,
-                          left: Get.width * 0.1,
-                          right: Get.width * 0.1,
-                        ),
-                        child: i.AppleSignInButton(
-                          style: i.ButtonStyle.black,
-                          cornerRadius: 50,
-                          type: i.ButtonType.defaultButton,
-                          onPressed: () async {
-                            final User currentUser = await loginController.handleAppleLogin(_scaffoldKey).catchError((onError) {
-                              SnackBar snackBar =
-                                  SnackBar(content: Text(onError.toString()));
-                              _scaffoldKey.currentState.showSnackBar(snackBar);
-                            });
-                            if (currentUser != null) {
-                              print('usernaem ${currentUser.displayName} \n photourl ${currentUser.photoURL}');
-                              // await _setDataUser(currentUser);
-                              loginController.navigationCheck(currentUser, context, "apple.com");
-                            }
-                          },
-                        ),
-                      )
-                    : Container(),
+                
                 InkWell(
                   onTap: (){
                     bool updateNumber = false;
@@ -232,7 +230,7 @@ class Login extends StatelessWidget {
                           // border: Border.all(
                           //   color: Colors.red[500],
                           // ),
-                          borderRadius: BorderRadius.all(Radius.circular(20))
+                          borderRadius: BorderRadius.all(Radius.circular(25))
                       ),
                       child: Center(
                         child: Text("LOGIN WITH PHONE NUMBER",
@@ -245,6 +243,72 @@ class Login extends StatelessWidget {
                         ),
                       )
                   )
+                ),
+
+                Padding(
+                  padding: EdgeInsets.only(top: 10, bottom: 10,
+                    left: Get.width * 0.1,
+                    right: Get.width * 0.1,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(6.0),
+                    child: InkWell(
+                      child: Container(
+                          decoration: BoxDecoration(
+                              shape: BoxShape.rectangle,
+                              borderRadius: BorderRadius.circular(25),
+                              gradient: LinearGradient(
+                                  begin: Alignment.topRight,
+                                  end: Alignment.bottomLeft,
+                                  colors: [
+                                    textBlue,
+                                    textBlue,
+                                    textBlue,
+                                    textBlue
+                                  ])),
+                          height: MediaQuery.of(context).size.height * .065,
+                          width: MediaQuery.of(context).size.width * .8,
+                          child: Center(
+                              child: Text(
+                            "LOGIN WITH FACEBOOK".toString(),
+                            style: TextStyle(
+                                color: textColor,
+                                fontSize: 16,
+                                fontFamily: Global.font,
+                                fontWeight: FontWeight.bold),
+                          ))),
+                      onTap: () async {
+                        showDialog(
+                            context: context,
+                            builder: (context) => Container(
+                                height: 30,
+                                width: 30,
+                                child: Center(
+                                    child: CupertinoActivityIndicator(
+                                  key: UniqueKey(),
+                                  radius: 20,
+                                  animating: true,
+                                ))));
+                        await loginController.handleFacebookLogin(context).then((user) async {
+                          if(user.providerData.length > 1){
+                            for(int index=0; index<=user.providerData.length-1; index++){
+                              if(user.providerData.length-1 == index){
+                                await Get.find<LoginController>().navigationCheck(user, context, user.providerData[index].providerId, false);
+                                break;
+                              }
+                              await Get.find<LoginController>().navigationCheck(user, context, user.providerData[index].providerId, true);
+                            }
+                            return;   
+                          }
+                          loginController.navigationCheck(user, context, 'fb', false);
+                        }).then((_) {
+                          Navigator.pop(context);
+                        }).catchError((e) {
+                          Navigator.pop(context);
+                        });
+                      },
+                    ),
+                  ),
                 ),
 
               ]),

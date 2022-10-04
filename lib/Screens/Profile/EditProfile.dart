@@ -379,7 +379,7 @@ class EditProfileState extends State<EditProfile> {
         imageQuality: 10
       );
       if (image != null) {
-        File croppedFile = await ImageCropper.cropImage(
+        File croppedFile = await ImageCropper().cropImage(
             sourcePath: image.path,
             cropStyle: CropStyle.circle,
             aspectRatioPresets: [CropAspectRatioPreset.square],
