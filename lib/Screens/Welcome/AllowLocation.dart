@@ -136,15 +136,19 @@ class AllowLocation extends StatelessWidget {
                     print(currentLocation);
                     print(userData);
                     if (currentLocation != null) {
-                      print(Get.find<TabsController>().items['free_radius']);
+                      if(kDebugMode){
+                        print(Get.find<TabsController>().items['free_radius']);
+                      }
                       int maxDistance = int.parse(Get.find<TabsController>().items['free_radius']  ?? "20");
                       userData.addAll(
                         {
+                          "listSwipedUser" : [],
                           'location': {
                             'latitude': currentLocation['latitude'],
                             'longitude': currentLocation['longitude'],
                             'address': currentLocation['PlaceName'],
-                            'countryName' : currentLocation['countryName']
+                            'countryName' : currentLocation['countryName'],
+                            'countryID' : currentLocation['countryID'],
                           },
                           'maximum_distance': maxDistance,
                           'age_range': {
@@ -158,8 +162,6 @@ class AllowLocation extends StatelessWidget {
                         print(Get.find<LoginController>().userId);
                       }
                       Get.to(() => UploadImageScreen(userData));
-                      // await Get.find<LoginController>().setUserData(userData);
-                      // await showWelcomDialog(context);
                     }
                   },
                 ),
@@ -171,12 +173,6 @@ class AllowLocation extends StatelessWidget {
     );
   }
 }
-// await FirebaseAuth.instance.currentUser().then((FirebaseUser user) async {
-//   await Firestore.instance
-//       .collection("Users")
-//       .document(user.uid)
-//       .setData(userData, merge: true);
-// });
 
 Future showWelcomDialog(context) async {
   showDialog(

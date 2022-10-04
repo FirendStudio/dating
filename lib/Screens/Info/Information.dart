@@ -113,21 +113,38 @@ class Info extends StatelessWidget {
                                   fontSize: 25,
                                   fontWeight: FontWeight.bold),
                             ),
-                            subtitle: Text(
-                              (!cekpartner)
-                              ?"${user.editInfo['showMyAge'] != null ? !user.editInfo['showMyAge'] ? user.age : "" : user.age}" +
-                                  ", " + user.gender + ", " + user.sexualOrientation + "\n" + user.status + ", " + "${user.distanceBW ?? 0} KM away"
+                            subtitle:Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Flexible(
+                                      child: Text(
+                                        (!cekpartner)
+                                        ?"${user.editInfo['showMyAge'] != null ? !user.editInfo['showMyAge'] ? user.age : "" : user.age}" +
+                                            ", " + user.gender + ", " + user.sexualOrientation + "\n" + user.status + ", " + "${user.distanceBW ?? 0} KM away"
 
-                              : "${user.editInfo['showMyAge'] != null ? !user.editInfo['showMyAge'] ? user.age : "" : user.age}" +
-                                  ", " + user.gender + ", " + user.sexualOrientation + ", " +
-                                  notificationController.userPartner.age.toString() + ", " + notificationController.userPartner.gender + ", " +  notificationController.userPartner.sexualOrientation
-                                  + "\n\nCouple, " + "${user.distanceBW ?? 0} KM away",
-                              style: TextStyle(
-                                // color: Colors.black,
-                                fontSize: 16,
-                                fontWeight: FontWeight.normal
-                              ),
-                                    // + "${user.address}"
+                                        : "${user.editInfo['showMyAge'] != null ? !user.editInfo['showMyAge'] ? user.age : "" : user.age}" +
+                                            ", " + user.gender + ", " + user.sexualOrientation + ", " +
+                                            notificationController.userPartner.age.toString() + ", " + notificationController.userPartner.gender + ", " +  notificationController.userPartner.sexualOrientation
+                                            + "\n\nCouple, " + "${user.distanceBW ?? 0} KM away",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.normal
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 10,),
+                                if(user.countryName.isNotEmpty)
+                                  Row(
+                                    children: [
+                                      Icon(Icons.pin_drop, color: Colors.black,),
+                                      SizedBox(width: 8,),
+                                      Text(user.countryName)
+                                    ],
+                                  )
+                              ],
                             ),
                             trailing: FloatingActionButton(
                                 backgroundColor: Colors.white,

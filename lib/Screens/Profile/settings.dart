@@ -417,6 +417,49 @@ class _SettingsState extends State<Settings> {
                                                       )
                                                   ):Container(),
 
+                                                  Platform.isAndroid?
+                                                    InkWell(
+                                                      onTap: () async {
+                                                        if(widget.currentUser.LoginID['google'] == "") {
+                                                          Get.find<LoginController>().addGoogleLogin();
+                                                        }else{
+                                                          Get.snackbar("Information", "You have connected to Google");
+                                                        }
+
+                                                      },
+                                                      child: Container(
+                                                        width: 250,
+                                                        padding: EdgeInsets.only(
+                                                          left: 8, right: 8,
+                                                          bottom: 8, top: 8
+                                                        ),
+                                                        decoration: BoxDecoration(
+                                                            // color: (widget.currentUser.LoginID['apple'] == "")?Colors.red : Colors.greenAccent,
+                                                            // border: Border.all(
+                                                            //   color: Colors.red[500],
+                                                            // ),
+                                                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                                                          color: Colors.grey[400]
+                                                        ),
+                                                        child: Row(
+                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                          children: [
+                                                            Image.asset("asset/images/ic_google.png", height:25),
+                                                            Text("Google",
+                                                              style: TextStyle(
+                                                                  color: (widget.currentUser.LoginID['google'] == "")?Colors.white : Colors.black
+                                                              ),
+                                                            ),
+                                                            if(widget.currentUser.LoginID['google'] == "")
+                                                              Text(""),
+                                                            if(widget.currentUser.LoginID['google'] != "")
+                                                              Icon(Icons.check_box, 
+                                                                size: 20,color: Colors.black,),
+                                                          ],
+                                                        ) 
+                                                      )
+                                                  ):Container(),
+
                                                   SizedBox(height: 50,),
                                                   
                                                 ],
@@ -1201,6 +1244,8 @@ class _SettingsState extends State<Settings> {
                                   await _auth.signOut().whenComplete(() {
                                     Get.delete<NotificationController>();
                                     Get.delete<TabsController>();
+                                    Get.put(NotificationController());
+                                    Get.put(TabsController());
                                     // _firebaseMessaging.deleteInstanceID();
                                     Navigator.pushReplacement(
                                       context,

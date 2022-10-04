@@ -21,6 +21,7 @@ class UserModel {
   final Map ageRange;
   final Map editInfo;
   List imageUrl = [];
+  List listSwipedUser = [];
   var distanceBW;
   final String status;
   final Map LoginID;
@@ -31,6 +32,7 @@ class UserModel {
   final Relationship relasi;
   final String fcmToken;
   final String countryName;
+  final String countryID;
 
   UserModel({
     @required this.id,
@@ -60,6 +62,8 @@ class UserModel {
     @required this.relasi,
     this.fcmToken,
     this.countryName,
+    this.listSwipedUser,
+    this.countryID
   });
 
   factory UserModel.fromDocument(DocumentSnapshot doc) {
@@ -85,7 +89,8 @@ class UserModel {
             .inDays) / 365.2425).truncate(),
         address: doc['location']['address'],
         coordinates: doc['location'],
-        countryName: doc['location']['countryName'] ?? "Unknown",
+        countryName: doc['location']['countryName'] ?? "",
+        countryID: doc['location']['countryID'] ?? "",
         LoginID : doc.data().toString().contains('LoginID') ? doc['LoginID'] : {},
         metode : doc.data().toString().contains('metode') ? doc['metode'] : "",
         // university: doc['editInfo']['university'],
@@ -94,6 +99,7 @@ class UserModel {
                 return doc['Pictures'][index];
               })
             : [],
+        listSwipedUser: doc.data().toString().contains('listSwipedUser') ? doc['listSwipedUser']: [],
         relasi: null,
         fcmToken: doc.data().toString().contains('pushToken') ? doc['pushToken'] : ""
     );

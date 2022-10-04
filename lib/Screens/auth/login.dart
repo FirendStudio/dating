@@ -121,76 +121,6 @@ class Login extends StatelessWidget {
                     ),
                   ),
                 ),
-                Padding(
-                  padding: EdgeInsets.only(top: 10, bottom: 10,
-                    left: Get.width * 0.1,
-                    right: Get.width * 0.1,
-                  ),
-                  child: Material(
-                    elevation: 2.0,
-                    borderRadius: BorderRadius.all(Radius.circular(30)),
-                    child: Padding(
-                      padding: const EdgeInsets.all(6.0),
-                      child: InkWell(
-                        child: Container(
-                            decoration: BoxDecoration(
-                                shape: BoxShape.rectangle,
-                                borderRadius: BorderRadius.circular(25),
-                                gradient: LinearGradient(
-                                    begin: Alignment.topRight,
-                                    end: Alignment.bottomLeft,
-                                    colors: [
-                                      textBlue,
-                                      textBlue,
-                                      textBlue,
-                                      textBlue
-                                    ])),
-                            height: MediaQuery.of(context).size.height * .065,
-                            width: MediaQuery.of(context).size.width * .8,
-                            child: Center(
-                                child: Text(
-                              "LOGIN WITH FACEBOOK".toString(),
-                              style: TextStyle(
-                                  color: textColor,
-                                  fontSize: 16,
-                                  fontFamily: Global.font,
-                                  fontWeight: FontWeight.bold),
-                            ))),
-                        onTap: () async {
-                          showDialog(
-                              context: context,
-                              builder: (context) => Container(
-                                  height: 30,
-                                  width: 30,
-                                  child: Center(
-                                      child: CupertinoActivityIndicator(
-                                    key: UniqueKey(),
-                                    radius: 20,
-                                    animating: true,
-                                  ))));
-                          await loginController.handleFacebookLogin(context).then((user) async {
-                            if(user.providerData.length > 1){
-                              for(int index=0; index<=user.providerData.length-1; index++){
-                                if(user.providerData.length-1 == index){
-                                  await Get.find<LoginController>().navigationCheck(user, context, user.providerData[index].providerId, false);
-                                  break;
-                                }
-                                await Get.find<LoginController>().navigationCheck(user, context, user.providerData[index].providerId, true);
-                              }
-                              return;   
-                            }
-                            loginController.navigationCheck(user, context, 'fb', false);
-                          }).then((_) {
-                            Navigator.pop(context);
-                          }).catchError((e) {
-                            Navigator.pop(context);
-                          });
-                        },
-                      ),
-                    ),
-                  ),
-                ),
-
                 if(Platform.isIOS)
                   Padding(
                     padding: EdgeInsets.only(
@@ -232,55 +162,50 @@ class Login extends StatelessWidget {
                       left: Get.width * 0.1,
                       right: Get.width * 0.1,
                     ),
-                    child: Material(
-                      // color: Colors.greenAccent,
-                      elevation: 2.0,
-                      borderRadius: BorderRadius.all(Radius.circular(30)),
-                      child: Padding(
-                        padding: const EdgeInsets.all(6.0),
-                        child: InkWell(
-                          child: Container(
-                              decoration: BoxDecoration(
-                                // color: Colors.white,
-                                shape: BoxShape.rectangle,
-                                borderRadius: BorderRadius.circular(25),
-                                // gradient: LinearGradient(
-                                //   begin: Alignment.topRight,
-                                //   end: Alignment.bottomLeft,
-                                //   colors: [
-                                //     Colors.white,
-                                //     Colors.white,
-                                //     Colors.white,
-                                //     Colors.white
-                                //   ]
-                                // )
-                              ),
-                              height: MediaQuery.of(context).size.height * .065,
-                              width: MediaQuery.of(context).size.width * .8,
-                              child: Center(
-                                  child: Text(
-                                "LOGIN WITH GOOGLE".toString(),
-                                style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 16,
-                                    fontFamily: Global.font,
-                                    fontWeight: FontWeight.bold),
-                              ))),
-                          onTap: () async {
-                            showDialog(
-                                context: context,
-                                builder: (context) => Container(
-                                    height: 30,
-                                    width: 30,
-                                    child: Center(
-                                        child: CupertinoActivityIndicator(
-                                      key: UniqueKey(),
-                                      radius: 20,
-                                      animating: true,
-                                    ))));
-                            await loginController.handleGoogleLogin(context);
-                          },
-                        ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(6.0),
+                      child: InkWell(
+                        child: Container(
+                            decoration: BoxDecoration(
+                              // color: Colors.white,
+                              shape: BoxShape.rectangle,
+                              borderRadius: BorderRadius.circular(25),
+                              gradient: LinearGradient(
+                                begin: Alignment.topRight,
+                                end: Alignment.bottomLeft,
+                                colors: [
+                                  Colors.lightBlue,
+                                  Colors.lightBlue,
+                                  Colors.lightBlue,
+                                  Colors.lightBlue
+                                ]
+                              )
+                            ),
+                            height: MediaQuery.of(context).size.height * .065,
+                            width: MediaQuery.of(context).size.width * .8,
+                            child: Center(
+                                child: Text(
+                              "LOGIN WITH GOOGLE".toString(),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontFamily: Global.font,
+                                  fontWeight: FontWeight.bold),
+                            ))),
+                        onTap: () async {
+                          showDialog(
+                              context: context,
+                              builder: (context) => Container(
+                                  height: 30,
+                                  width: 30,
+                                  child: Center(
+                                      child: CupertinoActivityIndicator(
+                                    key: UniqueKey(),
+                                    radius: 20,
+                                    animating: true,
+                                  ))));
+                          await loginController.handleGoogleLogin(context);
+                        },
                       ),
                     ),
                   ),
@@ -305,7 +230,7 @@ class Login extends StatelessWidget {
                           // border: Border.all(
                           //   color: Colors.red[500],
                           // ),
-                          borderRadius: BorderRadius.all(Radius.circular(20))
+                          borderRadius: BorderRadius.all(Radius.circular(25))
                       ),
                       child: Center(
                         child: Text("LOGIN WITH PHONE NUMBER",
@@ -318,6 +243,72 @@ class Login extends StatelessWidget {
                         ),
                       )
                   )
+                ),
+
+                Padding(
+                  padding: EdgeInsets.only(top: 10, bottom: 10,
+                    left: Get.width * 0.1,
+                    right: Get.width * 0.1,
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(6.0),
+                    child: InkWell(
+                      child: Container(
+                          decoration: BoxDecoration(
+                              shape: BoxShape.rectangle,
+                              borderRadius: BorderRadius.circular(25),
+                              gradient: LinearGradient(
+                                  begin: Alignment.topRight,
+                                  end: Alignment.bottomLeft,
+                                  colors: [
+                                    textBlue,
+                                    textBlue,
+                                    textBlue,
+                                    textBlue
+                                  ])),
+                          height: MediaQuery.of(context).size.height * .065,
+                          width: MediaQuery.of(context).size.width * .8,
+                          child: Center(
+                              child: Text(
+                            "LOGIN WITH FACEBOOK".toString(),
+                            style: TextStyle(
+                                color: textColor,
+                                fontSize: 16,
+                                fontFamily: Global.font,
+                                fontWeight: FontWeight.bold),
+                          ))),
+                      onTap: () async {
+                        showDialog(
+                            context: context,
+                            builder: (context) => Container(
+                                height: 30,
+                                width: 30,
+                                child: Center(
+                                    child: CupertinoActivityIndicator(
+                                  key: UniqueKey(),
+                                  radius: 20,
+                                  animating: true,
+                                ))));
+                        await loginController.handleFacebookLogin(context).then((user) async {
+                          if(user.providerData.length > 1){
+                            for(int index=0; index<=user.providerData.length-1; index++){
+                              if(user.providerData.length-1 == index){
+                                await Get.find<LoginController>().navigationCheck(user, context, user.providerData[index].providerId, false);
+                                break;
+                              }
+                              await Get.find<LoginController>().navigationCheck(user, context, user.providerData[index].providerId, true);
+                            }
+                            return;   
+                          }
+                          loginController.navigationCheck(user, context, 'fb', false);
+                        }).then((_) {
+                          Navigator.pop(context);
+                        }).catchError((e) {
+                          Navigator.pop(context);
+                        });
+                      },
+                    ),
+                  ),
                 ),
 
               ]),

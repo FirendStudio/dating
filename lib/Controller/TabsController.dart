@@ -68,6 +68,7 @@ class TabsController extends GetxController{
   int indexImage = 0;
   List checkedUser = [];
   GetStorage storage = GetStorage();
+  List<String> listUidChecked = [];
 
   List<String> kProductIds = <String>[
     "monthly",
@@ -441,11 +442,22 @@ class TabsController extends GetxController{
   }
 
   query() {
-
+    // listUidChecked = [];
+    // if(kDebugMode){
+    //   print("Cek User List");
+    //   // print(checkedUser.first);
+    // }
+    // if(checkedUser.isNotEmpty){
+    //   for(var data in checkedUser){
+    //     listUidChecked.add(data);
+    //     print(data);
+    //   }
+    // }
+    
     return docRef
-    .where('age', isGreaterThanOrEqualTo: int.parse(currentUser.ageRange['min']),)
-    .where('age',
-    isLessThanOrEqualTo: int.parse(currentUser.ageRange['max']))
+    // .where("userId", whereNotIn: listUidChecked);
+    .where('age', isGreaterThanOrEqualTo: int.parse(currentUser.ageRange['min']), isLessThanOrEqualTo: int.parse(currentUser.ageRange['max']))
+    // .where('age', isLessThanOrEqualTo: int.parse(currentUser.ageRange['max']))
     .orderBy('age', descending: false);
 
     // if (currentUser.showGender == 'everyone') {
@@ -490,21 +502,30 @@ class TabsController extends GetxController{
           checkedUser.add(element.data()["LikedUser"]);
         }
       });
-      if(kDebugMode){
-        print("Cek User List");
-        print(checkedUser);
-      }
+      
     }).then((_) {
       query().get().then((data) async {
         print(data);
         QuerySnapshot result = data;
+        print("Jumlah Data" + result.docs.length.toString());
         if (result.docs.length < 1) {
           print("no more data");
           return;
         }
+        // result.docs.removeWhere((element){
+        //   bool cekData = true;
+        //   Map<String, dynamic> map = element.data();
+        //   print(element.id);
+        //   if(map['age'] != null && map['age'] >= int.parse(currentUser.ageRange['min']) && map['age'] <= int.parse(currentUser.ageRange['max'])){
+        //     print(map['age']);
+        //   }
+        //   print("Masih on check");
+        //   return map['age'] == null;
+        // } );
         users.clear();
         userRemoved.clear();
         for (var doc in result.docs) {
+          print(doc.data());
           UserModel temp = UserModel.fromDocument(doc);
           allUsers.add(temp);
           var distance = calculateDistance(
@@ -569,7 +590,11 @@ class TabsController extends GetxController{
                     kinks: temp.kinks,
                     lastmsg: temp.lastmsg,
                     relasi: relationUserPartner,
-                    fcmToken: temp.fcmToken
+                    fcmToken: temp.fcmToken,
+                    listSwipedUser : temp.listSwipedUser,
+                    countryName: temp.countryName,
+                    countryID: temp.countryID,
+                    
                 ));
                 // temp.distanceBW = Get.find<TabsController>().calculateDistance(
                 //     Get.find<TabsController>().currentUser.coordinates['latitude'],

@@ -331,20 +331,39 @@ class _CardPicturesState2 extends State<CardPictures2>
                             fontSize: 25,
                             fontWeight: FontWeight.bold),
                       ),
-                      subtitle: Text(
-                        (!cekPartner)
-                            ? "${data.users[index].editInfo['showMyAge'] != null ? !data.users[index].editInfo['showMyAge'] ? data.users[index].age : "" : data.users[index].age}" +
-                            ", " + data.users[index].gender + ", " + data.users[index].sexualOrientation + "\n" + data.users[index].status + ", " + "${data.users[index].distanceBW} KM away"
-                            :"${data.users[index].editInfo['showMyAge'] != null ? !data.users[index].editInfo['showMyAge'] ? data.users[index].age : "" : data.users[index].age}" +
-                            ", " + data.users[index].gender + ", " + data.users[index].sexualOrientation + ", " +
-                            userPartner.age.toString() + ", " + userPartner.gender + ", " +  userPartner.sexualOrientation +
-                            "\n\nCouple, " + "${data.users[index].distanceBW} KM away",
-                        style: TextStyle(
-                          // color: Colors.black,
-                            fontSize: 16,
-                            fontWeight: FontWeight.normal
-                        ),
-                        // + "${data.selectedUser.address}"
+                      subtitle: Column(
+                        children: [
+                          Row(
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  (!cekPartner)
+                                      ? "${data.users[index].editInfo['showMyAge'] != null ? !data.users[index].editInfo['showMyAge'] ? data.users[index].age : "" : data.users[index].age}" +
+                                      ", " + data.users[index].gender + ", " + data.users[index].sexualOrientation + "\n" + data.users[index].status + ", " + "${data.users[index].distanceBW} KM away"
+                                      :"${data.users[index].editInfo['showMyAge'] != null ? !data.users[index].editInfo['showMyAge'] ? data.users[index].age : "" : data.users[index].age}" +
+                                      ", " + data.users[index].gender + ", " + data.users[index].sexualOrientation + ", " +
+                                      userPartner.age.toString() + ", " + userPartner.gender + ", " +  userPartner.sexualOrientation +
+                                      "\n\nCouple, " + "${data.users[index].distanceBW} KM away",
+                                  style: TextStyle(
+                                    // color: Colors.black,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.normal
+                                  ),
+                                  // + "${data.selectedUser.address}"
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 10,),
+                          if(data.users[index].countryName.isNotEmpty)
+                            Row(
+                              children: [
+                                Icon(Icons.pin_drop, color: Colors.black,),
+                                SizedBox(width: 8,),
+                                Text(data.users[index].countryName)
+                              ],
+                            )
+                        ],
                       ),
                     ),
                     data.users[index].editInfo['job_title'] != null

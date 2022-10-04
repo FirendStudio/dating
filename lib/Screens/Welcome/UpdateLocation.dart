@@ -111,6 +111,7 @@ Future coordinatesToAddress({latitude, longitude}) async {
     obj['latitude'] = latitude;
     obj['longitude'] = longitude;
     obj['countryName'] = result.first.countryName ?? "";
+    obj['countryID'] = result.first.countryCode ?? "";
     obj['data'] = result.first.toMap();
 
     return obj;

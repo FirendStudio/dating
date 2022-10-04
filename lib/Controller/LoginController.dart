@@ -120,6 +120,59 @@ class LoginController extends GetxController{
     return user;
   }
 
+  addGoogleLogin() async {
+
+    try{
+      googleUser = await googleSignIn.signIn();
+      if (googleUser == null) {
+        return;
+      }
+
+      if (kDebugMode) {
+        print(googleUser.id);
+      }
+      final googleAuth = await googleUser?.authentication;
+      if (googleAuth == null) {
+        return;
+      }
+      // Create a new credential
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      // Once signed in, return the UserCredential
+      var data = await auth.signInWithCredential(credential);
+      if (kDebugMode) {
+        print(auth.currentUser.providerData[0].uid);
+      }
+      if(data != null){
+        googleSignIn.signOut();
+        var userSnapShot = await getUser(auth.currentUser, "google");
+        if(userSnapShot.docs.isNotEmpty){
+          Get.snackbar("Information", "User Already Registered");
+          return;
+        }
+        var LoginID = {
+          "google": auth.currentUser.uid,
+        };
+        await FirebaseFirestore.instance
+            .collection("Users").doc(Get.find<LoginController>().userId).set(
+            {
+              "LoginID": LoginID,
+            },
+            SetOptions(merge: true)
+
+        );
+        Get.to(() => Tabbar(null, null));
+      }
+    }catch(e){
+      if(kDebugMode){
+        print(e.toString());
+      }
+      Get.snackbar("Information", e.toString());
+    }
+  }
+
   handleGoogleLogin(context) async {
     googleUser = await googleSignIn.signIn();
 
@@ -145,6 +198,7 @@ class LoginController extends GetxController{
       print(auth.currentUser.providerData[0].uid);
     }
     if(data != null){
+      googleSignIn.signOut();
       if(data.user.providerData.length > 1){
         for(int index=0; index<=data.user.providerData.length-1; index++){
           if(data.user.providerData.length-1 == index){
@@ -153,7 +207,7 @@ class LoginController extends GetxController{
           }
           navigationCheck(data.user, context, data.user.providerData[index].providerId, true);
         }
-        return;   
+        return;
       }
       navigationCheck(data.user, context, "google", false);
     }
