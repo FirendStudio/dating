@@ -68,7 +68,7 @@ class TabsController extends GetxController{
   int indexImage = 0;
   List checkedUser = [];
   GetStorage storage = GetStorage();
-  List<String> listUidChecked = [];
+  List<String> listUidSwiped = [];
 
   List<String> kProductIds = <String>[
     "monthly",
@@ -84,6 +84,9 @@ class TabsController extends GetxController{
   initAllTab(BuildContext context){
     if(init == 0){
       // getAccessItems();
+      if(storage.read("listUidSwiped") != null){
+        listUidSwiped = storage.read("listUidSwiped").cast<String>() ?? [];
+      }
       getCurrentUser(context);
       getMatches();
       Get.find<NotificationController>().initNotification();
@@ -422,7 +425,9 @@ class TabsController extends GetxController{
     User user = _firebaseAuth.currentUser;
     // return docRef.doc("${user.uid}").snapshots().listen((data) async {
     return docRef.doc(Get.find<LoginController>().userId).snapshots().listen((data) async {
-      print(data);
+      if(kDebugMode){
+        print(data);
+      }
       currentUser = UserModel.fromDocument(data);
       update();
       users.clear();
@@ -441,23 +446,11 @@ class TabsController extends GetxController{
     await Get.find<HomeController>().initFCM(docRef, user, context);
   }
 
-  query() {
-    // listUidChecked = [];
-    // if(kDebugMode){
-    //   print("Cek User List");
-    //   // print(checkedUser.first);
-    // }
-    // if(checkedUser.isNotEmpty){
-    //   for(var data in checkedUser){
-    //     listUidChecked.add(data);
-    //     print(data);
-    //   }
-    // }
+  Query query() {
     
     return docRef
-    // .where("userId", whereNotIn: listUidChecked);
+    // .limit(5)
     .where('age', isGreaterThanOrEqualTo: int.parse(currentUser.ageRange['min']), isLessThanOrEqualTo: int.parse(currentUser.ageRange['max']))
-    // .where('age', isLessThanOrEqualTo: int.parse(currentUser.ageRange['max']))
     .orderBy('age', descending: false);
 
     // if (currentUser.showGender == 'everyone') {
@@ -484,6 +477,58 @@ class TabsController extends GetxController{
     //       .orderBy('age', descending: false);
     // }
   }
+  bool filterLastSwiped(String idUID){
+    if(listUidSwiped.isEmpty){
+      return false;
+    }
+    var data = listUidSwiped.firstWhereOrNull((element) => element == idUID);
+    if(data == null){
+      return false;
+    }
+    return true;
+  }
+
+  addLastSwiped(String idUID){
+    if(kDebugMode){
+      print("Adding user to last Swiped : " + idUID);
+    }
+    if(listUidSwiped.isEmpty){
+      listUidSwiped.add(idUID);
+      storage.write("listUidSwiped", listUidSwiped);
+      return;
+    }
+    var data = listUidSwiped.firstWhereOrNull((element) => element == idUID);
+    if(data == null){
+      listUidSwiped.add(idUID);
+      storage.write("listUidSwiped", listUidSwiped);
+      return;
+    }
+    if(kDebugMode){
+      print("User already exist");
+    }
+  }
+
+  List<QueryDocumentSnapshot<Object>> getLastSwipe(List<QueryDocumentSnapshot<Object>> result){
+    List<QueryDocumentSnapshot<Object>> listTempResult = [];
+    List<QueryDocumentSnapshot<Object>> listTemp = [];
+    for (var doc in result) {
+      Map<String, dynamic> map = doc.data();
+      if(kDebugMode){
+        print(doc.id);
+      }
+      bool cek = filterLastSwiped(map['userId']);
+      if(kDebugMode){
+        print(cek);
+      }
+      if(cek){
+        listTemp.add(doc);
+      }else{
+        listTempResult.add(doc);
+      }
+    }
+    listTempResult.addAll(listTemp);
+    return listTempResult;
+  }
 
   Future getUserList() async {
     checkedUser = [];
@@ -506,25 +551,15 @@ class TabsController extends GetxController{
     }).then((_) {
       query().get().then((data) async {
         print(data);
-        QuerySnapshot result = data;
-        print("Jumlah Data" + result.docs.length.toString());
-        if (result.docs.length < 1) {
+        if (data.docs.length < 1) {
           print("no more data");
           return;
         }
-        // result.docs.removeWhere((element){
-        //   bool cekData = true;
-        //   Map<String, dynamic> map = element.data();
-        //   print(element.id);
-        //   if(map['age'] != null && map['age'] >= int.parse(currentUser.ageRange['min']) && map['age'] <= int.parse(currentUser.ageRange['max'])){
-        //     print(map['age']);
-        //   }
-        //   print("Masih on check");
-        //   return map['age'] == null;
-        // } );
+        List<QueryDocumentSnapshot<Object>> result = data.docs;
+        result = getLastSwipe(result);
         users.clear();
         userRemoved.clear();
-        for (var doc in result.docs) {
+        for (var doc in result) {
           print(doc.data());
           UserModel temp = UserModel.fromDocument(doc);
           allUsers.add(temp);
@@ -537,8 +572,11 @@ class TabsController extends GetxController{
           if (checkedUser.any((value) => value == temp.id,)) {
 
           } else {
-            print("Jarak : " + distance.toString());
-            print(currentUser.maxDistance);
+
+            if(kDebugMode){
+              print("Jarak : " + distance.toString());
+              print(currentUser.maxDistance);
+            }
             if (distance <= currentUser.maxDistance && temp.id != currentUser.id && !temp.isBlocked) {
               if(temp.imageUrl.isNotEmpty){
                 List imageUrlTemp = [];
@@ -596,22 +634,15 @@ class TabsController extends GetxController{
                     countryID: temp.countryID,
                     
                 ));
-                // temp.distanceBW = Get.find<TabsController>().calculateDistance(
-                //     Get.find<TabsController>().currentUser.coordinates['latitude'],
-                //     Get.find<TabsController>().currentUser.coordinates['longitude'],
-                //     temp.coordinates['latitude'],
-                //     temp.coordinates['longitude']).round();
               }else{
                 users.add(temp);
               }
 
             }
-            // final List<String> listIDRelationship = users.map((city) => city.id).toList();
 
-            // initListLikedUser();
-
-            print(users);
-
+            if(kDebugMode){
+              print(users);
+            }
           }
         }
         update();

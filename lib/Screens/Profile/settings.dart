@@ -9,6 +9,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:hookup4u/Controller/HomeController.dart';
 import 'package:hookup4u/Controller/NotificationController.dart';
 import 'package:hookup4u/Controller/TabsController.dart';
@@ -1242,6 +1243,7 @@ class _SettingsState extends State<Settings> {
                               ElevatedButton(
                                 onPressed: () async {
                                   await _auth.signOut().whenComplete(() {
+                                    GetStorage().write("listUidSwiped", []);
                                     Get.delete<NotificationController>();
                                     Get.delete<TabsController>();
                                     Get.put(NotificationController());

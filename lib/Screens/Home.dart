@@ -260,8 +260,10 @@ class _CardPicturesState2 extends State<CardPictures2>
               scrollDirection: Axis.horizontal,
               onPageChanged: (index, reason){
                 print("Index User : " + index.toString());
+                data.addLastSwiped(data.users[data.indexUser].id);
                 data.indexUser = index;
                 data.indexImage = 0;
+                
                 data.update();
                 // setState(() {});
               },
