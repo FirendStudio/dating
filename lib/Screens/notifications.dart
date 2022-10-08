@@ -62,7 +62,7 @@ class Notifications extends StatelessWidget {
           ),
           backgroundColor: primaryColor,
           bottomNavigationBar: CurvedNavigationBar(
-            color: Colors.redAccent,
+            color: primaryColor,
             index: data.indexNotif,
             backgroundColor: Colors.white,
             items: <Widget>[

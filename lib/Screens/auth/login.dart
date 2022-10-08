@@ -24,10 +24,11 @@ class Login extends StatelessWidget {
                 top: MediaQuery.of(context).padding.top
             ),
             decoration: BoxDecoration(
-                gradient: LinearGradient(colors: [
-                  primaryColor,
-                  primaryColor
-                ]),
+              color: Colors.black
+                // gradient: LinearGradient(colors: [
+                //   primaryColor,
+                //   primaryColor
+                // ]),
             ),
           ),
           preferredSize: new Size(
@@ -46,37 +47,7 @@ class Login extends StatelessWidget {
             children: <Widget>[
               Stack(
                 children: <Widget>[
-                  ClipPath(
-                    clipper: WaveClipper2(),
-                    child: Container(
-
-                      child: Column(),
-                      width: double.infinity,
-                      height: 280,
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(colors: [
-                        darkPrimaryColor,
-                        primaryColor.withOpacity(.15)
-                      ])),
-                    ),
-                  ),
-                  ClipPath(
-                    clipper: WaveClipper3(),
-                    child: Container(
-
-                      child: Column(),
-                      width: double.infinity,
-                      height: 280,
-                      decoration: BoxDecoration(
-                          gradient: LinearGradient(colors: [
-                        darkPrimaryColor,
-                        primaryColor.withOpacity(.2)
-                      ])),
-                    ),
-                  ),
-                  ClipPath(
-                    clipper: WaveClipper1(),
-                    child: Container(
+                  Container(
                       padding: EdgeInsets.only(
                         left: Get.width * 0.1,
                         right: Get.width * 0.1,
@@ -96,10 +67,65 @@ class Login extends StatelessWidget {
                       width: double.infinity,
                       height: 280,
                       decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                              colors: [primaryColor, primaryColor])),
+                        color: Colors.black
+                          // gradient: LinearGradient(
+                          //     colors: [primaryColor, primaryColor])),
                     ),
                   ),
+                  // ClipPath(
+                  //   clipper: WaveClipper2(),
+                  //   child: Container(
+
+                  //     child: Column(),
+                  //     width: double.infinity,
+                  //     height: 280,
+                  //     decoration: BoxDecoration(
+                  //         gradient: LinearGradient(colors: [
+                  //       darkPrimaryColor,
+                  //       primaryColor.withOpacity(.15)
+                  //     ])),
+                  //   ),
+                  // ),
+                  // ClipPath(
+                  //   clipper: WaveClipper3(),
+                  //   child: Container(
+
+                  //     child: Column(),
+                  //     width: double.infinity,
+                  //     height: 280,
+                  //     decoration: BoxDecoration(
+                  //         gradient: LinearGradient(colors: [
+                  //       darkPrimaryColor,
+                  //       primaryColor.withOpacity(.2)
+                  //     ])),
+                  //   ),
+                  // ),
+                  // ClipPath(
+                  //   clipper: WaveClipper1(),
+                  //   child: Container(
+                  //     padding: EdgeInsets.only(
+                  //       left: Get.width * 0.1,
+                  //       right: Get.width * 0.1,
+                  //     ),
+                  //     // padding: EdgeInsets.all(20),
+                  //     child: Column(
+                  //       children: <Widget>[
+                  //         SizedBox(
+                  //           height: 15,
+                  //         ),
+                  //         Image.asset(
+                  //           "asset/hookup4u-Logo-BW.png",
+                  //           fit: BoxFit.contain,
+                  //         ),
+                  //       ],
+                  //     ),
+                  //     width: double.infinity,
+                  //     height: 280,
+                  //     decoration: BoxDecoration(
+                  //         gradient: LinearGradient(
+                  //             colors: [primaryColor, primaryColor])),
+                  //   ),
+                  
                 ],
               ),
               Column(children: <Widget>[
@@ -116,7 +142,7 @@ class Login extends StatelessWidget {
                     // "By tapping 'Log in', you agree with our \n Terms.Learn how we process your data in \n our Privacy Policy and Cookies Policy.".toString(),
                     "By signing in, you are indicating that you have read the Privacy Policy and agree to the Terms of Service",
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.black54,
+                    style: TextStyle(color: Colors.black,
                       fontSize: Get.height * 0.02,
                     ),
                   ),
@@ -174,10 +200,10 @@ class Login extends StatelessWidget {
                                 begin: Alignment.topRight,
                                 end: Alignment.bottomLeft,
                                 colors: [
-                                  Colors.lightBlue,
-                                  Colors.lightBlue,
-                                  Colors.lightBlue,
-                                  Colors.lightBlue
+                                  Colors.blue[600],
+                                  Colors.blue[600],
+                                  // Colors.lightBlue,
+                                  // Colors.lightBlue
                                 ]
                               )
                             ),
@@ -226,7 +252,7 @@ class Login extends StatelessWidget {
                         // right: Get.width * 0.1,
                       ),
                       decoration: BoxDecoration(
-                          color: primaryColor,
+                          color: textRed,
                           // border: Border.all(
                           //   color: Colors.red[500],
                           // ),
@@ -261,10 +287,8 @@ class Login extends StatelessWidget {
                                   begin: Alignment.topRight,
                                   end: Alignment.bottomLeft,
                                   colors: [
-                                    textBlue,
-                                    textBlue,
-                                    textBlue,
-                                    textBlue
+                                    Colors.blue[800],
+                                    Colors.blue[800],
                                   ])),
                           height: MediaQuery.of(context).size.height * .065,
                           width: MediaQuery.of(context).size.width * .8,
@@ -319,7 +343,10 @@ class Login extends StatelessWidget {
                   GestureDetector(
                     child: Text(
                       "Privacy Policy",
-                      style: TextStyle(color: Colors.blue),
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold
+                      ),
                     ),
                     onTap: () => loginController.launchURL(
                         "https://jablesscupid.com/privacy-policy/"), //TODO: add privacy policy
@@ -328,14 +355,17 @@ class Login extends StatelessWidget {
                     margin: EdgeInsets.only(left: 10, right: 10),
                     height: 4,
                     width: 4,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(100),
-                        color: Colors.blue),
+                    // decoration: BoxDecoration(
+                    //     borderRadius: BorderRadius.circular(100),
+                    //     color: Colors.blue),
                   ),
                   GestureDetector(
                     child: Text(
                       "Terms & Conditions",
-                      style: TextStyle(color: Colors.blue),
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold
+                      ),
                     ),
                     onTap: () => loginController.launchURL(
                         "https://jablesscupid.com/terms-conditions/"), //TODO: add Terms and conditions
@@ -413,11 +443,11 @@ class Login extends StatelessWidget {
               title: Text('Exit'.toString()),
               content: Text('Do you want to exit the app?'.toString()),
               actions: <Widget>[
-                FlatButton(
+                TextButton(
                   onPressed: () => Navigator.of(context).pop(false),
                   child: Text('No'.toString()),
                 ),
-                FlatButton(
+                TextButton(
                   onPressed: () => SystemChannels.platform
                       .invokeMethod('SystemNavigator.pop'),
                   child: Text('Yes'.toString()),

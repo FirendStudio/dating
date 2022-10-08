@@ -1346,7 +1346,7 @@ class _SettingsState extends State<Settings> {
       padding: const EdgeInsets.all(8.0),
       child: InkWell(
         child: Card(
-          color: Colors.redAccent,
+          color: primaryColor,
           child: Padding(
             padding: const EdgeInsets.all(18.0),
             child: Center(
@@ -1388,7 +1388,7 @@ class _SettingsState extends State<Settings> {
               child: SizedBox(
                 height: 50,
                 child: Card(
-                  color: Colors.redAccent,
+                  color: primaryColor,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Center(
@@ -1559,7 +1559,7 @@ class _SettingsState extends State<Settings> {
             Expanded(
               flex: 1,
               child:FloatingActionButton(
-                backgroundColor: Colors.redAccent,
+                backgroundColor: primaryColor,
                 onPressed: () async {
 
                   await notificationController.deletePartner(Uid: notificationController.listPendingReq[0].reqUid);
@@ -1614,7 +1614,7 @@ class _SettingsState extends State<Settings> {
               child: SizedBox(
                 height: 50,
                 child: Card(
-                  color: Colors.redAccent,
+                  color: primaryColor,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Center(

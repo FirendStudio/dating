@@ -14,6 +14,7 @@ import 'package:hookup4u/util/color.dart';
 import 'package:swipe_stack/swipe_stack.dart';
 import '../models/Relationship.dart';
 import 'Info/InformationPartner.dart';
+import 'Widget/CustomLoading.dart';
 // import 'package:easy_localization/easy_localization.dart';
 
 
@@ -48,166 +49,204 @@ class _CardPicturesState2 extends State<CardPictures2>
         ? int.parse(widget.items['free_swipes']) : 10;
     bool exceedSwipes = widget.swipedcount >= freeSwipe;
     return GetBuilder<TabsController>(builder: (data){
-      return Scaffold(
+      if(data.init == 0){
+        return loadingWidget();
+      }
+      return doneWidget(exceedSwipes, freeSwipe, data);
+    });
 
-        backgroundColor: primaryColor,
-        body: Container(
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                  // topLeft: Radius.circular(50), topRight: Radius.circular(50)
-              ),
-              color: Colors.white),
-          child: ClipRRect(
+  }
+
+  Widget loadingWidget(){
+    return Scaffold(
+      backgroundColor: primaryColor,
+      body: Container(
+        height: Get.height,
+        decoration: BoxDecoration(
             borderRadius: BorderRadius.only(
                 // topLeft: Radius.circular(50), topRight: Radius.circular(50)
             ),
-            child: Stack(
-              children: [
-                AbsorbPointer(
-                  absorbing: exceedSwipes,
-                  child: Stack(
-                    children: <Widget>[
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
+            color: Colors.white),
+        child: ClipRRect(
+          borderRadius: BorderRadius.only(
+              // topLeft: Radius.circular(50), topRight: Radius.circular(50)
+          ),
+          child: Stack(
+            children: [
+              
+              Center(
+                child: SizedBox(
+                  height: Get.height * 0.6,
+                  child: customLoadingWidget(text: "Loading ....", color: primaryColor)
+                ),
+              )
+              
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget doneWidget(bool exceedSwipes, int freeSwipe, TabsController data){
+    return Scaffold(
+
+      backgroundColor: primaryColor,
+      body: Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.only(
+                // topLeft: Radius.circular(50), topRight: Radius.circular(50)
+            ),
+            color: Colors.white),
+        child: ClipRRect(
+          borderRadius: BorderRadius.only(
+              // topLeft: Radius.circular(50), topRight: Radius.circular(50)
+          ),
+          child: Stack(
+            children: [
+              AbsorbPointer(
+                absorbing: exceedSwipes,
+                child: Stack(
+                  children: <Widget>[
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                      ),
+                      // height: MediaQuery.of(context).size.height * .78,
+                      height: Get.height,
+                      width: MediaQuery.of(context).size.width,
+                      child: data.users.length == 0
+                          ? Align(
+                        alignment: Alignment.center,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: CircleAvatar(
+                                backgroundColor: secondryColor,
+                                radius: 40,
+                              ),
+                            ),
+                            Text(
+                              "There's no one new around you.",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  color: secondryColor,
+                                  decoration: TextDecoration.none,
+                                  fontSize: 18
+                              ),
+                            )
+                          ],
                         ),
-                        // height: MediaQuery.of(context).size.height * .78,
-                        height: Get.height,
-                        width: MediaQuery.of(context).size.width,
-                        child: data.users.length == 0
-                            ? Align(
-                          alignment: Alignment.center,
+                        // ) : swiperWidget(),
+                      ) : carouselWidget(),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(25),
+                      child: Align(
+                        alignment: Alignment.bottomCenter,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: <Widget>[
+
+                            FloatingActionButton(
+                                heroTag: UniqueKey(),
+                                backgroundColor: Colors.white,
+                                child: Icon(
+                                  Icons.clear,
+                                  color: Colors.red,
+                                  size: 30,
+                                ),
+                                onPressed: () async {
+                                  await data.disloveFunction();
+                                  setState(() {});
+                                }),
+                            FloatingActionButton(
+                                heroTag: UniqueKey(),
+                                backgroundColor: Colors.white,
+                                child: Icon(
+                                  Icons.favorite,
+                                  color: Colors.red,
+                                  size: 30,
+                                ),
+                                onPressed: () async {
+                                  await data.loveUserFunction();
+                                  setState(() {});
+                                }),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              exceedSwipes
+                  ? Align(
+                alignment: Alignment.center,
+                child: InkWell(
+                    child: Container(
+                      color: Colors.white.withOpacity(.3),
+                      child: Dialog(
+                        insetAnimationCurve: Curves.bounceInOut,
+                        insetAnimationDuration: Duration(seconds: 2),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                        backgroundColor: Colors.white,
+                        child: Container(
+                          height:
+                          MediaQuery.of(context).size.height * .55,
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
+                            mainAxisAlignment:
+                            MainAxisAlignment.spaceEvenly,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.error_outline,
+                                size: 50,
+                                color: primaryColor,
+                              ),
+                              Text(
+                                "You have already used the maximum number of free available swipes for 24 hrs.",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey,
+                                    fontSize: 20),
+                              ),
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
-                                child: CircleAvatar(
-                                  backgroundColor: secondryColor,
-                                  radius: 40,
+                                child: Icon(
+                                  Icons.lock_outline,
+                                  size: 120,
+                                  color: primaryColor,
                                 ),
                               ),
                               Text(
-                                "There's no one new around you.",
+                                "To swipe more users please subscribe to one of our premium plans",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                    color: secondryColor,
-                                    decoration: TextDecoration.none,
-                                    fontSize: 18
-                                ),
-                              )
-                            ],
-                          ),
-                          // ) : swiperWidget(),
-                        ) : carouselWidget(),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(25),
-                        child: Align(
-                          alignment: Alignment.bottomCenter,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: <Widget>[
-
-                              FloatingActionButton(
-                                  heroTag: UniqueKey(),
-                                  backgroundColor: Colors.white,
-                                  child: Icon(
-                                    Icons.clear,
-                                    color: Colors.red,
-                                    size: 30,
-                                  ),
-                                  onPressed: () async {
-                                    await data.disloveFunction();
-                                    setState(() {});
-                                  }),
-                              FloatingActionButton(
-                                  heroTag: UniqueKey(),
-                                  backgroundColor: Colors.white,
-                                  child: Icon(
-                                    Icons.favorite,
-                                    color: Colors.red,
-                                    size: 30,
-                                  ),
-                                  onPressed: () async {
-                                    await data.loveUserFunction();
-                                    setState(() {});
-                                  }),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                exceedSwipes
-                    ? Align(
-                  alignment: Alignment.center,
-                  child: InkWell(
-                      child: Container(
-                        color: Colors.white.withOpacity(.3),
-                        child: Dialog(
-                          insetAnimationCurve: Curves.bounceInOut,
-                          insetAnimationDuration: Duration(seconds: 2),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20)),
-                          backgroundColor: Colors.white,
-                          child: Container(
-                            height:
-                            MediaQuery.of(context).size.height * .55,
-                            child: Column(
-                              mainAxisAlignment:
-                              MainAxisAlignment.spaceEvenly,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.error_outline,
-                                  size: 50,
-                                  color: primaryColor,
-                                ),
-                                Text(
-                                  "You have already used the maximum number of free available swipes for 24 hrs.",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.grey,
-                                      fontSize: 20),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Icon(
-                                    Icons.lock_outline,
-                                    size: 120,
                                     color: primaryColor,
-                                  ),
-                                ),
-                                Text(
-                                  "To swipe more users please subscribe to one of our premium plans",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      color: primaryColor,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20),
-                                ),
-                              ],
-                            ),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 20),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                      onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  Subscription(null, null, data.items)))),
-                ) : Container()
-              ],
-            ),
+                    ),
+                    onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                Subscription(null, null, data.items)))),
+              ) : Container()
+            ],
           ),
         ),
-      );
-    });
-
+      ),
+    );
   }
 
   Widget carouselWidget(){
@@ -260,7 +299,7 @@ class _CardPicturesState2 extends State<CardPictures2>
               scrollDirection: Axis.horizontal,
               onPageChanged: (index, reason){
                 print("Index User : " + index.toString());
-                data.addLastSwiped(data.users[data.indexUser].id);
+                data.addLastSwiped(data.users[data.indexUser].id, index);
                 data.indexUser = index;
                 data.indexImage = 0;
                 

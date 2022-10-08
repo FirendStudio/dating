@@ -191,39 +191,6 @@ class _MyAppState extends State<MyApp> {
         isLoading = false;
       });
     }
-    // _auth.currentUser().then((FirebaseUser user) async {
-    //   print(user);
-    //   if (user != null) {
-    //     await Firestore.instance
-    //         .collection('Users')
-    //         .where('userId', isEqualTo: user.uid)
-    //         .getDocuments()
-    //         .then((QuerySnapshot snapshot) async {
-    //       if (snapshot.documents.length > 0) {
-    //         if (snapshot.documents[0].data['location'] != null) {
-    //           setState(() {
-    //             isRegistered = true;
-    //             isLoading = false;
-    //           });
-    //         } else {
-    //           setState(() {
-    //             isAuth = true;
-    //             isLoading = false;
-    //           });
-    //         }
-    //         print("loggedin ${user.uid}");
-    //       } else {
-    //         setState(() {
-    //           isLoading = false;
-    //         });
-    //       }
-    //     });
-    //   } else {
-    //     setState(() {
-    //       isLoading = false;
-    //     });
-    //   }
-    // });
   }
 
   _getLanguage() async {
