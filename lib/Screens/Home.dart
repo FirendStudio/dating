@@ -156,7 +156,7 @@ class _CardPicturesState2 extends State<CardPictures2>
                                 backgroundColor: Colors.white,
                                 child: Icon(
                                   Icons.clear,
-                                  color: Colors.red,
+                                  color: primaryColor,
                                   size: 30,
                                 ),
                                 onPressed: () async {
@@ -168,7 +168,7 @@ class _CardPicturesState2 extends State<CardPictures2>
                                 backgroundColor: Colors.white,
                                 child: Icon(
                                   Icons.favorite,
-                                  color: Colors.red,
+                                  color: primaryColor,
                                   size: 30,
                                 ),
                                 onPressed: () async {
