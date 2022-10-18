@@ -190,469 +190,144 @@ class _SettingsState extends State<Settings> {
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
-                ListTile(
-                  title: Card(
-                      child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: InkWell(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Text("Phone Number"),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              left: 20,
-                            ),
-                            child: Text(
-                              widget.currentUser.phoneNumber != null
-                                  ? "${widget.currentUser.phoneNumber}"
-                                  : "Verify Now",
-                              style: TextStyle(color: secondryColor),
-                            ),
-                          ),
-                          Icon(
-                            Icons.arrow_forward_ios,
-                            color: secondryColor,
-                            size: 15,
-                          ),
-                        ],
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            CupertinoPageRoute(
-                                builder: (context) =>
-                                    UpdateNumber(widget.currentUser)));
-                        // _ads.disable(_ad);
-                      },
-                    ),
-                  )),
-                  // subtitle: Text("Verify a phone number to secure your account"),
-                ),
 
-                ListTile(
-                  title: Card(
-                      child: Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: InkWell(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Text("Connected Account"),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 20,
-                                ),
-                                child: Text("",
-                                  style: TextStyle(color: secondryColor),
-                                ),
+                Container(
+                  padding: EdgeInsets.only(
+                    left:16, right: 16),
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        left:20.0, right: 10, top: 20, bottom: 20),
+                      child: InkWell(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Expanded(
+                              flex: 4,
+                              child: Text("Verification Status"),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                widget.currentUser.verified == 0
+                                    ? "Unverified"
+                                    : "Verify Now",
+                                style: TextStyle(color:widget.currentUser.verified == 0? Colors.red:Colors.greenAccent),
                               ),
-                              Icon(
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Icon(
                                 Icons.arrow_forward_ios,
                                 color: secondryColor,
                                 size: 15,
                               ),
-                            ],
-                          ),
-                          onTap: () async {
-
-                            await showDialog(
-                              context: context,
-                              barrierDismissible: false,
-                              builder: (BuildContext context) {
-                                return CupertinoAlertDialog(
-                                    content: StatefulBuilder(
-                                      builder: (BuildContext context2, StateSetter setState2){
-                                        return Material(
-                                          color: Colors.transparent,
-                                          child: Stack(
-                                            children: [
-                                              Column(
-                                                children: [
-                                                  SizedBox(height: 50,),
-                                                  Row(
-                                                    mainAxisAlignment: MainAxisAlignment.center,
-                                                    children: [
-                                                      Text(
-                                                        "Connected Accounts",
-                                                        style: TextStyle(
-                                                          fontSize: 16,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  SizedBox(height: 30,),
-                                                  InkWell(
-                                                    onTap: () async {
-                                                      if(widget.currentUser.LoginID['fb'] == ""){
-                                                        showDialog(
-                                                            context: context,
-                                                            builder: (context) => Container(
-                                                                height: 30,
-                                                                width: 30,
-                                                                child: Center(
-                                                                    child: CupertinoActivityIndicator(
-                                                                      key: UniqueKey(),
-                                                                      radius: 20,
-                                                                      animating: true,
-                                                                    ))));
-                                                        await Get.find<LoginController>().handleFacebookLogin(context).then((user) async {
-                                                          var LoginID = {
-                                                            "fb" : user.uid,
-                                                          };
-                                                          await FirebaseFirestore.instance.collection("Users").doc(Get.find<LoginController>().userId).set(
-                                                              {
-                                                                "LoginID" : LoginID,
-                                                              },
-                                                              SetOptions(merge : true)
-
-                                                          );
-                                                          print("done");
-                                                        }).then((_) {
-                                                          Navigator.pop(context);
-                                                          Get.to(()=>Tabbar(null, null));
-                                                        }).catchError((e) {
-                                                          Navigator.pop(context);
-                                                        });
-                                                      }else{
-                                                        Get.snackbar("Information", "You have connected to Facebook");
-                                                      }
-
-                                                    },
-                                                    child: Container(
-                                                      width: 250,
-                                                      padding: EdgeInsets.only(
-                                                        left: 8, right: 8,
-                                                        bottom: 8, top: 8
-                                                      ),
-                                                        decoration: BoxDecoration(
-                                                          // color: (widget.currentUser.LoginID['fb'] == "")?Colors.red : Colors.greenAccent,
-                                                            // border: Border.all(
-                                                            //   color: Colors.red[500],
-                                                            // ),
-                                                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                                                          color: Colors.grey[400]
-                                                        ),
-                                                        child:Row(
-                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                          children: [
-                                                            Image.asset("asset/images/fb.png", height:25),
-                                                            Text("Facebook",
-                                                              style: TextStyle(
-                                                                color: (widget.currentUser.LoginID['fb'] == "")?Colors.white : Colors.black
-                                                              ),
-                                                            ),
-                                                            if(widget.currentUser.LoginID['fb'] == "")
-                                                              Text(""),
-                                                            if(widget.currentUser.LoginID['fb'] != "")
-                                                              Icon(Icons.check_box, 
-                                                                size: 20,color: Colors.black,),
-                                                          ],
-                                                        ) 
-                                                    )
-                                                  ),
-
-                                                  SizedBox(height: 20,),
-
-                                                  Platform.isIOS?
-                                                  InkWell(
-                                                      onTap: () async {
-                                                        if(widget.currentUser.LoginID['apple'] == "") {
-                                                          final User currentUser = await Get.find<LoginController>().handleAppleLogin(_scaffoldKey).catchError((onError) {
-                                                            SnackBar snackBar = SnackBar(content: Text(onError.toString()));
-                                                            _scaffoldKey.currentState.showSnackBar(snackBar);
-                                                          });
-                                                          if (currentUser != null) {
-                                                            print('userName ${currentUser.displayName} \n photourl ${currentUser.photoURL}');
-                                                            var LoginID = {
-                                                              "apple": currentUser.uid,
-                                                            };
-                                                            await FirebaseFirestore.instance
-                                                                .collection("Users").doc(Get.find<LoginController>().userId).set(
-                                                                {
-                                                                  "LoginID": LoginID,
-                                                                },
-                                                                SetOptions(merge: true)
-
-                                                            );
-                                                            Get.to(() => Tabbar(null, null));
-                                                            // await _setDataUser(currentUser);
-
-                                                            // Get.find<LoginController>().navigationCheck(currentUser, context, "apple.com");
-                                                          }
-                                                        }else{
-                                                          Get.snackbar("Information", "You have connected to Apple");
-                                                        }
-
-                                                      },
-                                                      child: Container(
-                                                        width: 250,
-                                                        padding: EdgeInsets.only(
-                                                          left: 8, right: 8,
-                                                          bottom: 8, top: 8
-                                                        ),
-                                                        decoration: BoxDecoration(
-                                                            // color: (widget.currentUser.LoginID['apple'] == "")?Colors.red : Colors.greenAccent,
-                                                            // border: Border.all(
-                                                            //   color: Colors.red[500],
-                                                            // ),
-                                                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                                                          color: Colors.grey[400]
-                                                        ),
-                                                        child: Row(
-                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                          children: [
-                                                            Image.asset("asset/images/apple.png", height:25),
-                                                            Text("Apple",
-                                                              style: TextStyle(
-                                                                  color: (widget.currentUser.LoginID['apple'] == "")?Colors.white : Colors.black
-                                                              ),
-                                                            ),
-                                                            if(widget.currentUser.LoginID['apple'] == "")
-                                                              Text(""),
-                                                            if(widget.currentUser.LoginID['apple'] != "")
-                                                              Icon(Icons.check_box, 
-                                                                size: 20,color: Colors.black,),
-                                                          ],
-                                                        ) 
-                                                      )
-                                                  ):Container(),
-
-                                                  Platform.isAndroid?
-                                                    InkWell(
-                                                      onTap: () async {
-                                                        if(widget.currentUser.LoginID['google'] == "") {
-                                                          Get.find<LoginController>().addGoogleLogin();
-                                                        }else{
-                                                          Get.snackbar("Information", "You have connected to Google");
-                                                        }
-
-                                                      },
-                                                      child: Container(
-                                                        width: 250,
-                                                        padding: EdgeInsets.only(
-                                                          left: 8, right: 8,
-                                                          bottom: 8, top: 8
-                                                        ),
-                                                        decoration: BoxDecoration(
-                                                            // color: (widget.currentUser.LoginID['apple'] == "")?Colors.red : Colors.greenAccent,
-                                                            // border: Border.all(
-                                                            //   color: Colors.red[500],
-                                                            // ),
-                                                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                                                          color: Colors.grey[400]
-                                                        ),
-                                                        child: Row(
-                                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                          children: [
-                                                            Image.asset("asset/images/ic_google.png", height:25),
-                                                            Text("Google",
-                                                              style: TextStyle(
-                                                                  color: (widget.currentUser.LoginID['google'] == "")?Colors.white : Colors.black
-                                                              ),
-                                                            ),
-                                                            if(widget.currentUser.LoginID['google'] == "")
-                                                              Text(""),
-                                                            if(widget.currentUser.LoginID['google'] != "")
-                                                              Icon(Icons.check_box, 
-                                                                size: 20,color: Colors.black,),
-                                                          ],
-                                                        ) 
-                                                      )
-                                                  ):Container(),
-
-                                                  SizedBox(height: 50,),
-                                                  
-                                                ],
-                                              ),
-                                              InkWell(
-                                                onTap: (){
-                                                  Get.back();
-                                                },
-                                                child: Align(
-                                                  alignment: Alignment.topRight,
-                                                  child: Container(
-                                                    padding: EdgeInsets.all(4),
-                                                    decoration: new BoxDecoration(
-                                                      shape: BoxShape.circle,// You can use like this way or like the below line
-                                                      //borderRadius: new BorderRadius.circular(30.0),
-                                                      color: Colors.black,
-                                                    ),
-                                                    child: Icon(
-                                                      Icons.close, 
-                                                      size: 12,
-                                                      color: Colors.white,),
-                                                  )
-                                                )
-                                              )
-                                              
-                                            ]
-                                          )
-                                        );
-                                      },
-                                    ),
-                                    insetAnimationCurve: Curves.decelerate,
-                                    actions: [
-
-                                    ]);
-                              });
-
-                            // ArtSweetAlert.show(
-                            //     context: context,
-                            //     artDialogArgs: ArtDialogArgs(
-                            //         title: "Connected Account",
-                            //         text: "",
-                            //         customColumns: [
-                            //           InkWell(
-                            //             onTap: () async {
-                            //               if(widget.currentUser.LoginID['fb'] == ""){
-                            //                 showDialog(
-                            //                     context: context,
-                            //                     builder: (context) => Container(
-                            //                         height: 30,
-                            //                         width: 30,
-                            //                         child: Center(
-                            //                             child: CupertinoActivityIndicator(
-                            //                               key: UniqueKey(),
-                            //                               radius: 20,
-                            //                               animating: true,
-                            //                             ))));
-                            //                 await Get.find<LoginController>().handleFacebookLogin(context).then((user) async {
-                            //                   var LoginID = {
-                            //                     "fb" : user.uid,
-                            //                   };
-                            //                   await FirebaseFirestore.instance.collection("Users").doc(Get.find<LoginController>().userId).set(
-                            //                       {
-                            //                         "LoginID" : LoginID,
-                            //                       },
-                            //                       SetOptions(merge : true)
-
-                            //                   );
-                            //                   print("done");
-                            //                 }).then((_) {
-                            //                   Navigator.pop(context);
-                            //                   Get.to(()=>Tabbar(null, null));
-                            //                 }).catchError((e) {
-                            //                   Navigator.pop(context);
-                            //                 });
-                            //               }else{
-                            //                 Get.snackbar("Information", "You have connected to Facebook");
-                            //               }
-
-                            //             },
-                            //             child: Container(
-                            //               width: 250,
-                            //               padding: EdgeInsets.only(
-                            //                 left: 8, right: 8,
-                            //                 bottom: 8, top: 8
-                            //               ),
-                            //                 decoration: BoxDecoration(
-                            //                   color: (widget.currentUser.LoginID['fb'] == "")?Colors.red : Colors.greenAccent,
-                            //                     border: Border.all(
-                            //                       color: Colors.red[500],
-                            //                     ),
-                            //                     borderRadius: BorderRadius.all(Radius.circular(20))
-                            //                 ),
-                            //                 child:Row(
-                            //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            //                   children: [
-                            //                     Image.asset("asset/images/fb.png", height:25),
-                            //                     Text("Facebook",
-                            //                       style: TextStyle(
-                            //                         color: (widget.currentUser.LoginID['fb'] == "")?Colors.white : Colors.black
-                            //                       ),
-                            //                     ),
-                            //                     if(widget.currentUser.LoginID['fb'] == "")
-                            //                       Text(""),
-                            //                     if(widget.currentUser.LoginID['fb'] != "")
-                            //                       Icon(Icons.check_box, 
-                            //                         size: 20,color: Colors.white,),
-                            //                   ],
-                            //                 ) 
-                            //             )
-                            //           ),
-
-                            //           SizedBox(height: 20,),
-
-                            //           Platform.isIOS?
-                            //           InkWell(
-                            //               onTap: () async {
-                            //                 if(widget.currentUser.LoginID['apple'] == "") {
-                            //                   final User currentUser = await Get.find<LoginController>().handleAppleLogin(_scaffoldKey).catchError((onError) {
-                            //                     SnackBar snackBar = SnackBar(content: Text(onError.toString()));
-                            //                     _scaffoldKey.currentState.showSnackBar(snackBar);
-                            //                   });
-                            //                   if (currentUser != null) {
-                            //                     print('userName ${currentUser.displayName} \n photourl ${currentUser.photoURL}');
-                            //                     var LoginID = {
-                            //                       "apple": currentUser.uid,
-                            //                     };
-                            //                     await FirebaseFirestore.instance
-                            //                         .collection("Users").doc(Get.find<LoginController>().userId).set(
-                            //                         {
-                            //                           "LoginID": LoginID,
-                            //                         },
-                            //                         SetOptions(merge: true)
-
-                            //                     );
-                            //                     Get.to(() => Tabbar(null, null));
-                            //                     // await _setDataUser(currentUser);
-
-                            //                     // Get.find<LoginController>().navigationCheck(currentUser, context, "apple.com");
-                            //                   }
-                            //                 }else{
-                            //                   Get.snackbar("Information", "You have connected to Apple");
-                            //                 }
-
-                            //               },
-                            //               child: Container(
-                            //                 width: 250,
-                            //                 padding: EdgeInsets.only(
-                            //                   left: 8, right: 8,
-                            //                   bottom: 8, top: 8
-                            //                 ),
-                            //                 decoration: BoxDecoration(
-                            //                     color: (widget.currentUser.LoginID['apple'] == "")?Colors.red : Colors.greenAccent,
-                            //                     border: Border.all(
-                            //                       color: Colors.red[500],
-                            //                     ),
-                            //                     borderRadius: BorderRadius.all(Radius.circular(20))
-                            //                 ),
-                            //                 child: Row(
-                            //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            //                   children: [
-                            //                     Image.asset("asset/images/apple.png", height:25),
-                            //                     Text("Apple",
-                            //                       style: TextStyle(
-                            //                           color: (widget.currentUser.LoginID['apple'] == "")?Colors.white : Colors.black
-                            //                       ),
-                            //                     ),
-                            //                     if(widget.currentUser.LoginID['apple'] == "")
-                            //                       Text(""),
-                            //                     if(widget.currentUser.LoginID['apple'] != "")
-                            //                       Icon(Icons.check_box, 
-                            //                         size: 20,color: Colors.white,),
-                            //                   ],
-                            //                 ) 
-                            //               )
-                            //           ):Container(),
-
-                            //           SizedBox(height: 50,),
-
-                            //         ]
-                            //     )
-                            // );
-
-                            //   Navigator.push(
-                          //       context,
-                          //       CupertinoPageRoute(
-                          //           builder: (context) =>
-                          //               UpdateNumber(widget.currentUser)));
-                          //   // _ads.disable(_ad);
-                          },
+                            ),
+                            
+                            
+                          ],
                         ),
-                      )),
-                  // subtitle: Text("Verify a phone number to secure your account"),
+                        onTap: () {
+                          // Navigator.push(
+                          //     context,
+                          //     CupertinoPageRoute(
+                          //         builder: (context) =>
+                          //             UpdateNumber(widget.currentUser)));
+                          // _ads.disable(_ad);
+                        },
+                      ),
+                    )
+                  ),
+                ),
+
+                Container(
+                  padding: EdgeInsets.only(
+                    left:16, right: 16),
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        left:20.0, right: 10, top: 20, bottom: 20),
+                      child: InkWell(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Expanded(
+                              flex: 4,
+                              child: Text("Phone Number"),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Text(
+                                widget.currentUser.phoneNumber != null
+                                    ? "${widget.currentUser.phoneNumber}"
+                                    : "Verify Now",
+                                style: TextStyle(color: secondryColor),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Icon(
+                                Icons.arrow_forward_ios,
+                                color: secondryColor,
+                                size: 15,
+                              ),
+                            ),
+                            
+                            
+                          ],
+                        ),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              CupertinoPageRoute(
+                                  builder: (context) =>
+                                      UpdateNumber(widget.currentUser)));
+                          // _ads.disable(_ad);
+                        },
+                      ),
+                    )
+                  ),
+                ),
+
+                Container(
+                  padding: EdgeInsets.only(
+                    left:16, right: 16),
+                  child: Card(
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        left:20.0, right: 10, top: 20, bottom: 20),
+                      child: InkWell(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: <Widget>[
+                            Expanded(
+                              flex: 4,
+                              child: Text("Connected Account"),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child: Text("",
+                                style: TextStyle(color: secondryColor),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 1,
+                              child: Icon(
+                                Icons.arrow_forward_ios,
+                                color: secondryColor,
+                                size: 15,
+                              ),
+                            ),
+                            
+                            
+                          ],
+                        ),
+                        onTap: () {
+                          connectedAccountWidget();
+                        },
+                      ),
+                    )
+                  ),
                 ),
 
                 Padding(
@@ -1368,6 +1043,249 @@ class _SettingsState extends State<Settings> {
         },
       ),
     );
+  }
+
+  Future<void> connectedAccountWidget()async{
+    await showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+            content: StatefulBuilder(
+              builder: (BuildContext context2, StateSetter setState2){
+                return Material(
+                  color: Colors.transparent,
+                  child: Stack(
+                    children: [
+                      Column(
+                        children: [
+                          SizedBox(height: 50,),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                "Connected Accounts",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 30,),
+                          InkWell(
+                            onTap: () async {
+                              if(widget.currentUser.LoginID['fb'] == ""){
+                                showDialog(
+                                    context: context,
+                                    builder: (context) => Container(
+                                        height: 30,
+                                        width: 30,
+                                        child: Center(
+                                            child: CupertinoActivityIndicator(
+                                              key: UniqueKey(),
+                                              radius: 20,
+                                              animating: true,
+                                            ))));
+                                await Get.find<LoginController>().handleFacebookLogin(context).then((user) async {
+                                  var LoginID = {
+                                    "fb" : user.uid,
+                                  };
+                                  await FirebaseFirestore.instance.collection("Users").doc(Get.find<LoginController>().userId).set(
+                                      {
+                                        "LoginID" : LoginID,
+                                      },
+                                      SetOptions(merge : true)
+
+                                  );
+                                  print("done");
+                                }).then((_) {
+                                  Navigator.pop(context);
+                                  Get.to(()=>Tabbar(null, null));
+                                }).catchError((e) {
+                                  Navigator.pop(context);
+                                });
+                              }else{
+                                Get.snackbar("Information", "You have connected to Facebook");
+                              }
+
+                            },
+                            child: Container(
+                              width: 250,
+                              padding: EdgeInsets.only(
+                                left: 8, right: 8,
+                                bottom: 8, top: 8
+                              ),
+                                decoration: BoxDecoration(
+                                  // color: (widget.currentUser.LoginID['fb'] == "")?Colors.red : Colors.greenAccent,
+                                    // border: Border.all(
+                                    //   color: Colors.red[500],
+                                    // ),
+                                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                                  color: Colors.grey[400]
+                                ),
+                                child:Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Image.asset("asset/images/fb.png", height:25),
+                                    Text("Facebook",
+                                      style: TextStyle(
+                                        color: (widget.currentUser.LoginID['fb'] == "")?Colors.white : Colors.black
+                                      ),
+                                    ),
+                                    if(widget.currentUser.LoginID['fb'] == "")
+                                      Text(""),
+                                    if(widget.currentUser.LoginID['fb'] != "")
+                                      Icon(Icons.check_box, 
+                                        size: 20,color: Colors.black,),
+                                  ],
+                                ) 
+                            )
+                          ),
+
+                          SizedBox(height: 20,),
+
+                          Platform.isIOS?
+                          InkWell(
+                              onTap: () async {
+                                if(widget.currentUser.LoginID['apple'] == "") {
+                                  final User currentUser = await Get.find<LoginController>().handleAppleLogin(_scaffoldKey).catchError((onError) {
+                                    SnackBar snackBar = SnackBar(content: Text(onError.toString()));
+                                    _scaffoldKey.currentState.showSnackBar(snackBar);
+                                  });
+                                  if (currentUser != null) {
+                                    print('userName ${currentUser.displayName} \n photourl ${currentUser.photoURL}');
+                                    var LoginID = {
+                                      "apple": currentUser.uid,
+                                    };
+                                    await FirebaseFirestore.instance
+                                        .collection("Users").doc(Get.find<LoginController>().userId).set(
+                                        {
+                                          "LoginID": LoginID,
+                                        },
+                                        SetOptions(merge: true)
+
+                                    );
+                                    Get.to(() => Tabbar(null, null));
+                                    // await _setDataUser(currentUser);
+
+                                    // Get.find<LoginController>().navigationCheck(currentUser, context, "apple.com");
+                                  }
+                                }else{
+                                  Get.snackbar("Information", "You have connected to Apple");
+                                }
+
+                              },
+                              child: Container(
+                                width: 250,
+                                padding: EdgeInsets.only(
+                                  left: 8, right: 8,
+                                  bottom: 8, top: 8
+                                ),
+                                decoration: BoxDecoration(
+                                    // color: (widget.currentUser.LoginID['apple'] == "")?Colors.red : Colors.greenAccent,
+                                    // border: Border.all(
+                                    //   color: Colors.red[500],
+                                    // ),
+                                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                                  color: Colors.grey[400]
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Image.asset("asset/images/apple.png", height:25),
+                                    Text("Apple",
+                                      style: TextStyle(
+                                          color: (widget.currentUser.LoginID['apple'] == "")?Colors.white : Colors.black
+                                      ),
+                                    ),
+                                    if(widget.currentUser.LoginID['apple'] == "")
+                                      Text(""),
+                                    if(widget.currentUser.LoginID['apple'] != "")
+                                      Icon(Icons.check_box, 
+                                        size: 20,color: Colors.black,),
+                                  ],
+                                ) 
+                              )
+                          ):Container(),
+
+                          Platform.isAndroid?
+                            InkWell(
+                              onTap: () async {
+                                if(widget.currentUser.LoginID['google'] == "") {
+                                  Get.find<LoginController>().addGoogleLogin();
+                                }else{
+                                  Get.snackbar("Information", "You have connected to Google");
+                                }
+
+                              },
+                              child: Container(
+                                width: 250,
+                                padding: EdgeInsets.only(
+                                  left: 8, right: 8,
+                                  bottom: 8, top: 8
+                                ),
+                                decoration: BoxDecoration(
+                                    // color: (widget.currentUser.LoginID['apple'] == "")?Colors.red : Colors.greenAccent,
+                                    // border: Border.all(
+                                    //   color: Colors.red[500],
+                                    // ),
+                                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                                  color: Colors.grey[400]
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Image.asset("asset/images/ic_google.png", height:25),
+                                    Text("Google",
+                                      style: TextStyle(
+                                          color: (widget.currentUser.LoginID['google'] == "")?Colors.white : Colors.black
+                                      ),
+                                    ),
+                                    if(widget.currentUser.LoginID['google'] == "")
+                                      Text(""),
+                                    if(widget.currentUser.LoginID['google'] != "")
+                                      Icon(Icons.check_box, 
+                                        size: 20,color: Colors.black,),
+                                  ],
+                                ) 
+                              )
+                          ):Container(),
+
+                          SizedBox(height: 50,),
+                          
+                        ],
+                      ),
+                      InkWell(
+                        onTap: (){
+                          Get.back();
+                        },
+                        child: Align(
+                          alignment: Alignment.topRight,
+                          child: Container(
+                            padding: EdgeInsets.all(4),
+                            decoration: new BoxDecoration(
+                              shape: BoxShape.circle,// You can use like this way or like the below line
+                              //borderRadius: new BorderRadius.circular(30.0),
+                              color: Colors.black,
+                            ),
+                            child: Icon(
+                              Icons.close, 
+                              size: 12,
+                              color: Colors.white,),
+                          )
+                        )
+                      )
+                      
+                    ]
+                  )
+                );
+              },
+            ),
+            insetAnimationCurve: Curves.decelerate,
+            actions: [
+
+            ]);
+      });
   }
 
   Widget pendingWidget(){

@@ -9,16 +9,8 @@ import 'package:hookup4u/util/color.dart';
 import 'package:hookup4u/util/snackbar.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import '../../Controller/WelcomeController.dart';
-import 'login.dart';
-// import 'package:easy_localization/easy_localization.dart';
-
-// class Verification extends StatefulWidget {
-//   @override
-//   _VerificationState createState() => _VerificationState();
-// }
 
 var onTapRecognizer;
-
 class Verification extends StatelessWidget {
   final bool updateNumber;
   final String phoneNumber;
