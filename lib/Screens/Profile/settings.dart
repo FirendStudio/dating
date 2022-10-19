@@ -13,6 +13,8 @@ import 'package:get_storage/get_storage.dart';
 import 'package:hookup4u/Controller/HomeController.dart';
 import 'package:hookup4u/Controller/NotificationController.dart';
 import 'package:hookup4u/Controller/TabsController.dart';
+import 'package:hookup4u/Controller/VerifyProfileController.dart';
+import 'package:hookup4u/Screens/Profile/verify/VerifyAccountScreen.dart';
 import 'package:hookup4u/Screens/Tab.dart';
 import 'package:hookup4u/Screens/Welcome/UpdateLocation.dart';
 import 'package:hookup4u/Screens/auth/login.dart';
@@ -194,11 +196,19 @@ class _SettingsState extends State<Settings> {
                 Container(
                   padding: EdgeInsets.only(
                     left:16, right: 16),
-                  child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                        left:20.0, right: 10, top: 20, bottom: 20),
-                      child: InkWell(
+                  child: InkWell(
+                    onTap: (() {
+                      // print("Test");
+                      Get.find<VerifyProfileController>().phoneNumController.text = "";
+                      if(widget.currentUser.phoneNumber.isNotEmpty){
+                        Get.find<VerifyProfileController>().phoneNumController.text = widget.currentUser.phoneNumber;
+                      }
+                      Get.to(()=>VerifyAccountScreen());
+                    }),
+                    child: Card(
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          left:20.0, right: 10, top: 20, bottom: 20),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
@@ -227,17 +237,9 @@ class _SettingsState extends State<Settings> {
                             
                           ],
                         ),
-                        onTap: () {
-                          // Navigator.push(
-                          //     context,
-                          //     CupertinoPageRoute(
-                          //         builder: (context) =>
-                          //             UpdateNumber(widget.currentUser)));
-                          // _ads.disable(_ad);
-                        },
-                      ),
-                    )
-                  ),
+                      )
+                    ),
+                  ) 
                 ),
 
                 Container(

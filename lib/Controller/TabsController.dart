@@ -643,6 +643,7 @@ class TabsController extends GetxController{
                     listSwipedUser : temp.listSwipedUser,
                     countryName: temp.countryName,
                     countryID: temp.countryID,
+                    verified: temp.verified
                     
                 ));
               }else{

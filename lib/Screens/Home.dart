@@ -355,6 +355,7 @@ class _CardPicturesState2 extends State<CardPictures2>
               }
 
               // print("Index ke : " + index.toString() + " (" +data.users[index].name + ")");
+              // print("Verified : " + data.users[index].verified.toString());
               return SingleChildScrollView(
                 child: Column(
                   children: <Widget>[
@@ -365,12 +366,79 @@ class _CardPicturesState2 extends State<CardPictures2>
                     ),
                     SizedBox(height: 10,),
                     ListTile(
-                      title: Text(
-                        "${data.users[index].name}",
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold),
+                      title:Row(
+                        children: [
+                          Expanded(
+                            flex: 6,
+                            child: RichText(
+                              text: TextSpan(
+                                text: data.users[index].name,
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 25,
+                                  fontWeight: FontWeight.bold
+                                ),
+                                children: [
+                                  WidgetSpan(
+                                    child: SizedBox(width: 6,),
+                                  ),
+                                  WidgetSpan(
+                                    child: ClipOval(
+                                      child: Material(
+                                        color: (data.users[index].verified == 0)?Colors.grey[400] : Colors.greenAccent, // Button color
+                                        child: InkWell(
+                                          splashColor: Colors.red, // Splash color
+                                          onTap: () {
+                                            
+                                          },
+                                          child: SizedBox(
+                                            width: 23, height: 23, 
+                                            child: Icon(
+                                              Icons.check,
+                                              size: 20,
+                                              color: Colors.white,
+                                            )
+                                          ),
+                                        ),
+                                      ),
+                                    ) 
+                                  ),
+                                ]
+                              ),
+                            )
+                          ),
+                          SizedBox(width: 5,),
+                          Expanded(
+                            flex: 1,
+                            child:Stack(
+                              children: [
+                                Align(
+                                  alignment: Alignment.topCenter,
+                                  child: InkWell(
+                                    splashColor: Colors.red, // Splash color
+                                    onTap: () {
+                                      showDialog(
+                                              barrierDismissible: true,
+                                              context: context,
+                                              builder: (context) => ReportUser(
+                                                currentUser: widget.currentUser,
+                                                seconduser: data.users[index],
+                                              ));
+                                    },
+                                    child: SizedBox(
+                                      width: 40, height: 40, 
+                                      child: Icon(
+                                        Icons.flag,
+                                        size: 40,
+                                        color: Colors.red,
+                                      )
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ) 
+                          )
+                        ],
                       ),
                       subtitle: Column(
                         children: [
@@ -610,27 +678,27 @@ class _CardPicturesState2 extends State<CardPictures2>
                       height: 10,
                     ),
 
-                    InkWell(
-                      onTap: () => showDialog(
-                          barrierDismissible: true,
-                          context: context,
-                          builder: (context) => ReportUser(
-                            currentUser: widget.currentUser,
-                            seconduser: data.users[index],
-                          )),
-                      child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          child: Center(
-                            child: Text(
-                              "REPORT ${data.users[index].name}".toUpperCase(),
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                  color: secondryColor),
-                            ),
-                          )),
-                    ),
+                    // InkWell(
+                    //   onTap: () => showDialog(
+                    //       barrierDismissible: true,
+                    //       context: context,
+                    //       builder: (context) => ReportUser(
+                    //         currentUser: widget.currentUser,
+                    //         seconduser: data.users[index],
+                    //       )),
+                    //   child: Container(
+                    //       width: MediaQuery.of(context).size.width,
+                    //       child: Center(
+                    //         child: Text(
+                    //           "REPORT ${data.users[index].name}".toUpperCase(),
+                    //           textAlign: TextAlign.center,
+                    //           style: TextStyle(
+                    //               fontSize: 18,
+                    //               fontWeight: FontWeight.w600,
+                    //               color: secondryColor),
+                    //         ),
+                    //       )),
+                    // ),
                     SizedBox(height: 100,),
 
                   ],

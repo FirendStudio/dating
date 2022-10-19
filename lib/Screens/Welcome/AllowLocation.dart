@@ -143,6 +143,7 @@ class AllowLocation extends StatelessWidget {
                       userData.addAll(
                         {
                           "listSwipedUser" : [],
+                          "verified" : 0,
                           'location': {
                             'latitude': currentLocation['latitude'],
                             'longitude': currentLocation['longitude'],

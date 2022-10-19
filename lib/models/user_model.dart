@@ -73,7 +73,7 @@ class UserModel {
         id: doc['userId'],
         // isBlocked: doc['isBlocked'] != null ? doc['isBlocked'] : false,
         isBlocked: doc.data().toString().contains('isBlocked') ? doc['isBlocked'] : false,
-        phoneNumber: doc['phoneNumber'],
+        phoneNumber: doc.data().toString().contains('phoneNumber')?doc['phoneNumber']??"" : "",
         name: doc['UserName'],
         editInfo: doc['editInfo'],
         ageRange: doc['age_range'],

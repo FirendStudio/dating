@@ -72,59 +72,6 @@ class Login extends StatelessWidget {
                           //     colors: [primaryColor, primaryColor])),
                     ),
                   ),
-                  // ClipPath(
-                  //   clipper: WaveClipper2(),
-                  //   child: Container(
-
-                  //     child: Column(),
-                  //     width: double.infinity,
-                  //     height: 280,
-                  //     decoration: BoxDecoration(
-                  //         gradient: LinearGradient(colors: [
-                  //       darkPrimaryColor,
-                  //       primaryColor.withOpacity(.15)
-                  //     ])),
-                  //   ),
-                  // ),
-                  // ClipPath(
-                  //   clipper: WaveClipper3(),
-                  //   child: Container(
-
-                  //     child: Column(),
-                  //     width: double.infinity,
-                  //     height: 280,
-                  //     decoration: BoxDecoration(
-                  //         gradient: LinearGradient(colors: [
-                  //       darkPrimaryColor,
-                  //       primaryColor.withOpacity(.2)
-                  //     ])),
-                  //   ),
-                  // ),
-                  // ClipPath(
-                  //   clipper: WaveClipper1(),
-                  //   child: Container(
-                  //     padding: EdgeInsets.only(
-                  //       left: Get.width * 0.1,
-                  //       right: Get.width * 0.1,
-                  //     ),
-                  //     // padding: EdgeInsets.all(20),
-                  //     child: Column(
-                  //       children: <Widget>[
-                  //         SizedBox(
-                  //           height: 15,
-                  //         ),
-                  //         Image.asset(
-                  //           "asset/hookup4u-Logo-BW.png",
-                  //           fit: BoxFit.contain,
-                  //         ),
-                  //       ],
-                  //     ),
-                  //     width: double.infinity,
-                  //     height: 280,
-                  //     decoration: BoxDecoration(
-                  //         gradient: LinearGradient(
-                  //             colors: [primaryColor, primaryColor])),
-                  //   ),
                   
                 ],
               ),
@@ -372,65 +319,6 @@ class Login extends StatelessWidget {
                   ),
                 ],
               ),
-              // Container(
-              //   child: StreamBuilder<QuerySnapshot>(
-              //     stream: FirebaseFirestore.instance.collection('Language').snapshots(),
-              //     builder: (context, snapshot) {
-              //       if (!snapshot.hasData) {
-              //         return Center(
-              //             // child: Text('Lanuage not Found'),
-              //             );
-              //       }
-              //       return Column(
-              //         children: snapshot.data.docs.map((document) {
-              //           if (document['spanish'] == true &&
-              //               document['english'] == true) {
-              //             return Row(
-              //               mainAxisAlignment: MainAxisAlignment.center,
-              //               children: [
-              //                 FlatButton(
-              //                   child: Text(
-              //                     "English".toString(),
-              //                     style: TextStyle(color: Colors.pink),
-              //                   ),
-              //                   onPressed: () {
-              //                     // context.setLocale(Locale('en', 'US'));
-              //                     // EasyLocalization.of(context).locale =
-              //                     //     Locale('en', 'US');
-              //                     Navigator.pushReplacement(
-              //                         context,
-              //                         MaterialPageRoute(
-              //                           builder: (context) => Login(),
-              //                         ));
-              //                   },
-              //                 ),
-              //                 FlatButton(
-              //                   child: Text(
-              //                     "Spanish",
-              //                     style: TextStyle(color: Colors.pink),
-              //                   ),
-              //                   onPressed: () {
-              //                     context.locale = Locale('es', 'ES');
-              //
-              //                     // EasyLocalization.of(context).locale =
-              //                     //     Locale('es', 'ES');
-              //                     Navigator.pushReplacement(
-              //                         context,
-              //                         MaterialPageRoute(
-              //                           builder: (context) => Login(),
-              //                         ));
-              //                   },
-              //                 ),
-              //               ],
-              //             );
-              //           } else {
-              //             return Text('');
-              //           }
-              //         }).toList(),
-              //       );
-              //     },
-              //   ),
-              // ),
             ],
           ),
         ),

@@ -180,12 +180,39 @@ class InformationPartner extends StatelessWidget {
                       child: Column(
                         children: <Widget>[
                           ListTile(
-                            title: Text(
-                              "${user.name},",
-                              style: TextStyle(
+                            title:RichText(
+                              text: TextSpan(
+                                text:user.name,
+                                style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 25,
-                                  fontWeight: FontWeight.bold),
+                                  fontWeight: FontWeight.bold
+                                ),
+                                children: [
+                                  WidgetSpan(
+                                    child: SizedBox(width: 6,),
+                                  ),
+                                  WidgetSpan(
+                                    child: ClipOval(
+                                      child: Material(
+                                        color: (user.verified == 0)?Colors.grey[400] : Colors.greenAccent, // Button color
+                                        child: InkWell(
+                                          splashColor: Colors.red, // Splash color
+                                          onTap: () {},
+                                          child: SizedBox(
+                                            width: 23, height: 23, 
+                                            child: Icon(
+                                              Icons.check,
+                                              size: 20,
+                                              color: Colors.white,
+                                            )
+                                          ),
+                                        ),
+                                      ),
+                                    ) 
+                                  ),
+                                ]
+                              ),
                             ),
                             subtitle: Column(
                               children: [
