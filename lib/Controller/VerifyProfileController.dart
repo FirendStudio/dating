@@ -281,11 +281,12 @@ class VerifyProfileController extends GetxController{
 
       try {
         Map<String, dynamic> updateObject = {
-          "idUser"      : Get.find<TabsController>().currentUser.id,
-          "name"        : Get.find<TabsController>().currentUser.name,
-          "phoneNumber" : Get.find<TabsController>().currentUser.phoneNumber,
-          "verified"    : 1,
-          "imageUrl"    : fileURL
+          "idUser"        : Get.find<TabsController>().currentUser.id,
+          "name"          : Get.find<TabsController>().currentUser.name,
+          "phoneNumber"   : Get.find<TabsController>().currentUser.phoneNumber,
+          "verified"      : 1,
+          "date_updated"  : DateTime.now().toIso8601String(),
+          "imageUrl"      : fileURL
         };
         await FirebaseFirestore.instance
             .collection("Verify")
@@ -316,23 +317,21 @@ class VerifyProfileController extends GetxController{
             });
             return Center(
               child: Container(
-                width: 400.0,
-                height: 400.0,
+                width: 300.0,
+                height: 200.0,
                 decoration: BoxDecoration(
                   color: Colors.white,
                   shape: BoxShape.rectangle,
                   borderRadius: BorderRadius.circular(20)),
-                child: Column(
-                  children: <Widget>[
-                    Text(
-                      "Thanks for submitting, please wait 1x24 hour our staff will verify your account",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          decoration: TextDecoration.none,
-                          color: Colors.black,
-                          fontSize: 14),
-                    )
-                  ],
+                child: Center(
+                  child: Text(
+                    "Thanks for submitting, please wait 1x24 hour our staff will verify your account",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        decoration: TextDecoration.none,
+                        color: Colors.black,
+                        fontSize: 14),
+                  ),
                 )));
         });
         // if (mounted) setState(() {});
