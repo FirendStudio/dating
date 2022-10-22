@@ -219,10 +219,10 @@ class _SettingsState extends State<Settings> {
                             Expanded(
                               flex: 2,
                               child: Text(
-                                widget.currentUser.verified == 0
+                                widget.currentUser.verified != 3
                                     ? "Unverified"
                                     : "Verify Now",
-                                style: TextStyle(color:widget.currentUser.verified == 0? Colors.red:Colors.greenAccent),
+                                style: TextStyle(color:widget.currentUser.verified != 3? Colors.red:Colors.greenAccent),
                               ),
                             ),
                             Expanded(

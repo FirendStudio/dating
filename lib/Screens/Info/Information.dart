@@ -121,7 +121,7 @@ class Info extends StatelessWidget {
                                   WidgetSpan(
                                     child: ClipOval(
                                       child: Material(
-                                        color: (user.verified == 0)?Colors.grey[400] : Colors.greenAccent, // Button color
+                                        color: (user.verified != 3)?Colors.grey[400] : Colors.greenAccent, // Button color
                                         child: InkWell(
                                           splashColor: Colors.red, // Splash color
                                           onTap: () {},

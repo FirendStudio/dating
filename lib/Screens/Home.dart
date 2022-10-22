@@ -385,7 +385,7 @@ class _CardPicturesState2 extends State<CardPictures2>
                                   WidgetSpan(
                                     child: ClipOval(
                                       child: Material(
-                                        color: (data.users[index].verified == 0)?Colors.grey[400] : Colors.greenAccent, // Button color
+                                        color: (data.users[index].verified != 3)?Colors.grey[400] : Colors.greenAccent, // Button color
                                         child: InkWell(
                                           splashColor: Colors.red, // Splash color
                                           onTap: () {
