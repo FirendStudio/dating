@@ -109,6 +109,28 @@ class InformationPartner extends StatelessWidget {
                           Get.find<TabsController>().update();
                           Get.back();
                         }),
+                    if(!isMe)
+                      InkWell(
+                        splashColor: Colors.red, // Splash color
+                        onTap: () {
+                          showDialog(
+                            barrierDismissible: true,
+                            context: context,
+                            builder: (context) => ReportUser(
+                            currentUser: currentUser,
+                            seconduser: user,
+                          ),
+                          );
+                        },
+                        child: SizedBox(
+                          width: 40, height: 40, 
+                          child: Icon(
+                            Icons.flag,
+                            size: 40,
+                            color: Colors.red,
+                          )
+                        ),
+                      ),
                     FloatingActionButton(
                         heroTag: UniqueKey(),
                         backgroundColor: Colors.white,
@@ -243,19 +265,25 @@ class InformationPartner extends StatelessWidget {
                                       SizedBox(width: 8,),
                                       Text(user.countryName)
                                     ],
-                                  )
+                                  ),
                               ],
                             ),
-                            trailing: FloatingActionButton(
-                                backgroundColor: Colors.white,
-                                onPressed: () {
-                                  // Get.find<NotificationController>().relationUserPartner = null;
-                                  Navigator.pop(context);
-                                },
-                                child: Icon(
-                                  Icons.arrow_downward,
-                                  color: primaryColor,
-                                )),
+                            trailing:Column(
+                              children: [
+                                
+                                FloatingActionButton(
+                                  backgroundColor: Colors.white,
+                                  onPressed: () {
+                                    // Get.find<NotificationController>().relationUserPartner = null;
+                                    Navigator.pop(context);
+                                  },
+                                  child: Icon(
+                                    Icons.arrow_downward,
+                                    color: primaryColor,
+                                  )
+                                ),
+                              ],
+                            ) 
                           ),
                           user.editInfo['job_title'] != null
                               ? ListTile(
@@ -336,7 +364,7 @@ class InformationPartner extends StatelessWidget {
                       ),
                       subtitle: Text(desiresText),
                     ),
-
+                  
                   SizedBox(
                     height: 10,
                   ),
@@ -422,29 +450,29 @@ class InformationPartner extends StatelessWidget {
                   SizedBox(
                     height: 10,
                   ),
-                  !isMe ?
-                  InkWell(
-                    onTap: () => showDialog(
-                        barrierDismissible: true,
-                        context: context,
-                        builder: (context) => ReportUser(
-                          currentUser: currentUser,
-                          seconduser: user,
-                        )),
-                    child: Container(
-                        width: MediaQuery.of(context).size.width,
-                        child: Center(
-                          child: Text(
-                            "REPORT ${user.name}".toUpperCase(),
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                                color: secondryColor),
-                          ),
-                        )),
-                  )
-                      : Container(),
+                  // !isMe ?
+                  // InkWell(
+                  //   onTap: () => showDialog(
+                  //       barrierDismissible: true,
+                  //       context: context,
+                  //       builder: (context) => ReportUser(
+                  //         currentUser: currentUser,
+                  //         seconduser: user,
+                  //       )),
+                  //   child: Container(
+                  //       width: MediaQuery.of(context).size.width,
+                  //       child: Center(
+                  //         child: Text(
+                  //           "REPORT ${user.name}".toUpperCase(),
+                  //           textAlign: TextAlign.center,
+                  //           style: TextStyle(
+                  //               fontSize: 18,
+                  //               fontWeight: FontWeight.w600,
+                  //               color: secondryColor),
+                  //         ),
+                  //       )),
+                  // )
+                  //     : Container(),
                   SizedBox(
                     height: 100,
                   ),
