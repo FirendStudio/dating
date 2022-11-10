@@ -200,9 +200,9 @@ class _SettingsState extends State<Settings> {
                     onTap: (() {
                       // print("Test");
                       Get.find<VerifyProfileController>().phoneNumController.text = "";
-                      if(widget.currentUser.phoneNumber.isNotEmpty){
-                        Get.find<VerifyProfileController>().phoneNumController.text = widget.currentUser.phoneNumber;
-                      }
+                      // if(widget.currentUser.phoneNumber.isNotEmpty){
+                      //   Get.find<VerifyProfileController>().phoneNumController.text = widget.currentUser.phoneNumber;
+                      // }
                       Get.to(()=>VerifyAccountScreen());
                     }),
                     child: Card(

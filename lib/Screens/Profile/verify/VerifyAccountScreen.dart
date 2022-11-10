@@ -76,7 +76,7 @@ class VerifyAccountScreen extends StatelessWidget {
                                 fontWeight: FontWeight.bold,
                                 color: (currentUser.verified != 3)
                                     ? Colors.red
-                                    : Colors.greenAccent)),
+                                    : Colors.greenAccent,),),
                       ]),
                 ),
               ),
@@ -110,9 +110,10 @@ class VerifyAccountScreen extends StatelessWidget {
                 text: "Enter the code sent to ",
                 children: [
                   TextSpan(
-                      text: (currentUser.phoneNumber.isNotEmpty)
-                          ? currentUser.phoneNumber
-                          : (data.countryCode + data.phoneNumController.text),
+                      text: data.countryCode + data.phoneNumController.text,
+                      // text: (currentUser.phoneNumber.isNotEmpty)
+                      //     ? currentUser.phoneNumber
+                      //     : (data.countryCode + data.phoneNumController.text),
                       style: TextStyle(
                           color: primaryColor,
                           fontStyle: FontStyle.italic,
@@ -220,33 +221,54 @@ class VerifyAccountScreen extends StatelessWidget {
         Padding(
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 50),
             child: ListTile(
-                leading: (currentUser.phoneNumber.isEmpty)
-                    ? Container(
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(width: 1.0, color: primaryColor),
-                          ),
-                        ),
-                        child: CountryCodePicker(
-                          onChanged: (value) {
-                            data.countryCode = value.dialCode;
-                          },
-                          // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
-                          initialSelection: 'IN',
-                          favorite: [data.countryCode, 'IN'],
-                          // optional. Shows only country name and flag
-                          showCountryOnly: false,
-                          // optional. Shows only country name and flag when popup is closed.
-                          showOnlyCountryWhenClosed: false,
-                          // optional. aligns the flag and the Text left
-                          alignLeft: false,
-                        ),
-                      )
-                    : null,
+                // leading: (currentUser.phoneNumber.isEmpty)
+                //     ? Container(
+                //         decoration: BoxDecoration(
+                //           border: Border(
+                //             bottom: BorderSide(width: 1.0, color: primaryColor),
+                //           ),
+                //         ),
+                //         child: CountryCodePicker(
+                //           onChanged: (value) {
+                //             data.countryCode = value.dialCode;
+                //           },
+                //           // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
+                //           initialSelection: 'IN',
+                //           favorite: [data.countryCode, 'IN'],
+                //           // optional. Shows only country name and flag
+                //           showCountryOnly: false,
+                //           // optional. Shows only country name and flag when popup is closed.
+                //           showOnlyCountryWhenClosed: false,
+                //           // optional. aligns the flag and the Text left
+                //           alignLeft: false,
+                //         ),
+                //       )
+                //     : null,
+                leading: Container(
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(width: 1.0, color: primaryColor),
+                    ),
+                  ),
+                  child: CountryCodePicker(
+                    onChanged: (value) {
+                      data.countryCode = value.dialCode;
+                    },
+                    // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
+                    initialSelection: 'IN',
+                    favorite: [data.countryCode, 'IN'],
+                    // optional. Shows only country name and flag
+                    showCountryOnly: false,
+                    // optional. Shows only country name and flag when popup is closed.
+                    showOnlyCountryWhenClosed: false,
+                    // optional. aligns the flag and the Text left
+                    alignLeft: false,
+                  ),
+                ),
                 title: Container(
                   child: TextFormField(
-                    enabled:
-                        (currentUser.phoneNumber.isNotEmpty) ? false : true,
+                    // enabled:(currentUser.phoneNumber.isNotEmpty) ? false : true,
+                    enabled: true,
                     keyboardType: TextInputType.phone,
                     style: TextStyle(fontSize: 20),
                     cursorColor: primaryColor,
@@ -270,28 +292,30 @@ class VerifyAccountScreen extends StatelessWidget {
           child: InkWell(
               onTap: () async {
                 String phoneNumber = data.phoneNumController.text;
-                if (currentUser.phoneNumber.isEmpty) {
-                  phoneNumber = data.countryCode + phoneNumber.toString();
-                }
-                if (currentUser.phoneNumber.isNotEmpty) {
-                  data.verifyPhoneNumber(
-                      phoneNumber, Get.context, _scaffoldKey);
-                  return;
-                }
-                print(phoneNumber);
-                var result = await FirebaseFirestore.instance
-                    .collection('Users')
-                    .where("phoneNumber", isEqualTo: phoneNumber)
-                    .limit(1)
-                    .get();
-                print(result.docs);
-                if (result != null && result.docs.isEmpty) {
-                  data.verifyPhoneNumber(
-                      phoneNumber, Get.context, _scaffoldKey);
-                  return;
-                }
-                CustomSnackbar.snackbar(
-                    "Phone already registered", _scaffoldKey);
+                phoneNumber = data.countryCode + phoneNumber.toString();
+                data.verifyPhoneNumber(phoneNumber, Get.context, _scaffoldKey);
+                // if (currentUser.phoneNumber.isEmpty) {
+                //   phoneNumber = data.countryCode + phoneNumber.toString();
+                // }
+                // if (currentUser.phoneNumber.isNotEmpty) {
+                //   data.verifyPhoneNumber(
+                //       phoneNumber, Get.context, _scaffoldKey);
+                //   return;
+                // }
+                // print(phoneNumber);
+                // var result = await FirebaseFirestore.instance
+                //     .collection('Users')
+                //     .where("phoneNumber", isEqualTo: phoneNumber)
+                //     .limit(1)
+                //     .get();
+                // print(result.docs);
+                // if (result != null && result.docs.isEmpty) {
+                //   data.verifyPhoneNumber(
+                //       phoneNumber, Get.context, _scaffoldKey);
+                //   return;
+                // }
+                // CustomSnackbar.snackbar(
+                //     "Phone already registered", _scaffoldKey);
               },
               child: Container(
                   height: Get.size.height * .065,

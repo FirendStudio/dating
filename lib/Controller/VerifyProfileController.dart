@@ -63,15 +63,16 @@ class VerifyProfileController extends GetxController{
   smsCodeSent(String verificationId, List<int> code, BuildContext context) async {
     // set the verification code so that we can use it to log the user in
     smsVerificationCode = verificationId;
-    isSentOTP = true;
+    // isSentOTP = true;
+    print("code Sent : ");
     code.forEach((element) => print(element),);
     showDialog(
       barrierDismissible: false,
       context: context,
       builder: (_) {
-        Future.delayed(Duration(seconds: 2), () {
+        Future.delayed(Duration(seconds: 2), () async {
           Navigator.pop(context);
-          update();
+          Get.to(()=>UploadImageVerifyScreen());
         });
         return Center(
           child: Container(
