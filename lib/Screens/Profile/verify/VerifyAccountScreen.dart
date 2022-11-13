@@ -14,6 +14,7 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 import '../../../Controller/LoginController.dart';
 import '../../../Controller/WelcomeController.dart';
 import '../../../util/snackbar.dart';
+import 'UploadImageVerifyScreen.dart';
 // import 'package:easy_localization/easy_localization.dart';
 
 class VerifyAccountScreen extends StatelessWidget {
@@ -35,7 +36,7 @@ class VerifyAccountScreen extends StatelessWidget {
         backgroundColor: primaryColor,
         appBar: AppBar(
           title: Text(
-            "Phone number settings",
+            "Account Verification",
             style: TextStyle(color: Colors.white),
           ),
           leading: IconButton(
@@ -66,24 +67,32 @@ class VerifyAccountScreen extends StatelessWidget {
                           color: Colors.black),
                       children: [
                         TextSpan(
-                            text: (currentUser.verified == 0)
-                                ? "Unverified":(currentUser.verified == 1)
-                                ? "On Verification Admin":(currentUser.verified == 2)
-                                ? "Rejected"
-                                : "Verified",
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: (currentUser.verified != 3)
-                                    ? Colors.red
-                                    : Colors.greenAccent,),),
+                          text: (currentUser.verified == 0)
+                              ? "Unverified"
+                              : (currentUser.verified == 1)
+                                  ? "On Verification Admin"
+                                  : (currentUser.verified == 2)
+                                      ? "Rejected"
+                                      : "Verified",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: (currentUser.verified != 3)
+                                ? Colors.red
+                                : Colors.greenAccent,
+                          ),
+                        ),
                       ]),
                 ),
               ),
-              if (!data.isSentOTP && currentUser.verified == 0) requestWidget(data),
-              if (data.isSentOTP && currentUser.verified == 0) verifyWidget(data, context),
-              if (!data.isSentOTP && currentUser.verified == 2) requestWidget(data),
-              if (data.isSentOTP && currentUser.verified == 2) verifyWidget(data, context),
+              if (!data.isSentOTP && currentUser.verified == 0)
+                requestWidget(data),
+              if (data.isSentOTP && currentUser.verified == 0)
+                verifyWidget(data, context),
+              if (!data.isSentOTP && currentUser.verified == 2)
+                requestWidget(data),
+              if (data.isSentOTP && currentUser.verified == 2)
+                verifyWidget(data, context),
             ],
           ),
         ),
@@ -218,82 +227,87 @@ class VerifyAccountScreen extends StatelessWidget {
                 left: 15.0, right: 15, bottom: 5, top: 10),
             child: Text(
                 "You will then take a selfie displaying your face alongside the sheet of paper.")),
-        Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 50),
-            child: ListTile(
-                // leading: (currentUser.phoneNumber.isEmpty)
-                //     ? Container(
-                //         decoration: BoxDecoration(
-                //           border: Border(
-                //             bottom: BorderSide(width: 1.0, color: primaryColor),
-                //           ),
-                //         ),
-                //         child: CountryCodePicker(
-                //           onChanged: (value) {
-                //             data.countryCode = value.dialCode;
-                //           },
-                //           // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
-                //           initialSelection: 'IN',
-                //           favorite: [data.countryCode, 'IN'],
-                //           // optional. Shows only country name and flag
-                //           showCountryOnly: false,
-                //           // optional. Shows only country name and flag when popup is closed.
-                //           showOnlyCountryWhenClosed: false,
-                //           // optional. aligns the flag and the Text left
-                //           alignLeft: false,
-                //         ),
-                //       )
-                //     : null,
-                leading: Container(
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(width: 1.0, color: primaryColor),
-                    ),
-                  ),
-                  child: CountryCodePicker(
-                    onChanged: (value) {
-                      data.countryCode = value.dialCode;
-                    },
-                    // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
-                    initialSelection: 'IN',
-                    favorite: [data.countryCode, 'IN'],
-                    // optional. Shows only country name and flag
-                    showCountryOnly: false,
-                    // optional. Shows only country name and flag when popup is closed.
-                    showOnlyCountryWhenClosed: false,
-                    // optional. aligns the flag and the Text left
-                    alignLeft: false,
-                  ),
-                ),
-                title: Container(
-                  child: TextFormField(
-                    // enabled:(currentUser.phoneNumber.isNotEmpty) ? false : true,
-                    enabled: true,
-                    keyboardType: TextInputType.phone,
-                    style: TextStyle(fontSize: 20),
-                    cursorColor: primaryColor,
-                    controller: data.phoneNumController,
-                    onChanged: (value) {
-                      data.cont = true;
-                      data.update();
-                    },
-                    decoration: InputDecoration(
-                      hintText: "Enter your number",
-                      hintStyle: TextStyle(fontSize: 18),
-                      focusColor: primaryColor,
-                      focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: primaryColor)),
-                      enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: primaryColor)),
-                    ),
-                  ),
-                ))),
+        // Padding(
+        //     padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 50),
+        //     child: ListTile(
+        //         // leading: (currentUser.phoneNumber.isEmpty)
+        //         //     ? Container(
+        //         //         decoration: BoxDecoration(
+        //         //           border: Border(
+        //         //             bottom: BorderSide(width: 1.0, color: primaryColor),
+        //         //           ),
+        //         //         ),
+        //         //         child: CountryCodePicker(
+        //         //           onChanged: (value) {
+        //         //             data.countryCode = value.dialCode;
+        //         //           },
+        //         //           // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
+        //         //           initialSelection: 'IN',
+        //         //           favorite: [data.countryCode, 'IN'],
+        //         //           // optional. Shows only country name and flag
+        //         //           showCountryOnly: false,
+        //         //           // optional. Shows only country name and flag when popup is closed.
+        //         //           showOnlyCountryWhenClosed: false,
+        //         //           // optional. aligns the flag and the Text left
+        //         //           alignLeft: false,
+        //         //         ),
+        //         //       )
+        //         //     : null,
+        //         leading: Container(
+        //           decoration: BoxDecoration(
+        //             border: Border(
+        //               bottom: BorderSide(width: 1.0, color: primaryColor),
+        //             ),
+        //           ),
+        //           child: CountryCodePicker(
+        //             onChanged: (value) {
+        //               data.countryCode = value.dialCode;
+        //             },
+        //             // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
+        //             initialSelection: 'IN',
+        //             favorite: [data.countryCode, 'IN'],
+        //             // optional. Shows only country name and flag
+        //             showCountryOnly: false,
+        //             // optional. Shows only country name and flag when popup is closed.
+        //             showOnlyCountryWhenClosed: false,
+        //             // optional. aligns the flag and the Text left
+        //             alignLeft: false,
+        //           ),
+        //         ),
+        //         title: Container(
+        //           child: TextFormField(
+        //             // enabled:(currentUser.phoneNumber.isNotEmpty) ? false : true,
+        //             enabled: true,
+        //             keyboardType: TextInputType.phone,
+        //             style: TextStyle(fontSize: 20),
+        //             cursorColor: primaryColor,
+        //             controller: data.phoneNumController,
+        //             onChanged: (value) {
+        //               data.cont = true;
+        //               data.update();
+        //             },
+        //             decoration: InputDecoration(
+        //               hintText: "Enter your number",
+        //               hintStyle: TextStyle(fontSize: 18),
+        //               focusColor: primaryColor,
+        //               focusedBorder: UnderlineInputBorder(
+        //                   borderSide: BorderSide(color: primaryColor)),
+        //               enabledBorder: UnderlineInputBorder(
+        //                   borderSide: BorderSide(color: primaryColor)),
+        //             ),
+        //           ),
+        //         ))),
+        SizedBox(
+          height: 20,
+        ),
         Center(
           child: InkWell(
               onTap: () async {
-                String phoneNumber = data.phoneNumController.text;
-                phoneNumber = data.countryCode + phoneNumber.toString();
-                data.verifyPhoneNumber(phoneNumber, Get.context, _scaffoldKey);
+                data.setVerification();
+                // Get.to(()=>UploadImageVerifyScreen());
+                // String phoneNumber = data.phoneNumController.text;
+                // phoneNumber = data.countryCode + phoneNumber.toString();
+                // data.verifyPhoneNumber(phoneNumber, Get.context, _scaffoldKey);
                 // if (currentUser.phoneNumber.isEmpty) {
                 //   phoneNumber = data.countryCode + phoneNumber.toString();
                 // }
@@ -324,7 +338,7 @@ class VerifyAccountScreen extends StatelessWidget {
                       color: primaryColor,
                       borderRadius: BorderRadius.all(Radius.circular(8))),
                   child: Center(
-                    child: Text("Send me the verification code",
+                    child: Text("Show Me My Verification Code",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             fontSize: 16,
