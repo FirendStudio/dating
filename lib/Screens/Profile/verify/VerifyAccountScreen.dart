@@ -14,6 +14,7 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 import '../../../Controller/LoginController.dart';
 import '../../../Controller/WelcomeController.dart';
 import '../../../util/snackbar.dart';
+import 'UploadImageVerifyScreen.dart';
 // import 'package:easy_localization/easy_localization.dart';
 
 class VerifyAccountScreen extends StatelessWidget {
@@ -35,7 +36,7 @@ class VerifyAccountScreen extends StatelessWidget {
         backgroundColor: primaryColor,
         appBar: AppBar(
           title: Text(
-            "Phone number settings",
+            "Account Verification",
             style: TextStyle(color: Colors.white),
           ),
           leading: IconButton(
@@ -116,9 +117,10 @@ class VerifyAccountScreen extends StatelessWidget {
                 text: "Enter the code sent to ",
                 children: [
                   TextSpan(
-                      text: (currentUser.phoneNumber.isNotEmpty)
-                          ? currentUser.phoneNumber
-                          : (data.countryCode + data.phoneNumController.text),
+                      text: data.countryCode + data.phoneNumController.text,
+                      // text: (currentUser.phoneNumber.isNotEmpty)
+                      //     ? currentUser.phoneNumber
+                      //     : (data.countryCode + data.phoneNumController.text),
                       style: TextStyle(
                           color: primaryColor,
                           fontStyle: FontStyle.italic,
@@ -212,7 +214,7 @@ class VerifyAccountScreen extends StatelessWidget {
           padding:
               const EdgeInsets.only(left: 15.0, right: 15, bottom: 5, top: 10),
           child: Text(
-            "To get verified we will generate a unique code which you will need to write down on a A4 sheet of paper.",
+            "To get verified we will generate a unique code which you will need to write down on a A4 sheet.",
           ),
         ),
         Padding(
@@ -229,81 +231,13 @@ class VerifyAccountScreen extends StatelessWidget {
             "You will then take a selfie displaying your face alongside the sheet of paper.",
           ),
         ),
-        Padding(
-            padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 50),
-            child: ListTile(
-                leading: (currentUser.phoneNumber.isEmpty)
-                    ? Container(
-                        decoration: BoxDecoration(
-                          border: Border(
-                            bottom: BorderSide(width: 1.0, color: primaryColor),
-                          ),
-                        ),
-                        child: CountryCodePicker(
-                          onChanged: (value) {
-                            data.countryCode = value.dialCode;
-                          },
-                          // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
-                          initialSelection: 'IN',
-                          favorite: [data.countryCode, 'IN'],
-                          // optional. Shows only country name and flag
-                          showCountryOnly: false,
-                          // optional. Shows only country name and flag when popup is closed.
-                          showOnlyCountryWhenClosed: false,
-                          // optional. aligns the flag and the Text left
-                          alignLeft: false,
-                        ),
-                      )
-                    : null,
-                title: Container(
-                  child: TextFormField(
-                    enabled:
-                        (currentUser.phoneNumber.isNotEmpty) ? false : true,
-                    keyboardType: TextInputType.phone,
-                    style: TextStyle(fontSize: 20),
-                    cursorColor: primaryColor,
-                    controller: data.phoneNumController,
-                    onChanged: (value) {
-                      data.cont = true;
-                      data.update();
-                    },
-                    decoration: InputDecoration(
-                      hintText: "Enter your number",
-                      hintStyle: TextStyle(fontSize: 18),
-                      focusColor: primaryColor,
-                      focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: primaryColor)),
-                      enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(color: primaryColor)),
-                    ),
-                  ),
-                ))),
+        SizedBox(
+          height: 20,
+        ),
         Center(
           child: InkWell(
               onTap: () async {
-                String phoneNumber = data.phoneNumController.text;
-                if (currentUser.phoneNumber.isEmpty) {
-                  phoneNumber = data.countryCode + phoneNumber.toString();
-                }
-                if (currentUser.phoneNumber.isNotEmpty) {
-                  data.verifyPhoneNumber(
-                      phoneNumber, Get.context, _scaffoldKey);
-                  return;
-                }
-                print(phoneNumber);
-                var result = await FirebaseFirestore.instance
-                    .collection('Users')
-                    .where("phoneNumber", isEqualTo: phoneNumber)
-                    .limit(1)
-                    .get();
-                print(result.docs);
-                if (result != null && result.docs.isEmpty) {
-                  data.verifyPhoneNumber(
-                      phoneNumber, Get.context, _scaffoldKey);
-                  return;
-                }
-                CustomSnackbar.snackbar(
-                    "Phone already registered", _scaffoldKey);
+                data.setVerification();
               },
               child: Container(
                   height: Get.size.height * .065,
@@ -312,7 +246,7 @@ class VerifyAccountScreen extends StatelessWidget {
                       color: primaryColor,
                       borderRadius: BorderRadius.all(Radius.circular(8))),
                   child: Center(
-                    child: Text("Send me the verification code",
+                    child: Text("Show Me My Verification Code",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             fontSize: 16,

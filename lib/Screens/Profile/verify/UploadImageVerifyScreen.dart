@@ -59,6 +59,24 @@ class UploadImageVerifyScreen extends StatelessWidget {
                 + "\n\nYou will then take a selfie displaying your face alongside the sheet of paper."),
                 SizedBox(height: 50,),
                 Center(
+                  child:Text("Your Verification Code",
+                    style: TextStyle(
+                      fontWeight: FontWeight.normal,
+                      fontSize: 16
+                    ),
+                  ),
+                ),
+                SizedBox(height:8),
+                Center(
+                  child: Text(data.code,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20
+                    ),
+                  ),
+                ),
+                SizedBox(height:30),
+                Center(
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(0.0),
                     child: (data.croppedFile == null)
@@ -70,7 +88,6 @@ class UploadImageVerifyScreen extends StatelessWidget {
                       )
                   ),
                 ),
-                
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
