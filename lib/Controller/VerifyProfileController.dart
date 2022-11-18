@@ -306,33 +306,62 @@ class VerifyProfileController extends GetxController{
         Get.back();
         await Future.delayed(Duration(seconds: 1));
         Get.find<LoginController>().progress = 0.0;
-        showDialog(
-          barrierDismissible: false,
-          context: Get.context,
-          builder: (_) {
-            Future.delayed(Duration(seconds: 3), () {
-              Navigator.pop(Get.context);
-              Navigator.push(Get.context,
-                  CupertinoPageRoute(builder: (context) => Tabbar(null, null)));
-            });
-            return Center(
-              child: Container(
-                width: 300.0,
-                height: 200.0,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  shape: BoxShape.rectangle,
-                  borderRadius: BorderRadius.circular(20)),
-                child: Center(
-                  child: Text(
-                    "Thanks for submitting, please wait 1x24 hour our staff will verify your account",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                        decoration: TextDecoration.none,
-                        color: Colors.black,
-                        fontSize: 14),
+        await showDialog(
+        context: Get.context,
+        builder: (BuildContext context) {
+          return Material(
+              color: Colors.transparent,
+              child: CupertinoAlertDialog(
+                  title: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [Text("Account Verification")]),
+                  content: Column(
+                    children: [
+                      Text(
+                        "Thanks for submitting your photo! Please allow up to 24 hours for our staff to manually verify your profile.",
+                        textAlign: TextAlign.start,
+                        style: TextStyle(fontSize: 14),
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        // mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: InkWell(
+                                onTap: () {
+                                  Navigator.pop(Get.context);
+                                  Navigator.push(Get.context,
+                                      CupertinoPageRoute(builder: (context) => Tabbar(null, null)));
+                                },
+                                child: Container(
+                                    margin: EdgeInsets.only(
+                                        left: 0, top: 4, bottom: 4, right: 6),
+                                    padding: EdgeInsets.all(12),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                        color: Colors.grey[400],
+                                      ),
+                                      // borderRadius: BorderRadius.all(Radius.circular(20))
+                                    ),
+                                    child: Text(
+                                      "Okay",
+                                      textAlign: TextAlign.center,
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 15),
+                                    ))),
+                          ),
+                          
+                        ],
+                      ),
+                    ],
                   ),
-                )));
+                  insetAnimationCurve: Curves.decelerate,
+                  actions: []));
         });
         // if (mounted) setState(() {});
       } catch (err) {

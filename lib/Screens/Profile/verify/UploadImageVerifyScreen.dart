@@ -44,7 +44,7 @@ class UploadImageVerifyScreen extends StatelessWidget {
                         TextSpan(
                             text:(Get.find<TabsController>().currentUser.verified == 0)
                                 ? "Unverified":(Get.find<TabsController>().currentUser.verified == 1)
-                                ? "On Verification Admin":(Get.find<TabsController>().currentUser.verified == 2)
+                                ? "Under Review":(Get.find<TabsController>().currentUser.verified == 2)
                                 ? "Rejected"
                                 : "Verified",
                             style: TextStyle(

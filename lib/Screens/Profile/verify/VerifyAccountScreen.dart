@@ -59,7 +59,7 @@ class VerifyAccountScreen extends StatelessWidget {
                 padding: const EdgeInsets.all(15.0),
                 child: RichText(
                   text: TextSpan(
-                      text: "Verification Status : ",
+                      text: "Account Verification : ",
                       style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -67,10 +67,12 @@ class VerifyAccountScreen extends StatelessWidget {
                       children: [
                         TextSpan(
                             text: (currentUser.verified == 0)
-                                ? "Unverified":(currentUser.verified == 1)
-                                ? "On Verification Admin":(currentUser.verified == 2)
-                                ? "Rejected"
-                                : "Verified",
+                                ? "Unverified"
+                                : (currentUser.verified == 1)
+                                    ? "Under Review"
+                                    : (currentUser.verified == 2)
+                                        ? "Rejected"
+                                        : "Verified",
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -80,10 +82,14 @@ class VerifyAccountScreen extends StatelessWidget {
                       ]),
                 ),
               ),
-              if (!data.isSentOTP && currentUser.verified == 0) requestWidget(data),
-              if (data.isSentOTP && currentUser.verified == 0) verifyWidget(data, context),
-              if (!data.isSentOTP && currentUser.verified == 2) requestWidget(data),
-              if (data.isSentOTP && currentUser.verified == 2) verifyWidget(data, context),
+              if (!data.isSentOTP && currentUser.verified == 0)
+                requestWidget(data),
+              if (data.isSentOTP && currentUser.verified == 0)
+                verifyWidget(data, context),
+              if (!data.isSentOTP && currentUser.verified == 2)
+                requestWidget(data),
+              if (data.isSentOTP && currentUser.verified == 2)
+                verifyWidget(data, context),
             ],
           ),
         ),
@@ -203,20 +209,26 @@ class VerifyAccountScreen extends StatelessWidget {
     return Column(
       children: [
         Padding(
-            padding: const EdgeInsets.only(
-                left: 15.0, right: 15, bottom: 5, top: 10),
-            child: Text(
-                "To get verified we will send you a code which you will need to write down on a A4 sheet of paper.")),
+          padding:
+              const EdgeInsets.only(left: 15.0, right: 15, bottom: 5, top: 10),
+          child: Text(
+            "To get verified we will generate a unique code which you will need to write down on a A4 sheet of paper.",
+          ),
+        ),
         Padding(
-            padding: const EdgeInsets.only(
-                left: 15.0, right: 15, bottom: 5, top: 10),
-            child: Text(
-                "Please make sure that the numbers are written in large font and can easily be seen.")),
+          padding:
+              const EdgeInsets.only(left: 15.0, right: 15, bottom: 5, top: 10),
+          child: Text(
+            "Please make sure that the numbers are written in large font and can easily be seen.",
+          ),
+        ),
         Padding(
-            padding: const EdgeInsets.only(
-                left: 15.0, right: 15, bottom: 5, top: 10),
-            child: Text(
-                "You will then take a selfie displaying your face alongside the sheet of paper.")),
+          padding:
+              const EdgeInsets.only(left: 15.0, right: 15, bottom: 5, top: 10),
+          child: Text(
+            "You will then take a selfie displaying your face alongside the sheet of paper.",
+          ),
+        ),
         Padding(
             padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 50),
             child: ListTile(
