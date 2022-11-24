@@ -71,8 +71,8 @@ class TabsController extends GetxController{
   List<String> listUidSwiped = [];
 
   List<String> kProductIds = <String>[
-    "monthly",
-    "quarterly",
+    "monthly_unjabbed",
+    "quarterly_unjabbed",
   ];
 
   @override

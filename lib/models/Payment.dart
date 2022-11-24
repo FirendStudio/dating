@@ -24,7 +24,7 @@ class Payment {
     packageId: json["packageId"],
     purchasedId: json["purchasedId"],
     status: json["status"],
-    date: DateTime.parse(json["date"]),
+    date: DateTime.parse(json["date"] ?? DateTime.now()),
   );
 
   Map<String, dynamic> toJson() => {
