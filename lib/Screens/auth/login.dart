@@ -20,25 +20,22 @@ class Login extends StatelessWidget {
       child: Scaffold(
         appBar: new PreferredSize(
           child: new Container(
-            padding: new EdgeInsets.only(
-                top: MediaQuery.of(context).padding.top
-            ),
-            decoration: BoxDecoration(
-              color: Colors.black
+            padding:
+                new EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+            decoration: BoxDecoration(color: Colors.black
                 // gradient: LinearGradient(colors: [
                 //   primaryColor,
                 //   primaryColor
                 // ]),
-            ),
+                ),
           ),
           preferredSize: new Size(
-              MediaQuery.of(context).size.width,
-              MediaQuery.of(context).size.height * 0.1,
+            MediaQuery.of(context).size.width,
+            MediaQuery.of(context).size.height * 0.1,
           ),
         ),
         backgroundColor: Colors.white,
         body: Container(
-
           decoration: BoxDecoration(
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(50), topRight: Radius.circular(50)),
@@ -48,31 +45,29 @@ class Login extends StatelessWidget {
               Stack(
                 children: <Widget>[
                   Container(
-                      padding: EdgeInsets.only(
-                        left: Get.width * 0.1,
-                        right: Get.width * 0.1,
-                      ),
-                      // padding: EdgeInsets.all(20),
-                      child: Column(
-                        children: <Widget>[
-                          SizedBox(
-                            height: 15,
-                          ),
-                          Image.asset(
-                            "asset/hookup4u-Logo-BW.png",
-                            fit: BoxFit.contain,
-                          ),
-                        ],
-                      ),
-                      width: double.infinity,
-                      height: 280,
-                      decoration: BoxDecoration(
-                        color: Colors.black
-                          // gradient: LinearGradient(
-                          //     colors: [primaryColor, primaryColor])),
+                    padding: EdgeInsets.only(
+                      left: Get.width * 0.1,
+                      right: Get.width * 0.1,
                     ),
+                    // padding: EdgeInsets.all(20),
+                    child: Column(
+                      children: <Widget>[
+                        SizedBox(
+                          height: 15,
+                        ),
+                        Image.asset(
+                          "asset/hookup4u-Logo-BW.png",
+                          fit: BoxFit.contain,
+                        ),
+                      ],
+                    ),
+                    width: double.infinity,
+                    height: 280,
+                    decoration: BoxDecoration(color: Colors.black
+                        // gradient: LinearGradient(
+                        //     colors: [primaryColor, primaryColor])),
+                        ),
                   ),
-                  
                 ],
               ),
               Column(children: <Widget>[
@@ -89,15 +84,16 @@ class Login extends StatelessWidget {
                     // "By tapping 'Log in', you agree with our \n Terms.Learn how we process your data in \n our Privacy Policy and Cookies Policy.".toString(),
                     "By signing in, you are indicating that you have read the Privacy Policy and agree to the Terms of Service",
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.black,
+                    style: TextStyle(
+                      color: Colors.black,
                       fontSize: Get.height * 0.02,
                     ),
                   ),
                 ),
-                if(Platform.isIOS)
+                if (Platform.isIOS)
                   Padding(
                     padding: EdgeInsets.only(
-                        bottom: 10.0,
+                      bottom: 10.0,
                       left: Get.width * 0.1,
                       right: Get.width * 0.1,
                     ),
@@ -106,32 +102,51 @@ class Login extends StatelessWidget {
                       cornerRadius: 50,
                       type: i.ButtonType.defaultButton,
                       onPressed: () async {
-                        final User currentUser = await loginController.handleAppleLogin(_scaffoldKey).catchError((onError) {
+                        final User currentUser = await loginController
+                            .handleAppleLogin(_scaffoldKey)
+                            .catchError((onError) {
                           SnackBar snackBar =
                               SnackBar(content: Text(onError.toString()));
                           _scaffoldKey.currentState.showSnackBar(snackBar);
                         });
                         if (currentUser != null) {
-                          print('username ${currentUser.displayName} \n photourl ${currentUser.photoURL}');
+                          print(
+                              'username ${currentUser.displayName} \n photourl ${currentUser.photoURL}');
                           // await _setDataUser(currentUser);
-                          if(currentUser.providerData.length > 1){
-                            for(int index=0; index<=currentUser.providerData.length-1; index++){
-                              if(currentUser.providerData.length-1 == index){
-                                await Get.find<LoginController>().navigationCheck(currentUser, context, currentUser.providerData[index].providerId, false);
+                          if (currentUser.providerData.length > 1) {
+                            for (int index = 0;
+                                index <= currentUser.providerData.length - 1;
+                                index++) {
+                              if (currentUser.providerData.length - 1 ==
+                                  index) {
+                                await Get.find<LoginController>()
+                                    .navigationCheck(
+                                        currentUser,
+                                        context,
+                                        currentUser
+                                            .providerData[index].providerId,
+                                        false);
                                 break;
                               }
-                              await Get.find<LoginController>().navigationCheck(currentUser, context, currentUser.providerData[index].providerId, true);
+                              await Get.find<LoginController>().navigationCheck(
+                                  currentUser,
+                                  context,
+                                  currentUser.providerData[index].providerId,
+                                  true);
                             }
-                            return;   
+                            return;
                           }
-                          loginController.navigationCheck(currentUser, context, "apple.com", false);
+                          loginController.navigationCheck(
+                              currentUser, context, "apple.com", false);
                         }
                       },
                     ),
                   ),
-                if(Platform.isAndroid)
+                if (Platform.isAndroid)
                   Padding(
-                    padding: EdgeInsets.only(top: 10, bottom: 10,
+                    padding: EdgeInsets.only(
+                      top: 10,
+                      bottom: 10,
                       left: Get.width * 0.1,
                       right: Get.width * 0.1,
                     ),
@@ -140,20 +155,18 @@ class Login extends StatelessWidget {
                       child: InkWell(
                         child: Container(
                             decoration: BoxDecoration(
-                              // color: Colors.white,
-                              shape: BoxShape.rectangle,
-                              borderRadius: BorderRadius.circular(25),
-                              gradient: LinearGradient(
-                                begin: Alignment.topRight,
-                                end: Alignment.bottomLeft,
-                                colors: [
-                                  Colors.blue[600],
-                                  Colors.blue[600],
-                                  // Colors.lightBlue,
-                                  // Colors.lightBlue
-                                ]
-                              )
-                            ),
+                                // color: Colors.white,
+                                shape: BoxShape.rectangle,
+                                borderRadius: BorderRadius.circular(25),
+                                gradient: LinearGradient(
+                                    begin: Alignment.topRight,
+                                    end: Alignment.bottomLeft,
+                                    colors: [
+                                      Colors.blue[600],
+                                      Colors.blue[600],
+                                      // Colors.lightBlue,
+                                      // Colors.lightBlue
+                                    ])),
                             height: MediaQuery.of(context).size.height * .065,
                             width: MediaQuery.of(context).size.width * .8,
                             child: Center(
@@ -166,6 +179,10 @@ class Login extends StatelessWidget {
                                   fontWeight: FontWeight.bold),
                             ))),
                         onTap: () async {
+                          if (!loginController.isChecked.value) {
+                            Get.snackbar("Information", "You must agree our terms & conditions to use this apps");
+                            return;
+                          }
                           showDialog(
                               context: context,
                               builder: (context) => Container(
@@ -182,44 +199,45 @@ class Login extends StatelessWidget {
                       ),
                     ),
                   ),
-                
                 InkWell(
-                  onTap: (){
-                    bool updateNumber = false;
-                    Navigator.push(
-                        context,
-                        CupertinoPageRoute(
-                            builder: (context) => OTP(updateNumber)));
-                  },
-                  child: Container(
-                      height: MediaQuery.of(context).size.height * .065,
-                      width: MediaQuery.of(context).size.width * .75,
-                      padding: EdgeInsets.only(
-                        // left: Get.width * 0.1,
-                        // right: Get.width * 0.1,
-                      ),
-                      decoration: BoxDecoration(
-                          color: textRed,
-                          // border: Border.all(
-                          //   color: Colors.red[500],
-                          // ),
-                          borderRadius: BorderRadius.all(Radius.circular(25))
-                      ),
-                      child: Center(
-                        child: Text("LOGIN WITH PHONE NUMBER",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontFamily: Global.font,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold)
-                        ),
-                      )
-                  )
-                ),
-
+                    onTap: () {
+                      if (!loginController.isChecked.value) {
+                        Get.snackbar("Information", "You must agree our terms & conditions to use this apps");
+                        return;
+                      }
+                      bool updateNumber = false;
+                      Navigator.push(
+                          context,
+                          CupertinoPageRoute(
+                              builder: (context) => OTP(updateNumber)));
+                    },
+                    child: Container(
+                        height: MediaQuery.of(context).size.height * .065,
+                        width: MediaQuery.of(context).size.width * .75,
+                        padding: EdgeInsets.only(
+                            // left: Get.width * 0.1,
+                            // right: Get.width * 0.1,
+                            ),
+                        decoration: BoxDecoration(
+                            color: textRed,
+                            // border: Border.all(
+                            //   color: Colors.red[500],
+                            // ),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(25))),
+                        child: Center(
+                          child: Text("LOGIN WITH PHONE NUMBER",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontFamily: Global.font,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold)),
+                        ))),
                 Padding(
-                  padding: EdgeInsets.only(top: 10, bottom: 10,
+                  padding: EdgeInsets.only(
+                    top: 10,
+                    bottom: 10,
                     left: Get.width * 0.1,
                     right: Get.width * 0.1,
                   ),
@@ -249,6 +267,10 @@ class Login extends StatelessWidget {
                                 fontWeight: FontWeight.bold),
                           ))),
                       onTap: () async {
+                        if (!loginController.isChecked.value) {
+                          Get.snackbar("Information", "You must agree our terms & conditions to use this apps");
+                          return;
+                        }
                         showDialog(
                             context: context,
                             builder: (context) => Container(
@@ -260,18 +282,32 @@ class Login extends StatelessWidget {
                                   radius: 20,
                                   animating: true,
                                 ))));
-                        await loginController.handleFacebookLogin(context).then((user) async {
-                          if(user.providerData.length > 1){
-                            for(int index=0; index<=user.providerData.length-1; index++){
-                              if(user.providerData.length-1 == index){
-                                await Get.find<LoginController>().navigationCheck(user, context, user.providerData[index].providerId, false);
+                        await loginController
+                            .handleFacebookLogin(context)
+                            .then((user) async {
+                          if (user.providerData.length > 1) {
+                            for (int index = 0;
+                                index <= user.providerData.length - 1;
+                                index++) {
+                              if (user.providerData.length - 1 == index) {
+                                await Get.find<LoginController>()
+                                    .navigationCheck(
+                                        user,
+                                        context,
+                                        user.providerData[index].providerId,
+                                        false);
                                 break;
                               }
-                              await Get.find<LoginController>().navigationCheck(user, context, user.providerData[index].providerId, true);
+                              await Get.find<LoginController>().navigationCheck(
+                                  user,
+                                  context,
+                                  user.providerData[index].providerId,
+                                  true);
                             }
-                            return;   
+                            return;
                           }
-                          loginController.navigationCheck(user, context, 'fb', false);
+                          loginController.navigationCheck(
+                              user, context, 'fb', false);
                         }).then((_) {
                           Navigator.pop(context);
                         }).catchError((e) {
@@ -281,9 +317,32 @@ class Login extends StatelessWidget {
                     ),
                   ),
                 ),
-
               ]),
-              SizedBox(height: Get.height * 0.01,),
+              SizedBox(
+                height: Get.height * 0.01,
+              ),
+              Padding(
+                  padding: EdgeInsets.only(
+                    top: 10,
+                    bottom: 10,
+                    left: Get.width * 0.1,
+                    right: Get.width * 0.1,
+                  ),
+                  child: Obx(
+                    () => CheckboxListTile(
+                      value: loginController.isChecked.value,
+                      onChanged: (bool value) {
+                        loginController.isChecked.value =
+                            !loginController.isChecked.value;
+                      },
+                      dense: true,
+                      controlAffinity: ListTileControlAffinity.leading,
+                      title: Text("I agree to terms and conditions"),
+                    ),
+                  )),
+              SizedBox(
+                height: Get.height * 0.01,
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
@@ -291,9 +350,7 @@ class Login extends StatelessWidget {
                     child: Text(
                       "Privacy Policy",
                       style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold
-                      ),
+                          color: Colors.black, fontWeight: FontWeight.bold),
                     ),
                     onTap: () => loginController.launchURL(
                         "https://jablesscupid.com/privacy-policy/"), //TODO: add privacy policy
@@ -310,9 +367,7 @@ class Login extends StatelessWidget {
                     child: Text(
                       "Terms & Conditions",
                       style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold
-                      ),
+                          color: Colors.black, fontWeight: FontWeight.bold),
                     ),
                     onTap: () => loginController.launchURL(
                         "https://jablesscupid.com/terms-conditions/"), //TODO: add Terms and conditions
@@ -347,7 +402,6 @@ class Login extends StatelessWidget {
       },
     );
   }
-
 }
 
 class WaveClipper1 extends CustomClipper<Path> {
@@ -459,30 +513,25 @@ class _FirstLogin extends State<FirstLogin> {
                         SizedBox(
                           height: Get.height * 0.1,
                         ),
-
                         Container(
-                          padding: EdgeInsets.all(12),
-                          child: Image.asset(
-                            "asset/images/logo1.png",
-                          )
-                        ),
+                            padding: EdgeInsets.all(12),
+                            child: Image.asset(
+                              "asset/images/logo1.png",
+                            )),
                         ListTile(
                           contentPadding: EdgeInsets.all(8),
                           title: Text(
                             "Are you 18 years of age? In order to use this app you must be 18 years old or over.",
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize: Get.height * 0.027,
-                              fontFamily: "Arial",
-                              fontWeight: FontWeight.bold
-                            ),
+                                fontSize: Get.height * 0.027,
+                                fontFamily: "Arial",
+                                fontWeight: FontWeight.bold),
                           ),
                         ),
-
                         SizedBox(
                           height: Get.height * 0.01,
                         ),
-
                         ListTile(
                           contentPadding: EdgeInsets.all(8),
                           title: Text(
@@ -494,7 +543,6 @@ class _FirstLogin extends State<FirstLogin> {
                                 fontWeight: FontWeight.bold),
                           ),
                         ),
-
                       ],
                     ),
                   ),
@@ -522,17 +570,15 @@ class _FirstLogin extends State<FirstLogin> {
                         width: MediaQuery.of(context).size.width * .75,
                         child: Center(
                             child: Text(
-                              "I'm 18+",
-                              style: TextStyle(
-                                  fontSize: Get.height * 0.025,
-                                  color: textColor,
-                                  fontFamily: "Arial",
-                                  fontWeight: FontWeight.bold),
-                            ))),
+                          "I'm 18+",
+                          style: TextStyle(
+                              fontSize: Get.height * 0.025,
+                              color: textColor,
+                              fontFamily: "Arial",
+                              fontWeight: FontWeight.bold),
+                        ))),
                     onTap: () async {
-
-                      Get.to(()=>Login());
-
+                      Get.to(() => Login());
                     },
                   ),
                 ),
@@ -542,4 +588,3 @@ class _FirstLogin extends State<FirstLogin> {
         ));
   }
 }
-

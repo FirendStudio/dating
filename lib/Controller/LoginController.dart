@@ -36,6 +36,7 @@ class LoginController extends GetxController{
   );
   GoogleSignInAccount googleUser;
   final FirebaseAuth auth = FirebaseAuth.instance;
+  RxBool isChecked = false.obs;
 
   Future<User> handleFacebookLogin(context) async {
     User user;
