@@ -39,8 +39,8 @@ class Settings extends StatefulWidget {
 }
 
 class _SettingsState extends State<Settings> {
-
-  NotificationController notificationController = Get.put(NotificationController());
+  NotificationController notificationController =
+      Get.put(NotificationController());
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   Map<String, dynamic> changeValues = {};
   List<Map<String, dynamic>> listShowMe = [
@@ -91,9 +91,7 @@ class _SettingsState extends State<Settings> {
     FirebaseFirestore.instance
         .collection("Users")
         .doc(Get.find<LoginController>().userId)
-        .set(changeValues,
-        SetOptions(merge : true)
-    );
+        .set(changeValues, SetOptions(merge: true));
     // lastVisible = null;
     // print('ewew$lastVisible');
   }
@@ -101,21 +99,17 @@ class _SettingsState extends State<Settings> {
   int freeR;
   int paidR;
 
-  initData(){
-
-
-    
+  initData() {
     print(widget.currentUser.showMe);
-    for(int i = 0; i<=widget.currentUser.showMe.length-1; i++){
+    for (int i = 0; i <= widget.currentUser.showMe.length - 1; i++) {
       selected.add(widget.currentUser.showMe[i]);
 
-      for(int j=0; j<=listShowMe.length-1; j++){
-        if(widget.currentUser.showMe[i] == listShowMe[j]['name']){
+      for (int j = 0; j <= listShowMe.length - 1; j++) {
+        if (widget.currentUser.showMe[i] == listShowMe[j]['name']) {
           listShowMe[j]['ontap'] = true;
           break;
         }
       }
-
     }
 
     freeR = widget.items['free_radius'] != null
@@ -138,8 +132,10 @@ class _SettingsState extends State<Settings> {
       ageRange = RangeValues(double.parse(widget.currentUser.ageRange['min']),
           (double.parse(widget.currentUser.ageRange['max'])));
     });
-    Get.find<HomeController>().ageMin = int.parse(widget.currentUser.ageRange['min']);
-    Get.find<HomeController>().ageMax = int.parse(widget.currentUser.ageRange['max']);
+    Get.find<HomeController>().ageMin =
+        int.parse(widget.currentUser.ageRange['min']);
+    Get.find<HomeController>().ageMax =
+        int.parse(widget.currentUser.ageRange['max']);
   }
 
   @override
@@ -152,12 +148,10 @@ class _SettingsState extends State<Settings> {
     //   ..show();
     // var a = jsonDecode(widget.currentUser.showGender);
     // print(a[0]); // print one
-    
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: primaryColor,
       appBar: AppBar(
@@ -194,21 +188,23 @@ class _SettingsState extends State<Settings> {
                 ),
 
                 Container(
-                  padding: EdgeInsets.only(
-                    left:16, right: 16),
-                  child: InkWell(
-                    onTap: (() {
-                      // print("Test");
-                      Get.find<VerifyProfileController>().phoneNumController.text = "";
-                      // if(widget.currentUser.phoneNumber.isNotEmpty){
-                      //   Get.find<VerifyProfileController>().phoneNumController.text = widget.currentUser.phoneNumber;
-                      // }
-                      Get.to(()=>VerifyAccountScreen());
-                    }),
-                    child: Card(
-                      child: Padding(
+                    padding: EdgeInsets.only(left: 16, right: 16),
+                    child: InkWell(
+                      onTap: (() {
+                        // print("Test");
+                        Get.find<VerifyProfileController>()
+                            .phoneNumController
+                            .text = "";
+                        // if(widget.currentUser.phoneNumber.isNotEmpty){
+                        //   Get.find<VerifyProfileController>().phoneNumController.text = widget.currentUser.phoneNumber;
+                        // }
+                        Get.find<VerifyProfileController>().getVerifyModel();
+                        // Get.to(() => VerifyAccountScreen());
+                      }),
+                      child: Card(
+                          child: Padding(
                         padding: const EdgeInsets.only(
-                          left:20.0, right: 10, top: 20, bottom: 20),
+                            left: 20.0, right: 10, top: 20, bottom: 20),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
@@ -222,7 +218,10 @@ class _SettingsState extends State<Settings> {
                                 widget.currentUser.verified != 3
                                     ? "Unverified"
                                     : "Verified",
-                                style: TextStyle(color:widget.currentUser.verified != 3? Colors.red:Colors.greenAccent),
+                                style: TextStyle(
+                                    color: widget.currentUser.verified != 3
+                                        ? Colors.red
+                                        : Colors.greenAccent),
                               ),
                             ),
                             Expanded(
@@ -233,103 +232,92 @@ class _SettingsState extends State<Settings> {
                                 size: 15,
                               ),
                             ),
-                            
-                            
                           ],
                         ),
-                      )
+                      )),
+                    )),
+
+                Container(
+                  padding: EdgeInsets.only(left: 16, right: 16),
+                  child: Card(
+                      child: Padding(
+                    padding: const EdgeInsets.only(
+                        left: 20.0, right: 10, top: 20, bottom: 20),
+                    child: InkWell(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Expanded(
+                            flex: 4,
+                            child: Text("Phone Number"),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Text(
+                              widget.currentUser.phoneNumber.isNotEmpty
+                                  ? "${widget.currentUser.phoneNumber}"
+                                  : "Verify Now",
+                              style: TextStyle(color: secondryColor),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: Icon(
+                              Icons.arrow_forward_ios,
+                              color: secondryColor,
+                              size: 15,
+                            ),
+                          ),
+                        ],
+                      ),
+                      onTap: () {
+                        Navigator.push(
+                            context,
+                            CupertinoPageRoute(
+                                builder: (context) =>
+                                    UpdateNumber(widget.currentUser)));
+                        // _ads.disable(_ad);
+                      },
                     ),
-                  ) 
+                  )),
                 ),
 
                 Container(
-                  padding: EdgeInsets.only(
-                    left:16, right: 16),
+                  padding: EdgeInsets.only(left: 16, right: 16),
                   child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                        left:20.0, right: 10, top: 20, bottom: 20),
-                      child: InkWell(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Expanded(
-                              flex: 4,
-                              child: Text("Phone Number"),
+                      child: Padding(
+                    padding: const EdgeInsets.only(
+                        left: 20.0, right: 10, top: 20, bottom: 20),
+                    child: InkWell(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Expanded(
+                            flex: 4,
+                            child: Text("Connected Account"),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Text(
+                              "",
+                              style: TextStyle(color: secondryColor),
                             ),
-                            Expanded(
-                              flex: 2,
-                              child: Text(
-                                widget.currentUser.phoneNumber.isNotEmpty
-                                    ? "${widget.currentUser.phoneNumber}"
-                                    : "Verify Now",
-                                style: TextStyle(color: secondryColor),
-                              ),
+                          ),
+                          Expanded(
+                            flex: 1,
+                            child: Icon(
+                              Icons.arrow_forward_ios,
+                              color: secondryColor,
+                              size: 15,
                             ),
-                            Expanded(
-                              flex: 1,
-                              child: Icon(
-                                Icons.arrow_forward_ios,
-                                color: secondryColor,
-                                size: 15,
-                              ),
-                            ),
-                            
-                            
-                          ],
-                        ),
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              CupertinoPageRoute(
-                                  builder: (context) =>
-                                      UpdateNumber(widget.currentUser)));
-                          // _ads.disable(_ad);
-                        },
+                          ),
+                        ],
                       ),
-                    )
-                  ),
-                ),
-
-                Container(
-                  padding: EdgeInsets.only(
-                    left:16, right: 16),
-                  child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                        left:20.0, right: 10, top: 20, bottom: 20),
-                      child: InkWell(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Expanded(
-                              flex: 4,
-                              child: Text("Connected Account"),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: Text("",
-                                style: TextStyle(color: secondryColor),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Icon(
-                                Icons.arrow_forward_ios,
-                                color: secondryColor,
-                                size: 15,
-                              ),
-                            ),
-                            
-                            
-                          ],
-                        ),
-                        onTap: () {
-                          connectedAccountWidget();
-                        },
-                      ),
-                    )
-                  ),
+                      onTap: () {
+                        connectedAccountWidget();
+                      },
+                    ),
+                  )),
                 ),
 
                 Padding(
@@ -419,19 +407,22 @@ class _SettingsState extends State<Settings> {
                   ),
                 ),
 
-                GetBuilder<NotificationController>(builder: (data){
+                GetBuilder<NotificationController>(builder: (data) {
                   return Column(
                     children: [
-                      if(data.relationUser.pendingAcc.isEmpty && data.relationUser.pendingReq.isEmpty)
+                      if (data.relationUser.pendingAcc.isEmpty &&
+                          data.relationUser.pendingReq.isEmpty)
                         newPartnerWidget(),
-
-                      if(data.relationUser.pendingAcc.isNotEmpty && data.relationUser.pendingReq.isEmpty)
+                      if (data.relationUser.pendingAcc.isNotEmpty &&
+                          data.relationUser.pendingReq.isEmpty)
                         pendingWidget(),
-
-                      if(data.relationUser.pendingAcc.isEmpty && data.relationUser.pendingReq.isNotEmpty)
+                      if (data.relationUser.pendingAcc.isEmpty &&
+                          data.relationUser.pendingReq.isNotEmpty)
                         acceptWidget(),
-
-                      if(notificationController.relationUser.pendingAcc.isNotEmpty && notificationController.relationUser.pendingReq.isNotEmpty)
+                      if (notificationController
+                              .relationUser.pendingAcc.isNotEmpty &&
+                          notificationController
+                              .relationUser.pendingReq.isNotEmpty)
                         relationWidget(),
                     ],
                   );
@@ -447,9 +438,7 @@ class _SettingsState extends State<Settings> {
 
                 Padding(
                   padding: const EdgeInsets.only(
-                      top: 5.0, bottom: 5,
-                    right: 10, left: 10
-                  ),
+                      top: 5.0, bottom: 5, right: 10, left: 10),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
@@ -460,76 +449,70 @@ class _SettingsState extends State<Settings> {
                             color: Colors.black,
                             fontWeight: FontWeight.w500),
                       ),
-
-                      SizedBox(height: 12,),
-
+                      SizedBox(
+                        height: 12,
+                      ),
                       Container(
-                        height: Get.height * 0.9,
-                        child: GridView.count(
-                          physics: NeverScrollableScrollPhysics(),
-                          // Create a grid with 2 columns. If you change the scrollDirection to
-                          // horizontal, this produces 2 rows.
-                          crossAxisCount: 2,
-                          childAspectRatio: 4/1,
-                          crossAxisSpacing: 4.0,
-                          mainAxisSpacing: 8.0,
-                          // Generate 100 widgets that display their index in the List.
-                          children: List.generate(listShowMe.length, (index) {
-                            return OutlineButton(
-                              highlightedBorderColor: primaryColor,
-                              child: Container(
-                                // height: MediaQuery.of(context).size.height * .055,
-                                // width: MediaQuery.of(context).size.width * .65,
-                                padding: EdgeInsets.only(
-                                    top: 8,
-                                    bottom: 8,
-                                    left: 8,
-                                    right: 8
+                          height: Get.height * 0.9,
+                          child: GridView.count(
+                            physics: NeverScrollableScrollPhysics(),
+                            // Create a grid with 2 columns. If you change the scrollDirection to
+                            // horizontal, this produces 2 rows.
+                            crossAxisCount: 2,
+                            childAspectRatio: 4 / 1,
+                            crossAxisSpacing: 4.0,
+                            mainAxisSpacing: 8.0,
+                            // Generate 100 widgets that display their index in the List.
+                            children: List.generate(listShowMe.length, (index) {
+                              return OutlineButton(
+                                highlightedBorderColor: primaryColor,
+                                child: Container(
+                                  // height: MediaQuery.of(context).size.height * .055,
+                                  // width: MediaQuery.of(context).size.width * .65,
+                                  padding: EdgeInsets.only(
+                                      top: 8, bottom: 8, left: 8, right: 8),
+                                  child: Center(
+                                      child: Text(
+                                          "${listShowMe[index]["name"]}"
+                                              .toUpperCase(),
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                              fontSize: 12,
+                                              fontFamily: Global.font,
+                                              color: listShowMe[index]["ontap"]
+                                                  ? primaryColor
+                                                  : secondryColor,
+                                              fontWeight: FontWeight.normal))),
                                 ),
-                                child: Center(
-                                    child: Text("${listShowMe[index]["name"]}".toUpperCase(),
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                            fontSize: 12,
-                                            fontFamily: Global.font,
-                                            color: listShowMe[index]["ontap"]
-                                                ? primaryColor
-                                                : secondryColor,
-                                            fontWeight: FontWeight.normal
-                                        )
-                                    )
-                                ),
-                              ),
-                              borderSide: BorderSide(
-                                  width: 1,
-                                  style: BorderStyle.solid,
-                                  color: listShowMe[index]["ontap"]
-                                      ? primaryColor
-                                      : secondryColor),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(25)),
-                              onPressed: () {
-                                setState(() {
-
-                                  listShowMe[index]["ontap"] = !listShowMe[index]["ontap"];
-                                  if (listShowMe[index]["ontap"]) {
-                                    selected.add(listShowMe[index]["name"]);
-                                    print(listShowMe[index]["name"]);
-                                    print(selected);
-                                  } else {
-                                    selected.remove(listShowMe[index]["name"]);
-                                    print(selected);
-                                  }
-                                  changeValues.addAll({
-                                    'showGender': selected,
+                                borderSide: BorderSide(
+                                    width: 1,
+                                    style: BorderStyle.solid,
+                                    color: listShowMe[index]["ontap"]
+                                        ? primaryColor
+                                        : secondryColor),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(25)),
+                                onPressed: () {
+                                  setState(() {
+                                    listShowMe[index]["ontap"] =
+                                        !listShowMe[index]["ontap"];
+                                    if (listShowMe[index]["ontap"]) {
+                                      selected.add(listShowMe[index]["name"]);
+                                      print(listShowMe[index]["name"]);
+                                      print(selected);
+                                    } else {
+                                      selected
+                                          .remove(listShowMe[index]["name"]);
+                                      print(selected);
+                                    }
+                                    changeValues.addAll({
+                                      'showGender': selected,
+                                    });
                                   });
-
-                                });
-                              },
-                            );
-                          }),
-                        )
-                      )
+                                },
+                              );
+                            }),
+                          ))
                     ],
                   ),
                 ),
@@ -575,88 +558,98 @@ class _SettingsState extends State<Settings> {
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: ListTile(
-                        contentPadding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0),
-                        
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 0.0, horizontal: 16.0),
+
                         title: Container(
-                          margin: EdgeInsets.only(bottom: 10),
-                          child: Text(
-                            "Age range",
-                            style: TextStyle(
-                                fontSize: 18,
-                                color: primaryColor,
-                                fontWeight: FontWeight.w500),
-                          )
-                        ),
-                        subtitle: Row(
-                          children: [
-                            Expanded(
+                            margin: EdgeInsets.only(bottom: 10),
+                            child: Text(
+                              "Age range",
+                              style: TextStyle(
+                                  fontSize: 18,
+                                  color: primaryColor,
+                                  fontWeight: FontWeight.w500),
+                            )),
+                        subtitle: Row(children: [
+                          Expanded(
                               flex: 1,
                               child: Row(
                                 children: [
-                                  Text("From", 
+                                  Text(
+                                    "From",
                                     style: TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.black
-                                    ),
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.black),
                                   ),
-                                  SizedBox(width: 10,),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
                                   DropdownButton<int>(
                                     value: Get.find<HomeController>().ageMin,
-                                    items:Get.find<HomeController>().listAge.map((int value) {
+                                    items: Get.find<HomeController>()
+                                        .listAge
+                                        .map((int value) {
                                       return DropdownMenuItem<int>(
                                         value: value,
                                         child: Text(value.toString()),
                                       );
                                     }).toList(),
                                     onChanged: (int valueInt) {
-                                      Get.find<HomeController>().ageMin = valueInt;
+                                      Get.find<HomeController>().ageMin =
+                                          valueInt;
                                       changeValues.addAll({
                                         'age_range': {
-                                          'min': '${Get.find<HomeController>().ageMin}',
-                                          'max': '${Get.find<HomeController>().ageMax}'
+                                          'min':
+                                              '${Get.find<HomeController>().ageMin}',
+                                          'max':
+                                              '${Get.find<HomeController>().ageMax}'
                                         }
                                       });
                                       setState(() {});
                                     },
                                   )
                                 ],
-                              )
-                            ),
-                            Expanded(
+                              )),
+                          Expanded(
                               flex: 1,
                               child: Row(
                                 children: [
-                                  Text("To", 
+                                  Text(
+                                    "To",
                                     style: TextStyle(
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.black
-                                    ),
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.black),
                                   ),
-                                  SizedBox(width: 10,),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
                                   DropdownButton<int>(
                                     value: Get.find<HomeController>().ageMax,
-                                    items:Get.find<HomeController>().listAge.map((int value) {
+                                    items: Get.find<HomeController>()
+                                        .listAge
+                                        .map((int value) {
                                       return DropdownMenuItem<int>(
                                         value: value,
                                         child: Text(value.toString()),
                                       );
                                     }).toList(),
                                     onChanged: (int valueInt) {
-                                      Get.find<HomeController>().ageMax = valueInt;
+                                      Get.find<HomeController>().ageMax =
+                                          valueInt;
                                       changeValues.addAll({
                                         'age_range': {
-                                          'min': '${Get.find<HomeController>().ageMin}',
-                                          'max': '${Get.find<HomeController>().ageMax}'
+                                          'min':
+                                              '${Get.find<HomeController>().ageMin}',
+                                          'max':
+                                              '${Get.find<HomeController>().ageMax}'
                                         }
                                       });
                                       setState(() {});
                                     },
                                   )
                                 ],
-                              )
-                            ),
-                          ]
-                        ),
+                              )),
+                        ]),
                         // trailing: Text(
                         //   "${ageRange.start.round()}-${ageRange.end.round()}",
                         //   style: TextStyle(fontSize: 16),
@@ -885,7 +878,8 @@ class _SettingsState extends State<Settings> {
                     onTap: () {
                       Share.share(
                           'Checkout our brand new dating app! https://jablesscupid.com/', //Replace with your dynamic link and msg for invite users
-                          subject: 'Checkout our brand new dating app! https://jablesscupid.com/');
+                          subject:
+                              'Checkout our brand new dating app! https://jablesscupid.com/');
                     },
                   ),
                 ),
@@ -910,7 +904,8 @@ class _SettingsState extends State<Settings> {
                         builder: (BuildContext context) {
                           return AlertDialog(
                             title: Text('Logout'),
-                            content: Text('Would you like to logout of your account?'),
+                            content: Text(
+                                'Would you like to logout of your account?'),
                             actions: <Widget>[
                               ElevatedButton(
                                 onPressed: () =>
@@ -966,7 +961,8 @@ class _SettingsState extends State<Settings> {
                         builder: (BuildContext context) {
                           return AlertDialog(
                             title: Text('Delete Account'),
-                            content: Text('Do you want to delete your account?'),
+                            content:
+                                Text('Do you want to delete your account?'),
                             actions: <Widget>[
                               FlatButton(
                                 onPressed: () =>
@@ -1018,7 +1014,7 @@ class _SettingsState extends State<Settings> {
     );
   }
 
-  Widget newPartnerWidget(){
+  Widget newPartnerWidget() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: InkWell(
@@ -1047,263 +1043,307 @@ class _SettingsState extends State<Settings> {
     );
   }
 
-  Future<void> connectedAccountWidget()async{
+  Future<void> connectedAccountWidget() async {
     await showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return CupertinoAlertDialog(
-            content: StatefulBuilder(
-              builder: (BuildContext context2, StateSetter setState2){
-                return Material(
-                  color: Colors.transparent,
-                  child: Stack(
-                    children: [
-                      Column(
-                        children: [
-                          SizedBox(height: 50,),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "Connected Accounts",
-                                style: TextStyle(
-                                  fontSize: 16,
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return CupertinoAlertDialog(
+              content: StatefulBuilder(
+                builder: (BuildContext context2, StateSetter setState2) {
+                  return Material(
+                      color: Colors.transparent,
+                      child: Stack(children: [
+                        Column(
+                          children: [
+                            SizedBox(
+                              height: 50,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  "Connected Accounts",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 30,),
-                          InkWell(
-                            onTap: () async {
-                              if(widget.currentUser.LoginID['fb'] == ""){
-                                showDialog(
-                                    context: context,
-                                    builder: (context) => Container(
-                                        height: 30,
-                                        width: 30,
-                                        child: Center(
-                                            child: CupertinoActivityIndicator(
+                              ],
+                            ),
+                            SizedBox(
+                              height: 30,
+                            ),
+                            InkWell(
+                                onTap: () async {
+                                  if (widget.currentUser.LoginID['fb'] == "") {
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) => Container(
+                                            height: 30,
+                                            width: 30,
+                                            child: Center(
+                                                child:
+                                                    CupertinoActivityIndicator(
                                               key: UniqueKey(),
                                               radius: 20,
                                               animating: true,
                                             ))));
-                                await Get.find<LoginController>().handleFacebookLogin(context).then((user) async {
-                                  var LoginID = {
-                                    "fb" : user.uid,
-                                  };
-                                  await FirebaseFirestore.instance.collection("Users").doc(Get.find<LoginController>().userId).set(
-                                      {
-                                        "LoginID" : LoginID,
-                                      },
-                                      SetOptions(merge : true)
-
-                                  );
-                                  print("done");
-                                }).then((_) {
-                                  Navigator.pop(context);
-                                  Get.to(()=>Tabbar(null, null));
-                                }).catchError((e) {
-                                  Navigator.pop(context);
-                                });
-                              }else{
-                                Get.snackbar("Information", "You have connected to Facebook");
-                              }
-
-                            },
-                            child: Container(
-                              width: 250,
-                              padding: EdgeInsets.only(
-                                left: 8, right: 8,
-                                bottom: 8, top: 8
-                              ),
-                                decoration: BoxDecoration(
-                                  // color: (widget.currentUser.LoginID['fb'] == "")?Colors.red : Colors.greenAccent,
-                                    // border: Border.all(
-                                    //   color: Colors.red[500],
-                                    // ),
-                                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                                  color: Colors.grey[400]
-                                ),
-                                child:Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Image.asset("asset/images/fb.png", height:25),
-                                    Text("Facebook",
-                                      style: TextStyle(
-                                        color: (widget.currentUser.LoginID['fb'] == "")?Colors.white : Colors.black
-                                      ),
-                                    ),
-                                    if(widget.currentUser.LoginID['fb'] == "")
-                                      Text(""),
-                                    if(widget.currentUser.LoginID['fb'] != "")
-                                      Icon(Icons.check_box, 
-                                        size: 20,color: Colors.black,),
-                                  ],
-                                ) 
-                            )
-                          ),
-
-                          SizedBox(height: 20,),
-
-                          Platform.isIOS?
-                          InkWell(
-                              onTap: () async {
-                                if(widget.currentUser.LoginID['apple'] == "") {
-                                  final User currentUser = await Get.find<LoginController>().handleAppleLogin(_scaffoldKey).catchError((onError) {
-                                    SnackBar snackBar = SnackBar(content: Text(onError.toString()));
-                                    _scaffoldKey.currentState.showSnackBar(snackBar);
-                                  });
-                                  if (currentUser != null) {
-                                    print('userName ${currentUser.displayName} \n photourl ${currentUser.photoURL}');
-                                    var LoginID = {
-                                      "apple": currentUser.uid,
-                                    };
-                                    await FirebaseFirestore.instance
-                                        .collection("Users").doc(Get.find<LoginController>().userId).set(
-                                        {
-                                          "LoginID": LoginID,
-                                        },
-                                        SetOptions(merge: true)
-
-                                    );
-                                    Get.to(() => Tabbar(null, null));
-                                    // await _setDataUser(currentUser);
-
-                                    // Get.find<LoginController>().navigationCheck(currentUser, context, "apple.com");
+                                    await Get.find<LoginController>()
+                                        .handleFacebookLogin(context)
+                                        .then((user) async {
+                                      var LoginID = {
+                                        "fb": user.uid,
+                                      };
+                                      await FirebaseFirestore.instance
+                                          .collection("Users")
+                                          .doc(Get.find<LoginController>()
+                                              .userId)
+                                          .set({
+                                        "LoginID": LoginID,
+                                      }, SetOptions(merge: true));
+                                      print("done");
+                                    }).then((_) {
+                                      Navigator.pop(context);
+                                      Get.to(() => Tabbar(null, null));
+                                    }).catchError((e) {
+                                      Navigator.pop(context);
+                                    });
+                                  } else {
+                                    Get.snackbar("Information",
+                                        "You have connected to Facebook");
                                   }
-                                }else{
-                                  Get.snackbar("Information", "You have connected to Apple");
-                                }
-
-                              },
-                              child: Container(
-                                width: 250,
-                                padding: EdgeInsets.only(
-                                  left: 8, right: 8,
-                                  bottom: 8, top: 8
-                                ),
-                                decoration: BoxDecoration(
-                                    // color: (widget.currentUser.LoginID['apple'] == "")?Colors.red : Colors.greenAccent,
-                                    // border: Border.all(
-                                    //   color: Colors.red[500],
-                                    // ),
-                                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                                  color: Colors.grey[400]
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Image.asset("asset/images/apple.png", height:25),
-                                    Text("Apple",
-                                      style: TextStyle(
-                                          color: (widget.currentUser.LoginID['apple'] == "")?Colors.white : Colors.black
-                                      ),
-                                    ),
-                                    if(widget.currentUser.LoginID['apple'] == "")
-                                      Text(""),
-                                    if(widget.currentUser.LoginID['apple'] != "")
-                                      Icon(Icons.check_box, 
-                                        size: 20,color: Colors.black,),
-                                  ],
-                                ) 
-                              )
-                          ):Container(),
-
-                          Platform.isAndroid?
-                            InkWell(
-                              onTap: () async {
-                                if(widget.currentUser.LoginID['google'] == "") {
-                                  Get.find<LoginController>().addGoogleLogin();
-                                }else{
-                                  Get.snackbar("Information", "You have connected to Google");
-                                }
-
-                              },
-                              child: Container(
-                                width: 250,
-                                padding: EdgeInsets.only(
-                                  left: 8, right: 8,
-                                  bottom: 8, top: 8
-                                ),
-                                decoration: BoxDecoration(
-                                    // color: (widget.currentUser.LoginID['apple'] == "")?Colors.red : Colors.greenAccent,
-                                    // border: Border.all(
-                                    //   color: Colors.red[500],
-                                    // ),
-                                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                                  color: Colors.grey[400]
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Image.asset("asset/images/ic_google.png", height:25),
-                                    Text("Google",
-                                      style: TextStyle(
-                                          color: (widget.currentUser.LoginID['google'] == "")?Colors.white : Colors.black
-                                      ),
-                                    ),
-                                    if(widget.currentUser.LoginID['google'] == "")
-                                      Text(""),
-                                    if(widget.currentUser.LoginID['google'] != "")
-                                      Icon(Icons.check_box, 
-                                        size: 20,color: Colors.black,),
-                                  ],
-                                ) 
-                              )
-                          ):Container(),
-
-                          SizedBox(height: 50,),
-                          
-                        ],
-                      ),
-                      InkWell(
-                        onTap: (){
-                          Get.back();
-                        },
-                        child: Align(
-                          alignment: Alignment.topRight,
-                          child: Container(
-                            padding: EdgeInsets.all(4),
-                            decoration: new BoxDecoration(
-                              shape: BoxShape.circle,// You can use like this way or like the below line
-                              //borderRadius: new BorderRadius.circular(30.0),
-                              color: Colors.black,
+                                },
+                                child: Container(
+                                    width: 250,
+                                    padding: EdgeInsets.only(
+                                        left: 8, right: 8, bottom: 8, top: 8),
+                                    decoration: BoxDecoration(
+                                        // color: (widget.currentUser.LoginID['fb'] == "")?Colors.red : Colors.greenAccent,
+                                        // border: Border.all(
+                                        //   color: Colors.red[500],
+                                        // ),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(10)),
+                                        color: Colors.grey[400]),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Image.asset("asset/images/fb.png",
+                                            height: 25),
+                                        Text(
+                                          "Facebook",
+                                          style: TextStyle(
+                                              color: (widget.currentUser
+                                                          .LoginID['fb'] ==
+                                                      "")
+                                                  ? Colors.white
+                                                  : Colors.black),
+                                        ),
+                                        if (widget.currentUser.LoginID['fb'] ==
+                                            "")
+                                          Text(""),
+                                        if (widget.currentUser.LoginID['fb'] !=
+                                            "")
+                                          Icon(
+                                            Icons.check_box,
+                                            size: 20,
+                                            color: Colors.black,
+                                          ),
+                                      ],
+                                    ))),
+                            SizedBox(
+                              height: 20,
                             ),
-                            child: Icon(
-                              Icons.close, 
-                              size: 12,
-                              color: Colors.white,),
-                          )
-                        )
-                      )
-                      
-                    ]
-                  )
-                );
-              },
-            ),
-            insetAnimationCurve: Curves.decelerate,
-            actions: [
+                            Platform.isIOS
+                                ? InkWell(
+                                    onTap: () async {
+                                      if (widget.currentUser.LoginID['apple'] ==
+                                          "") {
+                                        final User currentUser =
+                                            await Get.find<LoginController>()
+                                                .handleAppleLogin(_scaffoldKey)
+                                                .catchError((onError) {
+                                          SnackBar snackBar = SnackBar(
+                                              content:
+                                                  Text(onError.toString()));
+                                          _scaffoldKey.currentState
+                                              .showSnackBar(snackBar);
+                                        });
+                                        if (currentUser != null) {
+                                          print(
+                                              'userName ${currentUser.displayName} \n photourl ${currentUser.photoURL}');
+                                          var LoginID = {
+                                            "apple": currentUser.uid,
+                                          };
+                                          await FirebaseFirestore.instance
+                                              .collection("Users")
+                                              .doc(Get.find<LoginController>()
+                                                  .userId)
+                                              .set({
+                                            "LoginID": LoginID,
+                                          }, SetOptions(merge: true));
+                                          Get.to(() => Tabbar(null, null));
+                                          // await _setDataUser(currentUser);
 
-            ]);
-      });
+                                          // Get.find<LoginController>().navigationCheck(currentUser, context, "apple.com");
+                                        }
+                                      } else {
+                                        Get.snackbar("Information",
+                                            "You have connected to Apple");
+                                      }
+                                    },
+                                    child: Container(
+                                        width: 250,
+                                        padding: EdgeInsets.only(
+                                            left: 8,
+                                            right: 8,
+                                            bottom: 8,
+                                            top: 8),
+                                        decoration: BoxDecoration(
+                                            // color: (widget.currentUser.LoginID['apple'] == "")?Colors.red : Colors.greenAccent,
+                                            // border: Border.all(
+                                            //   color: Colors.red[500],
+                                            // ),
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(10)),
+                                            color: Colors.grey[400]),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Image.asset(
+                                                "asset/images/apple.png",
+                                                height: 25),
+                                            Text(
+                                              "Apple",
+                                              style: TextStyle(
+                                                  color: (widget.currentUser
+                                                                  .LoginID[
+                                                              'apple'] ==
+                                                          "")
+                                                      ? Colors.white
+                                                      : Colors.black),
+                                            ),
+                                            if (widget.currentUser
+                                                    .LoginID['apple'] ==
+                                                "")
+                                              Text(""),
+                                            if (widget.currentUser
+                                                    .LoginID['apple'] !=
+                                                "")
+                                              Icon(
+                                                Icons.check_box,
+                                                size: 20,
+                                                color: Colors.black,
+                                              ),
+                                          ],
+                                        )))
+                                : Container(),
+                            Platform.isAndroid
+                                ? InkWell(
+                                    onTap: () async {
+                                      if (widget
+                                              .currentUser.LoginID['google'] ==
+                                          "") {
+                                        Get.find<LoginController>()
+                                            .addGoogleLogin();
+                                      } else {
+                                        Get.snackbar("Information",
+                                            "You have connected to Google");
+                                      }
+                                    },
+                                    child: Container(
+                                        width: 250,
+                                        padding: EdgeInsets.only(
+                                            left: 8,
+                                            right: 8,
+                                            bottom: 8,
+                                            top: 8),
+                                        decoration: BoxDecoration(
+                                            // color: (widget.currentUser.LoginID['apple'] == "")?Colors.red : Colors.greenAccent,
+                                            // border: Border.all(
+                                            //   color: Colors.red[500],
+                                            // ),
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(10)),
+                                            color: Colors.grey[400]),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Image.asset(
+                                                "asset/images/ic_google.png",
+                                                height: 25),
+                                            Text(
+                                              "Google",
+                                              style: TextStyle(
+                                                  color: (widget.currentUser
+                                                                  .LoginID[
+                                                              'google'] ==
+                                                          "")
+                                                      ? Colors.white
+                                                      : Colors.black),
+                                            ),
+                                            if (widget.currentUser
+                                                    .LoginID['google'] ==
+                                                "")
+                                              Text(""),
+                                            if (widget.currentUser
+                                                    .LoginID['google'] !=
+                                                "")
+                                              Icon(
+                                                Icons.check_box,
+                                                size: 20,
+                                                color: Colors.black,
+                                              ),
+                                          ],
+                                        )))
+                                : Container(),
+                            SizedBox(
+                              height: 50,
+                            ),
+                          ],
+                        ),
+                        InkWell(
+                            onTap: () {
+                              Get.back();
+                            },
+                            child: Align(
+                                alignment: Alignment.topRight,
+                                child: Container(
+                                  padding: EdgeInsets.all(4),
+                                  decoration: new BoxDecoration(
+                                    shape: BoxShape
+                                        .circle, // You can use like this way or like the below line
+                                    //borderRadius: new BorderRadius.circular(30.0),
+                                    color: Colors.black,
+                                  ),
+                                  child: Icon(
+                                    Icons.close,
+                                    size: 12,
+                                    color: Colors.white,
+                                  ),
+                                )))
+                      ]));
+                },
+              ),
+              insetAnimationCurve: Curves.decelerate,
+              actions: []);
+        });
   }
 
-  Widget pendingWidget(){
+  Widget pendingWidget() {
     return Padding(
         padding: const EdgeInsets.all(8.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-
             Text(
-              notificationController.relationUser.pendingAcc[0].userName + " (Pending)",
-              style: TextStyle(
-                  fontSize: 16
-              ),
+              notificationController.relationUser.pendingAcc[0].userName +
+                  " (Pending)",
+              style: TextStyle(fontSize: 16),
             ),
-
             InkWell(
               child: SizedBox(
                 height: 50,
@@ -1324,42 +1364,41 @@ class _SettingsState extends State<Settings> {
                 ),
               ),
               onTap: () async {
-                await notificationController.deletePartner(Uid: notificationController.relationUser.pendingAcc[0].reqUid);
+                await notificationController.deletePartner(
+                    Uid: notificationController
+                        .relationUser.pendingAcc[0].reqUid);
               },
             ),
-
           ],
-        )
-    );
+        ));
   }
 
-  Widget acceptWidget(){
+  Widget acceptWidget() {
     return Padding(
         padding: const EdgeInsets.all(8.0),
         child: Row(
           // mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-
             Expanded(
-              flex : 7,
+              flex: 7,
               child: Text(
-                notificationController.relationUser.pendingReq[0].userName + " (Requested)",
-                style: TextStyle(
-                    fontSize: 16
-                ),
+                notificationController.relationUser.pendingReq[0].userName +
+                    " (Requested)",
+                style: TextStyle(fontSize: 16),
               ),
             ),
-
-
             Expanded(
               flex: 1,
               child: FloatingActionButton(
                 backgroundColor: Colors.greenAccent,
                 onPressed: () async {
-
-                  await notificationController.acceptPartner(context2: context, Uid: notificationController.listPendingReq[0].reqUid,
-                      imageUrl: notificationController.listPendingReq[0].imageUrl,
-                      userName: notificationController.listPendingReq[0].userName);
+                  await notificationController.acceptPartner(
+                      context2: context,
+                      Uid: notificationController.listPendingReq[0].reqUid,
+                      imageUrl:
+                          notificationController.listPendingReq[0].imageUrl,
+                      userName:
+                          notificationController.listPendingReq[0].userName);
                   // if (Get.find<TabsController>().likedByList.contains(doc['LikedBy'])) {
                   //   print("Masuk sini");
                   //   showDialog(
@@ -1462,7 +1501,6 @@ class _SettingsState extends State<Settings> {
                   // );
                   //
                   // data.removeUserSwipe(index);
-
                 },
                 child: Icon(
                   Icons.add,
@@ -1471,18 +1509,16 @@ class _SettingsState extends State<Settings> {
                 ),
               ),
             ),
-
             SizedBox(
               width: 10,
             ),
-
             Expanded(
               flex: 1,
-              child:FloatingActionButton(
+              child: FloatingActionButton(
                 backgroundColor: primaryColor,
                 onPressed: () async {
-
-                  await notificationController.deletePartner(Uid: notificationController.listPendingReq[0].reqUid);
+                  await notificationController.deletePartner(
+                      Uid: notificationController.listPendingReq[0].reqUid);
                   // await data.docReference
                   //     .doc(Get.find<LoginController>().userId)
                   //     .collection("CheckedUser")
@@ -1497,7 +1533,6 @@ class _SettingsState extends State<Settings> {
                   // );
                   //
                   // data.removeUserSwipe(index);
-
                 },
                 child: Icon(
                   Icons.close,
@@ -1506,30 +1541,23 @@ class _SettingsState extends State<Settings> {
                 ),
               ),
             ),
-
             SizedBox(
               width: 10,
             ),
-
           ],
-        )
-    );
+        ));
   }
 
-  Widget relationWidget(){
+  Widget relationWidget() {
     return Padding(
         padding: const EdgeInsets.all(8.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-
             Text(
               notificationController.relationUser.partner.partnerName,
-              style: TextStyle(
-                  fontSize: 16
-              ),
+              style: TextStyle(fontSize: 16),
             ),
-
             InkWell(
               child: SizedBox(
                 height: 50,
@@ -1550,13 +1578,12 @@ class _SettingsState extends State<Settings> {
                 ),
               ),
               onTap: () async {
-                await notificationController.deletePartner(Uid: notificationController.relationUser.partner.partnerId);
+                await notificationController.deletePartner(
+                    Uid: notificationController.relationUser.partner.partnerId);
               },
             ),
-
           ],
-        )
-    );
+        ));
   }
 
   void _updateAddress(Map _address) {
@@ -1615,15 +1642,15 @@ class _SettingsState extends State<Settings> {
                     await FirebaseFirestore.instance
                         .collection("Users")
                         .doc('${Get.find<LoginController>().userId}')
-                        .update({
-                          'location': {
-                            'latitude': _address['latitude'],
-                            'longitude': _address['longitude'],
-                            'address': _address['PlaceName']
+                        .update(
+                          {
+                            'location': {
+                              'latitude': _address['latitude'],
+                              'longitude': _address['longitude'],
+                              'address': _address['PlaceName']
+                            },
                           },
-                        },
-
-                    )
+                        )
                         .whenComplete(() => showDialog(
                             barrierDismissible: false,
                             context: context,
@@ -1680,6 +1707,9 @@ class _SettingsState extends State<Settings> {
   }
 
   Future _deleteUser(User user) async {
-    await FirebaseFirestore.instance.collection("Users").doc(Get.find<LoginController>().userId).delete();
+    await FirebaseFirestore.instance
+        .collection("Users")
+        .doc(Get.find<LoginController>().userId)
+        .delete();
   }
 }
