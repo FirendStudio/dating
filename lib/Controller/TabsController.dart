@@ -29,7 +29,7 @@ import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 import 'package:in_app_purchase_storekit/in_app_purchase_storekit.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 
-class TabsController extends GetxController{
+class TabsController extends GetxController {
   CollectionReference docRef = FirebaseFirestore.instance.collection('Users');
   FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   UserModel currentUser;
@@ -43,6 +43,7 @@ class TabsController extends GetxController{
   List<UserModel> allUsers = [];
   UserModel selectedUser;
   List likedByList = [];
+
   /// Past purchases
   // List<PurchaseDetails> purchases = [];
   InAppPurchase _iap = InAppPurchase.instance;
@@ -76,15 +77,15 @@ class TabsController extends GetxController{
   ];
 
   @override
-  onInit(){
+  onInit() {
     super.onInit();
     getAccessItems();
   }
 
   initAllTab(BuildContext context) async {
-    if(init == 0){
+    if (init == 0) {
       // getAccessItems();
-      if(storage.read("listUidSwiped") != null){
+      if (storage.read("listUidSwiped") != null) {
         listUidSwiped = storage.read("listUidSwiped").cast<String>() ?? [];
       }
       getCurrentUser(context);
@@ -94,20 +95,19 @@ class TabsController extends GetxController{
       initNewCheckPayment();
       firstLoginApp();
     }
-
   }
 
-  Future <void> firstLoginApp() async {
+  Future<void> firstLoginApp() async {
     await Future.delayed(Duration(seconds: 4));
-    bool cek = storage.read("isLogin")??false;
-    print("Cek isLogin : "+ cek.toString());
-    if(!cek){
+    bool cek = storage.read("isLogin") ?? false;
+    print("Cek isLogin : " + cek.toString());
+    if (!cek) {
       await storage.write("isLogin", true);
-      Get.to(()=>DialogFirstApp());
+      Get.to(() => DialogFirstApp());
     }
   }
 
-  initNewCheckPayment(){
+  initNewCheckPayment() {
     final Stream<List<PurchaseDetails>> purchaseUpdated = _iap.purchaseStream;
     _subscription = purchaseUpdated.listen((purchaseDetailsList) {
       print(purchaseDetailsList);
@@ -145,8 +145,8 @@ class TabsController extends GetxController{
         if (Platform.isAndroid) {
           if (!kAutoConsume && purchaseDetails.productID == kConsumableId) {
             final InAppPurchaseAndroidPlatformAddition androidAddition =
-            _inAppPurchase.getPlatformAddition<
-                InAppPurchaseAndroidPlatformAddition>();
+                _inAppPurchase.getPlatformAddition<
+                    InAppPurchaseAndroidPlatformAddition>();
             await androidAddition.consumePurchase(purchaseDetails);
           }
         }
@@ -196,17 +196,17 @@ class TabsController extends GetxController{
       return;
     }
 
-
     if (Platform.isIOS) {
-      var iosPlatformAddition = _inAppPurchase.getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
+      var iosPlatformAddition = _inAppPurchase
+          .getPlatformAddition<InAppPurchaseStoreKitPlatformAddition>();
       await iosPlatformAddition.setDelegate(ExamplePaymentQueueDelegate());
     }
 
-    ProductDetailsResponse productDetailResponse = await _inAppPurchase.queryProductDetails(kProductIds.toSet());
+    ProductDetailsResponse productDetailResponse =
+        await _inAppPurchase.queryProductDetails(kProductIds.toSet());
     // print("Detail produk ");
     // print(productDetailResponse.productDetails[1].title);
     if (productDetailResponse.error != null) {
-
       queryProductError = productDetailResponse.error.message;
       isAvailable = isAvailable;
       products = productDetailResponse.productDetails;
@@ -244,64 +244,83 @@ class TabsController extends GetxController{
     // update();
   }
 
-  initPayment(){
+  initPayment() {
     print("Init Payment");
-    FirebaseFirestore.instance.collection("Payment")
+    FirebaseFirestore.instance
+        .collection("Payment")
         .doc(Get.find<LoginController>().userId)
-        .snapshots().listen((event) async {
+        .snapshots()
+        .listen((event) async {
       print("Payment");
-      if(!event.exists){
-        await setUpdatePayment(uid: Get.find<LoginController>().userId, packageId: "", status: false, date: DateTime.now(), purchasedId: "");
+      if (!event.exists) {
+        await setUpdatePayment(
+            uid: Get.find<LoginController>().userId,
+            packageId: "",
+            status: false,
+            date: DateTime.now(),
+            purchasedId: "");
         return;
       }
       paymentModel = Payment.fromDocument(event.data());
-      if(paymentModel.status == false){
+      if (paymentModel.status == false) {
         isPuchased = false;
       }
-      if(paymentModel.status && paymentModel.date.isBefore(DateTime.now())){
+      if (paymentModel.status && paymentModel.date.isBefore(DateTime.now())) {
         isPuchased = false;
-        await setUpdatePayment(uid: Get.find<LoginController>().userId, packageId: "", status: false, date: DateTime.now(), purchasedId: "");
+        await setUpdatePayment(
+            uid: Get.find<LoginController>().userId,
+            packageId: "",
+            status: false,
+            date: DateTime.now(),
+            purchasedId: "");
       }
-      if(paymentModel.status && paymentModel.date.isAfter(DateTime.now())){
+      if (paymentModel.status && paymentModel.date.isAfter(DateTime.now())) {
         isPuchased = true;
       }
 
       //if debug then payment always true
-      if(kDebugMode){
+      if (kDebugMode) {
         isPuchased = true;
       }
       print(isPuchased);
       update();
-
     });
-
   }
 
-  setUpdatePayment({@required String uid, @required String packageId, @required bool status, @required DateTime date,
-    @required String purchasedId
-  }) async {
-    Map <String, dynamic> newRelation = {
-      "userId" : uid,
-      "packageId" : packageId,
-      "purchasedId" : purchasedId,
-      "status" : status,
-      "date" : date.toString(),
+  setUpdatePayment(
+      {@required String uid,
+      @required String packageId,
+      @required bool status,
+      @required DateTime date,
+      @required String purchasedId}) async {
+    Map<String, dynamic> newRelation = {
+      "userId": uid,
+      "packageId": packageId,
+      "purchasedId": purchasedId,
+      "status": status,
+      "date": date.toString(),
     };
 
-    await FirebaseFirestore.instance
-        .collection("Payment")
-        .doc(uid)
-        .set(newRelation,
-        SetOptions(merge : true)
-    );
+    await FirebaseFirestore.instance.collection("Payment").doc(uid).set(
+          newRelation,
+          SetOptions(
+            merge: true,
+          ),
+        );
   }
 
   String capitalize(String text) {
+    if (text.isEmpty) {
+      return "";
+    }
     return "${text[0].toUpperCase()}${text.substring(1).toLowerCase()}";
   }
 
   getAccessItems() async {
-    FirebaseFirestore.instance.collection("Item_access").snapshots().listen((doc) {
+    FirebaseFirestore.instance
+        .collection("Item_access")
+        .snapshots()
+        .listen((doc) {
       if (doc.docs.length > 0) {
         // items = doc.docs[0].data;
         items = doc.docs[0].data();
@@ -358,10 +377,14 @@ class TabsController extends GetxController{
 
   int swipecount = 0;
   getSwipedcount() {
-    FirebaseFirestore.instance.collection('/Users/${currentUser.id}/CheckedUser')
-    .where('timestamp', isGreaterThan: Timestamp.now().toDate().subtract(Duration(days: 1)),)
-    .snapshots()
-    .listen((event) {
+    FirebaseFirestore.instance
+        .collection('/Users/${currentUser.id}/CheckedUser')
+        .where(
+          'timestamp',
+          isGreaterThan: Timestamp.now().toDate().subtract(Duration(days: 1)),
+        )
+        .snapshots()
+        .listen((event) {
       print(event.docs.length);
       swipecount = event.docs.length;
       update();
@@ -382,23 +405,24 @@ class TabsController extends GetxController{
       print(ondata.docs.length);
       List<String> listIDChat = [];
       if (ondata.docs.length > 0) {
-        if(Get.find<ChatController>().checkStreamChat){
+        if (Get.find<ChatController>().checkStreamChat) {
           Get.find<ChatController>().streamChat.cancel();
         }
         Get.find<NotificationController>().listMatchUserAll = ondata.docs;
         // Get.find<NotificationController>().listTempMatch = ondata.docs;
         Get.find<NotificationController>().filterLiked();
 
-        for(var i in ondata.docs){
-          listIDChat.add(Get.find<ChatController>().chatIdCustom(currentUser.id, i.id));
+        for (var i in ondata.docs) {
+          listIDChat.add(
+              Get.find<ChatController>().chatIdCustom(currentUser.id, i.id));
           var doc = await docRef.doc(i['Matches']).get();
           if (doc.exists) {
             UserModel tempuser = UserModel.fromDocument(doc);
             tempuser.distanceBW = calculateDistance(
-                currentUser.coordinates['latitude'],
-                currentUser.coordinates['longitude'],
-                tempuser.coordinates['latitude'],
-                tempuser.coordinates['longitude'])
+                    currentUser.coordinates['latitude'],
+                    currentUser.coordinates['longitude'],
+                    tempuser.coordinates['latitude'],
+                    tempuser.coordinates['longitude'])
                 .round();
 
             matches.add(tempuser);
@@ -408,23 +432,24 @@ class TabsController extends GetxController{
             // if (mounted) setState(() {});
           }
         }
-        if(kDebugMode){
+        if (kDebugMode) {
           print("List ID Chat : " + listIDChat.length.toString());
           print("List ListMatches : " + newmatches.length.toString());
         }
-        
+
         Get.find<ChatController>().initListChat(listIDChat);
       }
     });
   }
 
-  
-
   getCurrentUser(BuildContext context) async {
     User user = _firebaseAuth.currentUser;
     // return docRef.doc("${user.uid}").snapshots().listen((data) async {
-    return docRef.doc(Get.find<LoginController>().userId).snapshots().listen((data) async {
-      if(kDebugMode){
+    return docRef
+        .doc(Get.find<LoginController>().userId)
+        .snapshots()
+        .listen((data) async {
+      if (kDebugMode) {
         print(data);
       }
       currentUser = UserModel.fromDocument(data);
@@ -446,11 +471,12 @@ class TabsController extends GetxController{
   }
 
   Query query() {
-    
     return docRef
-    // .limit(5)
-    .where('age', isGreaterThanOrEqualTo: int.parse(currentUser.ageRange['min']), isLessThanOrEqualTo: int.parse(currentUser.ageRange['max']))
-    .orderBy('age', descending: false);
+        // .limit(5)
+        .where('age',
+            isGreaterThanOrEqualTo: int.parse(currentUser.ageRange['min']),
+            isLessThanOrEqualTo: int.parse(currentUser.ageRange['max']))
+        .orderBy('age', descending: false);
 
     // if (currentUser.showGender == 'everyone') {
     //   return docRef
@@ -476,64 +502,66 @@ class TabsController extends GetxController{
     //       .orderBy('age', descending: false);
     // }
   }
-  bool filterLastSwiped(String idUID){
-    if(listUidSwiped.isEmpty){
+
+  bool filterLastSwiped(String idUID) {
+    if (listUidSwiped.isEmpty) {
       return false;
     }
     var data = listUidSwiped.firstWhereOrNull((element) => element == idUID);
-    if(data == null){
+    if (data == null) {
       return false;
     }
     return true;
   }
 
-  addLastSwiped(String idUID, int nextIndex){
-    if(kDebugMode){
+  addLastSwiped(String idUID, int nextIndex) {
+    if (kDebugMode) {
       print("Adding user to last Swiped : " + idUID);
     }
-    if(nextIndex == users.length-1 && indexUser == 0){
-      if(kDebugMode){
+    if (nextIndex == users.length - 1 && indexUser == 0) {
+      if (kDebugMode) {
         print("User Swiped left");
       }
       return;
     }
-    if( nextIndex < indexUser){
-      if(kDebugMode){
+    if (nextIndex < indexUser) {
+      if (kDebugMode) {
         print("User Swiped left");
       }
       return;
     }
-    if(listUidSwiped.isEmpty){
+    if (listUidSwiped.isEmpty) {
       listUidSwiped.add(idUID);
       storage.write("listUidSwiped", listUidSwiped);
       return;
     }
     var data = listUidSwiped.firstWhereOrNull((element) => element == idUID);
-    if(data == null){
+    if (data == null) {
       listUidSwiped.add(idUID);
       storage.write("listUidSwiped", listUidSwiped);
       return;
     }
-    if(kDebugMode){
+    if (kDebugMode) {
       print("User already exist");
     }
   }
 
-  List<QueryDocumentSnapshot<Object>> getLastSwipe(List<QueryDocumentSnapshot<Object>> result){
+  List<QueryDocumentSnapshot<Object>> getLastSwipe(
+      List<QueryDocumentSnapshot<Object>> result) {
     List<QueryDocumentSnapshot<Object>> listTempResult = [];
     List<QueryDocumentSnapshot<Object>> listTemp = [];
     for (var doc in result) {
       Map<String, dynamic> map = doc.data();
-      if(kDebugMode){
+      if (kDebugMode) {
         print(doc.id);
       }
       bool cek = filterLastSwiped(map['userId']);
-      if(kDebugMode){
+      if (kDebugMode) {
         print(cek);
       }
-      if(cek){
+      if (cek) {
         listTemp.add(doc);
-      }else{
+      } else {
         listTempResult.add(doc);
       }
     }
@@ -545,20 +573,17 @@ class TabsController extends GetxController{
     checkedUser = [];
     FirebaseFirestore.instance
         .collection('/Users/${currentUser.id}/CheckedUser')
-    // .collection('/Users/${currentUser.id}')
+        // .collection('/Users/${currentUser.id}')
         .get()
         .then((data) {
-      
-
       data.docs.forEach((element) {
         print(element.data()["LikedUser"]);
-        if(element.data()["LikedUser"] == null){
+        if (element.data()["LikedUser"] == null) {
           checkedUser.add(element.data()["DislikedUser"]);
-        }else{
+        } else {
           checkedUser.add(element.data()["LikedUser"]);
         }
       });
-      
     }).then((_) async {
       await query().get().then((data) async {
         print(data);
@@ -580,38 +605,42 @@ class TabsController extends GetxController{
               temp.coordinates['latitude'],
               temp.coordinates['longitude']);
           temp.distanceBW = distance.round();
-          if (checkedUser.any((value) => value == temp.id,)) {
-
+          if (checkedUser.any(
+            (value) => value == temp.id,
+          )) {
           } else {
-
-            if(kDebugMode){
+            if (kDebugMode) {
               print("Jarak : " + distance.toString());
               print(currentUser.maxDistance);
             }
-            if (distance <= currentUser.maxDistance && temp.id != currentUser.id && !temp.isBlocked) {
-              if(temp.imageUrl.isNotEmpty){
+            if (distance <= currentUser.maxDistance &&
+                temp.id != currentUser.id &&
+                !temp.isBlocked) {
+              if (temp.imageUrl.isNotEmpty) {
                 List imageUrlTemp = [];
-                for(int i =0; i <= temp.imageUrl.length-1; i++){
-                  if(temp.imageUrl[i].runtimeType == String){
-                    imageUrlTemp.add({
-                      "url": temp.imageUrl[i],
-                      "show": "true"
-                    });
-
-                  }else{
-                    if(temp.imageUrl[i]['show'] == "true"){
+                for (int i = 0; i <= temp.imageUrl.length - 1; i++) {
+                  if (temp.imageUrl[i].runtimeType == String) {
+                    imageUrlTemp.add({"url": temp.imageUrl[i], "show": "true"});
+                  } else {
+                    if (temp.imageUrl[i]['show'] == "true") {
                       imageUrlTemp.add(temp.imageUrl[i]);
-
                     }
                   }
-
                 }
-                var data = await FirebaseFirestore.instance.collection("Relationship").doc(temp.id).get();
-                if(!data.exists){
-                  await Get.find<NotificationController>().setNewRelationship(temp.id);
-                  data = await FirebaseFirestore.instance.collection("Relationship").doc(temp.id).get();
+                var data = await FirebaseFirestore.instance
+                    .collection("Relationship")
+                    .doc(temp.id)
+                    .get();
+                if (!data.exists) {
+                  await Get.find<NotificationController>()
+                      .setNewRelationship(temp.id);
+                  data = await FirebaseFirestore.instance
+                      .collection("Relationship")
+                      .doc(temp.id)
+                      .get();
                 }
-                Relationship relationUserPartner = Relationship.fromDocument(data.data());
+                Relationship relationUserPartner =
+                    Relationship.fromDocument(data.data());
 
                 users.add(UserModel(
                     id: temp.id,
@@ -640,19 +669,16 @@ class TabsController extends GetxController{
                     lastmsg: temp.lastmsg,
                     relasi: relationUserPartner,
                     fcmToken: temp.fcmToken,
-                    listSwipedUser : temp.listSwipedUser,
+                    listSwipedUser: temp.listSwipedUser,
                     countryName: temp.countryName,
                     countryID: temp.countryID,
-                    verified: temp.verified
-                    
-                ));
-              }else{
+                    verified: temp.verified));
+              } else {
                 users.add(temp);
               }
-
             }
 
-            if(kDebugMode){
+            if (kDebugMode) {
               print(users);
             }
           }
@@ -665,18 +691,20 @@ class TabsController extends GetxController{
     });
   }
 
-  dynamic getUserSelected(idUser){
+  dynamic getUserSelected(idUser) {
     UserModel selected;
-    selected = allUsers.firstWhere((element) => element.id == idUser, orElse:()=>selected);
+    selected = allUsers.firstWhere((element) => element.id == idUser,
+        orElse: () => selected);
     return selected;
   }
 
   getLikedByList() {
-    docRef.doc(Get.find<LoginController>().userId)
-    .collection("LikedBy")
-    .orderBy('LikedBy', descending: true)
-    .snapshots()
-    .listen((data) async {
+    docRef
+        .doc(Get.find<LoginController>().userId)
+        .collection("LikedBy")
+        .orderBy('LikedBy', descending: true)
+        .snapshots()
+        .listen((data) async {
       likedByList.addAll(data.docs.map((f) => f['LikedBy']));
       Get.find<NotificationController>().listLikedUserAll = [];
       Get.find<NotificationController>().listLikedUserAll = data.docs;
@@ -706,20 +734,19 @@ class TabsController extends GetxController{
           .set({
         'userName': users[indexUser].name,
         'pictureUrl': (users[indexUser].imageUrl[0].runtimeType == String)
-            ?users[indexUser].imageUrl[0]:users[indexUser].imageUrl[0]['url'],
-        'DislikedUser':
-        users[indexUser].id,
+            ? users[indexUser].imageUrl[0]
+            : users[indexUser].imageUrl[0]['url'],
+        'DislikedUser': users[indexUser].id,
         'timestamp': DateTime.now(),
-      }, SetOptions(merge : true)
-      );
+      }, SetOptions(merge: true));
 
       if (indexUser < users.length) {
         userRemoved.clear();
         userRemoved.add(users[indexUser]);
         users.removeAt(indexUser);
-        
+
         indexImage = 0;
-        if(indexUser != 0){
+        if (indexUser != 0) {
           indexUser--;
         }
       }
@@ -728,10 +755,10 @@ class TabsController extends GetxController{
     }
   }
 
-  bool getSelectedUserIndex(String idUser){
-
-    var selectedUser = users.firstWhereOrNull((element) => element.id == idUser);
-    if(selectedUser != null){
+  bool getSelectedUserIndex(String idUser) {
+    var selectedUser =
+        users.firstWhereOrNull((element) => element.id == idUser);
+    if (selectedUser != null) {
       return true;
     }
     return false;
@@ -748,41 +775,32 @@ class TabsController extends GetxController{
         print("Masuk sini");
 
         Get.find<NotificationController>().sendMatchedFCM(
-          idUser:users[indexUser].id,
-          name: users[indexUser].name
-        );
+            idUser: users[indexUser].id, name: users[indexUser].name);
         showDialog(
             context: Get.context,
             builder: (ctx) {
-              Future.delayed(
-                  Duration(milliseconds: 1700),
-                      () {
-                    Navigator.pop(ctx);
-                  });
+              Future.delayed(Duration(milliseconds: 1700), () {
+                Navigator.pop(ctx);
+              });
               return Padding(
-                padding: const EdgeInsets.only(
-                    top: 80),
+                padding: const EdgeInsets.only(top: 80),
                 child: Align(
-                  alignment:
-                  Alignment.topCenter,
+                  alignment: Alignment.topCenter,
                   child: Card(
                     child: Container(
                       height: 100,
                       width: 300,
                       child: Center(
                           child: Text(
-                            "It's a match\n With ",
-                            textAlign:
-                            TextAlign.center,
-                            style: TextStyle(
-                                color: primaryColor,
-                                fontSize: 30,
-                                decoration:
-                                TextDecoration
-                                    .none),
-                          )
-                        // .tr(args: ['${widget.users[index].name}']),
-                      ),
+                        "It's a match\n With ",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            color: primaryColor,
+                            fontSize: 30,
+                            decoration: TextDecoration.none),
+                      )
+                          // .tr(args: ['${widget.users[index].name}']),
+                          ),
                     ),
                   ),
                 ),
@@ -792,70 +810,63 @@ class TabsController extends GetxController{
             .doc(Get.find<LoginController>().userId)
             .collection("Matches")
             .doc(users[indexUser].id)
-            .set(
-            {
-              'Matches': users[indexUser].id,
-              'isRead': false,
-              'userName': users[indexUser].name,
-              'pictureUrl': (users[indexUser].imageUrl[0].runtimeType == String)?users[indexUser].imageUrl[0]:users[indexUser].imageUrl[0]['url'],
-              'timestamp': FieldValue.serverTimestamp()
-            },
-            SetOptions(merge : true)
-        );
+            .set({
+          'Matches': users[indexUser].id,
+          'isRead': false,
+          'userName': users[indexUser].name,
+          'pictureUrl': (users[indexUser].imageUrl[0].runtimeType == String)
+              ? users[indexUser].imageUrl[0]
+              : users[indexUser].imageUrl[0]['url'],
+          'timestamp': FieldValue.serverTimestamp()
+        }, SetOptions(merge: true));
         await docRef
             .doc(users[indexUser].id)
             .collection("Matches")
             .doc(Get.find<LoginController>().userId)
-            .set(
-            {
-              'Matches': Get.find<LoginController>().userId,
-              'userName': currentUser.name,
-              'pictureUrl': (currentUser.imageUrl[0].runtimeType == String)?currentUser.imageUrl[0] : currentUser.imageUrl[0]['url'],
-              'isRead': false,
-              'timestamp': FieldValue.serverTimestamp()
-            },
-            SetOptions(merge : true)
-        );
+            .set({
+          'Matches': Get.find<LoginController>().userId,
+          'userName': currentUser.name,
+          'pictureUrl': (currentUser.imageUrl[0].runtimeType == String)
+              ? currentUser.imageUrl[0]
+              : currentUser.imageUrl[0]['url'],
+          'isRead': false,
+          'timestamp': FieldValue.serverTimestamp()
+        }, SetOptions(merge: true));
       }
 
-      if(!cek){
+      if (!cek) {
         Get.find<NotificationController>().sendLikedFCM(
-            idUser:users[indexUser].id,
-            name: users[indexUser].name
-        );
+            idUser: users[indexUser].id, name: users[indexUser].name);
       }
 
       await docRef
           .doc(Get.find<LoginController>().userId)
           .collection("CheckedUser")
           .doc(users[indexUser].id)
-          .set(
-          {
-            'userName': users[indexUser].name,
-            'pictureUrl': (users[indexUser].imageUrl[0].runtimeType == String)?users[indexUser].imageUrl[0] : users[indexUser].imageUrl[0]['url'],
-            'LikedUser': users[indexUser].id,
-            'timestamp':
-            FieldValue.serverTimestamp(),
-          },
-          SetOptions(merge : true)
-      );
+          .set({
+        'userName': users[indexUser].name,
+        'pictureUrl': (users[indexUser].imageUrl[0].runtimeType == String)
+            ? users[indexUser].imageUrl[0]
+            : users[indexUser].imageUrl[0]['url'],
+        'LikedUser': users[indexUser].id,
+        'timestamp': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
       await docRef
           .doc(users[indexUser].id)
           .collection("LikedBy")
           .doc(Get.find<LoginController>().userId)
-          .set(
-          {
-            'userName': Get.find<TabsController>().currentUser.name,
-            'pictureUrl': (currentUser.imageUrl[0].runtimeType == String)?currentUser.imageUrl[0] : currentUser.imageUrl[0]['url'],
-            'LikedBy': Get.find<LoginController>().userId,
-            'timestamp': FieldValue.serverTimestamp()
-          },
-          SetOptions(merge : true)
-      );
+          .set({
+        'userName': Get.find<TabsController>().currentUser.name,
+        'pictureUrl': (currentUser.imageUrl[0].runtimeType == String)
+            ? currentUser.imageUrl[0]
+            : currentUser.imageUrl[0]['url'],
+        'LikedBy': Get.find<LoginController>().userId,
+        'timestamp': FieldValue.serverTimestamp()
+      }, SetOptions(merge: true));
       print("Data User index ke : " + indexUser.toString());
       users.removeAt(indexUser);
       indexImage = 0;
-      if(indexUser != 0){
+      if (indexUser != 0) {
         indexUser--;
       }
       // if(data.indexUser+1 == data.users.length){
@@ -879,11 +890,10 @@ class TabsController extends GetxController{
       //   }
       // }
 
-      }else{
+    } else {
       print("length 0");
-      }
+    }
   }
-
 }
 
 class ExamplePaymentQueueDelegate implements SKPaymentQueueDelegateWrapper {

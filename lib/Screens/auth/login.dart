@@ -180,7 +180,9 @@ class Login extends StatelessWidget {
                             ))),
                         onTap: () async {
                           if (!loginController.isChecked.value) {
-                            Get.snackbar("Information", "You must agree our terms & conditions to use this apps");
+                            Get.snackbar("Information", "You must agree our terms & conditions to use this apps",
+                              colorText: Colors.white
+                            );
                             return;
                           }
                           showDialog(

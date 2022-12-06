@@ -29,7 +29,11 @@ class UploadImageVerifyScreen extends StatelessWidget {
           ),
           body: Container(
             padding: const EdgeInsets.only(
-                left: 15.0, right: 15, bottom: 5, top: 10),
+              left: 15.0,
+              right: 15,
+              bottom: 5,
+              top: 10,
+            ),
             child: SingleChildScrollView(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -38,31 +42,34 @@ class UploadImageVerifyScreen extends StatelessWidget {
                     text: TextSpan(
                         text: "Verification Status : ",
                         style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black),
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
                         children: [
                           TextSpan(
-                              text: (Get.find<TabsController>()
-                                          .currentUser
-                                          .verified ==
-                                      0)
-                                  ? "Unverified"
-                                  : (Get.find<TabsController>()
-                                              .currentUser
-                                              .verified ==
-                                          1)
-                                      ? "Under Review"
-                                      : (Get.find<TabsController>()
-                                                  .currentUser
-                                                  .verified ==
-                                              2)
-                                          ? "Rejected"
-                                          : "Verified",
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.red)),
+                            text: (Get.find<TabsController>()
+                                        .currentUser
+                                        .verified ==
+                                    0)
+                                ? "Unverified"
+                                : (Get.find<TabsController>()
+                                            .currentUser
+                                            .verified ==
+                                        1)
+                                    ? "Under Review"
+                                    : (Get.find<TabsController>()
+                                                .currentUser
+                                                .verified ==
+                                            2)
+                                        ? "Rejected"
+                                        : "Verified",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.red,
+                            ),
+                          ),
                         ]),
                   ),
                   SizedBox(
@@ -99,63 +106,72 @@ class UploadImageVerifyScreen extends StatelessWidget {
                     child: Text(
                       "Your Verification Code",
                       style: TextStyle(
-                          fontWeight: FontWeight.normal, fontSize: 16),
+                        fontWeight: FontWeight.normal,
+                        fontSize: 16,
+                      ),
                     ),
                   ),
                   SizedBox(height: 8),
                   Center(
                     child: Text(
                       data.code,
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      ),
                     ),
                   ),
                   SizedBox(height: 30),
                   if (data.croppedFile != null)
                     Center(
                       child: ClipRRect(
-                          borderRadius: BorderRadius.circular(0.0),
-                          child: Image.file(
-                            data.croppedFile,
-                            height: 200,
-                          )),
+                        borderRadius: BorderRadius.circular(0.0),
+                        child: Image.file(
+                          data.croppedFile,
+                          height: 200,
+                        ),
+                      ),
                     ),
                   if (data.croppedFile == null && data.verifyModel == null)
                     Center(
                       child: ClipRRect(
-                          borderRadius: BorderRadius.circular(0.0),
-                          child: Image.asset(
-                            "asset/images/ic_profile.png",
-                            height: 200,
-                          )),
+                        borderRadius: BorderRadius.circular(0.0),
+                        child: Image.asset(
+                          "asset/images/ic_profile.png",
+                          height: 200,
+                        ),
+                      ),
                     ),
                   if (data.croppedFile == null && data.verifyModel != null)
                     Center(
                       child: ClipRRect(
-                          borderRadius: BorderRadius.circular(0.0),
-                          child: Image.network(
-                            data.verifyModel.imageUrl,
-                            height: 200,
-                          )),
+                        borderRadius: BorderRadius.circular(0.0),
+                        child: Image.network(
+                          data.verifyModel.imageUrl,
+                          height: 200,
+                        ),
+                      ),
                     ),
                   Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        IconButton(
-                            iconSize: 50,
-                            color: Colors.black,
-                            onPressed: () {
-                              data.pickImage(ImageSource.camera, metode: true);
-                            },
-                            icon: Icon(Icons.photo_camera)),
-                        IconButton(
-                            iconSize: 50,
-                            color: Colors.black,
-                            onPressed: () {
-                              data.pickImage(ImageSource.gallery, metode: true);
-                            },
-                            icon: Icon(Icons.image)),
-                      ]),
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      IconButton(
+                          iconSize: 50,
+                          color: Colors.black,
+                          onPressed: () {
+                            data.pickImage(ImageSource.camera, metode: true);
+                          },
+                          icon: Icon(Icons.photo_camera)),
+                      IconButton(
+                        iconSize: 50,
+                        color: Colors.black,
+                        onPressed: () {
+                          data.pickImage(ImageSource.gallery, metode: true);
+                        },
+                        icon: Icon(Icons.image),
+                      ),
+                    ],
+                  ),
                   SizedBox(
                     height: 20,
                   ),
@@ -173,15 +189,24 @@ class UploadImageVerifyScreen extends StatelessWidget {
                         height: Get.size.height * .065,
                         width: Get.size.width * .75,
                         decoration: BoxDecoration(
-                            color: primaryColor,
-                            borderRadius: BorderRadius.all(Radius.circular(8))),
+                          color: primaryColor,
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(8),
+                          ),
+                        ),
                         child: Center(
-                          child: Text("Upload Photo",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold)),
+                          child: Text(
+                            (Get.find<TabsController>().currentUser.verified ==
+                                    2)
+                                ? "Replace Photo"
+                                : "Upload Photo",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                       ),
                     ),
