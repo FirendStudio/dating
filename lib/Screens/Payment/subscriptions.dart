@@ -348,9 +348,9 @@ class _SubscriptionState extends State<Subscription> {
                                               },
                                               children: products.map((product) {
                                                 String duration = "0";
-                                                if(product.id == "monthly"){
+                                                if(product.id == "monthly_unjabbed"){
                                                   duration = "1";
-                                                }else if(product.id == "quarterly"){
+                                                }else if(product.id == "quarterly_unjabbed"){
                                                   duration = "3";
                                                 }else if(product.id == "weekly"){
                                                   duration = "1";
@@ -640,9 +640,9 @@ class _SubscriptionState extends State<Subscription> {
       await _iap.completePurchase(purchase);
       DateTime date;
       var now = new DateTime.now();
-      if(purchase.productID == "quarterly"){
+      if(purchase.productID == "quarterly_unjabbed"){
         date = DateTime(now.year, now.month + 3, now.day);
-      }else if(purchase.productID == "monthly"){
+      }else if(purchase.productID == "monthly_unjabbed"){
         date = DateTime(now.year, now.month + 1, now.day);
       }else if(purchase.productID == "weekly"){
         date = DateTime(now.year, now.month, now.day + 7);
@@ -698,9 +698,9 @@ class _SubscriptionState extends State<Subscription> {
     // print(product.currencySymbol);
     // print(product.rawPrice);
     // print(product.currencyCode);
-    if(product.id == "monthly"){
+    if(product.id == "monthly_unjabbed"){
       return "Month(s)";
-    }else if(product.id == "quarterly"){
+    }else if(product.id == "quarterly_unjabbed"){
       return "Month(s)";
     }else if(product.id == "weekly"){
       return "Week(s)";
