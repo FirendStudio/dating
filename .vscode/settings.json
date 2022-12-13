@@ -1,9 +1,0 @@
-{
-    "dart.flutterSdkPath": "/Users/skydeveloper/Documents/System/flutter_2_10",
-    "files.exclude": {
-        "**/.classpath": true,
-        "**/.project": true,
-        "**/.settings": true,
-        "**/.factorypath": true
-    },
-}

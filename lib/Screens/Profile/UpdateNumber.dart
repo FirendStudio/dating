@@ -28,8 +28,8 @@ class UpdateNumber extends StatelessWidget {
       ),
       body: Container(
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(50), topRight: Radius.circular(50)),
+            // borderRadius: BorderRadius.only(
+            //     topLeft: Radius.circular(50), topRight: Radius.circular(50)),
             color: Colors.white),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

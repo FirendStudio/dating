@@ -1608,7 +1608,7 @@ class EditProfileState extends State<EditProfile> {
                               bottom: 10
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.redAccent,
+                            color: primaryColor,
                             borderRadius: BorderRadius.all(Radius.circular(10)),
                           ),
                           child: Text("Set as my profile image",
@@ -1660,7 +1660,7 @@ class EditProfileState extends State<EditProfile> {
                               bottom: 10
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.redAccent,
+                            color: primaryColor,
                             borderRadius: BorderRadius.all(Radius.circular(10)),
                           ),
                           child: Text((!show)?
@@ -1689,7 +1689,7 @@ class EditProfileState extends State<EditProfile> {
                               bottom: 10
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.redAccent,
+                            color: primaryColor,
                             borderRadius: BorderRadius.all(Radius.circular(10)),
                           ),
                           child: Text("Delete this image",

@@ -33,6 +33,7 @@ class UserModel {
   final String fcmToken;
   final String countryName;
   final String countryID;
+  final int verified;
 
   UserModel({
     @required this.id,
@@ -63,7 +64,8 @@ class UserModel {
     this.fcmToken,
     this.countryName,
     this.listSwipedUser,
-    this.countryID
+    this.countryID,
+    this.verified
   });
 
   factory UserModel.fromDocument(DocumentSnapshot doc) {
@@ -71,7 +73,7 @@ class UserModel {
         id: doc['userId'],
         // isBlocked: doc['isBlocked'] != null ? doc['isBlocked'] : false,
         isBlocked: doc.data().toString().contains('isBlocked') ? doc['isBlocked'] : false,
-        phoneNumber: doc['phoneNumber'],
+        phoneNumber: doc.data().toString().contains('phoneNumber')?doc['phoneNumber']??"" : "",
         name: doc['UserName'],
         editInfo: doc['editInfo'],
         ageRange: doc['age_range'],
@@ -101,7 +103,8 @@ class UserModel {
             : [],
         listSwipedUser: doc.data().toString().contains('listSwipedUser') ? doc['listSwipedUser']: [],
         relasi: null,
-        fcmToken: doc.data().toString().contains('pushToken') ? doc['pushToken'] : ""
+        fcmToken: doc.data().toString().contains('pushToken') ? doc['pushToken'] : "",
+        verified: doc.data().toString().contains('verified') ? doc['verified'] : 0,
     );
   }
 }

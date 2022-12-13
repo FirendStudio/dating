@@ -81,7 +81,7 @@ class TabsController extends GetxController{
     getAccessItems();
   }
 
-  initAllTab(BuildContext context){
+  initAllTab(BuildContext context) async {
     if(init == 0){
       // getAccessItems();
       if(storage.read("listUidSwiped") != null){
@@ -92,7 +92,6 @@ class TabsController extends GetxController{
       Get.find<NotificationController>().initNotification();
       initPayment();
       initNewCheckPayment();
-      init = 1;
       firstLoginApp();
     }
 
@@ -488,9 +487,21 @@ class TabsController extends GetxController{
     return true;
   }
 
-  addLastSwiped(String idUID){
+  addLastSwiped(String idUID, int nextIndex){
     if(kDebugMode){
       print("Adding user to last Swiped : " + idUID);
+    }
+    if(nextIndex == users.length-1 && indexUser == 0){
+      if(kDebugMode){
+        print("User Swiped left");
+      }
+      return;
+    }
+    if( nextIndex < indexUser){
+      if(kDebugMode){
+        print("User Swiped left");
+      }
+      return;
     }
     if(listUidSwiped.isEmpty){
       listUidSwiped.add(idUID);
@@ -548,8 +559,8 @@ class TabsController extends GetxController{
         }
       });
       
-    }).then((_) {
-      query().get().then((data) async {
+    }).then((_) async {
+      await query().get().then((data) async {
         print(data);
         if (data.docs.length < 1) {
           print("no more data");
@@ -632,6 +643,7 @@ class TabsController extends GetxController{
                     listSwipedUser : temp.listSwipedUser,
                     countryName: temp.countryName,
                     countryID: temp.countryID,
+                    verified: temp.verified
                     
                 ));
               }else{
@@ -648,6 +660,8 @@ class TabsController extends GetxController{
         update();
         // if (mounted) setState(() {});
       });
+      init = 1;
+      update();
     });
   }
 

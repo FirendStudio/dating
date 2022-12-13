@@ -25,6 +25,7 @@ import 'package:in_app_purchase/in_app_purchase.dart';
 
 import 'Controller/ChatController.dart';
 import 'Controller/NotificationController.dart';
+import 'Controller/VerifyProfileController.dart';
 // import 'package:easy_localization/easy_localization.dart';
 
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
@@ -110,6 +111,7 @@ Future<void> main() async {
   Get.put(TabsController());
   Get.put(ProfileController());
   Get.put(ChatController());
+  Get.put(VerifyProfileController());
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitDown,
     DeviceOrientation.portraitUp,
@@ -157,9 +159,10 @@ class _MyAppState extends State<MyApp> {
     print(user);
 
     if (user != null) {
-      print("ID User : " + user.uid);
+      if(kDebugMode){
+        print("ID User : " + user.uid);
+      }
       String cek = user.providerData[0].providerId;
-      print(cek);
       QuerySnapshot userAuth = await Get.find<LoginController>().getUser(user, cek);
 
       if (userAuth.docs.length > 0) {
@@ -180,7 +183,6 @@ class _MyAppState extends State<MyApp> {
             isLoading = false;
           });
         }
-        print("loggedin ${data['userId']}");
       } else {
         setState(() {
           isLoading = false;
@@ -191,39 +193,6 @@ class _MyAppState extends State<MyApp> {
         isLoading = false;
       });
     }
-    // _auth.currentUser().then((FirebaseUser user) async {
-    //   print(user);
-    //   if (user != null) {
-    //     await Firestore.instance
-    //         .collection('Users')
-    //         .where('userId', isEqualTo: user.uid)
-    //         .getDocuments()
-    //         .then((QuerySnapshot snapshot) async {
-    //       if (snapshot.documents.length > 0) {
-    //         if (snapshot.documents[0].data['location'] != null) {
-    //           setState(() {
-    //             isRegistered = true;
-    //             isLoading = false;
-    //           });
-    //         } else {
-    //           setState(() {
-    //             isAuth = true;
-    //             isLoading = false;
-    //           });
-    //         }
-    //         print("loggedin ${user.uid}");
-    //       } else {
-    //         setState(() {
-    //           isLoading = false;
-    //         });
-    //       }
-    //     });
-    //   } else {
-    //     setState(() {
-    //       isLoading = false;
-    //     });
-    //   }
-    // });
   }
 
   _getLanguage() async {

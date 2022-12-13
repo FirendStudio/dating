@@ -1,23 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:country_code_picker/country_code_picker.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/Controller/WelcomeController.dart';
-import 'package:hookup4u/Screens/Tab.dart';
-import 'package:hookup4u/Screens/auth/otp_verification.dart';
 import 'package:hookup4u/util/color.dart';
-import 'package:hookup4u/util/snackbar.dart';
-import 'login.dart';
-// import 'package:easy_localization/easy_localization.dart';
-//
-// class OTP extends StatefulWidget {
-//
-//
-//   @override
-//   _OTPState createState() => _OTPState();
-// }
 
 class OTP extends StatelessWidget {
   final bool updateNumber;
@@ -49,10 +36,6 @@ class OTP extends StatelessWidget {
                     width: MediaQuery.of(context).size.width,
                   ),
                 ),
-                // Icon(
-                //   Icons.mobile_screen_share,
-                //   size: 50,
-                // ),
                 Container(
                   padding: EdgeInsets.only(
                     left: Get.width * 0.1,
@@ -64,11 +47,6 @@ class OTP extends StatelessWidget {
                       textAlign: TextAlign.left,
                       style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
                     ),
-                    // subtitle: Text(
-                    //   "Please enter Your mobile Number to\n receive a verification code. Message and data rates may apply",
-                    //   textAlign: TextAlign.center,
-                    //   style: TextStyle(fontSize: 15, fontWeight: FontWeight.w400),
-                    // ),
                   ),
                 ),
 
