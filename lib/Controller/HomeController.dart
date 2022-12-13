@@ -19,7 +19,8 @@ class HomeController extends GetxController {
   List<int> listAge = [];
   int ageMin = 0, ageMax = 0;
 
-  initFCM(CollectionReference docRef, UserModel user, BuildContext context) async {
+  initFCM(
+      CollectionReference docRef, UserModel user, BuildContext context) async {
     if (index == 0) {
       await FirebaseMessaging.instance
           .getInitialMessage()
@@ -32,6 +33,7 @@ class HomeController extends GetxController {
       // FirebaseMessaging.instance.getToken().then((value) => print("Token : " + value));
       FirebaseMessaging.instance
           .subscribeToTopic("${Get.find<LoginController>().userId}");
+      FirebaseMessaging.instance.subscribeToTopic("all");
       print("Subcribe to ${Get.find<LoginController>().userId}");
       // String fcmToken = GetStorage().read("fcmToken") ?? "";
       // if(fcmToken.isEmpty){
@@ -117,14 +119,13 @@ class HomeController extends GetxController {
         android: androidplatformChannelSpecifics,
         iOS: iOSplatformChannelSpecifics);
     String payload = "";
-    if(message.notification.title == "Liked"){
+    if (message.notification.title == "Liked") {
       payload = "liked/" + message.data['idUser'];
     }
-    await flutterLocalNotificationsPlugin.show(
-      0, title, body, platformChannelSpecifics,
-      payload: payload
-      // payload:payload
-    );
+    await flutterLocalNotificationsPlugin
+        .show(0, title, body, platformChannelSpecifics, payload: payload
+            // payload:payload
+            );
   }
 
   showSimpleNotification(
