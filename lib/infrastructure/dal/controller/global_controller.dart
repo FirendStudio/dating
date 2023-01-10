@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -10,8 +12,9 @@ import 'package:hookup4u/infrastructure/navigation/routes.dart';
 
 class GlobalController extends GetxController {
   final FirebaseAuth auth = FirebaseAuth.instance;
-  late UserModel currentUser;
+  Rxn<UserModel> currentUser = Rxn();
   Map<String, dynamic> items = {};
+  StreamSubscription<DocumentSnapshot>? streamCurrentUser;
 
   @override
   onInit() async {
@@ -24,6 +27,25 @@ class GlobalController extends GetxController {
     }
     checkAuth();
     getAccessItems();
+  }
+
+  initAfterLogin() {
+    listenUser();
+  }
+
+  listenUser() {
+    streamCurrentUser = FirebaseFirestore.instance
+        .doc("Users/${Get.find<GlobalController>().currentUser.value?.id}")
+        .snapshots()
+        .listen((event) {
+      if (kDebugMode) {
+        print(event.data());
+      }
+
+      UserModel tempUser =
+          UserModel.fromJson(event.data() as Map<String, dynamic>);
+      currentUser.value = tempUser;
+    });
   }
 
   getAccessItems() async {
@@ -96,7 +118,7 @@ class GlobalController extends GetxController {
   }
 
   Future navigationCheck(User user, String metode) async {
-    print(user);
+    print(user.providerData);
     QuerySnapshot? userAuth = await getUser(user, metode);
     // print(userAuth?.docs);
     if (userAuth == null || userAuth.docs.isEmpty) {
@@ -111,8 +133,9 @@ class GlobalController extends GetxController {
       print(docs.data());
     }
     Map<String, dynamic> data = docs.data() as Map<String, dynamic>;
-    currentUser = UserModel.fromJson(data);
-    Get.offAllNamed(Routes.AUTH_LOGIN);
+    currentUser.value = UserModel.fromJson(data);
+    initAfterLogin();
+    Get.offAllNamed(Routes.DASHBOARD);
   }
 
   Future<void> addNewLoginTypeUser(User user, String metode) async {

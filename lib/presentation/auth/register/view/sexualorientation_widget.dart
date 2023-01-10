@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/domain/core/model/CustomTapModel.dart';
 import 'package:hookup4u/presentation/auth/register/controllers/auth_register.controller.dart';
-
 import '../../../../infrastructure/dal/util/Global.dart';
 import '../../../../infrastructure/dal/util/color.dart';
 import '../../../../infrastructure/dal/util/general.dart';

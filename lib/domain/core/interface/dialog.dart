@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hookup4u/infrastructure/dal/controller/global_controller.dart';
 import 'package:hookup4u/infrastructure/navigation/routes.dart';
 
 import '../../../infrastructure/dal/util/color.dart';
@@ -11,7 +12,8 @@ Future showWelcomDialog(context) async {
     builder: (_) {
       Future.delayed(Duration(seconds: 3), () {
         Navigator.pop(context);
-        Get.toNamed(Routes.HOME);
+        Get.find<GlobalController>().initAfterLogin();
+        Get.toNamed(Routes.DASHBOARD);
       });
       return Center(
         child: Container(

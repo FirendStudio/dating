@@ -1,18 +1,15 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
-import 'package:hookup4u/infrastructure/navigation/routes.dart';
 import 'package:hookup4u/presentation/auth/register/view/allowlocation_widget.dart';
 import 'package:hookup4u/presentation/auth/register/view/desire_widget.dart';
 import 'package:hookup4u/presentation/auth/register/view/gender_widget.dart';
 import 'package:hookup4u/presentation/auth/register/view/sexualorientation_widget.dart';
 import 'package:hookup4u/presentation/auth/register/view/showme_widget.dart';
+import 'package:hookup4u/presentation/auth/register/view/status_widget.dart';
+import 'package:hookup4u/presentation/auth/register/view/uploadimage_widget.dart';
 import 'package:hookup4u/presentation/auth/register/view/userdob_widget.dart';
 import 'package:hookup4u/presentation/auth/register/view/username_widget.dart';
-
 import '../../../infrastructure/dal/util/Global.dart';
 import '../../../infrastructure/dal/util/color.dart';
 import 'controllers/auth_register.controller.dart';
@@ -42,10 +39,16 @@ class AuthRegisterScreen extends GetView<AuthRegisterController> {
           return DesireWidget();
         }
         if (controller.indexView.value == 6) {
-          return ShowMeWidget();
+          return StatusWidget();
         }
         if (controller.indexView.value == 7) {
+          return ShowMeWidget();
+        }
+        if (controller.indexView.value == 8) {
           return AllowLocationWidget();
+        }
+        if (controller.indexView.value == 9) {
+          return UploadImageWidget();
         }
         return body();
       },
@@ -71,13 +74,14 @@ class AuthRegisterScreen extends GetView<AuthRegisterController> {
                       child: Container(),
                     ),
                     Expanded(
-                        flex: 3,
-                        child: Center(
-                          child: Image.asset(
-                            "asset/images/logo1.png",
-                            // height: Get.height * 0.1,
-                          ),
-                        )),
+                      flex: 3,
+                      child: Center(
+                        child: Image.asset(
+                          "asset/images/logo1.png",
+                          // height: Get.height * 0.1,
+                        ),
+                      ),
+                    ),
 
                     Expanded(
                       flex: 2,
@@ -92,10 +96,6 @@ class AuthRegisterScreen extends GetView<AuthRegisterController> {
                         ),
                       ),
                     ),
-
-                    // SizedBox(height: Get.height * 0.015,),
-
-                    // SizedBox(height: Get.height * 0.03,),
                     Expanded(
                       flex: 2,
                       child: ListTile(

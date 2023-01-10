@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/presentation/auth/register/controllers/auth_register.controller.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../../../infrastructure/dal/util/Global.dart';
 import '../../../../infrastructure/dal/util/color.dart';
@@ -72,8 +73,10 @@ class UploadImageWidget extends GetView<AuthRegisterController> {
                                   iconSize: 50,
                                   color: Colors.black,
                                   onPressed: () {
-                                    // data.pickImage(ImageSource.camera,
-                                    //     metode: true);
+                                    controller.pickImage(
+                                      ImageSource.camera,
+                                      metode: true,
+                                    );
                                   },
                                   icon: Icon(Icons.photo_camera),
                                 ),
@@ -81,8 +84,10 @@ class UploadImageWidget extends GetView<AuthRegisterController> {
                                   iconSize: 50,
                                   color: Colors.black,
                                   onPressed: () {
-                                    // data.pickImage(ImageSource.gallery,
-                                    //     metode: true);
+                                    controller.pickImage(
+                                      ImageSource.gallery,
+                                      metode: true,
+                                    );
                                   },
                                   icon: Icon(Icons.image),
                                 ),
@@ -130,8 +135,7 @@ class UploadImageWidget extends GetView<AuthRegisterController> {
                                     ],
                                   ),
                                 ),
-                                height:
-                                    Get.height * .065,
+                                height: Get.height * .065,
                                 width: Get.width * .75,
                                 child: Center(
                                   child: Text(
@@ -144,18 +148,15 @@ class UploadImageWidget extends GetView<AuthRegisterController> {
                                 ),
                               ),
                               onTap: () async {
-                                // print(userData);
-                                // // Get.to(() => UploadImageScreen(userData));
-                                // if (data.croppedFile == null) {
-                                //   Get.snackbar("Information",
-                                //       "You Must Choose Image First",
-                                //       snackPosition: SnackPosition.TOP);
-                                //   return;
-                                // }
-                                // await Get.find<LoginController>()
-                                //     .setUserData(userData);
-                                // await Get.find<LoginController>()
-                                //     .updateFirstImageProfil(data.croppedFile);
+                                if (controller.croppedFile.value == null) {
+                                  Get.snackbar(
+                                    "Information",
+                                    "You Must Choose Image First",
+                                    snackPosition: SnackPosition.TOP,
+                                  );
+                                  return;
+                                }
+                                controller.processRegister();
                               },
                             ),
                           ),

@@ -51,5 +51,10 @@ class Nav {
       page: () => const AuthRegisterScreen(),
       binding: AuthRegisterControllerBinding(),
     ),
+    GetPage(
+      name: Routes.DASHBOARD,
+      page: () => const DashboardScreen(),
+      binding: DashboardControllerBinding(),
+    ),
   ];
 }

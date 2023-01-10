@@ -2,6 +2,8 @@ import 'package:get/get.dart';
 
 import '../../../domain/core/model/CustomTapModel.dart';
 
+RxDouble progressLoading = 0.0.obs;
+
 List<CustomTapModel> orientationlist = [
   CustomTapModel(name: "straight".obs, onTap: false.obs),
   CustomTapModel(name: "gay".obs, onTap: false.obs),
@@ -23,67 +25,67 @@ List<CustomTapModel> orientationlist = [
   CustomTapModel(name: "objectumsexual".obs, onTap: false.obs),
   CustomTapModel(name: "omnisexual".obs, onTap: false.obs),
   CustomTapModel(name: "skoliosexual".obs, onTap: false.obs),
-  ];
+];
 
-  List<CustomTapModel> listGender = [
-    CustomTapModel(name: "man".obs, onTap: false.obs),
-    CustomTapModel(name: "woman".obs, onTap: false.obs),
-    CustomTapModel(name: "other".obs, onTap: false.obs),
-    CustomTapModel(name: "agender".obs, onTap: false.obs),
-    CustomTapModel(name: "androgynous".obs, onTap: false.obs),
-    CustomTapModel(name: "bigender".obs, onTap: false.obs),
-    CustomTapModel(name: "gender fluid".obs, onTap: false.obs),
-    CustomTapModel(name: "gender non conforming".obs, onTap: false.obs),
-    CustomTapModel(name: "gender queer".obs, onTap: false.obs),
-    CustomTapModel(name: "gender questioning".obs, onTap: false.obs),
-    CustomTapModel(name: "intersex".obs, onTap: false.obs),
-    CustomTapModel(name: "non-binary".obs, onTap: false.obs),
-    CustomTapModel(name: "pangender".obs, onTap: false.obs),
-    CustomTapModel(name: "trans human".obs, onTap: false.obs),
-    CustomTapModel(name: "trans man".obs, onTap: false.obs),
-    CustomTapModel(name: "trans woman".obs, onTap: false.obs),
-    CustomTapModel(name: "transfeminime".obs, onTap: false.obs),
-    CustomTapModel(name: "transmasculine".obs, onTap: false.obs),
-    CustomTapModel(name: "two-spirit".obs, onTap: false.obs),
-  ];
+List<CustomTapModel> listGender = [
+  CustomTapModel(name: "man".obs, onTap: false.obs),
+  CustomTapModel(name: "woman".obs, onTap: false.obs),
+  CustomTapModel(name: "other".obs, onTap: false.obs),
+  CustomTapModel(name: "agender".obs, onTap: false.obs),
+  CustomTapModel(name: "androgynous".obs, onTap: false.obs),
+  CustomTapModel(name: "bigender".obs, onTap: false.obs),
+  CustomTapModel(name: "gender fluid".obs, onTap: false.obs),
+  CustomTapModel(name: "gender non conforming".obs, onTap: false.obs),
+  CustomTapModel(name: "gender queer".obs, onTap: false.obs),
+  CustomTapModel(name: "gender questioning".obs, onTap: false.obs),
+  CustomTapModel(name: "intersex".obs, onTap: false.obs),
+  CustomTapModel(name: "non-binary".obs, onTap: false.obs),
+  CustomTapModel(name: "pangender".obs, onTap: false.obs),
+  CustomTapModel(name: "trans human".obs, onTap: false.obs),
+  CustomTapModel(name: "trans man".obs, onTap: false.obs),
+  CustomTapModel(name: "trans woman".obs, onTap: false.obs),
+  CustomTapModel(name: "transfeminime".obs, onTap: false.obs),
+  CustomTapModel(name: "transmasculine".obs, onTap: false.obs),
+  CustomTapModel(name: "two-spirit".obs, onTap: false.obs),
+];
 
-  List<CustomTapModel> listDesire = [
-    CustomTapModel(name: "relationship".obs, onTap: false.obs),
-    CustomTapModel(name: "friendship".obs, onTap: false.obs),
-    CustomTapModel(name: "casual".obs, onTap: false.obs),
-    CustomTapModel(name: "fwb".obs, onTap: false.obs),
-    CustomTapModel(name: "fun".obs, onTap: false.obs),
-    CustomTapModel(name: "dates".obs, onTap: false.obs),
-    CustomTapModel(name: "texting".obs, onTap: false.obs),
-    CustomTapModel(name: "threesome".obs, onTap: false.obs),
-  ];
+List<CustomTapModel> listDesire = [
+  CustomTapModel(name: "relationship".obs, onTap: false.obs),
+  CustomTapModel(name: "friendship".obs, onTap: false.obs),
+  CustomTapModel(name: "casual".obs, onTap: false.obs),
+  CustomTapModel(name: "fwb".obs, onTap: false.obs),
+  CustomTapModel(name: "fun".obs, onTap: false.obs),
+  CustomTapModel(name: "dates".obs, onTap: false.obs),
+  CustomTapModel(name: "texting".obs, onTap: false.obs),
+  CustomTapModel(name: "threesome".obs, onTap: false.obs),
+];
 
-  List<CustomTapModel> listStatus = [
-    CustomTapModel(name: "single".obs, onTap: false.obs),
-    CustomTapModel(name: "man + woman couple".obs, onTap: false.obs),
-    CustomTapModel(name: "man + man couple".obs, onTap: false.obs),
-    CustomTapModel(name: "woman + woman couple".obs, onTap: false.obs),
-  ];
+List<CustomTapModel> listStatus = [
+  CustomTapModel(name: "single".obs, onTap: false.obs),
+  CustomTapModel(name: "man + woman couple".obs, onTap: false.obs),
+  CustomTapModel(name: "man + man couple".obs, onTap: false.obs),
+  CustomTapModel(name: "woman + woman couple".obs, onTap: false.obs),
+];
 
-  List<CustomTapModel> listShowMe = [
-    CustomTapModel(name: "men".obs, onTap: false.obs),
-    CustomTapModel(name: "women".obs, onTap: false.obs),
-    CustomTapModel(name: "man + woman couples".obs, onTap: false.obs),
-    CustomTapModel(name: "man + man couples".obs, onTap: false.obs),
-    CustomTapModel(name: "woman + woman couples".obs, onTap: false.obs),
-    CustomTapModel(name: "gender fluid".obs, onTap: false.obs),
-    CustomTapModel(name: "gender non conforming".obs, onTap: false.obs),
-    CustomTapModel(name: "gender queer".obs, onTap: false.obs),
-    CustomTapModel(name: "agender".obs, onTap: false.obs),
-    CustomTapModel(name: "androgynous".obs, onTap: false.obs),
-    CustomTapModel(name: "gender questioning".obs, onTap: false.obs),
-    CustomTapModel(name: "intersex".obs, onTap: false.obs),
-    CustomTapModel(name: "non-binary".obs, onTap: false.obs),
-    CustomTapModel(name: "pangender".obs, onTap: false.obs),
-    CustomTapModel(name: "trans human".obs, onTap: false.obs),
-    CustomTapModel(name: "trans man".obs, onTap: false.obs),
-    CustomTapModel(name: "trans woman".obs, onTap: false.obs),
-    CustomTapModel(name: "transfeminime".obs, onTap: false.obs),
-    CustomTapModel(name: "transmasculine".obs, onTap: false.obs),
-    CustomTapModel(name: "two-spirit".obs, onTap: false.obs),
-  ];
+List<CustomTapModel> listShowMe = [
+  CustomTapModel(name: "men".obs, onTap: false.obs),
+  CustomTapModel(name: "women".obs, onTap: false.obs),
+  CustomTapModel(name: "man + woman couples".obs, onTap: false.obs),
+  CustomTapModel(name: "man + man couples".obs, onTap: false.obs),
+  CustomTapModel(name: "woman + woman couples".obs, onTap: false.obs),
+  CustomTapModel(name: "gender fluid".obs, onTap: false.obs),
+  CustomTapModel(name: "gender non conforming".obs, onTap: false.obs),
+  CustomTapModel(name: "gender queer".obs, onTap: false.obs),
+  CustomTapModel(name: "agender".obs, onTap: false.obs),
+  CustomTapModel(name: "androgynous".obs, onTap: false.obs),
+  CustomTapModel(name: "gender questioning".obs, onTap: false.obs),
+  CustomTapModel(name: "intersex".obs, onTap: false.obs),
+  CustomTapModel(name: "non-binary".obs, onTap: false.obs),
+  CustomTapModel(name: "pangender".obs, onTap: false.obs),
+  CustomTapModel(name: "trans human".obs, onTap: false.obs),
+  CustomTapModel(name: "trans man".obs, onTap: false.obs),
+  CustomTapModel(name: "trans woman".obs, onTap: false.obs),
+  CustomTapModel(name: "transfeminime".obs, onTap: false.obs),
+  CustomTapModel(name: "transmasculine".obs, onTap: false.obs),
+  CustomTapModel(name: "two-spirit".obs, onTap: false.obs),
+];

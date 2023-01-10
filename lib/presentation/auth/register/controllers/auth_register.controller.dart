@@ -1,11 +1,19 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/domain/core/model/CustomTapModel.dart';
 import 'package:hookup4u/infrastructure/dal/controller/global_controller.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 
+import '../../../../domain/core/interface/dialog.dart';
+import '../../../../infrastructure/dal/util/color.dart';
+import '../../../../infrastructure/dal/util/general.dart';
 import '../../../../infrastructure/dal/util/session.dart';
 
 class AuthRegisterController extends GetxController {
@@ -19,6 +27,7 @@ class AuthRegisterController extends GetxController {
   RxList<String> listSelectedShowMe = RxList();
   Rxn<Map<String, dynamic>> selectedCoordinate = Rxn();
   Rxn<File> croppedFile = Rxn();
+  ImagePicker imagePicker = ImagePicker();
 
   TextEditingController usernameController = TextEditingController();
   TextEditingController dobController = new TextEditingController();
@@ -36,7 +45,31 @@ class AuthRegisterController extends GetxController {
     return await false;
   }
 
-  process() {
+  Future<void> pickImage(ImageSource source, {bool metode = false}) async {
+    XFile? file = await imagePicker.pickImage(source: source, imageQuality: 50);
+
+    if (file == null) {
+      return;
+    }
+    if (metode) {
+      croppedFile.value = await ImageCropper().cropImage(
+        sourcePath: file.path,
+        cropStyle: CropStyle.circle,
+        aspectRatioPresets: [CropAspectRatioPreset.square],
+        androidUiSettings: AndroidUiSettings(
+            toolbarTitle: 'Crop',
+            toolbarColor: primaryColor,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.square,
+            lockAspectRatio: true),
+        iosUiSettings: IOSUiSettings(
+          minimumAspectRatio: 1.0,
+        ),
+      );
+    }
+  }
+
+  processRegister() async {
     if (checkDisplayName()) {
       dataUser.addAll(
           {'UserName': "${FirebaseAuth.instance.currentUser!.displayName!}"});
@@ -48,11 +81,13 @@ class AuthRegisterController extends GetxController {
       'age': ((DateTime.now().difference(selectedDate!).inDays) / 365.2425)
           .truncate(),
     });
-    dataUser.addAll(
-        {'userGender': selectedGender.value?.name, 'showOnProfile': false});
+    dataUser.addAll({
+      'userGender': selectedGender.value?.name.value,
+      'showOnProfile': false
+    });
     dataUser.addAll({
       "sexualOrientation": {
-        'orientation': selectedSexual.value?.name,
+        'orientation': selectedSexual.value?.name.value,
         'showOnProfile': false
       },
     });
@@ -60,8 +95,8 @@ class AuthRegisterController extends GetxController {
       'desires': listSelectedDesire.value,
       'showdesires': false,
     });
-    dataUser
-        .addAll({'status': selectedStatus.value?.name, 'showstatus': false});
+    dataUser.addAll(
+        {'status': selectedStatus.value?.name.value, 'showstatus': false});
     dataUser.addAll({'showGender': listSelectedShowMe.value});
     dataUser.addAll({
       'editInfo': {
@@ -73,7 +108,8 @@ class AuthRegisterController extends GetxController {
     dataUser.remove('showOnProfile');
     dataUser.remove('userGender');
 
-    int maxDistance = int.parse(Get.find<GlobalController>().items['free_radius']  ?? 20);
+    int maxDistance =
+        int.parse(Get.find<GlobalController>().items['free_radius'] ?? 20);
     dataUser.addAll(
       {
         "listSwipedUser": [],
@@ -93,8 +129,10 @@ class AuthRegisterController extends GetxController {
       },
     );
 
-    Get.find<GlobalController>()
+    await Get.find<GlobalController>()
         .firstAddUser(metode: Session().getLoginType(), dataExisting: dataUser);
+    await uploadFile(
+        croppedFile.value!, Get.find<GlobalController>().auth.currentUser!.uid);
   }
 
   bool checkDisplayName() {
@@ -121,6 +159,63 @@ class AuthRegisterController extends GetxController {
       return;
     }
     listSelectedShowMe.remove(name);
+  }
+
+  Future uploadFile(File image, String idUser) async {
+    Get.dialog(Obx(() {
+      return CircularPercentIndicator(
+        radius: 120.0,
+        lineWidth: 13.0,
+        animation: true,
+        percent: progressLoading.value,
+        center: Text(
+          "${(progressLoading.value * 100)}%",
+          style: TextStyle(
+              fontWeight: FontWeight.bold, fontSize: 20.0, color: Colors.white),
+        ),
+        footer: Text(
+          "Uploading......",
+          style: TextStyle(
+              fontWeight: FontWeight.bold, fontSize: 17.0, color: Colors.white),
+        ),
+        circularStrokeCap: CircularStrokeCap.round,
+        progressColor: Colors.purple,
+      );
+    }));
+    FirebaseStorage storage = FirebaseStorage.instance;
+    Reference ref = storage.ref().child('users/$idUser/${image.hashCode}.jpg');
+    UploadTask uploadTask = ref.putFile(File(image.path));
+    // var stream = uploadTask.asStream();
+    uploadTask.snapshotEvents.listen((event) {
+      print("Progress : " +
+          (event.bytesTransferred / event.totalBytes).toString());
+      progressLoading.value =
+          (event.bytesTransferred / event.totalBytes).toDouble();
+    });
+
+    uploadTask.then((res) async {
+      String fileURL = await res.ref.getDownloadURL();
+
+      try {
+        Map<String, dynamic> updateObject = {
+          "Pictures": [
+            {"url": fileURL, "show": "true"}
+          ],
+        };
+        print("object");
+        await FirebaseFirestore.instance.collection("Users").doc(idUser).set(
+              updateObject,
+              SetOptions(merge: true),
+            );
+        Get.back();
+        await Future.delayed(Duration(seconds: 1));
+        progressLoading.value = 0.0;
+        await showWelcomDialog(Get.context);
+        // if (mounted) setState(() {});
+      } catch (err) {
+        print("Error: $err");
+      }
+    });
   }
 
   @override

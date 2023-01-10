@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:get/get_rx/src/rx_types/rx_types.dart';
 
 import 'Relationship.dart';
 
@@ -29,7 +30,7 @@ class UserModel {
   final List<String> desires;
   final List<String> kinks;
   final List<String> interest;
-  // final Relationship? relasi;
+  final Rxn<Relationship> relasi;
   final String fcmToken;
   final String countryName;
   final String countryID;
@@ -60,7 +61,7 @@ class UserModel {
     this.interest = const [],
     required this.loginID,
     required this.metode,
-    // this.relasi,
+    required this.relasi,
     this.fcmToken = "",
     this.countryName = "",
     this.listSwipedUser = const [],
@@ -81,7 +82,9 @@ class UserModel {
       name: doc['UserName'],
       editInfo: doc['editInfo'],
       ageRange: doc['age_range'],
-      showMe: doc['showGender'],
+      showMe: List.generate((doc['showGender'] ?? []).length, (index) {
+              return doc[index];
+            }),
       gender: doc['editInfo']['userGender'] ?? "woman",
       showingGender: doc['editInfo']['showOnProfile'] ?? true,
       maxDistance: doc['maximum_distance'],
@@ -111,7 +114,7 @@ class UserModel {
       listSwipedUser: doc.data().toString().contains('listSwipedUser')
           ? doc['listSwipedUser']
           : [],
-      // relasi: null,
+      relasi: Rxn(),
       fcmToken:
           doc.data().toString().contains('pushToken') ? doc['pushToken'] : "",
       verified:
@@ -164,8 +167,8 @@ class UserModel {
           List.generate((json['listSwipedUser'] ?? []).length, (index) {
         return json['listSwipedUser'][index];
       }),
-      // relasi: null,
-      fcmToken: json['pushToken'] ?? [],
+      relasi: Rxn(),
+      fcmToken: json['pushToken'] ?? "",
       verified: json['verified'] ?? 0,
     );
   }

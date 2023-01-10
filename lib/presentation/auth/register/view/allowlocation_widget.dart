@@ -1,10 +1,6 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/presentation/auth/register/controllers/auth_register.controller.dart';
-
 import '../../../../infrastructure/dal/util/Global.dart';
 import '../../../../infrastructure/dal/util/color.dart';
 
