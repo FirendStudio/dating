@@ -26,4 +26,12 @@ class Session {
   bool getIntroduction() {
     return storage.read("isIntroduction") ?? false;
   }
+
+  void saveLoginType(String loginType) async {
+    await storage.write("metode", loginType);
+  }
+
+  String getLoginType() {
+    return storage.read("metode") ?? "";
+  }
 }

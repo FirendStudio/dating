@@ -1,8 +1,7 @@
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class CustomSnackbar {
-  static snackbar(String text, GlobalKey<ScaffoldState> _scaffoldKey) {
+  static snackbar(String text) {
     Get.snackbar("Info", text);
     // final snackBar = SnackBar(
 

@@ -1,9 +1,12 @@
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:apple_sign_in/apple_sign_in.dart' as i;
+// import 'package:apple_sign_in/apple_signs_in.dart' as i;
+import 'package:the_apple_sign_in/apple_sign_in_button.dart' as i;
 import '../../../infrastructure/dal/util/Global.dart';
+import '../../../infrastructure/dal/util/color.dart';
 import 'controllers/auth_login.controller.dart';
 
 class AuthLoginScreen extends GetView<AuthLoginController> {
@@ -94,45 +97,7 @@ class AuthLoginScreen extends GetView<AuthLoginController> {
                       style: i.ButtonStyle.black,
                       cornerRadius: 50,
                       type: i.ButtonType.defaultButton,
-                      onPressed: () async {
-                        final User currentUser = await loginController
-                            .handleAppleLogin(_scaffoldKey)
-                            .catchError((onError) {
-                          SnackBar snackBar =
-                              SnackBar(content: Text(onError.toString()));
-                          _scaffoldKey.currentState.showSnackBar(snackBar);
-                        });
-                        if (currentUser != null) {
-                          print(
-                              'username ${currentUser.displayName} \n photourl ${currentUser.photoURL}');
-                          // await _setDataUser(currentUser);
-                          if (currentUser.providerData.length > 1) {
-                            for (int index = 0;
-                                index <= currentUser.providerData.length - 1;
-                                index++) {
-                              if (currentUser.providerData.length - 1 ==
-                                  index) {
-                                await Get.find<LoginController>()
-                                    .navigationCheck(
-                                        currentUser,
-                                        context,
-                                        currentUser
-                                            .providerData[index].providerId,
-                                        false);
-                                break;
-                              }
-                              await Get.find<LoginController>().navigationCheck(
-                                  currentUser,
-                                  context,
-                                  currentUser.providerData[index].providerId,
-                                  true);
-                            }
-                            return;
-                          }
-                          loginController.navigationCheck(
-                              currentUser, context, "apple.com", false);
-                        }
-                      },
+                      onPressed: () => controller.handleAppleLogin(),
                     ),
                   ),
                 if (Platform.isAndroid)
@@ -147,30 +112,34 @@ class AuthLoginScreen extends GetView<AuthLoginController> {
                       padding: const EdgeInsets.all(6.0),
                       child: InkWell(
                         child: Container(
-                            decoration: BoxDecoration(
-                                // color: Colors.white,
-                                shape: BoxShape.rectangle,
-                                borderRadius: BorderRadius.circular(25),
-                                gradient: LinearGradient(
-                                    begin: Alignment.topRight,
-                                    end: Alignment.bottomLeft,
-                                    colors: [
-                                      Colors.blue[600]!,
-                                      Colors.blue[600]!,
-                                      // Colors.lightBlue,
-                                      // Colors.lightBlue
-                                    ])),
-                            height: MediaQuery.of(context).size.height * .065,
-                            width: MediaQuery.of(context).size.width * .8,
-                            child: Center(
-                                child: Text(
+                          decoration: BoxDecoration(
+                            // color: Colors.white,
+                            shape: BoxShape.rectangle,
+                            borderRadius: BorderRadius.circular(25),
+                            gradient: LinearGradient(
+                              begin: Alignment.topRight,
+                              end: Alignment.bottomLeft,
+                              colors: [
+                                Colors.blue[600]!,
+                                Colors.blue[600]!,
+                                // Colors.lightBlue,
+                                // Colors.lightBlue
+                              ],
+                            ),
+                          ),
+                          height: MediaQuery.of(context).size.height * .065,
+                          width: MediaQuery.of(context).size.width * .8,
+                          child: Center(
+                            child: Text(
                               "LOGIN WITH GOOGLE".toString(),
                               style: TextStyle(
                                   color: Colors.white,
                                   fontSize: 16,
                                   fontFamily: Global.font,
                                   fontWeight: FontWeight.bold),
-                            ))),
+                            ),
+                          ),
+                        ),
                         onTap: () async {
                           if (!controller.isChecked.value) {
                             Get.snackbar("Information",
@@ -179,33 +148,36 @@ class AuthLoginScreen extends GetView<AuthLoginController> {
                             return;
                           }
                           showDialog(
-                              context: context,
-                              builder: (context) => Container(
-                                  height: 30,
-                                  width: 30,
-                                  child: Center(
-                                      child: CupertinoActivityIndicator(
-                                    key: UniqueKey(),
-                                    radius: 20,
-                                    animating: true,
-                                  ))));
-                          await loginController.handleGoogleLogin(context);
+                            context: context,
+                            builder: (context) => Container(
+                              height: 30,
+                              width: 30,
+                              child: Center(
+                                child: CupertinoActivityIndicator(
+                                  key: UniqueKey(),
+                                  radius: 20,
+                                  animating: true,
+                                ),
+                              ),
+                            ),
+                          );
+                          await controller.handleGoogleLogin(context);
                         },
                       ),
                     ),
                   ),
                 InkWell(
                     onTap: () {
-                      if (!controller.isChecked.value) {
-                        Get.snackbar("Information",
-                            "You must agree our terms & conditions to use this apps");
-                        return;
-                      }
-                      bool updateNumber = false;
-                      Navigator.push(
-                          context,
-                          CupertinoPageRoute(
-                              builder: (context) => OTP(updateNumber)));
+                      // if (!controller.isChecked.value) {
+                      //   Get.snackbar("Information",
+                      //       "You must agree our terms & conditions to use this apps");
+                      //   return;
+                      // }
+                      // bool updateNumber = false;
+                      // Navigator.push(
+                      //     context,
+                      //     CupertinoPageRoute(
+                      //         builder: (context) => OTP(updateNumber)));
                     },
                     child: Container(
                         height: MediaQuery.of(context).size.height * .065,
@@ -241,27 +213,31 @@ class AuthLoginScreen extends GetView<AuthLoginController> {
                     padding: const EdgeInsets.all(6.0),
                     child: InkWell(
                       child: Container(
-                          decoration: BoxDecoration(
-                              shape: BoxShape.rectangle,
-                              borderRadius: BorderRadius.circular(25),
-                              gradient: LinearGradient(
-                                  begin: Alignment.topRight,
-                                  end: Alignment.bottomLeft,
-                                  colors: [
-                                    Colors.blue[800]!,
-                                    Colors.blue[800]!,
-                                  ])),
-                          height: MediaQuery.of(context).size.height * .065,
-                          width: MediaQuery.of(context).size.width * .8,
-                          child: Center(
-                              child: Text(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.rectangle,
+                          borderRadius: BorderRadius.circular(25),
+                          gradient: LinearGradient(
+                            begin: Alignment.topRight,
+                            end: Alignment.bottomLeft,
+                            colors: [
+                              Colors.blue[800]!,
+                              Colors.blue[800]!,
+                            ],
+                          ),
+                        ),
+                        height: MediaQuery.of(context).size.height * .065,
+                        width: MediaQuery.of(context).size.width * .8,
+                        child: Center(
+                          child: Text(
                             "LOGIN WITH FACEBOOK".toString(),
                             style: TextStyle(
                                 color: textColor,
                                 fontSize: 16,
                                 fontFamily: Global.font,
                                 fontWeight: FontWeight.bold),
-                          ))),
+                          ),
+                        ),
+                      ),
                       onTap: () async {
                         if (!controller.isChecked.value) {
                           Get.snackbar("Information",
@@ -269,47 +245,19 @@ class AuthLoginScreen extends GetView<AuthLoginController> {
                           return;
                         }
                         showDialog(
-                            context: context,
-                            builder: (context) => Container(
-                                height: 30,
-                                width: 30,
-                                child: Center(
-                                    child: CupertinoActivityIndicator(
-                                  key: UniqueKey(),
-                                  radius: 20,
-                                  animating: true,
-                                ))));
-                        await loginController
-                            .handleFacebookLogin(context)
-                            .then((user) async {
-                          if (user.providerData.length > 1) {
-                            for (int index = 0;
-                                index <= user.providerData.length - 1;
-                                index++) {
-                              if (user.providerData.length - 1 == index) {
-                                await Get.find<LoginController>()
-                                    .navigationCheck(
-                                        user,
-                                        context,
-                                        user.providerData[index].providerId,
-                                        false);
-                                break;
-                              }
-                              await Get.find<LoginController>().navigationCheck(
-                                  user,
-                                  context,
-                                  user.providerData[index].providerId,
-                                  true);
-                            }
-                            return;
-                          }
-                          loginController.navigationCheck(
-                              user, context, 'fb', false);
-                        }).then((_) {
-                          Navigator.pop(context);
-                        }).catchError((e) {
-                          Navigator.pop(context);
-                        });
+                          context: context,
+                          builder: (context) => Container(
+                            height: 30,
+                            width: 30,
+                            child: Center(
+                              child: CupertinoActivityIndicator(
+                                key: UniqueKey(),
+                                radius: 20,
+                                animating: true,
+                              ),
+                            ),
+                          ),
+                        );
                       },
                     ),
                   ),
@@ -327,10 +275,10 @@ class AuthLoginScreen extends GetView<AuthLoginController> {
                   ),
                   child: Obx(
                     () => CheckboxListTile(
-                      value: loginController.isChecked.value,
-                      onChanged: (bool value) {
-                        loginController.isChecked.value =
-                            !loginController.isChecked.value;
+                      value: controller.isChecked.value,
+                      onChanged: (bool? value) {
+                        controller.isChecked.value =
+                            !controller.isChecked.value;
                       },
                       dense: true,
                       controlAffinity: ListTileControlAffinity.leading,
@@ -349,7 +297,7 @@ class AuthLoginScreen extends GetView<AuthLoginController> {
                       style: TextStyle(
                           color: Colors.black, fontWeight: FontWeight.bold),
                     ),
-                    onTap: () => loginController.launchURL(
+                    onTap: () => Global().launchURL(
                         "https://jablesscupid.com/privacy-policy/"), //TODO: add privacy policy
                   ),
                   Container(
@@ -366,8 +314,9 @@ class AuthLoginScreen extends GetView<AuthLoginController> {
                       style: TextStyle(
                           color: Colors.black, fontWeight: FontWeight.bold),
                     ),
-                    onTap: () => loginController.launchURL(
-                        "https://jablesscupid.com/terms-conditions/"), //TODO: add Terms and conditions
+                    onTap: () => Global().launchURL(
+                      "https://jablesscupid.com/terms-conditions/",
+                    ),
                   ),
                 ],
               ),

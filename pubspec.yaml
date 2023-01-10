@@ -13,7 +13,8 @@ dependencies:
   firebase_auth: ^3.3.7
   cloud_firestore: ^3.1.7
   location: ^4.3.0
-  geocoder: ^0.2.1
+  # geocoder: ^0.2.1
+  flutter_geocoder: ^0.2.2-nullsafety
   image_picker: ^0.8.4+7
   image_cropper: ^1.2.1
   firebase_storage: ^10.2.7
@@ -27,7 +28,10 @@ dependencies:
   permission_handler: ^8.3.0
   flutter_ringtone_player: ^3.1.1
   shimmer: ^2.0.0
-  apple_sign_in: ^0.1.0
+  # apple_sign_in: ^0.1.0
+  # apple_sign_in_safety: ^0.0.6
+  the_apple_sign_in: ^1.1.1
+  sign_in_with_apple: ^4.3.0
   url_launcher: ^6.0.18
   flutter_mapbox_autocomplete: ^2.0.0
   get_storage: ^2.0.3

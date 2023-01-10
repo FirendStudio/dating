@@ -8,7 +8,6 @@ class SplashScreen extends GetView<SplashController> {
   const SplashScreen({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    Get.put(SplashController());
     return Scaffold(
       backgroundColor: Colors.white,
       body: Center(
