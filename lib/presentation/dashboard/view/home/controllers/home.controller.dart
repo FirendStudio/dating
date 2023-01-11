@@ -68,11 +68,12 @@ class HomeController extends GetxController {
           'age',
           isGreaterThanOrEqualTo:
               int.parse(currentUserTemp.ageRange?['min'] ?? 0),
-          isLessThanOrEqualTo: int.parse(currentUserTemp.ageRange?['max'] ?? 100),
+          isLessThanOrEqualTo:
+              int.parse(currentUserTemp.ageRange?['max'] ?? 100),
         )
         .orderBy('age', descending: false)
         .get();
-    if(query.docs.isEmpty){
+    if (query.docs.isEmpty) {
       return;
     }
     List<QueryDocumentSnapshot<Map<String, dynamic>>> temp = query.docs;
@@ -148,7 +149,6 @@ class HomeController extends GetxController {
 
   addLastSwiped(String idUID) {
     if (kDebugMode) {
-      print("Adding user to last Swiped : " + idUID);
       print(Get.find<GlobalController>()
           .currentUser
           .value!
@@ -160,8 +160,12 @@ class HomeController extends GetxController {
         .value!
         .listSwipedUser
         .contains(idUID)) {
+      if (kDebugMode){
+        print("User already added to last Swiped : " + idUID);
+      } 
       return;
     }
+    print("Adding user to last Swiped : " + idUID);
     Get.find<GlobalController>().currentUser.value!.listSwipedUser.add(idUID);
     print(Get.find<GlobalController>().currentUser.value!.listSwipedUser);
     FirebaseFirestore.instance
