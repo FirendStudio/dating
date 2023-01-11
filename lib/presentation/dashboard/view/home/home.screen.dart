@@ -1,13 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
 import 'package:hookup4u/domain/core/interface/loading.dart';
+import 'package:hookup4u/infrastructure/dal/controller/global_controller.dart';
 import 'package:hookup4u/infrastructure/dal/util/Global.dart';
-
+import '../../../../domain/core/interface/report/report_user.dart';
 import '../../../../domain/core/model/user_model.dart';
 import '../../../../infrastructure/dal/util/color.dart';
 import 'controllers/home.controller.dart';
@@ -25,93 +24,98 @@ class HomeScreen extends GetView<HomeController> {
         }
         return Container(
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                  // topLeft: Radius.circular(50), topRight: Radius.circular(50)
-                  ),
-              color: Colors.white),
-          child: ClipRRect(
-            borderRadius: BorderRadius.only(
-                // topLeft: Radius.circular(50), topRight: Radius.circular(50)
-                ),
-            child: Stack(
-              children: [
-                Stack(
-                  children: <Widget>[
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                      ),
-                      height: Get.height,
-                      width: Get.width,
-                      child: controller.listUsers.length == 0
-                          ? Align(
-                              alignment: Alignment.center,
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: CircleAvatar(
-                                      backgroundColor: secondryColor,
-                                      radius: 40,
-                                    ),
+            // borderRadius: BorderRadius.only(
+            //     // topLeft: Radius.circular(50), topRight: Radius.circular(50)
+            //     ),
+            color: Colors.white,
+          ),
+          child: Stack(
+            children: [
+              Stack(
+                children: <Widget>[
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                    ),
+                    height: Get.height,
+                    width: Get.width,
+                    child: controller.listUsers.length == 0
+                        ? Align(
+                            alignment: Alignment.center,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: CircleAvatar(
+                                    backgroundColor: secondryColor,
+                                    radius: 40,
                                   ),
-                                  Text(
-                                    "There's no one new around you.",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                        color: secondryColor,
-                                        decoration: TextDecoration.none,
-                                        fontSize: 18),
-                                  )
-                                ],
-                              ),
-                              // ) : swiperWidget(),
-                            )
-                          : carouselWidget(),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(25),
-                      child: Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: <Widget>[
-                            FloatingActionButton(
-                              heroTag: UniqueKey(),
-                              backgroundColor: Colors.white,
-                              child: Icon(
-                                Icons.clear,
-                                color: primaryColor,
-                                size: 30,
-                              ),
-                              onPressed: () async {
-                                // await data.disloveFunction();
-                                // setState(() {});
-                              },
+                                ),
+                                Text(
+                                  "There's no one new around you.",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: secondryColor,
+                                    decoration: TextDecoration.none,
+                                    fontSize: 18,
+                                  ),
+                                )
+                              ],
                             ),
-                            FloatingActionButton(
-                              heroTag: UniqueKey(),
-                              backgroundColor: Colors.white,
-                              child: Icon(
-                                Icons.favorite,
-                                color: primaryColor,
-                                size: 30,
-                              ),
-                              onPressed: () async {
-                                // await data.loveUserFunction();
-                                // setState(() {});
-                              },
+                            // ) : swiperWidget(),
+                          )
+                        : carouselWidget(),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(25),
+                    child: Align(
+                      alignment: Alignment.bottomCenter,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: <Widget>[
+                          FloatingActionButton(
+                            heroTag: UniqueKey(),
+                            backgroundColor: Colors.white,
+                            child: Icon(
+                              Icons.clear,
+                              color: primaryColor,
+                              size: 30,
                             ),
-                          ],
-                        ),
+                            onPressed: () async {
+                              await Global().disloveFunction(controller
+                                  .listUsers[controller.indexUser.value]);
+                              print("Data User index ke : " +
+                                  controller.indexUser.value.toString());
+                              controller.listUsers.remove(controller
+                                  .listUsers[controller.indexUser.value]);
+                            },
+                          ),
+                          FloatingActionButton(
+                            heroTag: UniqueKey(),
+                            backgroundColor: Colors.white,
+                            child: Icon(
+                              Icons.favorite,
+                              color: primaryColor,
+                              size: 30,
+                            ),
+                            onPressed: () async {
+                              await Global().loveUserFunction(controller
+                                  .listUsers[controller.indexUser.value]);
+                              print("Data User index ke : " +
+                                  controller.indexUser.value.toString());
+                              controller.listUsers.remove(controller
+                                  .listUsers[controller.indexUser.value]);
+                            },
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                )
-              ],
-            ),
+                  ),
+                ],
+              )
+            ],
           ),
         );
       }),
@@ -138,6 +142,8 @@ class HomeScreen extends GetView<HomeController> {
     return Obx(() {
       return CarouselSlider(
         options: CarouselOptions(
+          initialPage:
+              controller.listUsers.isNotEmpty ? controller.indexUser.value : 0,
           height: Get.height,
           viewportFraction: 1.0,
           enlargeCenterPage: false,
@@ -148,12 +154,12 @@ class HomeScreen extends GetView<HomeController> {
             controller.listUsers[index] =
                 await controller.initNextSwipe(controller.listUsers[index]);
             controller.indexImage.value = 0;
+            controller.indexUser.value = index;
           },
         ),
         carouselController: controller.carouselUserController,
         items: controller.listUsers.map(
           (value) {
-            
             return Obx(
               () {
                 bool cekPartner = false;
@@ -206,8 +212,9 @@ class HomeScreen extends GetView<HomeController> {
                   child: Column(
                     children: <Widget>[
                       SizedBox(
-                          height: Get.height * 0.6,
-                          child: listImageWidget(value)),
+                        height: Get.height * 0.6,
+                        child: listImageWidget(value),
+                      ),
                       SizedBox(
                         height: 10,
                       ),
@@ -215,79 +222,87 @@ class HomeScreen extends GetView<HomeController> {
                         title: Row(
                           children: [
                             Expanded(
-                                flex: 6,
-                                child: RichText(
-                                  text: TextSpan(
-                                      text: value.name,
-                                      style: TextStyle(
-                                          color: Colors.black,
-                                          fontSize: 25,
-                                          fontWeight: FontWeight.bold),
-                                      children: [
-                                        WidgetSpan(
-                                          child: SizedBox(
-                                            width: 6,
-                                          ),
-                                        ),
-                                        WidgetSpan(
-                                            child: ClipOval(
-                                          child: Material(
-                                            color: (value.verified != 3)
-                                                ? Colors.grey[400]
-                                                : Colors
-                                                    .greenAccent, // Button color
-                                            child: InkWell(
-                                              splashColor:
-                                                  Colors.red, // Splash color
-                                              onTap: () {},
-                                              child: SizedBox(
-                                                  width: 23,
-                                                  height: 23,
-                                                  child: Icon(
-                                                    Icons.check,
-                                                    size: 20,
-                                                    color: Colors.white,
-                                                  )),
+                              flex: 6,
+                              child: RichText(
+                                text: TextSpan(
+                                  text: value.name,
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 25,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                  children: [
+                                    WidgetSpan(
+                                      child: SizedBox(
+                                        width: 6,
+                                      ),
+                                    ),
+                                    WidgetSpan(
+                                      child: ClipOval(
+                                        child: Material(
+                                          color: (value.verified != 3)
+                                              ? Colors.grey[400]
+                                              : Colors
+                                                  .greenAccent, // Button color
+                                          child: InkWell(
+                                            splashColor:
+                                                Colors.red, // Splash color
+                                            onTap: () {},
+                                            child: SizedBox(
+                                              width: 23,
+                                              height: 23,
+                                              child: Icon(
+                                                Icons.check,
+                                                size: 20,
+                                                color: Colors.white,
+                                              ),
                                             ),
                                           ),
-                                        )),
-                                      ]),
-                                )),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
                             SizedBox(
                               width: 5,
                             ),
                             Expanded(
-                                flex: 1,
-                                child: Stack(
-                                  children: [
-                                    Align(
-                                      alignment: Alignment.topCenter,
-                                      child: InkWell(
-                                        splashColor: Colors.red, // Splash color
-                                        onTap: () {
-                                          // showDialog(
-                                          //     barrierDismissible: true,
-                                          //     context: Get.context!,
-                                          //     builder: (context) =>
-                                          //         ReportUser(
-                                          //           currentUser:
-                                          //               widget.currentUser,
-                                          //           seconduser:
-                                          //               data.users[index],
-                                          //         ));
-                                        },
-                                        child: SizedBox(
-                                            width: 40,
-                                            height: 40,
-                                            child: Icon(
-                                              Icons.flag,
-                                              size: 40,
-                                              color: Colors.red,
-                                            )),
+                              flex: 1,
+                              child: Stack(
+                                children: [
+                                  Align(
+                                    alignment: Alignment.topCenter,
+                                    child: InkWell(
+                                      splashColor: Colors.red, // Splash color
+                                      onTap: () {
+                                        showDialog(
+                                          barrierDismissible: true,
+                                          context: Get.context!,
+                                          builder: (context) => ReportUser(
+                                            currentUser:
+                                                Get.find<GlobalController>()
+                                                    .currentUser
+                                                    .value!,
+                                            seconduser: value,
+                                          ),
+                                        );
+                                      },
+                                      child: SizedBox(
+                                        width: 40,
+                                        height: 40,
+                                        child: Icon(
+                                          Icons.flag,
+                                          size: 40,
+                                          color: Colors.red,
+                                        ),
                                       ),
-                                    )
-                                  ],
-                                ))
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ),
                           ],
                         ),
                         subtitle: Column(
@@ -345,7 +360,7 @@ class HomeScreen extends GetView<HomeController> {
                                   ),
                                   Text(value.countryName)
                                 ],
-                              )
+                              ),
                           ],
                         ),
                       ),
@@ -446,137 +461,64 @@ class HomeScreen extends GetView<HomeController> {
                         height: 10,
                       ),
 
-                      // if (Get.find<NotificationController>()
-                      //             .relationUserPartner !=
-                      //         null &&
-                      //     Get.find<NotificationController>()
-                      //         .relationUserPartner
-                      //         .partner
-                      //         .partnerId
-                      //         .isNotEmpty)
-                      //   ListTile(
-                      //     dense: true,
-                      //     title: Text(
-                      //       "Partner",
-                      //       style: TextStyle(
-                      //           color: Colors.black,
-                      //           fontSize: 16,
-                      //           fontWeight: FontWeight.bold),
-                      //     ),
-                      //   ),
-                      // if (cekPartner)
-                      //   ListTile(
-                      //     dense: true,
-                      //     trailing: IconButton(
-                      //       onPressed: () async {
-                      //         showDialog(
-                      //           context: Get.context!,
-                      //           builder: (context) {
-                      //             return Center(
-                      //               child: CircularProgressIndicator(
-                      //                 strokeWidth: 2,
-                      //                 valueColor:
-                      //                     AlwaysStoppedAnimation<Color>(
-                      //                         Colors.white),
-                      //               ),
-                      //             );
-                      //           },
-                      //         );
-
-                      //         await Get.find<NotificationController>()
-                      //             .initUserPartner(
-                      //                 Uid: data.users[index].relasi.partner
-                      //                     .partnerId);
-                      //         var relation = await FirebaseFirestore
-                      //             .instance
-                      //             .collection("Relationship")
-                      //             .doc(data.users[index].relasi.partner
-                      //                 .partnerId)
-                      //             .get();
-                      //         if (!relation.exists) {
-                      //           await Get.find<NotificationController>()
-                      //               .setNewRelationship(data.users[index]
-                      //                   .relasi.partner.partnerId);
-                      //           relation = await FirebaseFirestore.instance
-                      //               .collection("Relationship")
-                      //               .doc(data.users[index].relasi.partner
-                      //                   .partnerId)
-                      //               .get();
-                      //         }
-                      //         Relationship relationshipTemp =
-                      //             Relationship.fromDocument(
-                      //                 relation.data());
-                      //         Get.back();
-                      //         Get.find<NotificationController>()
-                      //                 .userPartner
-                      //                 .distanceBW =
-                      //             Get.find<TabsController>()
-                      //                 .calculateDistance(
-                      //                     widget.currentUser
-                      //                         .coordinates['latitude'],
-                      //                     widget.currentUser
-                      //                         .coordinates['longitude'],
-                      //                     Get.find<NotificationController>()
-                      //                         .userPartner
-                      //                         .coordinates['latitude'],
-                      //                     Get.find<NotificationController>()
-                      //                         .userPartner
-                      //                         .coordinates['longitude'])
-                      //                 .round();
-                      //         await showDialog(
-                      //             barrierDismissible: false,
-                      //             context: context,
-                      //             builder: (context) {
-                      //               return InformationPartner(
-                      //                   Get.find<NotificationController>()
-                      //                       .userPartner,
-                      //                   widget.currentUser,
-                      //                   null,
-                      //                   relationshipTemp,
-                      //                   Get.find<NotificationController>()
-                      //                       .userPartner,
-                      //                   "like");
-                      //             });
-                      //       },
-                      //       icon: Icon(
-                      //         Icons.chevron_right_sharp,
-                      //         size: 40,
-                      //       ),
-                      //     ),
-                      //     title: Text(
-                      //       data.users[index].relasi.partner.partnerName,
-                      //       style: TextStyle(
-                      //           color: Colors.black,
-                      //           fontSize: 16,
-                      //           fontWeight: FontWeight.bold),
-                      //     ),
-                      //     subtitle: Text(userPartner.status +
-                      //         ", " +
-                      //         userPartner.sexualOrientation),
-                      //     leading: CircleAvatar(
-                      //       radius: 25,
-                      //       backgroundColor: secondryColor,
-                      //       child: ClipRRect(
-                      //         borderRadius: BorderRadius.circular(
-                      //           25,
-                      //         ),
-                      //         child: CachedNetworkImage(
-                      //           imageUrl: data.users[index].relasi.partner
-                      //               .partnerImage,
-                      //           fit: BoxFit.cover,
-                      //           useOldImageOnUrlChange: true,
-                      //           placeholder: (context, url) =>
-                      //               CupertinoActivityIndicator(
-                      //             radius: 20,
-                      //           ),
-                      //           errorWidget: (context, url, error) => Icon(
-                      //             Icons.error,
-                      //             color: Colors.black,
-                      //           ),
-                      //         ),
-                      //       ),
-                      //     ),
-                      //   ),
+                      if (value.relasi.value != null &&
+                          value.relasi.value!.partner!.partnerId.isNotEmpty)
+                        ListTile(
+                          dense: true,
+                          title: Text(
+                            "Partner",
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      if (cekPartner)
+                        ListTile(
+                          dense: true,
+                          trailing: IconButton(
+                            onPressed: () async {
+                              Global().initProfilPartner(value);
+                            },
+                            icon: Icon(
+                              Icons.chevron_right_sharp,
+                              size: 40,
+                            ),
+                          ),
+                          title: Text(
+                            value.relasi.value!.partner!.partnerName,
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          subtitle: Text(userPartner!.status +
+                              ", " +
+                              userPartner.sexualOrientation),
+                          leading: CircleAvatar(
+                            radius: 25,
+                            backgroundColor: secondryColor,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(
+                                25,
+                              ),
+                              child: CachedNetworkImage(
+                                imageUrl:
+                                    value.relasi.value!.partner!.partnerImage,
+                                fit: BoxFit.cover,
+                                useOldImageOnUrlChange: true,
+                                placeholder: (context, url) =>
+                                    CupertinoActivityIndicator(
+                                  radius: 20,
+                                ),
+                                errorWidget: (context, url, error) => Icon(
+                                  Icons.error,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
 
                       SizedBox(
                         height: 10,
@@ -586,28 +528,6 @@ class HomeScreen extends GetView<HomeController> {
                       SizedBox(
                         height: 10,
                       ),
-                      //tidak perlu
-                      // InkWell(
-                      //   onTap: () => showDialog(
-                      //       barrierDismissible: true,
-                      //       context: context,
-                      //       builder: (context) => ReportUser(
-                      //         currentUser: widget.currentUser,
-                      //         seconduser: data.users[index],
-                      //       )),
-                      //   child: Container(
-                      //       width: MediaQuery.of(context).size.width,
-                      //       child: Center(
-                      //         child: Text(
-                      //           "REPORT ${data.users[index].name}".toUpperCase(),
-                      //           textAlign: TextAlign.center,
-                      //           style: TextStyle(
-                      //               fontSize: 18,
-                      //               fontWeight: FontWeight.w600,
-                      //               color: secondryColor),
-                      //         ),
-                      //       )),
-                      // ),
                       SizedBox(
                         height: 100,
                       ),

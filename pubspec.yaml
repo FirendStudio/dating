@@ -8,7 +8,8 @@ dependencies:
   country_code_picker: ^2.0.2
   pin_code_fields: ^7.4.0
   swipe_stack: ^1.0.0
-  flutter_swiper: ^1.1.6
+  # flutter_swiper: ^1.1.6
+  flutter_swiper_null_safety: ^1.0.2
   intl: ^0.17.0
   firebase_auth: ^3.3.7
   cloud_firestore: ^3.1.7

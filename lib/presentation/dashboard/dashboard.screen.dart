@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-
 import 'package:get/get.dart';
 import 'package:hookup4u/infrastructure/dal/controller/global_controller.dart';
 import 'package:hookup4u/presentation/dashboard/widget/blockuser_widget.dart';
 import 'package:hookup4u/presentation/screens.dart';
-
 import '../../infrastructure/dal/util/color.dart';
 import 'controllers/dashboard.controller.dart';
 
-class DashboardScreen extends GetView<DashboardController> {
+class DashboardScreen extends GetView<DashboardController>  {
   const DashboardScreen({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -70,16 +68,8 @@ class DashboardScreen extends GetView<DashboardController> {
                         ),
                         body: TabBarView(
                           children: [
-                            // Center(
-                            //   child: Profile(
-                            //     data.currentUser,
-                            //     data.isPuchased,
-                            //     data.purchases,
-                            //     data.items,
-                            //   ),
-                            // ),
                             Center(
-                              child: HomeScreen(),
+                              child: ProfileScreen(),
                             ),
                             // Center(
                             //     child: CardPictures2(
@@ -92,7 +82,7 @@ class DashboardScreen extends GetView<DashboardController> {
                             ),
                             // Center(child: Notifications(data.currentUser)),
                             Center(
-                              child: HomeScreen(),
+                              child: NotifScreen(),
                             ),
                             Center(
                               child: HomeScreen(),

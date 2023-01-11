@@ -2,5 +2,9 @@ export 'package:hookup4u/infrastructure/navigation/bindings/controllers/auth_log
 export 'package:hookup4u/infrastructure/navigation/bindings/controllers/auth_register.controller.binding.dart'; 
 export 'package:hookup4u/infrastructure/navigation/bindings/controllers/dashboard.controller.binding.dart'; 
 export 'package:hookup4u/infrastructure/navigation/bindings/controllers/home.controller.binding.dart'; 
+export 'package:hookup4u/infrastructure/navigation/bindings/controllers/notif.controller.binding.dart'; 
+export 'package:hookup4u/infrastructure/navigation/bindings/controllers/profile.controller.binding.dart'; 
+export 'package:hookup4u/infrastructure/navigation/bindings/controllers/profile_detail.controller.binding.dart'; 
+export 'package:hookup4u/infrastructure/navigation/bindings/controllers/profile_detailpartner.controller.binding.dart'; 
 export 'package:hookup4u/infrastructure/navigation/bindings/controllers/splash.controller.binding.dart'; 
 export 'package:hookup4u/infrastructure/navigation/bindings/controllers/welcome.controller.binding.dart'; 

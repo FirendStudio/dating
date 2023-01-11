@@ -1,17 +1,23 @@
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/infrastructure/dal/util/Global.dart';
+import 'package:hookup4u/infrastructure/navigation/routes.dart';
+import 'package:hookup4u/presentation/screens.dart';
 
+import '../../../../../domain/core/model/Relationship.dart';
 import '../../../../../domain/core/model/user_model.dart';
 import '../../../../../infrastructure/dal/controller/global_controller.dart';
+import '../../../../../infrastructure/dal/util/color.dart';
 
 class HomeController extends GetxController {
   RxBool isLoading = false.obs;
   RxList<UserModel> listUsers = RxList();
   List<String> checkedUser = [];
   RxInt indexImage = 0.obs;
+  RxInt indexUser = 0.obs;
   CarouselController carouselUserController = CarouselController();
   CarouselController carouselImageController = CarouselController();
   @override
@@ -43,6 +49,10 @@ class HomeController extends GetxController {
     var query = await FirebaseFirestore.instance
         .collection('/Users/${currentUserTemp.id}/CheckedUser')
         .get();
+    if (query.docs.isEmpty) {
+      isLoading.value = false;
+      return;
+    }
     query.docs.forEach((element) {
       // print(element.data()["LikedUser"]);
       if (element.data()["LikedUser"] == null) {
@@ -98,8 +108,13 @@ class HomeController extends GetxController {
       }
     }
     listUsers.addAll(tempList);
+    if (listUsers.isEmpty) {
+      isLoading.value = false;
+      return;
+    }
     listUsers.first.relasi.value =
         await Global().getRelationship(listUsers.first.id);
+    addLastSwiped(listUsers.first.id);
     print("count User : " + listUsers.length.toString());
     isLoading.value = false;
   }
@@ -156,4 +171,6 @@ class HomeController extends GetxController {
       ),
     );
   }
+
+  
 }

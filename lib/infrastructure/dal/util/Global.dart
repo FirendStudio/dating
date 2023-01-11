@@ -1,13 +1,19 @@
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_geocoder/geocoder.dart';
 import 'package:get/get.dart';
+import 'package:hookup4u/infrastructure/dal/util/color.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:location/location.dart' as loc;
 
 import '../../../domain/core/model/Relationship.dart';
+import '../../../domain/core/model/user_model.dart';
+import '../../navigation/routes.dart';
+import '../controller/global_controller.dart';
 
 class Global {
   static String font = "Arial";
@@ -37,7 +43,7 @@ class Global {
     return ((val * mod).round().toDouble() / mod);
   }
 
-  showDialog(String text) {
+  showInfoDialog(String text) {
     Get.snackbar("Info", text);
   }
 
@@ -161,5 +167,267 @@ class Global {
         c((lat2 - lat1) * p) / 2 +
         c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
     return 12742 * asin(sqrt(a));
+  }
+
+  initProfilPartner(
+    UserModel userModel,
+  ) async {
+    UserModel currentUser = Get.find<GlobalController>().currentUser.value!;
+    showDialog(
+      context: Get.context!,
+      builder: (context) {
+        return Center(
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+          ),
+        );
+      },
+    );
+    var data = await FirebaseFirestore.instance
+        .collection("Users")
+        .doc(userModel.relasi.value!.partner!.partnerId)
+        .get();
+
+    UserModel userSecondPartner =
+        UserModel.fromJson(data.data() as Map<String, dynamic>);
+    userSecondPartner.relasi.value =
+        await getRelationship(userModel.relasi.value!.partner!.partnerId);
+    Get.back();
+    userSecondPartner.distanceBW = Global()
+        .calculateDistance(
+          currentUser.coordinates?['latitude'] ?? 0,
+          currentUser.coordinates?['longitude'] ?? 0,
+          userSecondPartner.coordinates?['latitude'] ?? 0,
+          userSecondPartner.coordinates?['longitude'] ?? 0,
+        )
+        .round();
+
+    Get.toNamed(Routes.DETAILPARTNER, arguments: {
+      "userPartner": userSecondPartner,
+      "user": userModel,
+      "type": "like",
+    });
+    // await showDialog(
+    //     barrierDismissible: false,
+    //     context: Get.context!,
+    //     builder: (context) {
+    //       return DetailpartnerScreen(
+    //           Get.find<NotificationController>().userPartner,
+    //           widget.currentUser,
+    //           null,
+    //           relationshipTemp,
+    //           Get.find<NotificationController>().userPartner,
+    //           "like");
+    //     });
+  }
+
+  initProfil(
+    UserModel userModel,
+  ) async {
+    UserModel currentUser = Get.find<GlobalController>().currentUser.value!;
+    showDialog(
+      context: Get.context!,
+      builder: (context) {
+        return Center(
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+          ),
+        );
+      },
+    );
+    UserModel? userSecondPartner;
+    if (userModel.relasi.value!.partner!.partnerId.isNotEmpty) {
+      var data = await FirebaseFirestore.instance
+          .collection("Users")
+          .doc(userModel.relasi.value?.partner?.partnerId)
+          .get();
+
+      userSecondPartner =
+          UserModel.fromJson(data.data() as Map<String, dynamic>);
+      userSecondPartner.relasi.value =
+          await getRelationship(userModel.relasi.value!.partner!.partnerId);
+      userSecondPartner.distanceBW = Global()
+          .calculateDistance(
+            currentUser.coordinates?['latitude'] ?? 0,
+            currentUser.coordinates?['longitude'] ?? 0,
+            userSecondPartner.coordinates?['latitude'] ?? 0,
+            userSecondPartner.coordinates?['longitude'] ?? 0,
+          )
+          .round();
+    }
+
+    Get.back();
+
+    Get.toNamed(Routes.DETAIL, arguments: {
+      "userPartner": userSecondPartner,
+      "user": userModel,
+      "type": "like",
+    });
+    // await showDialog(
+    //     barrierDismissible: false,
+    //     context: Get.context!,
+    //     builder: (context) {
+    //       return DetailpartnerScreen(
+    //           Get.find<NotificationController>().userPartner,
+    //           widget.currentUser,
+    //           null,
+    //           relationshipTemp,
+    //           Get.find<NotificationController>().userPartner,
+    //           "like");
+    //     });
+  }
+
+  disloveFunction(UserModel userModel) async {
+    if (kDebugMode) {
+      print(userModel.id);
+    }
+    await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(Get.find<GlobalController>().currentUser.value?.id)
+        .collection("CheckedUser")
+        .doc(userModel.id)
+        .set({
+      'userName': userModel.name,
+      'pictureUrl': (userModel.imageUrl[0].runtimeType == String)
+          ? userModel.imageUrl[0]
+          : userModel.imageUrl[0]['url'],
+      'DislikedUser': userModel.id,
+      'timestamp': DateTime.now(),
+    }, SetOptions(merge: true));
+    // listUsers.remove(userModel);
+  }
+
+  loveUserFunction(UserModel userModel) async {
+    bool cek = false;
+    UserModel currentUser = Get.find<GlobalController>().currentUser.value!;
+    if (kDebugMode) {
+      print(userModel.id);
+    }
+    var doc = await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(Get.find<GlobalController>().currentUser.value?.id)
+        .collection("LikedBy")
+        .doc(userModel.id)
+        .get();
+
+    print(doc.exists);
+    if (doc.exists) {
+      cek = true;
+      print("Masuk sini");
+
+      Get.find<GlobalController>()
+          .sendMatchedFCM(idUser: userModel.id, name: userModel.name);
+      showDialog(
+          context: Get.context!,
+          builder: (ctx) {
+            Future.delayed(Duration(milliseconds: 1700), () {
+              Navigator.pop(ctx);
+            });
+            return Padding(
+              padding: const EdgeInsets.only(top: 80),
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: Card(
+                  child: Container(
+                    height: 100,
+                    width: 300,
+                    child: Center(
+                        child: Text(
+                      "It's a match\n With ",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          color: primaryColor,
+                          fontSize: 30,
+                          decoration: TextDecoration.none),
+                    )
+                        // .tr(args: ['${widget.users[index].name}']),
+                        ),
+                  ),
+                ),
+              ),
+            );
+          });
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(currentUser.id)
+          .collection("Matches")
+          .doc(userModel.id)
+          .set({
+        'Matches': userModel.id,
+        'isRead': false,
+        'userName': userModel.name,
+        'pictureUrl': (userModel.imageUrl[0].runtimeType == String)
+            ? userModel.imageUrl[0]
+            : userModel.imageUrl[0]['url'],
+        'timestamp': FieldValue.serverTimestamp()
+      }, SetOptions(merge: true));
+      await FirebaseFirestore.instance
+          .collection('Users')
+          .doc(userModel.id)
+          .collection("Matches")
+          .doc(currentUser.id)
+          .set({
+        'Matches': currentUser.id,
+        'userName': currentUser.name,
+        'pictureUrl': (currentUser.imageUrl[0].runtimeType == String)
+            ? currentUser.imageUrl[0]
+            : currentUser.imageUrl[0]['url'],
+        'isRead': false,
+        'timestamp': FieldValue.serverTimestamp()
+      }, SetOptions(merge: true));
+    }
+
+    if (!cek) {
+      Get.find<GlobalController>()
+          .sendLikedFCM(idUser: userModel.id, name: userModel.name);
+    }
+
+    await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(currentUser.id)
+        .collection("CheckedUser")
+        .doc(userModel.id)
+        .set({
+      'userName': userModel.name,
+      'pictureUrl': (userModel.imageUrl[0].runtimeType == String)
+          ? userModel.imageUrl[0]
+          : userModel.imageUrl[0]['url'],
+      'LikedUser': userModel.id,
+      'timestamp': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
+    await FirebaseFirestore.instance
+        .collection('Users')
+        .doc(userModel.id)
+        .collection("LikedBy")
+        .doc(currentUser.id)
+        .set({
+      'userName': currentUser.name,
+      'pictureUrl': (currentUser.imageUrl[0].runtimeType == String)
+          ? currentUser.imageUrl[0]
+          : currentUser.imageUrl[0]['url'],
+      'LikedBy': currentUser.id,
+      'timestamp': FieldValue.serverTimestamp()
+    }, SetOptions(merge: true));
+
+    // if(data.indexUser+1 == data.users.length){
+    //
+    //   data.indexUser--;
+    // }else{
+    //   data.users.removeAt(data.indexUser);
+    // }
+    // data.userRemoved.clear();
+    // data.userRemoved.add(data.users[data.indexUser]);
+    print("selesai");
+    // if (data.indexUser < (data.users.length + 1)) {
+    //   print("clear");
+    //   data.userRemoved.clear();
+    //   data.userRemoved.add(data.users[data.indexUser]);
+    //   data.users.removeAt(data.indexUser);
+    //   if (data.users.length == 1) {
+    //     data.indexUser = 0;
+    //   }
+    // }
   }
 }

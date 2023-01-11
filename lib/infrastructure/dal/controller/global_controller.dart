@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,11 +11,17 @@ import 'package:hookup4u/infrastructure/dal/util/Global.dart';
 import 'package:hookup4u/infrastructure/dal/util/session.dart';
 import 'package:hookup4u/infrastructure/navigation/routes.dart';
 
+import '../../../domain/core/model/Payment.dart';
+import '../services/fcm_service.dart';
+import '../util/local_notif.dart';
+
 class GlobalController extends GetxController {
   final FirebaseAuth auth = FirebaseAuth.instance;
   Rxn<UserModel> currentUser = Rxn();
   Map<String, dynamic> items = {};
   StreamSubscription<DocumentSnapshot>? streamCurrentUser;
+  RxBool isPuchased = false.obs;
+  Payment? paymentModel;
 
   @override
   onInit() async {
@@ -37,7 +44,7 @@ class GlobalController extends GetxController {
     streamCurrentUser = FirebaseFirestore.instance
         .doc("Users/${Get.find<GlobalController>().currentUser.value?.id}")
         .snapshots()
-        .listen((event) {
+        .listen((event) async {
       if (kDebugMode) {
         print(event.data());
       }
@@ -45,6 +52,8 @@ class GlobalController extends GetxController {
       UserModel tempUser =
           UserModel.fromJson(event.data() as Map<String, dynamic>);
       currentUser.value = tempUser;
+      currentUser.value!.relasi.value =
+          await Global().getRelationship(tempUser.id);
     });
   }
 
@@ -52,6 +61,74 @@ class GlobalController extends GetxController {
     var doc = await FirebaseFirestore.instance.collection("Item_access").get();
     items = doc.docs[0].data();
     print(doc.docs[0].data());
+  }
+
+  initPayment() {
+    print("Init Payment");
+    FirebaseFirestore.instance
+        .collection("Payment")
+        .doc(currentUser.value?.id)
+        .snapshots()
+        .listen((event) async {
+      print("Payment");
+      if (!event.exists) {
+        await setUpdatePayment(
+          uid: currentUser.value?.id ?? "",
+          packageId: "",
+          status: false,
+          date: DateTime.now(),
+          purchasedId: "",
+        );
+        return;
+      }
+      paymentModel = Payment.fromDocument(event.data()!);
+      if (paymentModel!.status == false) {
+        isPuchased.value = false;
+      }
+      if (paymentModel!.status == true &&
+          paymentModel!.date!.isBefore(DateTime.now())) {
+        isPuchased.value = false;
+        await setUpdatePayment(
+            uid: currentUser.value?.id ?? "",
+            packageId: "",
+            status: false,
+            date: DateTime.now(),
+            purchasedId: "");
+      }
+      if (paymentModel!.status && paymentModel!.date!.isAfter(DateTime.now())) {
+        isPuchased.value = true;
+      }
+
+      //if debug then payment always true
+      if (kDebugMode) {
+        isPuchased.value = true;
+      }
+      print(isPuchased);
+      update();
+    });
+  }
+
+  setUpdatePayment({
+    required String uid,
+    required String packageId,
+    required bool status,
+    required DateTime date,
+    required String purchasedId,
+  }) async {
+    Map<String, dynamic> newRelation = {
+      "userId": uid,
+      "packageId": packageId,
+      "purchasedId": purchasedId,
+      "status": status,
+      "date": date.toString(),
+    };
+
+    await FirebaseFirestore.instance.collection("Payment").doc(uid).set(
+          newRelation,
+          SetOptions(
+            merge: true,
+          ),
+        );
   }
 
   Future<QuerySnapshot?> getUser(User user, String metode) async {
@@ -213,5 +290,132 @@ class GlobalController extends GetxController {
         .collection("Users")
         .doc(auth.currentUser!.uid)
         .set(dataExisting, SetOptions(merge: true));
+  }
+
+  sendMatchedFCM({required String idUser, required String name}) async {
+    showSimpleNotification(
+        title: "Matched", body: "You are matched with $name");
+    // UserModel userFCM = Get.find<TabsController>().getUserSelected(idUser);
+    String toParams = "/topics/" + idUser;
+    var data = {
+      "title": "Matched",
+      "body": "You are matched with ${currentUser.value?.name}"
+    };
+    print(data);
+    var response = await FCMService().sendFCM(data: data, to: toParams);
+    if (response.statusCode == 200) {
+      var result = await response.stream.bytesToString();
+      print("Success Request FCM");
+      print(result);
+      var data = jsonDecode(result);
+    } else {
+      print(response.reasonPhrase);
+    }
+  }
+
+  sendLikedFCM({required String idUser, required String name}) async {
+    // Get.find<HomeController>().showSimpleNotification(title: "Liked", body: "You are matched with $name");
+    // UserModel userFCM = Get.find<TabsConstroller>().getUserSelected(idUser);
+    String toParams = "/topics/" + idUser;
+    var data = {
+      "title": "Liked",
+      "body": "Someone just liked your profile! Tap to see if you're a match!",
+      "idUser": idUser,
+    };
+    var notif = {
+      "title": "Liked",
+      "body": "Someone just liked your profile! Tap to see if you're a match!"
+    };
+    if (kDebugMode) {
+      print(data);
+    }
+    var response = await FCMService()
+        .sendCustomFCM(data: data, to: toParams, notif: notif);
+    if (response.statusCode == 200) {
+      var result = await response.stream.bytesToString();
+      print("Success Request FCM");
+      print(result);
+      var data = jsonDecode(result);
+    } else {
+      print(response.reasonPhrase);
+    }
+  }
+
+  sendChatFCM({required String idUser, required String name}) async {
+    // UserModel userFCM = Get.find<TabsController>().getUserSelected(idUser);
+    if (kDebugMode) {
+      print("Send Message FCM");
+    }
+    String toParams = "/topics/" + idUser;
+    var data = {"title": "New Chat", "body": "You have new message from $name"};
+    var response = await FCMService().sendFCM(data: data, to: toParams);
+    if (response.statusCode == 200) {
+      var result = await response.stream.bytesToString();
+      print("Success Request FCM");
+      print(result);
+      var data = jsonDecode(result);
+    } else {
+      print(response.reasonPhrase);
+    }
+  }
+
+  sendLeaveFCM({required String idUser, required String name}) async {
+    // UserModel userFCM = Get.find<TabsController>().getUserSelected(idUser);
+    if (kDebugMode) {
+      print("Send Leave FCM");
+    }
+    String toParams = "/topics/" + idUser;
+    var data = {
+      "title": "Leaving Chat",
+      "body": "$name has left the conversation"
+    };
+    var response = await FCMService().sendFCM(data: data, to: toParams);
+    if (response.statusCode == 200) {
+      var result = await response.stream.bytesToString();
+      print("Success Request FCM");
+      print(result);
+      var data = jsonDecode(result);
+    } else {
+      print(response.reasonPhrase);
+    }
+  }
+
+  sendRestoreLeaveFCM({required String idUser, required String name}) async {
+    // UserModel userFCM = Get.find<TabsController>().getUserSelected(idUser);
+    if (kDebugMode) {
+      print("Send Restore Leave FCM");
+    }
+    String toParams = "/topics/" + idUser;
+    var data = {
+      "title": "Resume Chat",
+      "body": "$name has resumed the conversation"
+    };
+    var response = await FCMService().sendFCM(data: data, to: toParams);
+    if (response.statusCode == 200) {
+      var result = await response.stream.bytesToString();
+      print("Success Request FCM");
+      print(result);
+      var data = jsonDecode(result);
+    } else {
+      print(response.reasonPhrase);
+    }
+  }
+
+  sendDisconnectFCM({required String idUser, required String name}) async {
+    // UserModel userFCM = Get.find<TabsController>().getUserSelected(idUser);
+    if (kDebugMode) {
+      print("Send Blocked FCM");
+    }
+    String toParams = "/topics/" + idUser;
+    var data = {"title": "Blocked Chat", "body": "$name has blocked you"};
+    var response = await FCMService().sendFCM(data: data, to: toParams);
+    if (response.statusCode == 200) {
+      var result = await response.stream.bytesToString();
+      print("Success Request FCM");
+      print(result);
+      var data = jsonDecode(result);
+    } else {
+      print(response.reasonPhrase);
+    }
   }
 }

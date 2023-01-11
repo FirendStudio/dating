@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../../domain/core/model/CustomTapModel.dart';
@@ -88,4 +89,43 @@ List<CustomTapModel> listShowMe = [
   CustomTapModel(name: "transfeminime".obs, onTap: false.obs),
   CustomTapModel(name: "transmasculine".obs, onTap: false.obs),
   CustomTapModel(name: "two-spirit".obs, onTap: false.obs),
+];
+
+final List listAdds = [
+  {
+    'icon': Icons.whatshot,
+    'color': Colors.indigo,
+    'title': "Subscribe now",
+    'subtitle': "for unlimited matches and contacts",
+  },
+  // {
+  //   'icon': Icons.whatshot,
+  //   'color': Colors.indigo,
+  //   'title': "Get matches faster",
+  //   'subtitle': "Boost your profile once a month",
+  // },
+  // {
+  //   'icon': Icons.favorite,
+  //   'color': Colors.lightBlueAccent,
+  //   'title': "more likes",
+  //   'subtitle': "Get free rewindes",
+  // },
+  // {
+  //   'icon': Icons.star_half,
+  //   'color': Colors.amber,
+  //   'title': "Increase your chances",
+  //   'subtitle': "Get unlimited free likes",
+  // },
+  // {
+  //   'icon': Icons.location_on,
+  //   'color': Colors.purple,
+  //   'title': "Swipe around the world",
+  //   'subtitle': "Passport to anywhere with hookup4u",
+  // },
+  // {
+  //   'icon': Icons.vpn_key,
+  //   'color': Colors.orange,
+  //   'title': "Control your profile",
+  //   'subtitle': "highly secured",
+  // }
 ];
