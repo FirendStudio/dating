@@ -8,6 +8,7 @@ import 'package:hookup4u/infrastructure/dal/controller/global_controller.dart';
 import 'package:the_apple_sign_in/the_apple_sign_in.dart';
 
 import '../../../../domain/core/model/custom_web_view.dart';
+import '../../../../infrastructure/dal/util/Global.dart';
 import '../../../../infrastructure/dal/util/session.dart';
 
 class AuthLoginController extends GetxController {
@@ -111,7 +112,7 @@ class AuthLoginController extends GetxController {
       Session().saveLoginType("google");
       Get.find<GlobalController>().navigationCheck(data.user!, "google");
     } catch (e) {
-      Get.snackbar("Information", e.toString());
+      Global().showInfoDialog(e.toString());
     }
   }
 

@@ -90,6 +90,10 @@ class HomeScreen extends GetView<HomeController> {
                                   controller.indexUser.value.toString());
                               controller.listUsers.remove(controller
                                   .listUsers[controller.indexUser.value]);
+                              if ((controller.listUsers.length + 1) <
+                                  controller.indexUser.value) {
+                                controller.indexUser.value--;
+                              }
                             },
                           ),
                           FloatingActionButton(
@@ -103,10 +107,19 @@ class HomeScreen extends GetView<HomeController> {
                             onPressed: () async {
                               await Global().loveUserFunction(controller
                                   .listUsers[controller.indexUser.value]);
-                              print("Data User index ke : " +
-                                  controller.indexUser.value.toString());
                               controller.listUsers.remove(controller
                                   .listUsers[controller.indexUser.value]);
+                              // print("Data User index ke 1 : " +
+                              //     controller.indexUser.value.toString());
+                              // print(controller.listUsers.length);
+                              // print(controller.listUsers.length ==
+                              //     controller.indexUser.value);
+                              if (controller.listUsers.length ==
+                                  controller.indexUser.value) {
+                                controller.indexUser.value--;
+                                // print("Data User index ke 2 : " +
+                                //     controller.indexUser.value.toString());
+                              }
                             },
                           ),
                         ],

@@ -64,14 +64,23 @@ class HomeController extends GetxController {
     // checkedUser.addAll(currentUserTemp.listSwipedUser);
     query = await FirebaseFirestore.instance
         .collection('Users')
-        .where("userId", whereNotIn: checkedUser)
+        .where(
+          'age',
+          isGreaterThanOrEqualTo:
+              int.parse(currentUserTemp.ageRange?['min'] ?? 0),
+          isLessThanOrEqualTo: int.parse(currentUserTemp.ageRange?['max'] ?? 100),
+        )
+        .orderBy('age', descending: false)
         .get();
-    for (var doc in query.docs) {
+    if(query.docs.isEmpty){
+      return;
+    }
+    List<QueryDocumentSnapshot<Map<String, dynamic>>> temp = query.docs;
+    print("Count All User : " + temp.length.toString());
+    temp.removeWhere((element) => checkedUser.contains(element.id));
+    for (var doc in temp) {
       Map<String, dynamic> json = doc.data();
-
-      if (json.containsKey("age") &&
-          json["age"] < int.parse(currentUserTemp.ageRange?['max']) &&
-          json["age"] > int.parse(currentUserTemp.ageRange?['min'])) {
+      if (json.containsKey("age")) {
         UserModel tempUser = UserModel.fromJson(json);
         double distance = Global().calculateDistance(
           currentUserTemp.coordinates?['latitude'] ?? 0,
@@ -80,10 +89,6 @@ class HomeController extends GetxController {
           tempUser.coordinates?['longitude'] ?? 0,
         );
         tempUser.distanceBW = distance.round();
-        // if (kDebugMode) {
-        //   print("Jarak : " + distance.toString());
-        //   print(tempUser.maxDistance);
-        // }
         if (!cekDistance(distance, tempUser, currentUserTemp)) {
           continue;
         }
@@ -115,6 +120,7 @@ class HomeController extends GetxController {
     listUsers.first.relasi.value =
         await Global().getRelationship(listUsers.first.id);
     addLastSwiped(listUsers.first.id);
+    listUsers.sort((a, b) => a.distanceBW.compareTo(b.distanceBW));
     print("count User : " + listUsers.length.toString());
     isLoading.value = false;
   }
@@ -171,6 +177,4 @@ class HomeController extends GetxController {
       ),
     );
   }
-
-  
 }

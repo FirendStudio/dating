@@ -149,10 +149,8 @@ class UploadImageWidget extends GetView<AuthRegisterController> {
                               ),
                               onTap: () async {
                                 if (controller.croppedFile.value == null) {
-                                  Get.snackbar(
-                                    "Information",
+                                  Global().showInfoDialog(
                                     "You Must Choose Image First",
-                                    snackPosition: SnackPosition.TOP,
                                   );
                                   return;
                                 }

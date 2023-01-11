@@ -142,9 +142,7 @@ class AuthLoginScreen extends GetView<AuthLoginController> {
                         ),
                         onTap: () async {
                           if (!controller.isChecked.value) {
-                            Get.snackbar("Information",
-                                "You must agree our terms & conditions to use this apps",
-                                colorText: Colors.white);
+                            Global().showInfoDialog("You must agree our terms & conditions to use this apps");
                             return;
                           }
                           showDialog(
@@ -240,8 +238,7 @@ class AuthLoginScreen extends GetView<AuthLoginController> {
                       ),
                       onTap: () async {
                         if (!controller.isChecked.value) {
-                          Get.snackbar("Information",
-                              "You must agree our terms & conditions to use this apps");
+                          Global().showInfoDialog("You must agree our terms & conditions to use this apps");
                           return;
                         }
                         showDialog(

@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_geocoder/geocoder.dart';
@@ -44,7 +45,10 @@ class Global {
   }
 
   showInfoDialog(String text) {
-    Get.snackbar("Info", text);
+    Get.snackbar("Information", text,
+      colorText: primaryColor,
+      backgroundColor: Colors.white
+    );
   }
 
   launchURL(String url) async {
@@ -174,12 +178,13 @@ class Global {
   ) async {
     UserModel currentUser = Get.find<GlobalController>().currentUser.value!;
     showDialog(
+      barrierDismissible: false,
       context: Get.context!,
       builder: (context) {
         return Center(
           child: CircularProgressIndicator(
             strokeWidth: 2,
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
           ),
         );
       },
@@ -223,16 +228,19 @@ class Global {
   }
 
   initProfil(
-    UserModel userModel,
+    UserModel userModel,{
+      String type = "like"
+    }
   ) async {
     UserModel currentUser = Get.find<GlobalController>().currentUser.value!;
     showDialog(
+      barrierDismissible: false,
       context: Get.context!,
       builder: (context) {
         return Center(
           child: CircularProgressIndicator(
             strokeWidth: 2,
-            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            valueColor: AlwaysStoppedAnimation<Color>(primaryColor),
           ),
         );
       },
@@ -263,7 +271,7 @@ class Global {
     Get.toNamed(Routes.DETAIL, arguments: {
       "userPartner": userSecondPartner,
       "user": userModel,
-      "type": "like",
+      "type": type,
     });
     // await showDialog(
     //     barrierDismissible: false,
@@ -429,5 +437,433 @@ class Global {
     //     data.indexUser = 0;
     //   }
     // }
+  }
+
+  chatId(UserModel currentUser, UserModel sender) {
+    String groupChatId = "";
+    if (currentUser.id.hashCode <= sender.id.hashCode) {
+      return groupChatId = '${currentUser.id}-${sender.id}';
+    } else {
+      return groupChatId = '${sender.id}-${currentUser.id}';
+    }
+  }
+
+  setNewOptionMessage(String chatId) {
+    FirebaseFirestore.instance.collection("chats").doc(chatId).set({
+      "active": true,
+      "docId": chatId,
+      "isclear1": false,
+      "isclear2": false,
+    });
+  }
+
+  leaveWidget(
+      UserModel sender, UserModel second, String idChat, String type) async {
+    return await showDialog(
+      context: Get.context!,
+      builder: (BuildContext context) {
+        return Material(
+          color: Colors.transparent,
+          child: CupertinoAlertDialog(
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text("Leave Conversation"),
+              ],
+            ),
+            content: Column(
+              children: [
+                Text(
+                  "Are you sure that you would like to leave this conversation?",
+                  textAlign: TextAlign.start,
+                  style: TextStyle(fontSize: 14),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  // mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: InkWell(
+                        onTap: () =>
+                            leaveFunction(sender, second, idChat, type),
+                        child: Container(
+                          margin: EdgeInsets.only(
+                            left: 0,
+                            top: 4,
+                            bottom: 4,
+                            right: 6,
+                          ),
+                          padding: EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.grey[400]!,
+                            ),
+                            // borderRadius: BorderRadius.all(Radius.circular(20))
+                          ),
+                          child: Text(
+                            "Yes",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: InkWell(
+                        onTap: () {
+                          Get.back();
+                          if (type == "chat") {
+                            Get.back();
+                          }
+                        },
+                        child: Container(
+                          margin: EdgeInsets.only(
+                            left: 6,
+                            top: 4,
+                            bottom: 4,
+                            right: 0,
+                          ),
+                          padding: EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.grey[400]!,
+                            ),
+                            // borderRadius: BorderRadius.all(Radius.circular(20))
+                          ),
+                          child: Text(
+                            "No",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            insetAnimationCurve: Curves.decelerate,
+            actions: [],
+          ),
+        );
+      },
+    );
+  }
+
+  leaveFunction(
+      UserModel sender, UserModel second, String idChat, String type) async {
+    await FirebaseFirestore.instance
+        .collection("chats")
+        .doc(idChat)
+        .collection('messages')
+        .add({
+      'type': 'Leave',
+      'text': "${sender.name} has left the conversation.",
+      'sender_id': sender.id,
+      'receiver_id': second.id,
+      'isRead': false,
+      'image_url': "",
+      'time': FieldValue.serverTimestamp(),
+    });
+    Get.find<GlobalController>().sendLeaveFCM(
+      idUser: second.id,
+      name: Get.find<GlobalController>().currentUser.value?.name ?? "",
+    );
+    // await Get.find<NotificationController>().filterMatches();
+    // if (type == 'chat') {
+    //   Get.back();
+    // }
+    Get.back();
+  }
+
+  restoreLeaveWidget(UserModel sender, UserModel second, String idMessage,
+      String idChat, String type) async {
+    return await showDialog(
+      context: Get.context!,
+      builder: (BuildContext context) {
+        return Material(
+          color: Colors.transparent,
+          child: CupertinoAlertDialog(
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text("Resume Chat"),
+              ],
+            ),
+            content: Column(
+              children: [
+                Text(
+                  "Are you sure that you want to resume this chat?",
+                  textAlign: TextAlign.start,
+                  style: TextStyle(fontSize: 14),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: InkWell(
+                        onTap: () => restoreLeaveFunction(
+                            sender, second, idMessage, idChat, type),
+                        child: Container(
+                          margin: EdgeInsets.only(
+                            left: 0,
+                            top: 4,
+                            bottom: 4,
+                            right: 6,
+                          ),
+                          padding: EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.grey[400]!,
+                            ),
+                            // borderRadius: BorderRadius.all(Radius.circular(20))
+                          ),
+                          child: Text(
+                            "Yes",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: InkWell(
+                        onTap: () {
+                          Get.back();
+                        },
+                        child: Container(
+                          margin: EdgeInsets.only(
+                            left: 6,
+                            top: 4,
+                            bottom: 4,
+                            right: 0,
+                          ),
+                          padding: EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.grey[400]!,
+                            ),
+                            // borderRadius: BorderRadius.all(Radius.circular(20))
+                          ),
+                          child: Text(
+                            "No",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            insetAnimationCurve: Curves.decelerate,
+            actions: [],
+          ),
+        );
+      },
+    );
+  }
+
+  restoreLeaveFunction(UserModel sender, UserModel second, String idMessage,
+      String chatId, String type) async {
+    await FirebaseFirestore.instance
+        .collection("chats")
+        .doc(chatId)
+        .collection('messages')
+        .doc(idMessage)
+        .delete()
+        .then((value) async {
+      // if(type == "notif"){
+      //   await Get.find<NotificationController>().filterMatches();
+      // }
+      Get.find<GlobalController>().sendRestoreLeaveFCM(
+        idUser: second.id,
+        name: Get.find<GlobalController>().currentUser.value?.name ?? "",
+      );
+      // if(type != "notif"){
+      //   Get.back();
+      // }
+      Get.back();
+    });
+  }
+
+  disconnectWidget(
+      UserModel sender, UserModel second, String idChat, String type) async {
+    return await showDialog(
+      context: Get.context!,
+      builder: (BuildContext context) {
+        return Material(
+          color: Colors.transparent,
+          child: CupertinoAlertDialog(
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text("Permanently Disconnect"),
+              ],
+            ),
+            content: Column(
+              children: [
+                Text(
+                  "This action will permanently disconnect you from ${second.name}." +
+                      "\nAre you sure you want to proceed?",
+                  textAlign: TextAlign.start,
+                  style: TextStyle(fontSize: 14),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: InkWell(
+                        onTap: () =>
+                            disconnectFunction(sender, second, idChat, type),
+                        child: Container(
+                          margin: EdgeInsets.only(
+                            left: 0,
+                            top: 4,
+                            bottom: 4,
+                            right: 6,
+                          ),
+                          padding: EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.grey[400]!,
+                            ),
+                            // borderRadius: BorderRadius.all(Radius.circular(20))
+                          ),
+                          child: Text(
+                            "Yes",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: InkWell(
+                        onTap: () {
+                          Get.back();
+                          if (type == "chat") {
+                            Get.back();
+                          }
+                        },
+                        child: Container(
+                          margin: EdgeInsets.only(
+                            left: 6,
+                            top: 4,
+                            bottom: 4,
+                            right: 0,
+                          ),
+                          padding: EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.grey[400]!,
+                            ),
+                            // borderRadius: BorderRadius.all(Radius.circular(20))
+                          ),
+                          child: Text(
+                            "No",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            insetAnimationCurve: Curves.decelerate,
+            actions: [],
+          ),
+        );
+      },
+    );
+  }
+
+  disconnectFunction(
+      UserModel sender, UserModel second, String chatId, String type) async {
+    var result = await FirebaseFirestore.instance
+        .collection("chats")
+        .doc(chatId)
+        .collection('messages')
+        .orderBy('time', descending: true)
+        .limit(1)
+        .get();
+
+    if (result.docs.isNotEmpty && result.docs.first['type'] == "Leave") {
+      if (kDebugMode) {
+        print(result.docs.first['type']);
+      }
+      await FirebaseFirestore.instance
+          .collection("chats")
+          .doc(chatId)
+          .collection('messages')
+          .doc(result.docs.first.id)
+          .delete();
+    }
+    // Get.back();
+    // return;
+    await FirebaseFirestore.instance
+        .collection("chats")
+        .doc(chatId)
+        .collection('messages')
+        .add({
+      'type': 'Disconnect',
+      'text': "${sender.name} has blocked you",
+      'sender_id': sender.id,
+      'receiver_id': second.id,
+      'isRead': false,
+      'image_url': "",
+      'time': FieldValue.serverTimestamp(),
+    });
+    FirebaseFirestore.instance
+        .collection("chats")
+        .doc(chatId)
+        .set({"active": false, "docId": chatId}, SetOptions(merge: true)).then(
+            (value) {
+      Get.find<GlobalController>().sendDisconnectFCM(
+        idUser: second.id,
+        name: Get.find<GlobalController>().currentUser.value?.name ?? "",
+      );
+      Get.back();
+      // Get.to(()=>Tabbar(null, null));
+    });
   }
 }

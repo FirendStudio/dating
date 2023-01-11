@@ -259,7 +259,7 @@ class GlobalController extends GetxController {
     required Map<String, dynamic> dataExisting,
   }) async {
     if (auth.currentUser == null) {
-      Get.snackbar("Information", "User not exist");
+      Global().showInfoDialog("User not exist");
       return;
     }
     String url = "";

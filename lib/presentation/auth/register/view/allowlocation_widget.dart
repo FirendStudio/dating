@@ -128,9 +128,9 @@ class AllowLocationWidget extends GetView<AuthRegisterController> {
                           controller.indexView++;
                           return;
                         }
-                        Get.snackbar("Information", "Address not found");
+                        Global().showInfoDialog("Address not found");
                       } catch (e) {
-                        Get.snackbar("Information", e.toString());
+                        Global().showInfoDialog(e.toString());
                       }
                     },
                   ),

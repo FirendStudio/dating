@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
+import '../util/Global.dart';
+
 class FCMService {
   Future sendFCM(
       {required Map<String, String> data, required String to}) async {
@@ -27,7 +29,7 @@ class FCMService {
       return response;
     } catch (e) {
       print(e.toString());
-      Get.snackbar("Info", e.toString());
+      Global().showInfoDialog(e.toString());
       return null;
     }
   }
@@ -58,7 +60,7 @@ class FCMService {
       return response;
     } catch (e) {
       print(e.toString());
-      Get.snackbar("Info", e.toString());
+      Global().showInfoDialog(e.toString());
       return null;
     }
   }

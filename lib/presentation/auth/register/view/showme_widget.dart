@@ -5,7 +5,6 @@ import 'package:hookup4u/presentation/auth/register/controllers/auth_register.co
 import '../../../../infrastructure/dal/util/Global.dart';
 import '../../../../infrastructure/dal/util/color.dart';
 import '../../../../infrastructure/dal/util/general.dart';
-import '../../../../infrastructure/dal/util/snackbar.dart';
 
 class ShowMeWidget extends GetView<AuthRegisterController> {
   const ShowMeWidget({super.key});
@@ -186,7 +185,7 @@ class ShowMeWidget extends GetView<AuthRegisterController> {
                                     ),
                                   ),
                                   onTap: () {
-                                    CustomSnackbar.snackbar("Please select one");
+                                    Global().showInfoDialog("Please select one");
                                   },
                                 ),
                               ),
