@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/infrastructure/dal/controller/global_controller.dart';
+import 'package:hookup4u/infrastructure/dal/util/general.dart';
 import '../../../../infrastructure/dal/util/color.dart';
 import '../../model/user_model.dart';
 // import 'package:easy_localization/easy_localization.dart';
@@ -149,7 +150,7 @@ class _ReportUserState extends State<ReportUser> {
   }
 
   Future _newReport(context, String reason) async {
-    await FirebaseFirestore.instance.collection("Reports").add({
+    await queryCollectionDB("Reports").add({
       'reported_by': Get.find<GlobalController>().currentUser.value?.id,
       'victim_id': widget.seconduser.id,
       'reason': reason,

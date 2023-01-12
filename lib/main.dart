@@ -8,6 +8,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 import 'package:hookup4u/infrastructure/dal/controller/global_controller.dart';
+import 'package:hookup4u/infrastructure/dal/util/color.dart';
 
 import 'firebase_config.dart';
 import 'infrastructure/navigation/navigation.dart';
@@ -101,6 +102,18 @@ class Main extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      builder: (context, child) {
+        return MediaQuery(
+          child: child!,
+          data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
+        );
+      },
+      defaultTransition: Transition.cupertinoDialog,
+      title: "JablessCupid",
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primaryColor: primaryColor,
+      ),
       initialRoute: initialRoute,
       getPages: Nav.routes,
     );

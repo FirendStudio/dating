@@ -1,7 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/infrastructure/dal/controller/global_controller.dart';
+
+import '../../../infrastructure/dal/util/general.dart';
 
 class NotifController extends GetxController {
   RxInt indexNotif = 0.obs;
@@ -11,8 +11,7 @@ class NotifController extends GetxController {
   RxList listMatchUser = RxList();
 
   getLikedByList() {
-    FirebaseFirestore.instance
-        .collection('Users')
+    queryCollectionDB('Users')
         .doc(Get.find<GlobalController>().currentUser.value?.id)
         .collection("LikedBy")
         .orderBy('LikedBy', descending: true)
@@ -25,8 +24,7 @@ class NotifController extends GetxController {
   }
 
   getMatches() async {
-    return FirebaseFirestore.instance
-        .collection(
+    return queryCollectionDB(
             '/Users/${Get.find<GlobalController>().currentUser.value?.id}/Matches')
         .orderBy('timestamp', descending: true)
         .snapshots()

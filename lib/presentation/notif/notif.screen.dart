@@ -57,7 +57,8 @@ class NotifScreen extends GetView<NotifController> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              if (controller.indexNotif.value == 1 && controller.listLikedUser.isNotEmpty)
+              if (controller.indexNotif.value == 1 &&
+                  controller.listLikedUser.isNotEmpty)
                 Row(children: [
                   Padding(
                     padding: EdgeInsets.only(
@@ -74,32 +75,35 @@ class NotifScreen extends GetView<NotifController> {
                   ),
                 ]),
               if (controller.indexNotif.value == 0) MatchesWidget(),
-              if (controller.indexNotif.value == 0 && controller.listMatchUser.length < 5)
-              Container(
-                padding:
-                    EdgeInsets.only(top: 20, bottom: 20, right: 15, left: 15),
-                margin: EdgeInsets.only(right: 15, left: 15, bottom: 30),
-                decoration: BoxDecoration(
+              if (controller.indexNotif.value == 0 &&
+                  controller.listMatchUser.length < 5)
+                Container(
+                  padding:
+                      EdgeInsets.only(top: 20, bottom: 20, right: 15, left: 15),
+                  margin: EdgeInsets.only(right: 15, left: 15, bottom: 30),
+                  decoration: BoxDecoration(
                     color: Colors.yellow[100],
-                    borderRadius: BorderRadius.all(Radius.circular(10))),
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: 20,
-                    ),
-                    Text(
-                      "Swipe the match to the left if you would like to permanently delete it or swipe right if you would like to block this member." +
-                          "\n\nYou can unblock the member at any time if you choose.",
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
+                    borderRadius: BorderRadius.all(Radius.circular(10)),
+                  ),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: 20,
+                      ),
+                      Text(
+                        "Swipe the match to the left if you would like to permanently delete it or swipe right if you would like to block this member." +
+                            "\n\nYou can unblock the member at any time if you choose.",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
                           color: Colors.black,
                           fontSize: 16,
                           fontWeight: FontWeight.normal,
-                          fontStyle: FontStyle.normal),
-                    ),
-                  ],
+                          fontStyle: FontStyle.normal,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
               if (controller.indexNotif.value == 1) LikedWidget(),
             ],
           ),

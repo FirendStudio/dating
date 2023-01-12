@@ -203,7 +203,7 @@ class AuthRegisterController extends GetxController {
           ],
         };
         print("object");
-        await FirebaseFirestore.instance.collection("Users").doc(idUser).set(
+        await queryCollectionDB("Users").doc(idUser).set(
               updateObject,
               SetOptions(merge: true),
             );

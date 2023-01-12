@@ -6,23 +6,27 @@ class Environments {
 }
 
 class ConfigEnvironments {
-  static const String _currentEnvironments = Environments.LOCAL;
+  static const String _currentEnvironments = Environments.PRODUCTION;
   static final List<Map<String, String>> _availableEnvironments = [
     {
       'env': Environments.LOCAL,
       'url': 'http://localhost:8080/api/',
+      "path" : "dev_",
     },
     {
       'env': Environments.DEV,
       'url': '',
+      "path" : "dev_",
     },
     {
       'env': Environments.QAS,
       'url': '',
+      "path" : "dev_",
     },
     {
       'env': Environments.PRODUCTION,
       'url': '',
+      "path" : "",
     },
   ];
 

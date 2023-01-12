@@ -17,7 +17,7 @@ class ProfileScreen extends GetView<ProfileController> {
   const ProfileScreen({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    // Get.put(ProfileController());
+    Get.put(ProfileController());
     return Obx(
       () => Scaffold(
         backgroundColor: primaryColor,
@@ -110,19 +110,27 @@ class ProfileScreen extends GetView<ProfileController> {
                             alignment: Alignment.bottomRight,
                             child: Card(
                               shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(30)),
+                                borderRadius: BorderRadius.circular(30),
+                              ),
                               color: primaryColor,
                               child: IconButton(
-                                  alignment: Alignment.center,
-                                  icon: Icon(
-                                    Icons.photo_camera,
-                                    size: 25,
-                                    color: Colors.white,
-                                  ),
-                                  onPressed: () {
-                                    // _editProfileState.source(context,
-                                    //     widget.currentUser, true, "true");
-                                  }),
+                                alignment: Alignment.center,
+                                icon: Icon(
+                                  Icons.photo_camera,
+                                  size: 25,
+                                  color: Colors.white,
+                                ),
+                                onPressed: () {
+                                  controller.source(
+                                    context,
+                                    Get.find<GlobalController>()
+                                        .currentUser
+                                        .value!,
+                                    true,
+                                    "true",
+                                  );
+                                },
+                              ),
                             ),
                           ),
                         ],
@@ -166,9 +174,14 @@ class ProfileScreen extends GetView<ProfileController> {
                                   size: 32,
                                 ),
                                 onPressed: () {
-                                  // _editProfileState.showPrivateImageDialog(context, false, widget.currentUser, false);
-                                  // _editProfileState.source(context,
-                                  //     widget.currentUser, false, "true");
+                                  controller.source(
+                                    context,
+                                    Get.find<GlobalController>()
+                                        .currentUser
+                                        .value!,
+                                    false,
+                                    "true",
+                                  );
                                 },
                               ),
                             ),

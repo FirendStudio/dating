@@ -76,5 +76,20 @@ class Nav {
       page: () => const NotifScreen(),
       binding: NotifControllerBinding(),
     ),
+    GetPage(
+      name: Routes.AUTH_OTP,
+      page: () => const AuthOtpScreen(),
+      binding: AuthOtpControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.AUTH_VERIFICATION,
+      page: () => AuthVerificationScreen(),
+      binding: AuthOtpControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.SETTINGS,
+      page: () => const SettingsScreen(),
+      binding: SettingsControllerBinding(),
+    ),
   ];
 }

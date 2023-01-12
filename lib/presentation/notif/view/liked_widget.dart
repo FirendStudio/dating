@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 
 import '../../../domain/core/model/user_model.dart';
 import '../../../infrastructure/dal/util/color.dart';
+import '../../../infrastructure/dal/util/general.dart';
 
 class LikedWidget extends GetView<NotifController> {
   const LikedWidget({super.key});
@@ -34,8 +35,7 @@ class LikedWidget extends GetView<NotifController> {
 
               return InkWell(
                 onTap: () async {
-                  DocumentSnapshot userdoc = await FirebaseFirestore.instance
-                      .collection("Users")
+                  DocumentSnapshot userdoc = await queryCollectionDB("Users")
                       .doc(likedUser["LikedBy"])
                       .get();
                   if (!userdoc.exists) {

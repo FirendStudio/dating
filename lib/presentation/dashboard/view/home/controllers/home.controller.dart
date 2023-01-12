@@ -1,25 +1,23 @@
 import 'package:carousel_slider/carousel_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/infrastructure/dal/util/Global.dart';
-import 'package:hookup4u/infrastructure/navigation/routes.dart';
-import 'package:hookup4u/presentation/screens.dart';
-
-import '../../../../../domain/core/model/Relationship.dart';
 import '../../../../../domain/core/model/user_model.dart';
 import '../../../../../infrastructure/dal/controller/global_controller.dart';
-import '../../../../../infrastructure/dal/util/color.dart';
+import '../../../../../infrastructure/dal/util/general.dart';
+import '../../../../../infrastructure/dal/util/session.dart';
 
 class HomeController extends GetxController {
   RxBool isLoading = false.obs;
   RxList<UserModel> listUsers = RxList();
   List<String> checkedUser = [];
+  List<String> listSwipedUser = [];
   RxInt indexImage = 0.obs;
   RxInt indexUser = 0.obs;
   CarouselController carouselUserController = CarouselController();
   CarouselController carouselImageController = CarouselController();
+
   @override
   void onInit() {
     initAllHome();
@@ -44,11 +42,12 @@ class HomeController extends GetxController {
     isLoading.value = true;
     listUsers.value = [];
     checkedUser = [];
+    listSwipedUser = Session().getSwipedUser();
     List<UserModel> tempList = [];
     UserModel currentUserTemp = Get.find<GlobalController>().currentUser.value!;
-    var query = await FirebaseFirestore.instance
-        .collection('/Users/${currentUserTemp.id}/CheckedUser')
-        .get();
+    var query =
+        await queryCollectionDB('/Users/${currentUserTemp.id}/CheckedUser')
+            .get();
     if (query.docs.isEmpty) {
       isLoading.value = false;
       return;
@@ -62,8 +61,7 @@ class HomeController extends GetxController {
       }
     });
     // checkedUser.addAll(currentUserTemp.listSwipedUser);
-    query = await FirebaseFirestore.instance
-        .collection('Users')
+    query = await queryCollectionDB('Users')
         .where(
           'age',
           isGreaterThanOrEqualTo:
@@ -105,14 +103,21 @@ class HomeController extends GetxController {
             }
           }
         }
-        if (currentUserTemp.listSwipedUser.contains(json['userId'])) {
+        if (listSwipedUser.contains(json['userId'])) {
           tempList.add(tempUser);
+          if (json['UserName'] == "Yanuardila Liwang") {
+            print("Masuk sini 1");
+          }
           continue;
+        }
+        if (json['UserName'] == "Yanuardila Liwang") {
+          print("Masuk sini 2");
         }
         listUsers.add(tempUser);
         continue;
       }
     }
+    listUsers.sort((a, b) => a.distanceBW.compareTo(b.distanceBW));
     listUsers.addAll(tempList);
     if (listUsers.isEmpty) {
       isLoading.value = false;
@@ -120,9 +125,10 @@ class HomeController extends GetxController {
     }
     listUsers.first.relasi.value =
         await Global().getRelationship(listUsers.first.id);
-    addLastSwiped(listUsers.first.id);
-    listUsers.sort((a, b) => a.distanceBW.compareTo(b.distanceBW));
-    print("count User : " + listUsers.length.toString());
+    addLastSwiped(listUsers.first);
+    if(kDebugMode){
+      print("count User Existing : " + listUsers.length.toString());
+    }
     isLoading.value = false;
   }
 
@@ -147,38 +153,22 @@ class HomeController extends GetxController {
     return selected;
   }
 
-  addLastSwiped(String idUID) {
+  addLastSwiped(UserModel userModel) {
     if (kDebugMode) {
-      print(Get.find<GlobalController>()
-          .currentUser
-          .value!
-          .listSwipedUser
-          .contains(idUID));
+      print(listSwipedUser.contains(userModel.id));
     }
-    if (Get.find<GlobalController>()
-        .currentUser
-        .value!
-        .listSwipedUser
-        .contains(idUID)) {
-      if (kDebugMode){
-        print("User already added to last Swiped : " + idUID);
-      } 
+    if (listSwipedUser.contains(userModel.id)) {
+      if (kDebugMode) {
+        print("User already added to last Swiped : " + userModel.id);
+      }
       return;
     }
-    print("Adding user to last Swiped : " + idUID);
-    Get.find<GlobalController>().currentUser.value!.listSwipedUser.add(idUID);
-    print(Get.find<GlobalController>().currentUser.value!.listSwipedUser);
-    FirebaseFirestore.instance
-        .collection("Users")
-        .doc(Get.find<GlobalController>().currentUser.value!.id)
-        .set(
-      {
-        "listSwipedUser":
-            Get.find<GlobalController>().currentUser.value!.listSwipedUser
-      },
-      SetOptions(
-        merge: true,
-      ),
-    );
+    listSwipedUser.add(userModel.id);
+    if (kDebugMode) {
+      print("Adding Name to last Swiped : " + userModel.name);
+      print("Adding user to last Swiped : " + userModel.id);
+      print(listSwipedUser.length);
+    }
+    Session().saveSwipedUser(listSwipedUser);
   }
 }

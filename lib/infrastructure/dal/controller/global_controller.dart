@@ -8,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/domain/core/model/user_model.dart';
 import 'package:hookup4u/infrastructure/dal/util/Global.dart';
+import 'package:hookup4u/infrastructure/dal/util/general.dart';
 import 'package:hookup4u/infrastructure/dal/util/session.dart';
 import 'package:hookup4u/infrastructure/navigation/routes.dart';
 
@@ -41,8 +42,7 @@ class GlobalController extends GetxController {
   }
 
   listenUser() {
-    streamCurrentUser = FirebaseFirestore.instance
-        .doc("Users/${Get.find<GlobalController>().currentUser.value?.id}")
+    streamCurrentUser = queryDocDB("Users/${Get.find<GlobalController>().currentUser.value?.id}")
         .snapshots()
         .listen((event) async {
       if (kDebugMode) {
@@ -58,15 +58,14 @@ class GlobalController extends GetxController {
   }
 
   getAccessItems() async {
-    var doc = await FirebaseFirestore.instance.collection("Item_access").get();
+    var doc = await queryCollectionDB("Item_access").get();
     items = doc.docs[0].data();
     print(doc.docs[0].data());
   }
 
   initPayment() {
     print("Init Payment");
-    FirebaseFirestore.instance
-        .collection("Payment")
+    queryCollectionDB("Payment")
         .doc(currentUser.value?.id)
         .snapshots()
         .listen((event) async {
@@ -123,7 +122,7 @@ class GlobalController extends GetxController {
       "date": date.toString(),
     };
 
-    await FirebaseFirestore.instance.collection("Payment").doc(uid).set(
+    await queryCollectionDB("Payment").doc(uid).set(
           newRelation,
           SetOptions(
             merge: true,
@@ -140,8 +139,7 @@ class GlobalController extends GetxController {
         var userProvider = user.providerData[index];
         type = getTypeMetode(userProvider.providerId);
         print("Type : $type" + " ID : " + user.uid);
-        var result = await FirebaseFirestore.instance
-            .collection('Users')
+        var result = await queryCollectionDB('Users')
             .where(type, isEqualTo: user.uid)
             .limit(1)
             .get();
@@ -151,8 +149,7 @@ class GlobalController extends GetxController {
         }
       }
     } else {
-      data = await FirebaseFirestore.instance
-          .collection('Users')
+      data = await queryCollectionDB('Users')
           .where(type, isEqualTo: user.uid)
           .limit(1)
           .get();
@@ -248,8 +245,7 @@ class GlobalController extends GetxController {
     Map<String, dynamic> data = {
       "LoginID": loginID,
     };
-    await FirebaseFirestore.instance
-        .collection("Users")
+    await queryCollectionDB("Users")
         .doc(userID)
         .set(data, SetOptions(merge: true));
   }
@@ -286,8 +282,7 @@ class GlobalController extends GetxController {
       'phoneNumber': auth.currentUser!.phoneNumber,
       'timestamp': FieldValue.serverTimestamp()
     });
-    await FirebaseFirestore.instance
-        .collection("Users")
+    await queryCollectionDB("Users")
         .doc(auth.currentUser!.uid)
         .set(dataExisting, SetOptions(merge: true));
   }

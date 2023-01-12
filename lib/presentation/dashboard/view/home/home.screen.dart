@@ -163,7 +163,7 @@ class HomeScreen extends GetView<HomeController> {
           scrollDirection: Axis.horizontal,
           onPageChanged: (index, reason) async {
             print("Index User : " + index.toString());
-            controller.addLastSwiped(controller.listUsers[index].id);
+            controller.addLastSwiped(controller.listUsers[index]);
             controller.listUsers[index] =
                 await controller.initNextSwipe(controller.listUsers[index]);
             controller.indexImage.value = 0;

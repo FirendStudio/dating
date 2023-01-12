@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:hookup4u/infrastructure/navigation/routes.dart';
 // import 'package:apple_sign_in/apple_signs_in.dart' as i;
 import 'package:the_apple_sign_in/apple_sign_in_button.dart' as i;
 import '../../../infrastructure/dal/util/Global.dart';
@@ -13,6 +14,7 @@ class AuthLoginScreen extends GetView<AuthLoginController> {
   const AuthLoginScreen({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    // Get.put(AuthLoginController());
     return WillPopScope(
       child: Scaffold(
         appBar: new PreferredSize(
@@ -142,7 +144,8 @@ class AuthLoginScreen extends GetView<AuthLoginController> {
                         ),
                         onTap: () async {
                           if (!controller.isChecked.value) {
-                            Global().showInfoDialog("You must agree our terms & conditions to use this apps");
+                            Global().showInfoDialog(
+                                "You must agree our terms & conditions to use this apps");
                             return;
                           }
                           showDialog(
@@ -165,41 +168,39 @@ class AuthLoginScreen extends GetView<AuthLoginController> {
                     ),
                   ),
                 InkWell(
-                    onTap: () {
-                      // if (!controller.isChecked.value) {
-                      //   Get.snackbar("Information",
-                      //       "You must agree our terms & conditions to use this apps");
-                      //   return;
-                      // }
-                      // bool updateNumber = false;
-                      // Navigator.push(
-                      //     context,
-                      //     CupertinoPageRoute(
-                      //         builder: (context) => OTP(updateNumber)));
-                    },
-                    child: Container(
-                        height: MediaQuery.of(context).size.height * .065,
-                        width: MediaQuery.of(context).size.width * .75,
-                        padding: EdgeInsets.only(
-                            // left: Get.width * 0.1,
-                            // right: Get.width * 0.1,
-                            ),
-                        decoration: BoxDecoration(
-                            color: textRed,
-                            // border: Border.all(
-                            //   color: Colors.red[500],
-                            // ),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(25))),
-                        child: Center(
-                          child: Text("LOGIN WITH PHONE NUMBER",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  fontFamily: Global.font,
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold)),
-                        ))),
+                  onTap: () {
+                    if (!controller.isChecked.value) {
+                      Global().showInfoDialog(
+                          "You must agree our terms & conditions to use this apps");
+                      return;
+                    }
+                    Get.toNamed(Routes.AUTH_OTP, arguments: {
+                      "updateNumber": false,
+                    });
+                  },
+                  child: Container(
+                    height: Get.height * .065,
+                    width: Get.width * .75,
+                    decoration: BoxDecoration(
+                      color: textRed,
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(25),
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        "LOGIN WITH PHONE NUMBER",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontFamily: Global.font,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
                 Padding(
                   padding: EdgeInsets.only(
                     top: 10,
@@ -223,8 +224,8 @@ class AuthLoginScreen extends GetView<AuthLoginController> {
                             ],
                           ),
                         ),
-                        height: MediaQuery.of(context).size.height * .065,
-                        width: MediaQuery.of(context).size.width * .8,
+                        height: Get.height * .065,
+                        width: Get.width * .8,
                         child: Center(
                           child: Text(
                             "LOGIN WITH FACEBOOK".toString(),
@@ -238,7 +239,8 @@ class AuthLoginScreen extends GetView<AuthLoginController> {
                       ),
                       onTap: () async {
                         if (!controller.isChecked.value) {
-                          Global().showInfoDialog("You must agree our terms & conditions to use this apps");
+                          Global().showInfoDialog(
+                              "You must agree our terms & conditions to use this apps");
                           return;
                         }
                         showDialog(

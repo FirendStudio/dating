@@ -1,9 +1,19 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
+import 'package:hookup4u/config.dart';
 import '../../../domain/core/model/CustomTapModel.dart';
 
 RxDouble progressLoading = 0.0.obs;
+String env = ConfigEnvironments.getEnvironments()['path']!;
+
+CollectionReference<Map<String, dynamic>> queryCollectionDB(String path) {
+  return FirebaseFirestore.instance.collection(env + path);
+}
+
+DocumentReference<Map<String, dynamic>> queryDocDB(String path) {
+  return FirebaseFirestore.instance.doc(env + path);
+}
 
 List<CustomTapModel> orientationlist = [
   CustomTapModel(name: "straight".obs, onTap: false.obs),

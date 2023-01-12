@@ -1,5 +1,6 @@
+import 'dart:io';
 import 'dart:math';
-
+import 'package:image/image.dart' as i;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_geocoder/geocoder.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/infrastructure/dal/util/color.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:location/location.dart' as loc;
 
@@ -15,6 +17,7 @@ import '../../../domain/core/model/Relationship.dart';
 import '../../../domain/core/model/user_model.dart';
 import '../../navigation/routes.dart';
 import '../controller/global_controller.dart';
+import 'general.dart';
 
 class Global {
   static String font = "Arial";
@@ -46,9 +49,7 @@ class Global {
 
   showInfoDialog(String text) {
     Get.snackbar("Information", text,
-      colorText: primaryColor,
-      backgroundColor: Colors.white
-    );
+        colorText: primaryColor, backgroundColor: Colors.white);
   }
 
   launchURL(String url) async {
@@ -129,17 +130,12 @@ class Global {
   }
 
   Future<Relationship> getRelationship(String idUser) async {
-    DocumentSnapshot data = await FirebaseFirestore.instance
-        .collection("Relationship")
-        .doc(idUser)
-        .get();
+    DocumentSnapshot data =
+        await queryCollectionDB("Relationship").doc(idUser).get();
 
     if (!data.exists) {
       await setNewRelationship(idUser);
-      data = await FirebaseFirestore.instance
-          .collection("Relationship")
-          .doc(idUser)
-          .get();
+      data = await queryCollectionDB("Relationship").doc(idUser).get();
     }
     return Relationship.fromDocument(data.data() as Map<String, dynamic>);
   }
@@ -158,8 +154,7 @@ class Global {
       "updateAt": FieldValue.serverTimestamp()
     };
 
-    await FirebaseFirestore.instance
-        .collection("Relationship")
+    await queryCollectionDB("Relationship")
         .doc(uid)
         .set(newRelation, SetOptions(merge: true));
   }
@@ -189,8 +184,7 @@ class Global {
         );
       },
     );
-    var data = await FirebaseFirestore.instance
-        .collection("Users")
+    var data = await queryCollectionDB("Users")
         .doc(userModel.relasi.value!.partner!.partnerId)
         .get();
 
@@ -227,11 +221,7 @@ class Global {
     //     });
   }
 
-  initProfil(
-    UserModel userModel,{
-      String type = "like"
-    }
-  ) async {
+  initProfil(UserModel userModel, {String type = "like"}) async {
     UserModel currentUser = Get.find<GlobalController>().currentUser.value!;
     showDialog(
       barrierDismissible: false,
@@ -247,8 +237,7 @@ class Global {
     );
     UserModel? userSecondPartner;
     if (userModel.relasi.value!.partner!.partnerId.isNotEmpty) {
-      var data = await FirebaseFirestore.instance
-          .collection("Users")
+      var data = await queryCollectionDB("Users")
           .doc(userModel.relasi.value?.partner?.partnerId)
           .get();
 
@@ -291,8 +280,7 @@ class Global {
     if (kDebugMode) {
       print(userModel.id);
     }
-    await FirebaseFirestore.instance
-        .collection('Users')
+    await queryCollectionDB('Users')
         .doc(Get.find<GlobalController>().currentUser.value?.id)
         .collection("CheckedUser")
         .doc(userModel.id)
@@ -313,8 +301,7 @@ class Global {
     if (kDebugMode) {
       print(userModel.id);
     }
-    var doc = await FirebaseFirestore.instance
-        .collection('Users')
+    var doc = await queryCollectionDB('Users')
         .doc(Get.find<GlobalController>().currentUser.value?.id)
         .collection("LikedBy")
         .doc(userModel.id)
@@ -357,8 +344,7 @@ class Global {
               ),
             );
           });
-      await FirebaseFirestore.instance
-          .collection('Users')
+      await queryCollectionDB('Users')
           .doc(currentUser.id)
           .collection("Matches")
           .doc(userModel.id)
@@ -371,8 +357,7 @@ class Global {
             : userModel.imageUrl[0]['url'],
         'timestamp': FieldValue.serverTimestamp()
       }, SetOptions(merge: true));
-      await FirebaseFirestore.instance
-          .collection('Users')
+      await queryCollectionDB('Users')
           .doc(userModel.id)
           .collection("Matches")
           .doc(currentUser.id)
@@ -392,8 +377,7 @@ class Global {
           .sendLikedFCM(idUser: userModel.id, name: userModel.name);
     }
 
-    await FirebaseFirestore.instance
-        .collection('Users')
+    await queryCollectionDB('Users')
         .doc(currentUser.id)
         .collection("CheckedUser")
         .doc(userModel.id)
@@ -405,8 +389,7 @@ class Global {
       'LikedUser': userModel.id,
       'timestamp': FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
-    await FirebaseFirestore.instance
-        .collection('Users')
+    await queryCollectionDB('Users')
         .doc(userModel.id)
         .collection("LikedBy")
         .doc(currentUser.id)
@@ -449,7 +432,7 @@ class Global {
   }
 
   setNewOptionMessage(String chatId) {
-    FirebaseFirestore.instance.collection("chats").doc(chatId).set({
+    queryCollectionDB("chats").doc(chatId).set({
       "active": true,
       "docId": chatId,
       "isclear1": false,
@@ -564,11 +547,7 @@ class Global {
 
   leaveFunction(
       UserModel sender, UserModel second, String idChat, String type) async {
-    await FirebaseFirestore.instance
-        .collection("chats")
-        .doc(idChat)
-        .collection('messages')
-        .add({
+    await queryCollectionDB("chats").doc(idChat).collection('messages').add({
       'type': 'Leave',
       'text': "${sender.name} has left the conversation.",
       'sender_id': sender.id,
@@ -691,8 +670,7 @@ class Global {
 
   restoreLeaveFunction(UserModel sender, UserModel second, String idMessage,
       String chatId, String type) async {
-    await FirebaseFirestore.instance
-        .collection("chats")
+    await queryCollectionDB("chats")
         .doc(chatId)
         .collection('messages')
         .doc(idMessage)
@@ -819,8 +797,7 @@ class Global {
 
   disconnectFunction(
       UserModel sender, UserModel second, String chatId, String type) async {
-    var result = await FirebaseFirestore.instance
-        .collection("chats")
+    var result = await queryCollectionDB("chats")
         .doc(chatId)
         .collection('messages')
         .orderBy('time', descending: true)
@@ -831,8 +808,7 @@ class Global {
       if (kDebugMode) {
         print(result.docs.first['type']);
       }
-      await FirebaseFirestore.instance
-          .collection("chats")
+      await queryCollectionDB("chats")
           .doc(chatId)
           .collection('messages')
           .doc(result.docs.first.id)
@@ -840,11 +816,7 @@ class Global {
     }
     // Get.back();
     // return;
-    await FirebaseFirestore.instance
-        .collection("chats")
-        .doc(chatId)
-        .collection('messages')
-        .add({
+    await queryCollectionDB("chats").doc(chatId).collection('messages').add({
       'type': 'Disconnect',
       'text': "${sender.name} has blocked you",
       'sender_id': sender.id,
@@ -853,8 +825,7 @@ class Global {
       'image_url': "",
       'time': FieldValue.serverTimestamp(),
     });
-    FirebaseFirestore.instance
-        .collection("chats")
+    queryCollectionDB("chats")
         .doc(chatId)
         .set({"active": false, "docId": chatId}, SetOptions(merge: true)).then(
             (value) {
@@ -865,5 +836,20 @@ class Global {
       Get.back();
       // Get.to(()=>Tabbar(null, null));
     });
+  }
+
+  Future<File?> compressimage(File image) async {
+    try {
+      final tempdir = await getTemporaryDirectory();
+      final path = tempdir.path;
+      i.Image imagefile = i.decodeImage(image.readAsBytesSync())!;
+      final compressedImagefile = File('$path.jpg')
+        ..writeAsBytesSync(i.encodeJpg(imagefile, quality: 80));
+      return compressedImagefile;
+    } catch (e) {
+      print(e.toString());
+      return null;
+      
+    }
   }
 }

@@ -1,20 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
-import 'package:hookup4u/domain/core/model/Relationship.dart';
 import 'package:hookup4u/infrastructure/dal/controller/global_controller.dart';
 import 'package:hookup4u/presentation/notif/controllers/notif.controller.dart';
 import 'package:intl/intl.dart';
-
 import '../../../domain/core/model/user_model.dart';
 import '../../../infrastructure/dal/util/Global.dart';
 import '../../../infrastructure/dal/util/color.dart';
+import '../../../infrastructure/dal/util/general.dart';
 
 class MatchesWidget extends GetView<NotifController> {
   const MatchesWidget({super.key});
@@ -48,16 +44,14 @@ class MatchesWidget extends GetView<NotifController> {
         children: [
           SlidableAction(
             onPressed: (BuildContext context) async {
-              var dataUserReceive = await FirebaseFirestore.instance
-                  .collection("Users")
-                  .doc(doc['Matches'])
-                  .get();
+              var dataUserReceive =
+                  await queryCollectionDB("Users").doc(doc['Matches']).get();
               UserModel tempuser;
               if (!dataUserReceive.exists) {
                 Global().showInfoDialog("User not exist");
                 return;
               }
-              tempuser = UserModel.fromDocument(dataUserReceive);
+              tempuser = UserModel.fromJson(dataUserReceive.data()!);
               tempuser.distanceBW = Global()
                   .calculateDistance(
                     Get.find<GlobalController>()
@@ -75,10 +69,8 @@ class MatchesWidget extends GetView<NotifController> {
                   .round();
               String idChat = Global().chatId(
                   Get.find<GlobalController>().currentUser.value!, tempuser);
-              var resultChat = await FirebaseFirestore.instance
-                  .collection("chats")
-                  .doc(idChat)
-                  .get();
+              var resultChat =
+                  await queryCollectionDB("chats").doc(idChat).get();
               if (!resultChat.exists) {
                 Global().setNewOptionMessage(idChat);
               }
@@ -92,8 +84,7 @@ class MatchesWidget extends GetView<NotifController> {
                 );
                 return;
               }
-              var chatList = await FirebaseFirestore.instance
-                  .collection("chats")
+              var chatList = await queryCollectionDB("chats")
                   .doc(idChat)
                   .collection("messages")
                   .limit(1)
@@ -126,17 +117,15 @@ class MatchesWidget extends GetView<NotifController> {
         children: [
           SlidableAction(
             onPressed: (BuildContext context) async {
-              var dataUserReceive = await FirebaseFirestore.instance
-                  .collection("Users")
-                  .doc(doc['Matches'])
-                  .get();
+              var dataUserReceive =
+                  await queryCollectionDB("Users").doc(doc['Matches']).get();
               UserModel tempuser;
               if (!dataUserReceive.exists) {
                 Global().showInfoDialog("User not exist");
                 return;
                 // if (mounted) setState(() {});
               }
-              tempuser = UserModel.fromDocument(dataUserReceive);
+              tempuser = UserModel.fromJson(dataUserReceive.data()!);
               tempuser.distanceBW = Global()
                   .calculateDistance(
                     Get.find<GlobalController>()
@@ -155,10 +144,8 @@ class MatchesWidget extends GetView<NotifController> {
                   .round();
               String idChat = Global().chatId(
                   Get.find<GlobalController>().currentUser.value!, tempuser);
-              var resultChat = await FirebaseFirestore.instance
-                  .collection("chats")
-                  .doc(idChat)
-                  .get();
+              var resultChat =
+                  await queryCollectionDB("chats").doc(idChat).get();
               if (!resultChat.exists) {
                 Global().setNewOptionMessage(idChat);
               }
@@ -244,14 +231,21 @@ class MatchesWidget extends GetView<NotifController> {
               ),
             ),
             onTap: () async {
-              DocumentSnapshot userdoc = await FirebaseFirestore.instance
-                  .collection("Users")
-                  .doc(doc["Matches"])
-                  .get();
+              DocumentSnapshot userdoc =
+                  await queryCollectionDB("Users").doc(doc["Matches"]).get();
               if (userdoc.exists) {
                 UserModel userModel =
                     UserModel.fromJson(userdoc.data() as Map<String, dynamic>);
-                userModel.relasi.value = await Global().getRelationship(userModel.id);
+                userModel.relasi.value =
+                    await Global().getRelationship(userModel.id);
+                if (!doc["isRead"]) {
+                  queryCollectionDB(
+                          "/Users/${Get.find<GlobalController>().currentUser.value?.id}/Matches")
+                      .doc('${doc["Matches"]}')
+                      .update(
+                    {'isRead': true},
+                  );
+                }
                 Global().initProfil(userModel);
               }
             },

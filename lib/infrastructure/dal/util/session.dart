@@ -34,4 +34,15 @@ class Session {
   String getLoginType() {
     return storage.read("metode") ?? "";
   }
+
+  void saveSwipedUser(List<String> list) async {
+    await storage.write("listUidSwiped", list);
+  }
+
+  List<String> getSwipedUser() {
+    if ((storage.read("listUidSwiped") ?? []).isNotEmpty) {
+      return storage.read("listUidSwiped").cast<String>();
+    }
+    return [];
+  }
 }
