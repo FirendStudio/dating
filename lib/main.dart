@@ -108,7 +108,7 @@ class Main extends StatelessWidget {
           data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
         );
       },
-      defaultTransition: Transition.cupertinoDialog,
+      defaultTransition: Transition.circularReveal,
       title: "JablessCupid",
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

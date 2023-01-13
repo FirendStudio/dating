@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/config.dart';
 import '../../../domain/core/model/CustomTapModel.dart';
+import '../controller/global_controller.dart';
 
 RxDouble progressLoading = 0.0.obs;
 String env = ConfigEnvironments.getEnvironments()['path']!;
+var globalController = Get.put(GlobalController());
 
 CollectionReference<Map<String, dynamic>> queryCollectionDB(String path) {
   return FirebaseFirestore.instance.collection(env + path);

@@ -257,6 +257,7 @@ class AuthLoginScreen extends GetView<AuthLoginController> {
                             ),
                           ),
                         );
+                        controller.handleFacebookLogin(context);
                       },
                     ),
                   ),

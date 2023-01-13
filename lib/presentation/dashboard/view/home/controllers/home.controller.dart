@@ -48,19 +48,16 @@ class HomeController extends GetxController {
     var query =
         await queryCollectionDB('/Users/${currentUserTemp.id}/CheckedUser')
             .get();
-    if (query.docs.isEmpty) {
-      isLoading.value = false;
-      return;
+    if (query.docs.isNotEmpty) {
+      query.docs.forEach((element) {
+        // print(element.data()["LikedUser"]);
+        if (element.data()["LikedUser"] == null) {
+          checkedUser.add(element.data()["DislikedUser"]);
+        } else {
+          checkedUser.add(element.data()["LikedUser"]);
+        }
+      });
     }
-    query.docs.forEach((element) {
-      // print(element.data()["LikedUser"]);
-      if (element.data()["LikedUser"] == null) {
-        checkedUser.add(element.data()["DislikedUser"]);
-      } else {
-        checkedUser.add(element.data()["LikedUser"]);
-      }
-    });
-    // checkedUser.addAll(currentUserTemp.listSwipedUser);
     query = await queryCollectionDB('Users')
         .where(
           'age',
@@ -126,7 +123,7 @@ class HomeController extends GetxController {
     listUsers.first.relasi.value =
         await Global().getRelationship(listUsers.first.id);
     addLastSwiped(listUsers.first);
-    if(kDebugMode){
+    if (kDebugMode) {
       print("count User Existing : " + listUsers.length.toString());
     }
     isLoading.value = false;

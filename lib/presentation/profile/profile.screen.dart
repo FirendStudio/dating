@@ -212,6 +212,7 @@ class ProfileScreen extends GetView<ProfileController> {
                                     size: 28,
                                   ),
                                   onPressed: () {
+                                    Get.toNamed(Routes.SETTINGS);
                                     // Navigator.push(
                                     //     context,
                                     //     CupertinoPageRoute(

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:share/share.dart';
+import '../../infrastructure/dal/util/Global.dart';
 import '../../infrastructure/dal/util/color.dart';
+import '../../infrastructure/dal/util/general.dart';
+import '../../infrastructure/navigation/routes.dart';
 import 'controllers/settings.controller.dart';
 
 class SettingsScreen extends GetView<SettingsController> {
@@ -10,6 +13,8 @@ class SettingsScreen extends GetView<SettingsController> {
   Widget build(BuildContext context) {
     Get.put(SettingsController());
     return Scaffold(
+      // return Obx(
+      //   () => Scaffold(
       backgroundColor: primaryColor,
       appBar: AppBar(
         title: Text(
@@ -34,6 +39,30 @@ class SettingsScreen extends GetView<SettingsController> {
             topRight: Radius.circular(50),
           ),
           child: SingleChildScrollView(
+            // scrollDirection: Axis.horizontal,
+            // child: Row(
+            //   mainAxisAlignment: MainAxisAlignment.start,
+            //   children: [
+            //     for (int index = 0; index <= 5; index++)
+            //       Column(
+            //         crossAxisAlignment: CrossAxisAlignment.start,
+            //         children: [
+            //           Text("Test : $index"),
+            //           Container(
+            //             height: 100,
+            //             width: 150,
+            //             child: ListView.builder(
+            //               shrinkWrap: true,
+            //               itemCount: 4,
+            //               itemBuilder: ((context, index2) {
+            //                 return Text("Testing : $index2");
+            //               }),
+            //             ),
+            //           )
+            //         ],
+            //       ),
+            //   ],
+            // ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -42,21 +71,22 @@ class SettingsScreen extends GetView<SettingsController> {
                   padding: const EdgeInsets.all(12.0),
                   child: Text(
                     "Account settings",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
                 Container(
-                    padding: EdgeInsets.only(left: 16, right: 16),
-                    child: InkWell(
-                      onTap: (() {
-                        // print("Test");
-                        Get.find<VerifyProfileController>()
-                            .phoneNumController
-                            .text = "";
-                        Get.find<VerifyProfileController>().getVerifyModel();
-                      }),
-                      child: Card(
-                          child: Padding(
+                  padding: EdgeInsets.only(left: 16, right: 16),
+                  child: InkWell(
+                    onTap: (() {
+                      // print("Test");
+                      // Get.find<VerifyProfileController>()
+                      //     .phoneNumController
+                      //     .text = "";
+                      // Get.find<VerifyProfileController>().getVerifyModel();
+                    }),
+                    child: Card(
+                      child: Padding(
                         padding: const EdgeInsets.only(
                             left: 20.0, right: 10, top: 20, bottom: 20),
                         child: Row(
@@ -69,13 +99,18 @@ class SettingsScreen extends GetView<SettingsController> {
                             Expanded(
                               flex: 2,
                               child: Text(
-                                widget.currentUser.verified != 3
+                                globalController
+                                            .currentUser.value?.verified !=
+                                        3
                                     ? "Unverified"
                                     : "Verified",
                                 style: TextStyle(
-                                    color: widget.currentUser.verified != 3
-                                        ? Colors.red
-                                        : Colors.greenAccent),
+                                  color: globalController
+                                              .currentUser.value?.verified !=
+                                          3
+                                      ? Colors.red
+                                      : Colors.greenAccent,
+                                ),
                               ),
                             ),
                             Expanded(
@@ -88,14 +123,20 @@ class SettingsScreen extends GetView<SettingsController> {
                             ),
                           ],
                         ),
-                      )),
-                    )),
+                      ),
+                    ),
+                  ),
+                ),
                 Container(
                   padding: EdgeInsets.only(left: 16, right: 16),
                   child: Card(
                       child: Padding(
                     padding: const EdgeInsets.only(
-                        left: 20.0, right: 10, top: 20, bottom: 20),
+                      left: 20.0,
+                      right: 10,
+                      top: 20,
+                      bottom: 20,
+                    ),
                     child: InkWell(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -107,8 +148,11 @@ class SettingsScreen extends GetView<SettingsController> {
                           Expanded(
                             flex: 2,
                             child: Text(
-                              widget.currentUser.phoneNumber.isNotEmpty
-                                  ? "${widget.currentUser.phoneNumber}"
+                              (globalController.currentUser.value
+                                              ?.phoneNumber ??
+                                          "")
+                                      .isNotEmpty
+                                  ? "${globalController.currentUser.value?.phoneNumber}"
                                   : "Verify Now",
                               style: TextStyle(color: secondryColor),
                             ),
@@ -124,22 +168,22 @@ class SettingsScreen extends GetView<SettingsController> {
                         ],
                       ),
                       onTap: () {
-                        Navigator.push(
-                            context,
-                            CupertinoPageRoute(
-                                builder: (context) =>
-                                    UpdateNumber(widget.currentUser)));
-                        // _ads.disable(_ad);
+                        Get.toNamed(Routes.AUTH_OTP, arguments: {
+                          "updateNumber": true,
+                        });
                       },
                     ),
                   )),
                 ),
                 Container(
                   padding: EdgeInsets.only(left: 16, right: 16),
-                  child: Card(
-                      child: Padding(
+                  child: Padding(
                     padding: const EdgeInsets.only(
-                        left: 20.0, right: 10, top: 20, bottom: 20),
+                      left: 20.0,
+                      right: 10,
+                      top: 20,
+                      bottom: 20,
+                    ),
                     child: InkWell(
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -166,16 +210,17 @@ class SettingsScreen extends GetView<SettingsController> {
                         ],
                       ),
                       onTap: () {
-                        connectedAccountWidget();
+                        controller.connectedAccountWidget();
                       },
                     ),
-                  )),
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: Text(
                     "Discovery settings",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
                 Padding(
@@ -190,7 +235,7 @@ class SettingsScreen extends GetView<SettingsController> {
                         ),
                       ),
                       title: Text(
-                        widget.currentUser.address,
+                        (globalController.currentUser.value?.address ?? ""),
                         style: TextStyle(
                           color: Colors.blue,
                           fontSize: 14,
@@ -219,15 +264,15 @@ class SettingsScreen extends GetView<SettingsController> {
                                   ),
                                 ),
                                 onTap: () async {
-                                  var address = await Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              UpdateLocation()));
-                                  print(address);
-                                  if (address != null) {
-                                    _updateAddress(address);
-                                  }
+                                  // var address = await Navigator.push(
+                                  //     context,
+                                  //     MaterialPageRoute(
+                                  //         builder: (context) =>
+                                  //             UpdateLocation()));
+                                  // print(address);
+                                  // if (address != null) {
+                                  //   _updateAddress(address);
+                                  // }
                                 },
                               ),
                             ],
@@ -253,34 +298,56 @@ class SettingsScreen extends GetView<SettingsController> {
                   padding: const EdgeInsets.all(10.0),
                   child: Text(
                     "Partner",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
-                GetBuilder<NotificationController>(builder: (data) {
-                  return Column(
-                    children: [
-                      if (data.relationUser.pendingAcc.isEmpty &&
-                          data.relationUser.pendingReq.isEmpty)
-                        newPartnerWidget(),
-                      if (data.relationUser.pendingAcc.isNotEmpty &&
-                          data.relationUser.pendingReq.isEmpty)
-                        pendingWidget(),
-                      if (data.relationUser.pendingAcc.isEmpty &&
-                          data.relationUser.pendingReq.isNotEmpty)
-                        acceptWidget(),
-                      if (notificationController
-                              .relationUser.pendingAcc.isNotEmpty &&
-                          notificationController
-                              .relationUser.pendingReq.isNotEmpty)
-                        relationWidget(),
-                    ],
-                  );
-                }),
+                Column(
+                  children: [
+                    if ((globalController.currentUser.value?.relasi.value
+                                    ?.pendingAcc ??
+                                [])
+                            .isEmpty &&
+                        (globalController.currentUser.value?.relasi.value
+                                    ?.pendingReq ??
+                                [])
+                            .isEmpty)
+                      newPartnerWidget(),
+                    if ((globalController.currentUser.value?.relasi.value
+                                    ?.pendingAcc ??
+                                [])
+                            .isNotEmpty &&
+                        (globalController.currentUser.value?.relasi.value
+                                    ?.pendingReq ??
+                                [])
+                            .isEmpty)
+                      pendingWidget(),
+                    if ((globalController.currentUser.value?.relasi.value
+                                    ?.pendingAcc ??
+                                [])
+                            .isEmpty &&
+                        (globalController.currentUser.value?.relasi.value
+                                    ?.pendingReq ??
+                                [])
+                            .isNotEmpty)
+                      acceptWidget(),
+                    if ((globalController.currentUser.value?.relasi.value
+                                    ?.pendingAcc ??
+                                [])
+                            .isNotEmpty &&
+                        (globalController.currentUser.value?.relasi.value
+                                    ?.pendingReq ??
+                                [])
+                            .isNotEmpty)
+                      relationWidget(),
+                  ],
+                ),
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: Text(
                     "Search Settings",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style:
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
                 Padding(
@@ -310,55 +377,66 @@ class SettingsScreen extends GetView<SettingsController> {
                             crossAxisSpacing: 4.0,
                             mainAxisSpacing: 8.0,
                             // Generate 100 widgets that display their index in the List.
-                            children: List.generate(listShowMe.length, (index) {
-                              return OutlineButton(
-                                highlightedBorderColor: primaryColor,
-                                child: Container(
-                                  // height: MediaQuery.of(context).size.height * .055,
-                                  // width: MediaQuery.of(context).size.width * .65,
-                                  padding: EdgeInsets.only(
-                                      top: 8, bottom: 8, left: 8, right: 8),
-                                  child: Center(
-                                      child: Text(
-                                          "${listShowMe[index]["name"]}"
+                            children: List.generate(
+                              listShowMe.length,
+                              (index) {
+                                return Obx(
+                                  () => OutlinedButton(
+                                    style: OutlinedButton.styleFrom(
+                                      foregroundColor: primaryColor,
+                                      side: BorderSide(
+                                        width: 1,
+                                        style: BorderStyle.solid,
+                                        color: listShowMe[index].onTap.value
+                                            ? primaryColor
+                                            : secondryColor,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(25)),
+                                    ),
+                                    child: Container(
+                                      padding: EdgeInsets.only(
+                                          top: 8,
+                                          bottom: 8,
+                                          left: 8,
+                                          right: 8),
+                                      child: Center(
+                                        child: Text(
+                                          "${listShowMe[index].name.value}"
                                               .toUpperCase(),
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
-                                              fontSize: 12,
-                                              fontFamily: Global.font,
-                                              color: listShowMe[index]["ontap"]
-                                                  ? primaryColor
-                                                  : secondryColor,
-                                              fontWeight: FontWeight.normal))),
-                                ),
-                                borderSide: BorderSide(
-                                    width: 1,
-                                    style: BorderStyle.solid,
-                                    color: listShowMe[index]["ontap"]
-                                        ? primaryColor
-                                        : secondryColor),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(25)),
-                                onPressed: () {
-                                  setState(() {
-                                    listShowMe[index]["ontap"] =
-                                        !listShowMe[index]["ontap"];
-                                    if (listShowMe[index]["ontap"]) {
-                                      selected.add(listShowMe[index]["name"]);
-                                      print(listShowMe[index]["name"]);
-                                      print(selected);
-                                    } else {
-                                      selected
-                                          .remove(listShowMe[index]["name"]);
-                                      print(selected);
-                                    }
-                                    changeValues.addAll({
-                                      'showGender': selected,
-                                    });
-                                  });
-                                },
-                              );
-                            }),
+                                            fontSize: 12,
+                                            fontFamily: Global.font,
+                                            color:
+                                                listShowMe[index].onTap.value
+                                                    ? primaryColor
+                                                    : secondryColor,
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      listShowMe[index].onTap.value =
+                                          !listShowMe[index].onTap.value;
+                                      if (listShowMe[index].onTap.value) {
+                                        controller.listSelectedGender.add(
+                                            listShowMe[index].name.value);
+                                      } else {
+                                        controller.listSelectedGender.remove(
+                                            listShowMe[index].name.value);
+                                      }
+                                      print(controller.listSelectedGender);
+                                      controller.changeValues.addAll({
+                                        'showGender': controller.listSelectedGender,
+                                      });
+                                    },
+                                  ),
+                                );
+                              },
+                            ),
                           ))
                     ],
                   ),
@@ -653,6 +731,7 @@ class SettingsScreen extends GetView<SettingsController> {
           ),
         ),
       ),
+      // ),
     );
   }
 }
