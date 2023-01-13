@@ -11,7 +11,7 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 
-import '../../../../domain/core/interface/dialog.dart';
+import '../../../../domain/core/interfaces/dialog.dart';
 import '../../../../infrastructure/dal/util/color.dart';
 import '../../../../infrastructure/dal/util/general.dart';
 import '../../../../infrastructure/dal/util/session.dart';

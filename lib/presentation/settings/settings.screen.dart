@@ -1,5 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hookup4u/infrastructure/dal/controller/global_controller.dart';
+import 'package:hookup4u/infrastructure/dal/util/session.dart';
 import 'package:share/share.dart';
 import '../../infrastructure/dal/util/Global.dart';
 import '../../infrastructure/dal/util/color.dart';
@@ -71,8 +75,7 @@ class SettingsScreen extends GetView<SettingsController> {
                   padding: const EdgeInsets.all(12.0),
                   child: Text(
                     "Account settings",
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
                 Container(
@@ -99,8 +102,7 @@ class SettingsScreen extends GetView<SettingsController> {
                             Expanded(
                               flex: 2,
                               child: Text(
-                                globalController
-                                            .currentUser.value?.verified !=
+                                globalController.currentUser.value?.verified !=
                                         3
                                     ? "Unverified"
                                     : "Verified",
@@ -148,8 +150,8 @@ class SettingsScreen extends GetView<SettingsController> {
                           Expanded(
                             flex: 2,
                             child: Text(
-                              (globalController.currentUser.value
-                                              ?.phoneNumber ??
+                              (globalController
+                                              .currentUser.value?.phoneNumber ??
                                           "")
                                       .isNotEmpty
                                   ? "${globalController.currentUser.value?.phoneNumber}"
@@ -219,8 +221,7 @@ class SettingsScreen extends GetView<SettingsController> {
                   padding: const EdgeInsets.all(10.0),
                   child: Text(
                     "Discovery settings",
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
                 Padding(
@@ -298,8 +299,7 @@ class SettingsScreen extends GetView<SettingsController> {
                   padding: const EdgeInsets.all(10.0),
                   child: Text(
                     "Partner",
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
                 Column(
@@ -346,8 +346,7 @@ class SettingsScreen extends GetView<SettingsController> {
                   padding: const EdgeInsets.all(10.0),
                   child: Text(
                     "Search Settings",
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                 ),
                 Padding(
@@ -397,10 +396,7 @@ class SettingsScreen extends GetView<SettingsController> {
                                     ),
                                     child: Container(
                                       padding: EdgeInsets.only(
-                                          top: 8,
-                                          bottom: 8,
-                                          left: 8,
-                                          right: 8),
+                                          top: 8, bottom: 8, left: 8, right: 8),
                                       child: Center(
                                         child: Text(
                                           "${listShowMe[index].name.value}"
@@ -409,10 +405,9 @@ class SettingsScreen extends GetView<SettingsController> {
                                           style: TextStyle(
                                             fontSize: 12,
                                             fontFamily: Global.font,
-                                            color:
-                                                listShowMe[index].onTap.value
-                                                    ? primaryColor
-                                                    : secondryColor,
+                                            color: listShowMe[index].onTap.value
+                                                ? primaryColor
+                                                : secondryColor,
                                             fontWeight: FontWeight.normal,
                                           ),
                                         ),
@@ -422,15 +417,16 @@ class SettingsScreen extends GetView<SettingsController> {
                                       listShowMe[index].onTap.value =
                                           !listShowMe[index].onTap.value;
                                       if (listShowMe[index].onTap.value) {
-                                        controller.listSelectedGender.add(
-                                            listShowMe[index].name.value);
+                                        controller.listSelectedGender
+                                            .add(listShowMe[index].name.value);
                                       } else {
                                         controller.listSelectedGender.remove(
                                             listShowMe[index].name.value);
                                       }
                                       print(controller.listSelectedGender);
                                       controller.changeValues.addAll({
-                                        'showGender': controller.listSelectedGender,
+                                        'showGender':
+                                            controller.listSelectedGender,
                                       });
                                     },
                                   ),
@@ -455,23 +451,21 @@ class SettingsScreen extends GetView<SettingsController> {
                               fontWeight: FontWeight.w500),
                         ),
                         trailing: Text(
-                          "$distance Km.",
+                          "${controller.distance.value} Km.",
                           style: TextStyle(fontSize: 16),
                         ),
                         subtitle: Slider(
-                            value: distance.toDouble(),
+                            value: controller.distance.value.toDouble(),
                             inactiveColor: secondryColor,
                             min: 1.0,
-                            max: widget.isPurchased
-                                ? paidR.toDouble()
-                                : freeR.toDouble(),
+                            max: globalController.isPurchased.value
+                                ? controller.paidR.toDouble()
+                                : controller.freeR.toDouble(),
                             activeColor: primaryColor,
                             onChanged: (val) {
-                              changeValues
+                              controller.changeValues
                                   .addAll({'maximum_distance': val.round()});
-                              setState(() {
-                                distance = val.round();
-                              });
+                              controller.distance.value = val.round();
                             }),
                       ),
                     ),
@@ -486,55 +480,60 @@ class SettingsScreen extends GetView<SettingsController> {
                         contentPadding: EdgeInsets.symmetric(
                             vertical: 0.0, horizontal: 16.0),
                         title: Container(
-                            margin: EdgeInsets.only(bottom: 10),
-                            child: Text(
-                              "Age range",
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  color: primaryColor,
-                                  fontWeight: FontWeight.w500),
-                            )),
-                        subtitle: Row(children: [
-                          Expanded(
+                          margin: EdgeInsets.only(bottom: 10),
+                          child: Text(
+                            "Age range",
+                            style: TextStyle(
+                                fontSize: 18,
+                                color: primaryColor,
+                                fontWeight: FontWeight.w500),
+                          ),
+                        ),
+                        subtitle: Row(
+                          children: [
+                            Expanded(
                               flex: 1,
                               child: Row(
                                 children: [
                                   Text(
                                     "From",
                                     style: TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.black),
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.black,
+                                    ),
                                   ),
                                   SizedBox(
                                     width: 10,
                                   ),
                                   DropdownButton<int>(
-                                    value: Get.find<HomeController>().ageMin,
-                                    items: Get.find<HomeController>()
-                                        .listAge
+                                    value: globalController
+                                        .currentUser.value?.ageRange?['min'],
+                                    items: globalController.listAge
                                         .map((int value) {
                                       return DropdownMenuItem<int>(
                                         value: value,
                                         child: Text(value.toString()),
                                       );
                                     }).toList(),
-                                    onChanged: (int valueInt) {
-                                      Get.find<HomeController>().ageMin =
-                                          valueInt;
-                                      changeValues.addAll({
-                                        'age_range': {
-                                          'min':
-                                              '${Get.find<HomeController>().ageMin}',
-                                          'max':
-                                              '${Get.find<HomeController>().ageMax}'
-                                        }
-                                      });
-                                      setState(() {});
+                                    onChanged: (int? valueInt) {
+                                      if (valueInt != null) {
+                                        globalController.currentUser.value
+                                            ?.ageRange?['min'] = valueInt;
+                                        controller.changeValues.addAll({
+                                          'age_range': {
+                                            'min':
+                                                '${globalController.currentUser.value?.ageRange?['min']}',
+                                            'max':
+                                                '${globalController.currentUser.value?.ageRange?['max']}'
+                                          }
+                                        });
+                                      }
                                     },
                                   )
                                 ],
-                              )),
-                          Expanded(
+                              ),
+                            ),
+                            Expanded(
                               flex: 1,
                               child: Row(
                                 children: [
@@ -548,32 +547,35 @@ class SettingsScreen extends GetView<SettingsController> {
                                     width: 10,
                                   ),
                                   DropdownButton<int>(
-                                    value: Get.find<HomeController>().ageMax,
-                                    items: Get.find<HomeController>()
-                                        .listAge
+                                    value: globalController
+                                        .currentUser.value?.ageRange?['max'],
+                                    items: globalController.listAge
                                         .map((int value) {
                                       return DropdownMenuItem<int>(
                                         value: value,
                                         child: Text(value.toString()),
                                       );
                                     }).toList(),
-                                    onChanged: (int valueInt) {
-                                      Get.find<HomeController>().ageMax =
-                                          valueInt;
-                                      changeValues.addAll({
-                                        'age_range': {
-                                          'min':
-                                              '${Get.find<HomeController>().ageMin}',
-                                          'max':
-                                              '${Get.find<HomeController>().ageMax}'
-                                        }
-                                      });
-                                      setState(() {});
+                                    onChanged: (int? valueInt) {
+                                      if (valueInt != null) {
+                                        globalController.currentUser.value
+                                            ?.ageRange?['max'] = valueInt;
+                                        controller.changeValues.addAll({
+                                          'age_range': {
+                                            'min':
+                                                '${globalController.currentUser.value?.ageRange?['min']}',
+                                            'max':
+                                                '${globalController.currentUser.value?.ageRange?['max']}'
+                                          }
+                                        });
+                                      }
                                     },
                                   )
                                 ],
-                              )),
-                        ]),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
@@ -588,18 +590,20 @@ class SettingsScreen extends GetView<SettingsController> {
                           child: Text(
                             "Invite your friends",
                             style: TextStyle(
-                                color: primaryColor,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w500),
+                              color: primaryColor,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                       ),
                     ),
                     onTap: () {
                       Share.share(
-                          'Checkout our brand new dating app! https://jablesscupid.com/', //Replace with your dynamic link and msg for invite users
-                          subject:
-                              'Checkout our brand new dating app! https://jablesscupid.com/');
+                        'Checkout our brand new dating app! https://jablesscupid.com/', //Replace with your dynamic link and msg for invite users
+                        subject:
+                            'Checkout our brand new dating app! https://jablesscupid.com/',
+                      );
                     },
                   ),
                 ),
@@ -634,19 +638,15 @@ class SettingsScreen extends GetView<SettingsController> {
                               ),
                               ElevatedButton(
                                 onPressed: () async {
-                                  await _auth.signOut().whenComplete(() {
-                                    GetStorage().write("listUidSwiped", []);
-                                    Get.delete<NotificationController>();
-                                    Get.delete<TabsController>();
-                                    Get.put(NotificationController());
-                                    Get.put(TabsController());
-                                    // _firebaseMessaging.deleteInstanceID();
-                                    Navigator.pushReplacement(
-                                      context,
-                                      CupertinoPageRoute(
-                                          builder: (context) => Login()),
-                                    );
-                                  });
+                                  try {
+                                    await FirebaseAuth.instance.signOut();
+                                    Session().saveSwipedUser([]);
+                                    Get.delete<GlobalController>();
+                                    Get.put(GlobalController());
+                                  } catch (e) {
+                                    Global().showInfoDialog(e.toString());
+                                  }
+
                                   // _ads.disable(_ad);
                                 },
                                 child: Text('Yes'),
@@ -684,24 +684,20 @@ class SettingsScreen extends GetView<SettingsController> {
                             content:
                                 Text('Do you want to delete your account?'),
                             actions: <Widget>[
-                              FlatButton(
+                              ElevatedButton(
                                 onPressed: () =>
                                     Navigator.of(context).pop(false),
                                 child: Text('No'),
                               ),
-                              FlatButton(
+                              ElevatedButton(
                                 onPressed: () async {
-                                  final user = _auth.currentUser;
-                                  await _deleteUser(user).then((_) async {
-                                    await _auth.signOut().whenComplete(() {
-                                      Navigator.pushReplacement(
-                                        context,
-                                        CupertinoPageRoute(
-                                            builder: (context) => Login()),
-                                      );
-                                    });
-                                    // _ads.disable(_ad);
-                                  });
+                                  try {
+                                    await controller.deleteUser();
+                                    await FirebaseAuth.instance.signOut();
+                                    Get.offAllNamed(Routes.AUTH_LOGIN);
+                                  } catch (e) {
+                                    Global().showInfoDialog(e.toString());
+                                  }
                                 },
                                 child: Text('Yes'),
                               ),
@@ -713,16 +709,18 @@ class SettingsScreen extends GetView<SettingsController> {
                   ),
                 ),
                 Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Center(
-                      child: Container(
-                          height: 50,
-                          width: 100,
-                          child: Image.asset(
-                            "asset/hookup4u-Logo-BP.png",
-                            fit: BoxFit.contain,
-                          )),
-                    )),
+                  padding: const EdgeInsets.all(20.0),
+                  child: Center(
+                    child: Container(
+                      height: 50,
+                      width: 100,
+                      child: Image.asset(
+                        "asset/hookup4u-Logo-BP.png",
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ),
+                ),
                 SizedBox(
                   height: 80,
                 )
@@ -732,6 +730,35 @@ class SettingsScreen extends GetView<SettingsController> {
         ),
       ),
       // ),
+    );
+  }
+
+  Widget newPartnerWidget() {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: InkWell(
+        child: Card(
+          color: primaryColor,
+          child: Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: Center(
+              child: Text(
+                "Add Partner",
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500),
+              ),
+            ),
+          ),
+        ),
+        onTap: () {
+          showSearch(context: Get.context!, delegate: CustomSearch());
+          // Share.share(
+          //     'check out my website https://deligence.com', //Replace with your dynamic link and msg for invite users
+          //     subject: 'Look what I made!');
+        },
+      ),
     );
   }
 }

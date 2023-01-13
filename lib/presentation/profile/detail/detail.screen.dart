@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
 import 'package:get/get.dart';
-import '../../../domain/core/interface/report/report_user.dart';
+import '../../../domain/core/interfaces/report/report_user.dart';
 import '../../../infrastructure/dal/util/Global.dart';
 import '../../../infrastructure/dal/util/color.dart';
 import 'controllers/detail.controller.dart';

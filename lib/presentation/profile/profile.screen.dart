@@ -8,7 +8,7 @@ import 'package:hookup4u/infrastructure/dal/controller/global_controller.dart';
 import 'package:hookup4u/infrastructure/dal/util/Global.dart';
 import 'package:hookup4u/infrastructure/navigation/routes.dart';
 
-import '../../domain/core/interface/custom.dart';
+import '../../domain/core/interfaces/custom.dart';
 import '../../infrastructure/dal/util/color.dart';
 import '../../infrastructure/dal/util/general.dart';
 import 'controllers/profile.controller.dart';
