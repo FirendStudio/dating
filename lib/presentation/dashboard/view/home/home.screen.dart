@@ -24,9 +24,6 @@ class HomeScreen extends GetView<HomeController> {
         }
         return Container(
           decoration: BoxDecoration(
-            // borderRadius: BorderRadius.only(
-            //     // topLeft: Radius.circular(50), topRight: Radius.circular(50)
-            //     ),
             color: Colors.white,
           ),
           child: Stack(
@@ -86,11 +83,9 @@ class HomeScreen extends GetView<HomeController> {
                             onPressed: () async {
                               await Global().disloveFunction(controller
                                   .listUsers[controller.indexUser.value]);
-                              print("Data User index ke : " +
-                                  controller.indexUser.value.toString());
                               controller.listUsers.remove(controller
                                   .listUsers[controller.indexUser.value]);
-                              if ((controller.listUsers.length + 1) <
+                              if (controller.listUsers.length ==
                                   controller.indexUser.value) {
                                 controller.indexUser.value--;
                               }
@@ -567,49 +562,10 @@ class HomeScreen extends GetView<HomeController> {
                     imageUrl: userModel.imageUrl[0]['url'] ?? "",
                     fit: BoxFit.cover,
                     useOldImageOnUrlChange: true,
-                    placeholder: (context, url) => CupertinoActivityIndicator(
-                      radius: 20,
-                    ),
+                    placeholder: (context, url) => loadingWidget(Get.height * .78, null),
                     errorWidget: (context, url, error) => Icon(Icons.error),
                   ),
                 ),
-                // if (userModel.imageUrl.length > 1)
-                //   Positioned(
-                //       top: Get.height * 0.15,
-                //       right: 15,
-                //       child: Container(
-                //         padding: EdgeInsets.only(
-                //             top: 4, bottom: 4, right: 4, left: 4),
-                //         decoration: BoxDecoration(
-                //           color: Colors.black45,
-                //           // borderRadius: BorderRadius.all(Radius.circular(50))
-                //         ),
-                //         child: Column(
-                //           mainAxisAlignment: MainAxisAlignment.center,
-                //           children: userModel.imageUrl
-                //               .asMap()
-                //               .entries
-                //               .map((entry) {
-                //             // print("index entry : " + entry.key.toString());
-                //             return GestureDetector(
-                //               onTap: () =>
-                //                   carouselController.animateToPage(entry.key),
-                //               child: Container(
-                //                 width: 8.0,
-                //                 height: 8.0,
-                //                 margin: EdgeInsets.symmetric(
-                //                     vertical: 8.0, horizontal: 4.0),
-                //                 decoration: BoxDecoration(
-                //                   shape: BoxShape.circle,
-                //                   color: (data.indexImage == entry.key)
-                //                       ? Colors.white
-                //                       : Colors.white38,
-                //                 ),
-                //               ),
-                //             );
-                //           }).toList(),
-                //         ),
-                //       ))
               ],
             )
           : Stack(
@@ -621,12 +577,8 @@ class HomeScreen extends GetView<HomeController> {
                     enlargeCenterPage: false,
                     scrollDirection: Axis.vertical,
                     onPageChanged: (index, reason) {
-                      // print("Index Image : " + index.toString());
                       controller.indexImage.value = index;
-                      // print("Index Image : " + data.indexImage.toString());
-                      // data.update();
                     },
-                    // autoPlay: false,
                   ),
                   carouselController: controller.carouselImageController,
                   items: userModel.imageUrl.map((value) {
@@ -640,9 +592,7 @@ class HomeScreen extends GetView<HomeController> {
                             fit: BoxFit.cover,
                             useOldImageOnUrlChange: true,
                             placeholder: (context, url) =>
-                                CupertinoActivityIndicator(
-                              radius: 20,
-                            ),
+                                loadingWidget(Get.height * .78, null),
                             errorWidget: (context, url, error) =>
                                 Icon(Icons.error),
                           ),

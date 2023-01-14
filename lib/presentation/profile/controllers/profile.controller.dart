@@ -16,9 +16,12 @@ import '../../../infrastructure/dal/util/Global.dart';
 import '../../../infrastructure/dal/util/color.dart';
 
 class ProfileController extends GetxController {
+  Rxn<Map<String, dynamic>> newAddress = Rxn();
+  
   @override
-  void onInit() {
+  Future<void> onInit() async {
     super.onInit();
+    newAddress.value = await Global().getLocationCoordinates() ?? {};
   }
 
   @override
@@ -29,6 +32,121 @@ class ProfileController extends GetxController {
   @override
   void onClose() {
     super.onClose();
+  }
+
+  void updateAddress(Map _address) {
+    showCupertinoModalPopup(
+        context: Get.context!,
+        builder: (ctx) {
+          return Container(
+            color: Colors.white,
+            width: Get.width,
+            height: Get.height * .4,
+            child: Column(
+              children: <Widget>[
+                Material(
+                  child: ListTile(
+                    title: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        'New address:',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 18,
+                          fontWeight: FontWeight.w500,
+                          decoration: TextDecoration.none,
+                        ),
+                      ),
+                    ),
+                    trailing: IconButton(
+                      icon: Icon(
+                        Icons.cancel,
+                        color: Colors.black26,
+                      ),
+                      onPressed: () => Navigator.pop(Get.context!),
+                    ),
+                    subtitle: Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          _address['PlaceName'] ?? '',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w300,
+                            decoration: TextDecoration.none,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                  ),
+                  child: Text(
+                    "Confirm",
+                    style: TextStyle(color: primaryColor),
+                  ),
+                  onPressed: () async {
+                    Get.back();
+                    await queryCollectionDB("Users")
+                        .doc('${globalController.currentUser.value?.id}')
+                        .update(
+                      {
+                        'location': {
+                          'latitude': _address['latitude'],
+                          'longitude': _address['longitude'],
+                          'address': _address['PlaceName']
+                        },
+                      },
+                    );
+                    showDialog(
+                      barrierDismissible: false,
+                      context: Get.context!,
+                      builder: (_) {
+                        Future.delayed(Duration(seconds: 3), () {
+                          Get.back();
+                        });
+                        return Center(
+                          child: Container(
+                            width: 160.0,
+                            height: 120.0,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              shape: BoxShape.rectangle,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Column(
+                              children: <Widget>[
+                                Image.asset(
+                                  "asset/auth/verified.jpg",
+                                  height: 60,
+                                  color: primaryColor,
+                                  colorBlendMode: BlendMode.color,
+                                ),
+                                Text(
+                                  "location\nchanged",
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    decoration: TextDecoration.none,
+                                    color: Colors.black,
+                                    fontSize: 20,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    );
+                  },
+                )
+              ],
+            ),
+          );
+        });
   }
 
   Future source(BuildContext context, UserModel currentUser,

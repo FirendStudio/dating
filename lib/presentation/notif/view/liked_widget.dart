@@ -35,6 +35,7 @@ class LikedWidget extends GetView<NotifController> {
 
               return InkWell(
                 onTap: () async {
+                  print(likedUser["LikedBy"]);
                   DocumentSnapshot userdoc = await queryCollectionDB("Users")
                       .doc(likedUser["LikedBy"])
                       .get();
@@ -46,6 +47,18 @@ class LikedWidget extends GetView<NotifController> {
                       userdoc.data() as Map<String, dynamic>);
                   userModel.relasi.value =
                       await Global().getRelationship(userModel.id);
+                  userModel.distanceBW = Global()
+                      .calculateDistance(
+                        globalController
+                                .currentUser.value?.coordinates?['latitude'] ??
+                            0,
+                        globalController
+                                .currentUser.value?.coordinates?['longitude'] ??
+                            0,
+                        userModel.coordinates?['latitude'] ?? 0,
+                        userModel.coordinates?['longitude'] ?? 0,
+                      )
+                      .round();
                   Global().initProfil(userModel);
                 },
                 child: Padding(

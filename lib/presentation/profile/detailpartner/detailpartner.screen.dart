@@ -1,12 +1,17 @@
+import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
 
 import 'package:get/get.dart';
+import 'package:hookup4u/infrastructure/dal/util/general.dart';
 // import 'package:flutter_swiper/flutter_swiper.dart';
+import '../../../domain/core/interfaces/report/report_user.dart';
+import '../../../domain/core/model/user_model.dart';
 import '../../../infrastructure/dal/util/Global.dart';
 import '../../../infrastructure/dal/util/color.dart';
+import '../../../infrastructure/navigation/routes.dart';
 import 'controllers/detailpartner.controller.dart';
 
 class DetailPartnerScreen extends GetView<DetailPartnerController> {
@@ -49,14 +54,14 @@ class DetailPartnerScreen extends GetView<DetailPartnerController> {
                         splashColor: Colors.red, // Splash color
                         onTap: () {
                           // TODO
-                          // showDialog(
-                          //   barrierDismissible: true,
-                          //   context: context,
-                          //   builder: (context) => ReportUser(
-                          //   currentUser: currentUser,
-                          //   seconduser: user,
-                          // ),
-                          // );
+                          showDialog(
+                            barrierDismissible: true,
+                            context: context,
+                            builder: (context) => ReportUser(
+                              currentUser: globalController.currentUser.value!,
+                              seconduser: controller.userPartner,
+                            ),
+                          );
                         },
                         child: SizedBox(
                             width: 40,
@@ -473,6 +478,7 @@ class DetailPartnerScreen extends GetView<DetailPartnerController> {
                           color: primaryColor,
                         ),
                         onPressed: () {
+                          Get.toNamed(Routes.PROFILE_EDIT);
                           //  Navigator.pushReplacement(
                           //   context,
                           //   CupertinoPageRoute(
@@ -493,79 +499,49 @@ class DetailPartnerScreen extends GetView<DetailPartnerController> {
                               color: primaryColor,
                             ),
                             onPressed: () async {
-                              // var data = await FirebaseFirestore.instance
-                              //     .collection("Relationship")
-                              //     .doc(user.id)
-                              //     .get();
+                              if (!globalController.isPurchased.value) {
+                                ArtDialogResponse? response =
+                                    await ArtSweetAlert.show(
+                                  barrierDismissible: false,
+                                  context: Get.context!,
+                                  artDialogArgs: ArtDialogArgs(
+                                    denyButtonText: "Cancel",
+                                    title: "Information",
+                                    text:
+                                        "Upgrade now to start chatting with this member!",
+                                    confirmButtonText: "Subscribe Now",
+                                    type: ArtSweetAlertType.warning,
+                                  ),
+                                );
 
-                              // if (!data.exists) {
-                              //   await Get.find<NotificationController>()
-                              //       .setNewRelationship(user.id);
-                              //   data = await FirebaseFirestore.instance
-                              //       .collection("Relationship")
-                              //       .doc(user.id)
-                              //       .get();
-                              // }
-                              // Relationship relationshipTemp =
-                              //     Relationship.fromDocument(data.data());
-                              // if (relationshipTemp.pendingAcc[0].reqUid ==
-                              //     Get.find<TabsController>()
-                              //         .currentUser
-                              //         .id) {
-                              //   Get.back();
-                              //   // return;
-                              // } else {
-                              //   if (!Get.find<TabsController>()
-                              //       .isPuchased) {
-                              //     ArtDialogResponse response =
-                              //         await ArtSweetAlert.show(
-                              //             barrierDismissible: false,
-                              //             context: context,
-                              //             artDialogArgs: ArtDialogArgs(
-                              //                 denyButtonText: "Cancel",
-                              //                 title: "Information",
-                              //                 text:
-                              //                     "Upgrade now to start chatting with this member!",
-                              //                 confirmButtonText:
-                              //                     "Subscribe Now",
-                              //                 type: ArtSweetAlertType
-                              //                     .warning));
-
-                              //     if (response == null) {
-                              //       return;
-                              //     }
-
-                              //     if (response.isTapDenyButton) {
-                              //       return;
-                              //     }
-                              //     if (response.isTapConfirmButton) {
-                              //       Navigator.push(
-                              //         context,
-                              //         CupertinoPageRoute(
-                              //             builder: (context) =>
-                              //                 Subscription(
-                              //                     Get.find<TabsController>()
-                              //                         .currentUser,
-                              //                     null,
-                              //                     Get.find<TabsController>()
-                              //                         .items)),
-                              //       );
-                              //     }
-                              //   } else {
-                              //     await Get.find<ChatController>()
-                              //         .initChatScreen(
-                              //             chatId(user, currentUser));
-                              //     Navigator.push(
-                              //         context,
-                              //         CupertinoPageRoute(
-                              //             builder: (context) => ChatPage(
-                              //                   sender: currentUser,
-                              //                   second: user,
-                              //                   chatId: chatId(
-                              //                       user, currentUser),
-                              //                 )));
-                              //   }
-                              // }
+                                if (response?.isTapConfirmButton == true) {
+                                  Get.toNamed(Routes.PAYMENT_SUBCRIPTION);
+                                  return;
+                                }
+                                return;
+                              }
+                              UserModel userSecond = controller.userPartner;
+                              userSecond.relasi.value =
+                                  await Global().getRelationship(userSecond.id);
+                              userSecond.distanceBW = Global()
+                                  .calculateDistance(
+                                    globalController.currentUser.value
+                                            ?.coordinates?['latitude'] ??
+                                        0,
+                                    globalController.currentUser.value
+                                            ?.coordinates?['longitude'] ??
+                                        0,
+                                    userSecond.coordinates?['latitude'] ?? 0,
+                                    userSecond.coordinates?['longitude'] ?? 0,
+                                  )
+                                  .round();
+                              Get.toNamed(Routes.NOTIF_VIEW_CHAT, arguments: {
+                                "chatId": Global().chatId(
+                                  globalController.currentUser.value?.id ?? "",
+                                  userSecond.id,
+                                ),
+                                "userSecond": userSecond
+                              });
                             },
                           ),
                         ),

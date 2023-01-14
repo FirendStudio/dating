@@ -11,7 +11,7 @@ class NotifScreen extends GetView<NotifController> {
   const NotifScreen({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    Get.put(NotifController());
+    // Get.put(NotifController());
     return Obx(
       () => Scaffold(
         appBar: AppBar(

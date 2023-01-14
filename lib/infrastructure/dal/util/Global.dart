@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:math';
+import 'package:hookup4u/presentation/notif/controllers/notif.controller.dart';
 import 'package:image/image.dart' as i;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_geocoder/geocoder.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/infrastructure/dal/util/color.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -21,6 +24,7 @@ import 'general.dart';
 
 class Global {
   static String font = "Arial";
+  ImagePicker imagePicker = ImagePicker();
   String readTimestamp(int timestamp) {
     var now = new DateTime.now();
     var format = new DateFormat('HH:mm a');
@@ -207,18 +211,6 @@ class Global {
       "user": userModel,
       "type": "like",
     });
-    // await showDialog(
-    //     barrierDismissible: false,
-    //     context: Get.context!,
-    //     builder: (context) {
-    //       return DetailpartnerScreen(
-    //           Get.find<NotificationController>().userPartner,
-    //           widget.currentUser,
-    //           null,
-    //           relationshipTemp,
-    //           Get.find<NotificationController>().userPartner,
-    //           "like");
-    //     });
   }
 
   initProfil(UserModel userModel, {String type = "like"}) async {
@@ -262,18 +254,6 @@ class Global {
       "user": userModel,
       "type": type,
     });
-    // await showDialog(
-    //     barrierDismissible: false,
-    //     context: Get.context!,
-    //     builder: (context) {
-    //       return DetailpartnerScreen(
-    //           Get.find<NotificationController>().userPartner,
-    //           widget.currentUser,
-    //           null,
-    //           relationshipTemp,
-    //           Get.find<NotificationController>().userPartner,
-    //           "like");
-    //     });
   }
 
   disloveFunction(UserModel userModel) async {
@@ -422,12 +402,12 @@ class Global {
     // }
   }
 
-  chatId(UserModel currentUser, UserModel sender) {
+  chatId(String currentUser, String sender) {
     String groupChatId = "";
-    if (currentUser.id.hashCode <= sender.id.hashCode) {
-      return groupChatId = '${currentUser.id}-${sender.id}';
+    if (currentUser.hashCode <= sender.hashCode) {
+      return groupChatId = '$currentUser-$sender';
     } else {
-      return groupChatId = '${sender.id}-${currentUser.id}';
+      return groupChatId = '$sender-$currentUser';
     }
   }
 
@@ -503,9 +483,9 @@ class Global {
                       child: InkWell(
                         onTap: () {
                           Get.back();
-                          if (type == "chat") {
-                            Get.back();
-                          }
+                          // if (type == "chat") {
+                          //   Get.back();
+                          // }
                         },
                         child: Container(
                           margin: EdgeInsets.only(
@@ -560,7 +540,7 @@ class Global {
       idUser: second.id,
       name: Get.find<GlobalController>().currentUser.value?.name ?? "",
     );
-    // await Get.find<NotificationController>().filterMatches();
+    await Get.find<NotifController>().filterMatches();
     // if (type == 'chat') {
     //   Get.back();
     // }
@@ -676,9 +656,7 @@ class Global {
         .doc(idMessage)
         .delete()
         .then((value) async {
-      // if(type == "notif"){
-      //   await Get.find<NotificationController>().filterMatches();
-      // }
+      await Get.find<NotifController>().filterMatches();
       Get.find<GlobalController>().sendRestoreLeaveFCM(
         idUser: second.id,
         name: Get.find<GlobalController>().currentUser.value?.name ?? "",
@@ -753,9 +731,9 @@ class Global {
                       child: InkWell(
                         onTap: () {
                           Get.back();
-                          if (type == "chat") {
-                            Get.back();
-                          }
+                          // if (type == "chat") {
+                          //   Get.back();
+                          // }
                         },
                         child: Container(
                           margin: EdgeInsets.only(
@@ -849,7 +827,71 @@ class Global {
     } catch (e) {
       print(e.toString());
       return null;
-      
     }
   }
+
+  Future<bool> deletePartner({required String Uid}) async {
+    try {
+      await setNewRelationship(Uid);
+      await setNewRelationship(globalController.currentUser.value?.id ?? "");
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+      showInfoDialog(e.toString());
+      return false;
+    }
+
+    return true;
+  }
+
+  Future<File?> pickImage(ImageSource source, {bool metode = false}) async {
+    final XFile? file =
+        await imagePicker.pickImage(source: source, imageQuality: 50);
+
+    if (file == null) {
+      return null;
+    }
+    if (metode) {
+      File? croppedFile = await ImageCropper().cropImage(
+          sourcePath: file.path,
+          cropStyle: CropStyle.circle,
+          aspectRatioPresets: [CropAspectRatioPreset.square],
+          androidUiSettings: AndroidUiSettings(
+              toolbarTitle: 'Crop',
+              toolbarColor: primaryColor,
+              toolbarWidgetColor: Colors.white,
+              initAspectRatio: CropAspectRatioPreset.square,
+              lockAspectRatio: true),
+          iosUiSettings: IOSUiSettings(
+            minimumAspectRatio: 1.0,
+          ));
+      // image = file;
+      return croppedFile;
+    }
+    return File(file.path);
+  }
+
+  bool searchFirstUser(List<String> list, String idUser) {
+    var temp = list.firstWhereOrNull((element) => idUser == element);
+    if (temp != null) {
+      return true;
+    }
+    return false;
+  }
+
+  // Future<void> handleCameraAndMic(callType) async {
+  //   if (callType == "VideoCall") {
+  //     Map<Permission, PermissionStatus> statuses = await [
+  //       Permission.camera,
+  //       Permission.microphone,
+  //     ].request();
+  //     print(statuses);
+  //   } else {
+  //     Map<Permission, PermissionStatus> statuses = await [
+  //       Permission.microphone,
+  //     ].request();
+  //     print(statuses);
+  //   }
+  // }
 }

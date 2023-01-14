@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 
+import 'package:hookup4u/presentation/settings/controllers/view/verifyaccount_widget.dart';
+
 import '../../config.dart';
 import '../../presentation/screens.dart';
+import '../../presentation/settings/controllers/view/verifyuploadimage_widget.dart';
 import 'bindings/controllers/controllers_bindings.dart';
 import 'routes.dart';
 
@@ -90,6 +93,46 @@ class Nav {
       name: Routes.SETTINGS,
       page: () => const SettingsScreen(),
       binding: SettingsControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.PROFILE_EDIT,
+      page: () => ProfileEditScreen(),
+      binding: ProfileEditControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.Verify_Upload,
+      page: () => const VerifyUploadImageWidget(),
+      binding: SettingsControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.Verify_Account,
+      page: () => VerifyAccountwidget(),
+      binding: SettingsControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.PAYMENT_DETAILS,
+      page: () => const PaymentDetailsScreen(),
+      binding: PaymentDetailsControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.PAYMENT_SUBCRIPTION,
+      page: () => const PaymentSubcriptionScreen(),
+      binding: PaymentSubcriptionControllerBinding(),
+    ),
+    // GetPage(
+    //   name: Routes.ROOM,
+    //   page: () => const RoomScreen(),
+    //   binding: NotifControllerBinding(),
+    // ),
+    // GetPage(
+    //   name: Routes.ROOM_CHAT,
+    //   page: () => const RoomChatScreen(),
+    //   binding: NotifControllerBinding(),
+    // ),
+    GetPage(
+      name: Routes.NOTIF_VIEW_CHAT,
+      page: () => const NotifViewChatScreen(),
+      binding: NotifViewChatControllerBinding(),
     ),
   ];
 }

@@ -109,10 +109,13 @@ class Main extends StatelessWidget {
         );
       },
       defaultTransition: Transition.circularReveal,
-      title: "JablessCupid",
+      title: "Unjabbed",
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primaryColor: primaryColor,
+        appBarTheme: AppBarTheme(
+          color: primaryColor
+        ),
       ),
       initialRoute: initialRoute,
       getPages: Nav.routes,

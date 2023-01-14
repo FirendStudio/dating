@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
+import 'package:hookup4u/domain/core/model/MatchModel.dart';
 import 'package:hookup4u/infrastructure/dal/controller/global_controller.dart';
 import 'package:hookup4u/presentation/notif/controllers/notif.controller.dart';
 import 'package:intl/intl.dart';
@@ -22,9 +23,8 @@ class MatchesWidget extends GetView<NotifController> {
         child: ListView.builder(
           itemCount: controller.listMatchUser.length,
           itemBuilder: (BuildContext context, int index) {
-            Map doc = controller.listMatchUser[index];
-            // bool cekLeave = data.filterLeave(doc);
-            if (doc['type'] == 2) {
+            MatchModel doc = controller.listMatchUser[index];
+            if (doc.type.value == 2) {
               return blockedWidget(doc, context);
             }
             return normalWidget(doc, context);
@@ -34,7 +34,7 @@ class MatchesWidget extends GetView<NotifController> {
     );
   }
 
-  normalWidget(Map<dynamic, dynamic> doc, BuildContext context) {
+  normalWidget(MatchModel doc, BuildContext context) {
     return Slidable(
       key: const ValueKey(0),
       startActionPane: ActionPane(
@@ -45,7 +45,7 @@ class MatchesWidget extends GetView<NotifController> {
           SlidableAction(
             onPressed: (BuildContext context) async {
               var dataUserReceive =
-                  await queryCollectionDB("Users").doc(doc['Matches']).get();
+                  await queryCollectionDB("Users").doc(doc.matches).get();
               UserModel tempuser;
               if (!dataUserReceive.exists) {
                 Global().showInfoDialog("User not exist");
@@ -68,14 +68,15 @@ class MatchesWidget extends GetView<NotifController> {
                   )
                   .round();
               String idChat = Global().chatId(
-                  Get.find<GlobalController>().currentUser.value!, tempuser);
+                  Get.find<GlobalController>().currentUser.value!.id,
+                  tempuser.id);
               var resultChat =
                   await queryCollectionDB("chats").doc(idChat).get();
               if (!resultChat.exists) {
                 Global().setNewOptionMessage(idChat);
               }
 
-              if (doc['type'] != 1) {
+              if (doc.type.value != 1) {
                 Global().leaveWidget(
                   Get.find<GlobalController>().currentUser.value!,
                   tempuser,
@@ -103,9 +104,9 @@ class MatchesWidget extends GetView<NotifController> {
               );
             },
             backgroundColor:
-                (doc['type'] != 1) ? Color(0xFFFE4A49) : Colors.green[600]!,
+                (doc.type.value != 1) ? Color(0xFFFE4A49) : Colors.green[600]!,
             foregroundColor: Colors.white,
-            icon: (doc['type'] != 1) ? Icons.block : Icons.restore,
+            icon: (doc.type.value != 1) ? Icons.block : Icons.restore,
             // label: 'Delete',
           ),
         ],
@@ -118,7 +119,7 @@ class MatchesWidget extends GetView<NotifController> {
           SlidableAction(
             onPressed: (BuildContext context) async {
               var dataUserReceive =
-                  await queryCollectionDB("Users").doc(doc['Matches']).get();
+                  await queryCollectionDB("Users").doc(doc.matches).get();
               UserModel tempuser;
               if (!dataUserReceive.exists) {
                 Global().showInfoDialog("User not exist");
@@ -143,7 +144,8 @@ class MatchesWidget extends GetView<NotifController> {
                   )
                   .round();
               String idChat = Global().chatId(
-                  Get.find<GlobalController>().currentUser.value!, tempuser);
+                  Get.find<GlobalController>().currentUser.value!.id,
+                  tempuser.id);
               var resultChat =
                   await queryCollectionDB("chats").doc(idChat).get();
               if (!resultChat.exists) {
@@ -169,7 +171,7 @@ class MatchesWidget extends GetView<NotifController> {
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               // color: !doc.data['isRead']
-              color: !doc['isRead']
+              color: doc.isRead == false
                   ? primaryColor.withOpacity(.15)
                   : secondryColor.withOpacity(.15)),
           child: ListTile(
@@ -182,7 +184,7 @@ class MatchesWidget extends GetView<NotifController> {
                   25,
                 ),
                 child: CachedNetworkImage(
-                  imageUrl: doc['pictureUrl'] ?? "",
+                  imageUrl: doc.pictureUrl ?? "",
                   fit: BoxFit.cover,
                   useOldImageOnUrlChange: true,
                   placeholder: (context, url) => CupertinoActivityIndicator(
@@ -195,11 +197,11 @@ class MatchesWidget extends GetView<NotifController> {
                 ),
               ),
             ),
-            title: Text("You are matched with ${doc['userName'] ?? ""}"),
+            title: Text("You are matched with ${doc.userName ?? ""}"),
             subtitle: Text(
               DateFormat.MMMd('en_US')
                   .add_jm()
-                  .format(doc['timestamp'].toDate())
+                  .format(doc.timeStamp ?? DateTime.now())
                   .toString(),
             ),
             trailing: Padding(
@@ -207,8 +209,7 @@ class MatchesWidget extends GetView<NotifController> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: <Widget>[
-                  // !doc.data['isRead']
-                  !doc['isRead']
+                  doc.isRead == false
                       ? Container(
                           width: 40.0,
                           height: 20.0,
@@ -232,16 +233,16 @@ class MatchesWidget extends GetView<NotifController> {
             ),
             onTap: () async {
               DocumentSnapshot userdoc =
-                  await queryCollectionDB("Users").doc(doc["Matches"]).get();
+                  await queryCollectionDB("Users").doc(doc.matches).get();
               if (userdoc.exists) {
                 UserModel userModel =
                     UserModel.fromJson(userdoc.data() as Map<String, dynamic>);
                 userModel.relasi.value =
                     await Global().getRelationship(userModel.id);
-                if (!doc["isRead"]) {
+                if (doc.isRead == false) {
                   queryCollectionDB(
                           "/Users/${Get.find<GlobalController>().currentUser.value?.id}/Matches")
-                      .doc('${doc["Matches"]}')
+                      .doc('${doc.matches}')
                       .update(
                     {'isRead': true},
                   );
@@ -255,77 +256,76 @@ class MatchesWidget extends GetView<NotifController> {
     );
   }
 
-  blockedWidget(Map<dynamic, dynamic> doc, BuildContext context) {
+  blockedWidget(MatchModel doc, BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            // color: !doc.data['isRead']
-            color: secondryColor.withOpacity(.15),
-          ),
-          child: ListTile(
-            contentPadding: EdgeInsets.all(5),
-            leading: CircleAvatar(
-              radius: 25,
-              backgroundColor: secondryColor,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(
-                  25,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          // color: !doc.data['isRead']
+          color: secondryColor.withOpacity(.15),
+        ),
+        child: ListTile(
+          contentPadding: EdgeInsets.all(5),
+          leading: CircleAvatar(
+            radius: 25,
+            backgroundColor: secondryColor,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(
+                25,
+              ),
+              child: CachedNetworkImage(
+                imageUrl: doc.pictureUrl ?? "",
+                fit: BoxFit.cover,
+                useOldImageOnUrlChange: true,
+                placeholder: (context, url) => CupertinoActivityIndicator(
+                  radius: 20,
                 ),
-                child: CachedNetworkImage(
-                  imageUrl: doc['pictureUrl'] ?? "",
-                  fit: BoxFit.cover,
-                  useOldImageOnUrlChange: true,
-                  placeholder: (context, url) => CupertinoActivityIndicator(
-                    radius: 20,
-                  ),
-                  errorWidget: (context, url, error) => Icon(
-                    Icons.error,
-                    color: Colors.black,
-                  ),
+                errorWidget: (context, url, error) => Icon(
+                  Icons.error,
+                  color: Colors.black,
                 ),
               ),
             ),
-            title: Text("You are matched with ${doc['userName'] ?? ""}"),
-            subtitle: Column(
-              children: [
-                SizedBox(
-                  height: 6,
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      flex: 2,
-                      child: Container(
-                        width: 40.0,
-                        height: 25.0,
-                        decoration: BoxDecoration(
-                          color: Colors.black,
-                          borderRadius: BorderRadius.circular(30.0),
-                        ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          'Disconnected',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 12.0,
-                            fontWeight: FontWeight.bold,
-                          ),
+          ),
+          title: Text("You are matched with ${doc.userName ?? ""}"),
+          subtitle: Column(
+            children: [
+              SizedBox(
+                height: 6,
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: Container(
+                      width: 40.0,
+                      height: 25.0,
+                      decoration: BoxDecoration(
+                        color: Colors.black,
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                      alignment: Alignment.center,
+                      child: Text(
+                        'Disconnected',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 12.0,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ),
-                    Expanded(flex: 4, child: Text(""))
-                  ],
-                ),
-              ],
-            ),
-            onTap: () async {
-              Global().showInfoDialog("Blocked user");
-            },
-          )
-          //  : Container()
+                  ),
+                  Expanded(flex: 4, child: Text(""))
+                ],
+              ),
+            ],
           ),
+          onTap: () async {
+            Global().showInfoDialog("Blocked user");
+          },
+        ),
+      ),
     );
   }
 }

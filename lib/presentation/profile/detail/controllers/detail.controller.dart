@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../../../../domain/core/model/user_model.dart';
 import '../../../../infrastructure/dal/controller/global_controller.dart';
 import '../../../../infrastructure/dal/util/Global.dart';
+import '../../../notif/controllers/notif.controller.dart';
 
 class DetailController extends GetxController {
   UserModel? userPartner;
@@ -14,6 +15,7 @@ class DetailController extends GetxController {
   bool cekpartner = false;
   bool isMe = false;
   final count = 0.obs;
+  bool isMatched = false;
   @override
   void onInit() {
     super.onInit();
@@ -42,9 +44,14 @@ class DetailController extends GetxController {
         if (interestText.isEmpty) {
           interestText = Global().capitalize(user.interest[index]);
         } else {
-          interestText +=
-              ", " + Global().capitalize(user.interest[index]);
+          interestText += ", " + Global().capitalize(user.interest[index]);
         }
+      }
+    }
+    for (var value in Get.find<NotifController>().listMatchUserAll) {
+      if (value.id == user.id) {
+        isMatched = true;
+        break;
       }
     }
   }

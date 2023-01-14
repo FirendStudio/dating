@@ -3,19 +3,20 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../../../infrastructure/dal/util/Global.dart';
 import '../../../infrastructure/dal/util/color.dart';
 
-Widget loadingWidget(double height, BorderRadius? borderRadius) {
+Widget loadingWidget(double? height, BorderRadius? borderRadius,
+    {bool isloadingText = false}) {
   return Container(
     height: height,
     decoration: BoxDecoration(
-        borderRadius: BorderRadius.only(
-            // topLeft: Radius.circular(50), topRight: Radius.circular(50)
-            ),
-        color: Colors.white),
+      borderRadius: BorderRadius.only(),
+    ),
     child: Stack(
+      alignment: Alignment.center,
       children: [
-        Center(
-          child: customLoadingWidget(text: "Loading ....", color: primaryColor),
-        )
+        customLoadingWidget(
+          text: (!isloadingText) ? "Loading ...." : "",
+          color: primaryColor,
+        ),
       ],
     ),
   );
@@ -23,12 +24,14 @@ Widget loadingWidget(double height, BorderRadius? borderRadius) {
 
 Widget customLoadingWidget({String text = "", Color color = Colors.blue}) {
   return Column(
+    mainAxisAlignment: MainAxisAlignment.center,
     children: [
       ClipOval(
-          child: SpinKitDoubleBounce(
-        color: color,
-        size: 50.0,
-      )),
+        child: SpinKitDoubleBounce(
+          color: color,
+          // size: 50.0,
+        ),
+      ),
       if (text.isNotEmpty)
         SizedBox(
           height: 15,

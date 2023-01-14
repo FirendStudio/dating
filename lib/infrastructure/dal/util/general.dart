@@ -7,6 +7,7 @@ import '../controller/global_controller.dart';
 
 RxDouble progressLoading = 0.0.obs;
 String env = ConfigEnvironments.getEnvironments()['path']!;
+String mapboxApi = "pk.************000000000XnrcvFYOz9sHe7CjA";
 var globalController = Get.put(GlobalController());
 
 CollectionReference<Map<String, dynamic>> queryCollectionDB(String path) {
@@ -101,6 +102,21 @@ List<CustomTapModel> listShowMe = [
   CustomTapModel(name: "transfeminime".obs, onTap: false.obs),
   CustomTapModel(name: "transmasculine".obs, onTap: false.obs),
   CustomTapModel(name: "two-spirit".obs, onTap: false.obs),
+];
+
+List<CustomTapModel> listKinks = [
+  CustomTapModel(name: "role play".obs, onTap: false.obs),
+  CustomTapModel(name: "rope bondage".obs, onTap: false.obs),
+  CustomTapModel(name: "voyeurisms".obs, onTap: false.obs),
+  CustomTapModel(name: "exhibitionism".obs, onTap: false.obs),
+  CustomTapModel(name: "foot fetish".obs, onTap: false.obs),
+  CustomTapModel(name: "bdsm".obs, onTap: false.obs),
+  CustomTapModel(name: "dominant".obs, onTap: false.obs),
+  CustomTapModel(name: "submissive".obs, onTap: false.obs),
+  CustomTapModel(name: "switch".obs, onTap: false.obs),
+  CustomTapModel(name: "edge play".obs, onTap: false.obs),
+  CustomTapModel(name: "hot wifer".obs, onTap: false.obs),
+  CustomTapModel(name: "cuckolding".obs, onTap: false.obs),
 ];
 
 final List listAdds = [

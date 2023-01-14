@@ -21,8 +21,11 @@ class GlobalController extends GetxController {
   Rxn<UserModel> currentUser = Rxn();
   Map<String, dynamic> items = {};
   StreamSubscription<DocumentSnapshot>? streamCurrentUser;
-  RxBool isPuchased = false.obs;
+  StreamSubscription<DocumentSnapshot>? streamPayment;
+  RxBool isPurchased = false.obs;
   Payment? paymentModel;
+  List<int> listAge = [];
+  RxInt distance = 0.obs;
 
   @override
   onInit() async {
@@ -37,12 +40,24 @@ class GlobalController extends GetxController {
     getAccessItems();
   }
 
+  @override
+  onClose() {
+    super.onClose();
+    streamCurrentUser?.cancel();
+    streamPayment?.cancel();
+  }
+
   initAfterLogin() {
     listenUser();
+    initPayment();
+    for (int i = 18; i <= 99; i++) {
+      listAge.add(i);
+    }
   }
 
   listenUser() {
-    streamCurrentUser = queryDocDB("Users/${Get.find<GlobalController>().currentUser.value?.id}")
+    streamCurrentUser = queryDocDB(
+            "Users/${Get.find<GlobalController>().currentUser.value?.id}")
         .snapshots()
         .listen((event) async {
       if (kDebugMode) {
@@ -65,11 +80,10 @@ class GlobalController extends GetxController {
 
   initPayment() {
     print("Init Payment");
-    queryCollectionDB("Payment")
+    streamPayment = queryCollectionDB("Payment")
         .doc(currentUser.value?.id)
         .snapshots()
         .listen((event) async {
-      print("Payment");
       if (!event.exists) {
         await setUpdatePayment(
           uid: currentUser.value?.id ?? "",
@@ -78,32 +92,34 @@ class GlobalController extends GetxController {
           date: DateTime.now(),
           purchasedId: "",
         );
+        isPurchased.value = false;
         return;
       }
       paymentModel = Payment.fromDocument(event.data()!);
       if (paymentModel!.status == false) {
-        isPuchased.value = false;
+        isPurchased.value = false;
       }
       if (paymentModel!.status == true &&
           paymentModel!.date!.isBefore(DateTime.now())) {
-        isPuchased.value = false;
+        isPurchased.value = false;
         await setUpdatePayment(
-            uid: currentUser.value?.id ?? "",
-            packageId: "",
-            status: false,
-            date: DateTime.now(),
-            purchasedId: "");
+          uid: currentUser.value?.id ?? "",
+          packageId: "",
+          status: false,
+          date: DateTime.now(),
+          purchasedId: "",
+        );
       }
       if (paymentModel!.status && paymentModel!.date!.isAfter(DateTime.now())) {
-        isPuchased.value = true;
+        isPurchased.value = true;
       }
 
-      //if debug then payment always true
       if (kDebugMode) {
-        isPuchased.value = true;
+        isPurchased.value = true;
       }
-      print(isPuchased);
-      update();
+      if (kDebugMode) {
+        print("Payment Status : " + isPurchased.value.toString());
+      }
     });
   }
 
@@ -184,9 +200,7 @@ class GlobalController extends GetxController {
       Get.offAllNamed(Routes.AUTH_LOGIN);
       return;
     }
-    if (kDebugMode) {
-      print("ID User : " + user.uid);
-    }
+    
     String cek = user.providerData[0].providerId;
     navigationCheck(user, cek);
   }
@@ -203,11 +217,13 @@ class GlobalController extends GetxController {
       print(userAuth.docs.first);
     }
     var docs = userAuth.docs.first;
-    if (kDebugMode) {
-      print(docs.data());
-    }
+    
     Map<String, dynamic> data = docs.data() as Map<String, dynamic>;
     currentUser.value = UserModel.fromJson(data);
+    if (kDebugMode) {
+      print(docs.data());
+      print("ID User : " + (currentUser.value?.id ?? ""));
+    }
     initAfterLogin();
     Get.offAllNamed(Routes.DASHBOARD);
   }

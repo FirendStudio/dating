@@ -2,14 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/infrastructure/dal/controller/global_controller.dart';
 import 'package:hookup4u/presentation/dashboard/widget/blockuser_widget.dart';
+import 'package:hookup4u/presentation/notif/controllers/notif.controller.dart';
+import 'package:hookup4u/presentation/profile/controllers/profile.controller.dart';
 import 'package:hookup4u/presentation/screens.dart';
 import '../../infrastructure/dal/util/color.dart';
+import '../notif/view/room.screen.dart';
 import 'controllers/dashboard.controller.dart';
 
-class DashboardScreen extends GetView<DashboardController>  {
+class DashboardScreen extends GetView<DashboardController> {
   const DashboardScreen({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    Get.put(NotifController());
+    Get.put(ProfileController());
     return WillPopScope(
       onWillPop: controller.onBack,
       child: Obx(
@@ -71,21 +76,14 @@ class DashboardScreen extends GetView<DashboardController>  {
                             Center(
                               child: ProfileScreen(),
                             ),
-                            // Center(
-                            //     child: CardPictures2(
-                            //         data.currentUser,
-                            //         // data.users,
-                            //         data.swipecount,
-                            //         data.items)),
                             Center(
                               child: HomeScreen(),
                             ),
-                            // Center(child: Notifications(data.currentUser)),
                             Center(
                               child: NotifScreen(),
                             ),
                             Center(
-                              child: HomeScreen(),
+                              child: RoomScreen(),
                             ),
                           ],
                           physics: NeverScrollableScrollPhysics(),

@@ -1,20 +1,24 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:hookup4u/presentation/screens.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:the_apple_sign_in/the_apple_sign_in.dart';
-
+import '../../../domain/core/model/VerifyModel.dart';
 import '../../../domain/core/model/custom_web_view.dart';
+import '../../../domain/core/model/user_model.dart';
 import '../../../infrastructure/dal/controller/global_controller.dart';
 import '../../../infrastructure/dal/util/Global.dart';
 import '../../../infrastructure/dal/util/general.dart';
-import '../../../infrastructure/dal/util/session.dart';
+import '../../../infrastructure/navigation/routes.dart';
 
 class SettingsController extends GetxController {
   static const your_client_id = '709280423766575';
@@ -27,47 +31,64 @@ class SettingsController extends GetxController {
       // 'https://www.googleapis.com/auth/contacts.readonly',
     ],
   );
+  TextEditingController phoneController = new TextEditingController();
   List<String> listSelectedGender = [];
   GoogleSignInAccount? googleUser;
   Map<String, dynamic> changeValues = {};
   RxInt distance = 0.obs;
+  int freeR = 0;
+  int paidR = 0;
+  RxInt ageMin = 1.obs;
+  RxInt ageMax = 100.obs;
+  Rxn<VerifyModel> verifyModel = Rxn();
+  String code = "0";
+  String codeVerify = "0";
+  Rxn<File> currentFile = Rxn();
+  RxBool isSentOTP = false.obs;
+  String countryCode = '+91';
+  String smsVerificationCode = "";
+
   @override
   void onInit() {
     super.onInit();
     changeValues = {};
     listSelectedGender = [];
-    // for (int i = 0; i <= widget.currentUser.showMe.length - 1; i++) {
-    //   selected.add(widget.currentUser.showMe[i]);
+    for (int i = 0;
+        i <= globalController.currentUser.value!.showMe.length - 1;
+        i++) {
+      listSelectedGender.add(globalController.currentUser.value!.showMe[i]);
 
-    //   for (int j = 0; j <= listShowMe.length - 1; j++) {
-    //     if (widget.currentUser.showMe[i] == listShowMe[j]['name']) {
-    //       listShowMe[j]['ontap'] = true;
-    //       break;
-    //     }
-    //   }
-    // }
+      for (int j = 0; j <= listShowMe.length - 1; j++) {
+        if (globalController.currentUser.value!.showMe[i] ==
+            listShowMe[j].name.value) {
+          listShowMe[j].onTap.value = true;
+          break;
+        }
+      }
+    }
 
-    // freeR = widget.items['free_radius'] != null
-    //     ? int.parse(widget.items['free_radius'])
-    //     : 400;
-    // paidR = widget.items['paid_radius'] != null
-    //     ? int.parse(widget.items['paid_radius'])
-    //     : 400;
-    // if (!widget.isPurchased && widget.currentUser.maxDistance > freeR) {
-    //   widget.currentUser.maxDistance = freeR.round();
-    //   changeValues.addAll({'maximum_distance': freeR.round()});
-    // } else if (widget.isPurchased && widget.currentUser.maxDistance >= paidR) {
-    //   widget.currentUser.maxDistance = paidR.round();
-    //   changeValues.addAll({'maximum_distance': paidR.round()});
-    // }
+    freeR = globalController.items['free_radius'] != null
+        ? int.parse(globalController.items['free_radius'])
+        : 400;
+    paidR = globalController.items['paid_radius'] != null
+        ? int.parse(globalController.items['paid_radius'])
+        : 400;
+    if (!globalController.isPurchased.value &&
+        (globalController.currentUser.value?.maxDistance ?? 100) > freeR) {
+      globalController.currentUser.value!.maxDistance = freeR.round();
+      changeValues.addAll({'maximum_distance': freeR.round()});
+    } else if (globalController.isPurchased.value &&
+        (globalController.currentUser.value?.maxDistance ?? 100) >= paidR) {
+      globalController.currentUser.value!.maxDistance = paidR.round();
+      changeValues.addAll({'maximum_distance': paidR.round()});
+    }
     // _showMe = widget.currentUser.showMe;
-    // distance = widget.currentUser.maxDistance.round();
-    // ageRange = RangeValues(double.parse(widget.currentUser.ageRange['min']),
-    //     (double.parse(widget.currentUser.ageRange['max'])));
-    // Get.find<HomeController>().ageMin =
-    //     int.parse(widget.currentUser.ageRange['min']);
-    // Get.find<HomeController>().ageMax =
-    //     int.parse(widget.currentUser.ageRange['max']);
+    distance.value =
+        (globalController.currentUser.value?.maxDistance ?? 100).round();
+    ageMin.value =
+        int.parse(globalController.currentUser.value?.ageRange?['min'] ?? 1);
+    ageMax.value =
+        int.parse(globalController.currentUser.value?.ageRange?['max'] ?? 100);
   }
 
   @override
@@ -78,6 +99,39 @@ class SettingsController extends GetxController {
   @override
   void onClose() {
     super.onClose();
+    if (changeValues.length > 0) {
+      updateData();
+    }
+  }
+
+  getVerifyModel() async {
+    verifyModel.value = null;
+    var result = await queryCollectionDB("Verify")
+        .doc(globalController.currentUser.value?.id)
+        .get();
+    if (result.exists) {
+      print(result.data());
+      verifyModel.value = VerifyModel.fromDocument(result.data()!);
+      if (verifyModel.value?.verified == 2) {
+        code = verifyModel.value?.code ?? "0";
+        Get.toNamed(Routes.Verify_Upload);
+        // Get.to(() => UploadImageVerifyScreen());
+        return;
+      }
+    }
+    Get.toNamed(Routes.Verify_Account);
+  }
+
+  Future updateData() async {
+    queryCollectionDB("Users")
+        .doc(globalController.currentUser.value?.id)
+        .set(changeValues, SetOptions(merge: true));
+  }
+
+  Future deleteUser() async {
+    await queryCollectionDB("Users")
+        .doc(globalController.currentUser.value?.id)
+        .delete();
   }
 
   Future<void> connectedAccountWidget() async {
@@ -487,5 +541,253 @@ class SettingsController extends GetxController {
       }
     }
     // return user;
+  }
+
+  setVerification() {
+    var rng = Random();
+    codeVerify = rng.nextInt(99999).toString();
+    if (kDebugMode) {
+      print(codeVerify);
+    }
+    Get.toNamed(Routes.Verify_Upload);
+  }
+
+  Future uploadFile(File image) async {
+    Get.dialog(Obx(() {
+      return CircularPercentIndicator(
+        radius: 120.0,
+        lineWidth: 13.0,
+        animation: true,
+        percent: progressLoading.value,
+        center: Text(
+          "${(progressLoading.value * 100)}%",
+          style: TextStyle(
+              fontWeight: FontWeight.bold, fontSize: 20.0, color: Colors.white),
+        ),
+        footer: Text(
+          "Uploading......",
+          style: TextStyle(
+              fontWeight: FontWeight.bold, fontSize: 17.0, color: Colors.white),
+        ),
+        circularStrokeCap: CircularStrokeCap.round,
+        progressColor: Colors.purple,
+      );
+    }));
+    FirebaseStorage storage = FirebaseStorage.instance;
+    Reference ref = storage.ref().child(
+        'verify/${globalController.currentUser.value?.id}/${image.hashCode}.jpg');
+    UploadTask uploadTask = ref.putFile(File(image.path));
+    uploadTask.snapshotEvents.listen((event) {
+      print("Progress : " +
+          (event.bytesTransferred / event.totalBytes).toString());
+      progressLoading.value =
+          (event.bytesTransferred / event.totalBytes).toDouble();
+    });
+
+    uploadTask.then((res) async {
+      String fileURL = await res.ref.getDownloadURL();
+
+      try {
+        Map<String, dynamic> updateObject = {
+          "idUser": globalController.currentUser.value?.id,
+          "name": globalController.currentUser.value?.name,
+          "phoneNumber": globalController.currentUser.value?.phoneNumber,
+          "verified": 1,
+          "reason_verified": "",
+          "date_updated": DateTime.now().toIso8601String(),
+          "imageUrl": fileURL,
+          "code": code,
+        };
+        await queryCollectionDB("Verify")
+            .doc(globalController.currentUser.value?.id)
+            .set(updateObject, SetOptions(merge: true));
+        await queryCollectionDB("Users")
+            .doc(globalController.currentUser.value?.id)
+            .set({
+          "verified": 1,
+          "reason_verified": "",
+        }, SetOptions(merge: true));
+        // widget.currentUser.imageUrl.add(fileURL);
+        Get.back();
+        await Future.delayed(Duration(seconds: 1));
+        progressLoading.value = 0.0;
+        await showDialog(
+          context: Get.context!,
+          builder: (BuildContext context) {
+            return Material(
+              color: Colors.transparent,
+              child: CupertinoAlertDialog(
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [Text("Account Verification")],
+                ),
+                content: Column(
+                  children: [
+                    Text(
+                      "Thanks for submitting your photo! Please allow up to 24 hours for our staff to manually verify your profile.",
+                      textAlign: TextAlign.start,
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: InkWell(
+                            onTap: () {
+                              Navigator.pop(Get.context!);
+                              Get.offAllNamed(Routes.DASHBOARD);
+                            },
+                            child: Container(
+                              margin: EdgeInsets.only(
+                                left: 0,
+                                top: 4,
+                                bottom: 4,
+                                right: 6,
+                              ),
+                              padding: EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                border: Border.all(
+                                  color: Colors.grey[400]!,
+                                ),
+                              ),
+                              child: Text(
+                                "Okay",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+                insetAnimationCurve: Curves.decelerate,
+                actions: [],
+              ),
+            );
+          },
+        );
+      } catch (err) {
+        print("Error: $err");
+      }
+    });
+  }
+
+  codeAutoRetrievalTimeout(String verificationId) {
+    // set the verification code so that we can use it to log the user in
+    smsVerificationCode = verificationId;
+    print("timeout $smsVerificationCode");
+  }
+
+  verifyOtpFunction(BuildContext context, String otp, UserModel currentUser) {
+    PhoneAuthCredential phoneAuth = PhoneAuthProvider.credential(
+        verificationId: smsVerificationCode, smsCode: otp);
+    if (currentUser.phoneNumber.isEmpty) {
+      User user = FirebaseAuth.instance.currentUser!;
+      user.updatePhoneNumber(phoneAuth).then((_) async {
+        User user = FirebaseAuth.instance.currentUser!;
+        var loginID = {
+          "phone": user.uid,
+        };
+        queryCollectionDB("Users")
+            .doc(globalController.currentUser.value?.id)
+            .set({'phoneNumber': user.phoneNumber, "LoginID": loginID},
+                SetOptions(merge: true));
+        showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (_) {
+            Future.delayed(Duration(seconds: 2), () async {
+              Navigator.pop(context);
+              Get.toNamed(Routes.Verify_Upload);
+            });
+            return Center(
+              child: Container(
+                width: 180.0,
+                height: 200.0,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  shape: BoxShape.rectangle,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Column(
+                  children: <Widget>[
+                    Image.asset(
+                      "asset/auth/verified.jpg",
+                      height: 100,
+                    ),
+                    Text(
+                      "Verified\n Successfully",
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        decoration: TextDecoration.none,
+                        color: Colors.black,
+                        fontSize: 20,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      }).catchError((e) {
+        Global().showInfoDialog(e.toString());
+      });
+      return;
+    }
+
+    FirebaseAuth.instance
+        .signInWithCredential(phoneAuth)
+        .then((authResult) async {
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (_) {
+          Future.delayed(Duration(seconds: 2), () async {
+            Navigator.pop(context);
+            Get.toNamed(Routes.Verify_Upload);
+          });
+          return Center(
+            child: Container(
+              width: 180.0,
+              height: 200.0,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Column(
+                children: <Widget>[
+                  Image.asset(
+                    "asset/auth/verified.jpg",
+                    height: 100,
+                  ),
+                  Text(
+                    "Verified\n Successfully",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      decoration: TextDecoration.none,
+                      color: Colors.black,
+                      fontSize: 20,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      );
+    }).catchError((onError) {
+      Global().showInfoDialog("$onError");
+    });
   }
 }

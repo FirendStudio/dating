@@ -18,7 +18,7 @@ class DetailPartnerController extends GetxController {
     super.onInit();
     userPartner = Get.arguments['userPartner'];
     user = Get.arguments['user'];
-    type = Get.arguments['userPartner'] ?? "";
+    type = Get.arguments['type'] ?? "";
     isMe = userPartner.id == currentUser.id;
     if (userPartner.relasi.value != null &&
         userPartner.relasi.value!.partner!.partnerId.isNotEmpty) {

@@ -1,6 +1,5 @@
 class Routes {
   static Future<String> get initialRoute async {
-    // TODO: implement method
     return SPLASH;
   }
 
@@ -13,9 +12,17 @@ class Routes {
   static const DETAILPARTNER = '/profile-detailpartner';
   static const HOME = '/home';
   static const NOTIF = '/notif';
+  static const PAYMENT_DETAILS = '/payment-details';
+  static const PAYMENT_SUBCRIPTION = '/payment-subcription';
   static const PROFILE = '/profile';
+  static const PROFILE_EDIT = '/profile-edit';
   static const PROFILE_REPORT = '/profile-report';
-  static const SPLASH = '/splash';
-  static const WELCOME = '/welcome';
+  static const ROOM = '/room';
+  static const ROOM_CHAT = '/room-chat';
   static const SETTINGS = '/settings';
+  static const SPLASH = '/splash';
+  static const Verify_Account = '/verify-account';
+  static const Verify_Upload = '/verify-upload';
+  static const WELCOME = '/welcome';
+  static const NOTIF_VIEW_CHAT = '/notif-view-chat';
 }

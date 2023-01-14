@@ -1,11 +1,17 @@
+import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
 import 'package:get/get.dart';
+import 'package:hookup4u/presentation/dashboard/view/home/controllers/home.controller.dart';
+import 'package:hookup4u/presentation/notif/controllers/notif.controller.dart';
 import '../../../domain/core/interfaces/report/report_user.dart';
+import '../../../domain/core/model/user_model.dart';
 import '../../../infrastructure/dal/util/Global.dart';
 import '../../../infrastructure/dal/util/color.dart';
+import '../../../infrastructure/dal/util/general.dart';
+import '../../../infrastructure/navigation/routes.dart';
 import 'controllers/detail.controller.dart';
 
 class DetailScreen extends GetView<DetailController> {
@@ -230,7 +236,6 @@ class DetailScreen extends GetView<DetailController> {
                                 subtitle: Text(
                                     controller.user.editInfo?['about'] ?? ""),
                               ),
-
                             controller.user.editInfo?['living_in'] != null
                                 ? ListTile(
                                     dense: true,
@@ -248,22 +253,6 @@ class DetailScreen extends GetView<DetailController> {
                                     // .tr(args: ["${user.editInfo['living_in']}"]),
                                     )
                                 : Container(),
-                            // !isMe
-                            //     ? ListTile(
-                            //         dense: true,
-                            //         leading: Icon(
-                            //           Icons.location_on,
-                            //           color: primaryColor,
-                            //         ),
-                            //         title: Text(
-                            //           "${user.editInfo['DistanceVisible'] != null ? user.editInfo['DistanceVisible'] ? 'Less than ${user.distanceBW} KM away' : 'Distance not visible' : 'Less than ${user.distanceBW} KM away'}",
-                            //           style: TextStyle(
-                            //               color: secondryColor,
-                            //               fontSize: 16,
-                            //               fontWeight: FontWeight.w500),
-                            //         ),
-                            //       )
-                            //     : Container(),
                           ],
                         ),
                       ),
@@ -406,89 +395,140 @@ class DetailScreen extends GetView<DetailController> {
                   ],
                 ),
               ),
-              controller.isMe
+              !controller.isMatched
                   ? Padding(
-                      padding: const EdgeInsets.all(18.0),
+                      padding: const EdgeInsets.all(25.0),
                       child: Align(
-                        alignment: Alignment.bottomRight,
-                        child: FloatingActionButton(
-                          heroTag: UniqueKey(),
-                          backgroundColor: Colors.white,
-                          child: Icon(
-                            Icons.edit,
-                            color: primaryColor,
-                          ),
-                          onPressed: () {
-                            // Navigator.pushReplacement(
-                            //   context,
-                            //   CupertinoPageRoute(
-                            //     builder: (context) => EditProfile(user),
-                            //   ),
-                            // );
-                          },
+                        alignment: Alignment.bottomCenter,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: <Widget>[
+                            FloatingActionButton(
+                              heroTag: UniqueKey(),
+                              backgroundColor: Colors.white,
+                              child: Icon(
+                                Icons.clear,
+                                color: Colors.red,
+                                size: 30,
+                              ),
+                              onPressed: () async {
+                                bool cek = Global().searchFirstUser(
+                                  Get.find<HomeController>().checkedUser,
+                                  controller.user.id,
+                                );
+                                if (!cek) {
+                                  Global().showInfoDialog("User not Found");
+                                  return;
+                                }
+                                // Get.back();
+                                await Global().disloveFunction(controller.user);
+                              },
+                            ),
+                            FloatingActionButton(
+                              heroTag: UniqueKey(),
+                              backgroundColor: Colors.white,
+                              child: Icon(
+                                Icons.favorite,
+                                color: Colors.lightBlueAccent,
+                                size: 30,
+                              ),
+                              onPressed: () async {
+                                bool cek = Global().searchFirstUser(
+                                  Get.find<HomeController>().checkedUser,
+                                  controller.user.id,
+                                );
+                                if (!cek) {
+                                  Global().showInfoDialog("User not Found");
+                                  return;
+                                }
+                                // Get.back();
+                                await Global()
+                                    .loveUserFunction(controller.user);
+                              },
+                            ),
+                          ],
                         ),
                       ),
                     )
-                  : Padding(
-                      padding: const EdgeInsets.all(18.0),
-                      child: Align(
-                        alignment: Alignment.bottomRight,
-                        child: FloatingActionButton(
-                          heroTag: UniqueKey(),
-                          backgroundColor: Colors.white,
-                          child: Icon(
-                            Icons.message,
-                            color: primaryColor,
+                  : controller.isMe
+                      ? Padding(
+                          padding: const EdgeInsets.all(18.0),
+                          child: Align(
+                            alignment: Alignment.bottomRight,
+                            child: FloatingActionButton(
+                              heroTag: UniqueKey(),
+                              backgroundColor: Colors.white,
+                              child: Icon(
+                                Icons.edit,
+                                color: primaryColor,
+                              ),
+                              onPressed: () {
+                                Get.toNamed(Routes.PROFILE_EDIT);
+                              },
+                            ),
                           ),
-                          onPressed: () async {
-                            // if (!Get.find<TabsController>().isPuchased) {
-                            //   ArtDialogResponse response = await ArtSweetAlert.show(
-                            //       barrierDismissible: false,
-                            //       context: context,
-                            //       artDialogArgs: ArtDialogArgs(
-                            //           denyButtonText: "Cancel",
-                            //           title: "Information",
-                            //           text:
-                            //               "Upgrade now to start chatting with this member!",
-                            //           confirmButtonText: "Subscribe Now",
-                            //           type: ArtSweetAlertType.warning));
+                        )
+                      : Padding(
+                          padding: const EdgeInsets.all(18.0),
+                          child: Align(
+                            alignment: Alignment.bottomRight,
+                            child: FloatingActionButton(
+                              heroTag: UniqueKey(),
+                              backgroundColor: Colors.white,
+                              child: Icon(
+                                Icons.message,
+                                color: primaryColor,
+                              ),
+                              onPressed: () async {
+                                if (!globalController.isPurchased.value) {
+                                  ArtDialogResponse? response =
+                                      await ArtSweetAlert.show(
+                                    barrierDismissible: false,
+                                    context: Get.context!,
+                                    artDialogArgs: ArtDialogArgs(
+                                      denyButtonText: "Cancel",
+                                      title: "Information",
+                                      text:
+                                          "Upgrade now to start chatting with this member!",
+                                      confirmButtonText: "Subscribe Now",
+                                      type: ArtSweetAlertType.warning,
+                                    ),
+                                  );
 
-                            //   if (response == null) {
-                            //     return;
-                            //   }
-
-                            //   if (response.isTapDenyButton) {
-                            //     return;
-                            //   }
-                            //   if (response.isTapConfirmButton) {
-                            //     Navigator.push(
-                            //       context,
-                            //       CupertinoPageRoute(
-                            //           builder: (context) => Subscription(
-                            //               Get.find<TabsController>()
-                            //                   .currentUser,
-                            //               null,
-                            //               Get.find<TabsController>().items)),
-                            //     );
-                            //   }
-                            // } else {
-                            //   await Get.find<ChatController>()
-                            //       .initChatScreen(chatId(user, currentUser));
-                            //   Navigator.push(
-                            //     context,
-                            //     CupertinoPageRoute(
-                            //       builder: (context) => ChatPage(
-                            //         sender: currentUser,
-                            //         second: user,
-                            //         chatId: chatId(user, currentUser),
-                            //       ),
-                            //     ),
-                            //   );
-                            // }
-                          },
+                                  if (response?.isTapConfirmButton == true) {
+                                    Get.toNamed(Routes.PAYMENT_SUBCRIPTION);
+                                    return;
+                                  }
+                                  return;
+                                }
+                                UserModel? userSecond = controller.user;
+                                userSecond.relasi.value = await Global()
+                                    .getRelationship(userSecond.id);
+                                userSecond.distanceBW = Global()
+                                    .calculateDistance(
+                                      globalController.currentUser.value
+                                              ?.coordinates?['latitude'] ??
+                                          0,
+                                      globalController.currentUser.value
+                                              ?.coordinates?['longitude'] ??
+                                          0,
+                                      userSecond.coordinates?['latitude'] ?? 0,
+                                      userSecond.coordinates?['longitude'] ?? 0,
+                                    )
+                                    .round();
+                                Get.toNamed(Routes.NOTIF_VIEW_CHAT, arguments: {
+                                  "chatId": Global().chatId(
+                                    globalController.currentUser.value?.id ??
+                                        "",
+                                    userSecond.id,
+                                  ),
+                                  "userSecond": userSecond
+                                });
+                              },
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
             ],
           ),
         ),
