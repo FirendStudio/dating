@@ -27,6 +27,14 @@ class Session {
     return storage.read("isIntroduction") ?? false;
   }
 
+  void saveIntroductionAfterLogin(bool isIntroduction) async {
+    await storage.write("isIntroductionLogin", isIntroduction);
+  }
+
+  bool getIntroductionAfterLogin() {
+    return storage.read("isIntroductionLogin") ?? false;
+  }
+
   void saveLoginType(String loginType) async {
     await storage.write("metode", loginType);
   }

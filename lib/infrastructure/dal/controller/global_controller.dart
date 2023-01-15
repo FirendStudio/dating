@@ -5,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/domain/core/model/user_model.dart';
 import 'package:hookup4u/infrastructure/dal/util/Global.dart';
@@ -12,6 +13,7 @@ import 'package:hookup4u/infrastructure/dal/util/general.dart';
 import 'package:hookup4u/infrastructure/dal/util/session.dart';
 import 'package:hookup4u/infrastructure/navigation/routes.dart';
 
+import '../../../domain/core/interfaces/dialog.dart';
 import '../../../domain/core/model/Payment.dart';
 import '../services/fcm_service.dart';
 import '../util/local_notif.dart';
@@ -26,6 +28,7 @@ class GlobalController extends GetxController {
   Payment? paymentModel;
   List<int> listAge = [];
   RxInt distance = 0.obs;
+  int initFCM = 0;
 
   @override
   onInit() async {
@@ -55,6 +58,33 @@ class GlobalController extends GetxController {
     }
   }
 
+  initFirebaseMessaging() async {
+    if (initFCM == 1) {
+      return;
+    }
+    initFCM = 1;
+    FirebaseMessaging.instance.subscribeToTopic("${currentUser.value?.id}");
+    FirebaseMessaging.instance.subscribeToTopic("all");
+    if (kDebugMode) {
+      print("Subcribe to ${currentUser.value?.id}");
+    }
+    await FirebaseMessaging.instance
+        .getInitialMessage()
+        .then((RemoteMessage? message) {
+      if (kDebugMode) {
+        print('Firebase Connect');
+      }
+    });
+
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      showNotification(message);
+    });
+
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
+      showNotification(message);
+    });
+  }
+
   listenUser() {
     streamCurrentUser = queryDocDB(
             "Users/${Get.find<GlobalController>().currentUser.value?.id}")
@@ -63,12 +93,12 @@ class GlobalController extends GetxController {
       if (kDebugMode) {
         print(event.data());
       }
-
       UserModel tempUser =
           UserModel.fromJson(event.data() as Map<String, dynamic>);
       currentUser.value = tempUser;
       currentUser.value!.relasi.value =
           await Global().getRelationship(tempUser.id);
+      initFirebaseMessaging();
     });
   }
 
@@ -200,7 +230,7 @@ class GlobalController extends GetxController {
       Get.offAllNamed(Routes.AUTH_LOGIN);
       return;
     }
-    
+
     String cek = user.providerData[0].providerId;
     navigationCheck(user, cek);
   }
@@ -217,7 +247,7 @@ class GlobalController extends GetxController {
       print(userAuth.docs.first);
     }
     var docs = userAuth.docs.first;
-    
+
     Map<String, dynamic> data = docs.data() as Map<String, dynamic>;
     currentUser.value = UserModel.fromJson(data);
     if (kDebugMode) {

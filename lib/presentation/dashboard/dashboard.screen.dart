@@ -13,6 +13,7 @@ class DashboardScreen extends GetView<DashboardController> {
   const DashboardScreen({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
+    Get.put(DashboardController());
     Get.put(NotifController());
     Get.put(ProfileController());
     return WillPopScope(

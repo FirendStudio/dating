@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
+import '../../../domain/core/interfaces/dialog.dart';
+import '../../../infrastructure/dal/util/session.dart';
+
 class DashboardController extends GetxController {
   RxBool isLoading = false.obs;
 
@@ -28,8 +31,19 @@ class DashboardController extends GetxController {
     );
   }
 
+  Future<void> firstLoginApp() async {
+    await Future.delayed(Duration(seconds: 4));
+    bool cek = Session().getIntroductionAfterLogin();
+    print("Cek isLogin : " + cek.toString());
+    if (!cek) {
+      Session().saveIntroductionAfterLogin(true);
+      Get.to(() => DialogFirstApp());
+    }
+  }
+
   @override
   void onInit() {
+    firstLoginApp();
     super.onInit();
   }
 
