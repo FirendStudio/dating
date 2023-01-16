@@ -12,5 +12,6 @@ export 'package:hookup4u/infrastructure/navigation/bindings/controllers/profile_
 export 'package:hookup4u/infrastructure/navigation/bindings/controllers/profile_detailpartner.controller.binding.dart'; 
 export 'package:hookup4u/infrastructure/navigation/bindings/controllers/profile_edit.controller.binding.dart'; 
 export 'package:hookup4u/infrastructure/navigation/bindings/controllers/settings.controller.binding.dart'; 
+export 'package:hookup4u/infrastructure/navigation/bindings/controllers/settings_view_verified_profile.controller.binding.dart'; 
 export 'package:hookup4u/infrastructure/navigation/bindings/controllers/splash.controller.binding.dart'; 
 export 'package:hookup4u/infrastructure/navigation/bindings/controllers/welcome.controller.binding.dart'; 

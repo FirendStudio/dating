@@ -13,5 +13,6 @@ export 'package:hookup4u/presentation/profile/detailpartner/detailpartner.screen
 export 'package:hookup4u/presentation/profile/edit/profile_edit.screen.dart';
 export 'package:hookup4u/presentation/profile/profile.screen.dart';
 export 'package:hookup4u/presentation/settings/settings.screen.dart';
+export 'package:hookup4u/presentation/settings/view/verified_profile/settings_view_verified_profile.screen.dart';
 export 'package:hookup4u/presentation/splash/splash.screen.dart';
 export 'package:hookup4u/presentation/welcome/welcome.screen.dart';

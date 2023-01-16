@@ -128,6 +128,20 @@ class ProfileScreen extends GetView<ProfileController> {
                                     color: Colors.white,
                                   ),
                                   onPressed: () {
+                                    if (globalController
+                                            .reviewModel.value?.status?.value ==
+                                        "suspend") {
+                                      Global().showInfoDialog(
+                                          "Please change your profile picture in setting");
+                                      return;
+                                    }
+                                    if (globalController
+                                            .reviewModel.value?.status?.value ==
+                                        "review") {
+                                      Global().showInfoDialog(
+                                          "Your Profile need reviewed by admin first");
+                                      return;
+                                    }
                                     controller.source(
                                       context,
                                       Get.find<GlobalController>()
@@ -178,10 +192,24 @@ class ProfileScreen extends GetView<ProfileController> {
                                   backgroundColor: primaryColor,
                                   child: Icon(
                                     Icons.add_a_photo,
-                                    color: Colors.white,
+                                    color: Color.fromARGB(255, 112, 55, 55),
                                     size: 32,
                                   ),
                                   onPressed: () {
+                                    if (globalController
+                                            .reviewModel.value?.status?.value ==
+                                        "suspend") {
+                                      Global().showInfoDialog(
+                                          "Please change your profile picture in setting area");
+                                      return;
+                                    }
+                                    if (globalController
+                                            .reviewModel.value?.status?.value ==
+                                        "review") {
+                                      Global().showInfoDialog(
+                                          "Your Profile need reviewed by admin first");
+                                      return;
+                                    }
                                     controller.source(
                                       context,
                                       Get.find<GlobalController>()

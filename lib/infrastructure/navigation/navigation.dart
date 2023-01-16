@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
 
-import 'package:hookup4u/presentation/settings/controllers/view/verifyaccount_widget.dart';
+import 'package:hookup4u/presentation/settings/view/verifyaccount_widget.dart';
 
 import '../../config.dart';
 import '../../presentation/screens.dart';
-import '../../presentation/settings/controllers/view/verifyuploadimage_widget.dart';
+import '../../presentation/settings/view/verifyuploadimage_widget.dart';
 import 'bindings/controllers/controllers_bindings.dart';
 import 'routes.dart';
 
@@ -133,6 +133,11 @@ class Nav {
       name: Routes.NOTIF_VIEW_CHAT,
       page: () => const NotifViewChatScreen(),
       binding: NotifViewChatControllerBinding(),
+    ),
+    GetPage(
+      name: Routes.SETTINGS_VIEW_VERIFIED_PROFILE,
+      page: () => const SettingsViewVerifiedProfileScreen(),
+      binding: SettingsViewVerifiedProfileControllerBinding(),
     ),
   ];
 }

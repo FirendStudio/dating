@@ -89,7 +89,82 @@ class SettingsScreen extends GetView<SettingsController> {
                                                 .currentUser.value?.verified !=
                                             3
                                         ? Colors.red
-                                        : Colors.greenAccent,
+                                        : Colors.green,
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: Icon(
+                                  Icons.arrow_forward_ios,
+                                  color: secondryColor,
+                                  size: 15,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.only(left: 16, right: 16),
+                    child: InkWell(
+                      onTap: (() {
+                        if (globalController.reviewModel.value?.status?.value ==
+                            "review") {
+                          Global().showInfoDialog("Waiting Reviewed by Admin");
+                          return;
+                        }
+                        if (globalController.reviewModel.value?.status?.value ==
+                            "suspend") {
+                          Get.toNamed(
+                            Routes.SETTINGS_VIEW_VERIFIED_PROFILE,
+                            arguments: {
+                              "reviewModel":
+                                  globalController.reviewModel.value!,
+                            },
+                          );
+                          return;
+                        }
+                        Global()
+                            .showInfoDialog("Your Profile Already Verified");
+                      }),
+                      child: Card(
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 20.0, right: 10, top: 20, bottom: 20),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: <Widget>[
+                              Expanded(
+                                flex: 4,
+                                child: Text("Verification Profile"),
+                              ),
+                              Expanded(
+                                flex: 2,
+                                child: Text(
+                                  (globalController.reviewModel.value?.status
+                                                  ?.value ==
+                                              "suspend" ||
+                                          globalController.reviewModel.value
+                                                  ?.status?.value ==
+                                              "review")
+                                      ? (globalController.reviewModel.value
+                                                      ?.status?.value ??
+                                                  "")
+                                              .capitalizeFirst ??
+                                          ""
+                                      : "Verified",
+                                  style: TextStyle(
+                                    color: (globalController.reviewModel.value
+                                                    ?.status?.value ==
+                                                "suspend" ||
+                                            globalController.reviewModel.value
+                                                    ?.status?.value ==
+                                                "review")
+                                        ? Colors.red
+                                        : Colors.green,
                                   ),
                                 ),
                               ),
@@ -366,10 +441,7 @@ class SettingsScreen extends GetView<SettingsController> {
                                   ),
                                   child: Container(
                                     padding: EdgeInsets.only(
-                                        top: 8,
-                                        bottom: 8,
-                                        left: 8,
-                                        right: 8),
+                                        top: 8, bottom: 8, left: 8, right: 8),
                                     child: Center(
                                       child: Text(
                                         "${listShowMe[index].name.value}"
@@ -378,10 +450,9 @@ class SettingsScreen extends GetView<SettingsController> {
                                         style: TextStyle(
                                           fontSize: 12,
                                           fontFamily: Global.font,
-                                          color:
-                                              listShowMe[index].onTap.value
-                                                  ? primaryColor
-                                                  : secondryColor,
+                                          color: listShowMe[index].onTap.value
+                                              ? primaryColor
+                                              : secondryColor,
                                           fontWeight: FontWeight.normal,
                                         ),
                                       ),
@@ -391,11 +462,11 @@ class SettingsScreen extends GetView<SettingsController> {
                                     listShowMe[index].onTap.value =
                                         !listShowMe[index].onTap.value;
                                     if (listShowMe[index].onTap.value) {
-                                      controller.listSelectedGender.add(
-                                          listShowMe[index].name.value);
+                                      controller.listSelectedGender
+                                          .add(listShowMe[index].name.value);
                                     } else {
-                                      controller.listSelectedGender.remove(
-                                          listShowMe[index].name.value);
+                                      controller.listSelectedGender
+                                          .remove(listShowMe[index].name.value);
                                     }
                                     print(controller.listSelectedGender);
                                     controller.changeValues.addAll({

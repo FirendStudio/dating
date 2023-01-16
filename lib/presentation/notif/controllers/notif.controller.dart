@@ -79,30 +79,9 @@ class NotifController extends GetxController {
         listMatchUserAll.assignAll(ondata.docs);
         filterMatches();
         filterLiked();
-        // disposeStreamRoom();
       }
     });
   }
-
-  // initStreamChat() {
-  //   if (listMatchUser.isEmpty) {
-  //     return;
-  //   }
-  //   // for (int index=0; index <= listMatchUser.length-1; index++) {
-  //   //   var element =
-  //   //   listChat.add(ChatsModel());
-  //   //   var stream = queryCollectionDB("chats")
-  //   //       .doc(Global().chatId(globalController.currentUser.value!.id, index))
-  //   //       .collection('messages')
-  //   //       .orderBy('time', descending: true)
-  //   //       .limit(1)
-  //   //       .snapshots()
-  //   //       .listen((event) {
-  //   //         listChat[index] = ChatsModel.fromJson(event.da)
-  //   //       },);
-  //   //   listStreamRoom.add(stream);
-  //   // }
-  // }
 
   filterLiked() {
     listLikedUser.assignAll(listLikedUserAll);

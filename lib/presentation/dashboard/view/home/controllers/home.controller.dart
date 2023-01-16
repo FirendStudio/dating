@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:hookup4u/domain/core/model/SuspendModel.dart';
 import 'package:hookup4u/infrastructure/dal/util/Global.dart';
 import '../../../../../domain/core/model/user_model.dart';
 import '../../../../../infrastructure/dal/controller/global_controller.dart';
@@ -11,6 +12,7 @@ import '../../../../../infrastructure/dal/util/session.dart';
 class HomeController extends GetxController {
   RxBool isLoading = false.obs;
   RxList<UserModel> listUsers = RxList();
+  RxList<ReviewModel> listReviewUser = RxList();
   List<String> checkedUser = [];
   List<String> listSwipedUser = [];
   RxInt indexImage = 0.obs;
@@ -41,6 +43,7 @@ class HomeController extends GetxController {
   initUser() async {
     isLoading.value = true;
     listUsers.value = [];
+    listReviewUser.value = [];
     checkedUser = [];
     listSwipedUser = Session().getSwipedUser();
     List<UserModel> tempList = [];
@@ -72,8 +75,12 @@ class HomeController extends GetxController {
       return;
     }
     List<QueryDocumentSnapshot<Map<String, dynamic>>> temp = query.docs;
+    // temp.removeWhere((element) => checkedUser.contains(element.id));
+    query = await queryCollectionDB("Review").get();
+    query.docs.forEach((element) {
+      listReviewUser.add(ReviewModel.fromJson(element.data()));
+    });
     print("Count All User : " + temp.length.toString());
-    temp.removeWhere((element) => checkedUser.contains(element.id));
     for (var doc in temp) {
       Map<String, dynamic> json = doc.data();
       if (json.containsKey("age")) {
@@ -85,7 +92,7 @@ class HomeController extends GetxController {
           tempUser.coordinates?['longitude'] ?? 0,
         );
         tempUser.distanceBW = distance.round();
-        if (!cekDistance(distance, tempUser, currentUserTemp)) {
+        if (filterUser(tempUser, currentUserTemp, distance)) {
           continue;
         }
         if (tempUser.imageUrl.isNotEmpty) {
@@ -102,13 +109,7 @@ class HomeController extends GetxController {
         }
         if (listSwipedUser.contains(json['userId'])) {
           tempList.add(tempUser);
-          if (json['UserName'] == "Yanuardila Liwang") {
-            print("Masuk sini 1");
-          }
           continue;
-        }
-        if (json['UserName'] == "Yanuardila Liwang") {
-          print("Masuk sini 2");
         }
         listUsers.add(tempUser);
         continue;
@@ -129,14 +130,68 @@ class HomeController extends GetxController {
     isLoading.value = false;
   }
 
+  bool filterUser(
+      UserModel tempUser, UserModel currentUserTemp, double distance) {
+    if (checkedUser.contains(tempUser.id)) {
+      return true;
+    }
+    if (cekShowMe(currentUserTemp, tempUser)) {
+      return true;
+    }
+    if (cekDistance(distance, tempUser, currentUserTemp)) {
+      return true;
+    }
+    if (cekReview(tempUser)) {
+      return true;
+    }
+    return false;
+  }
+
+  bool cekShowMe(UserModel currentUser, UserModel tempUser) {
+    if (currentUser.showMe.isEmpty) {
+      return false;
+    }
+    if (currentUser.showMe
+        .contains(cekGender(tempUser.editInfo?['userGender']))) {
+      print("Masuk cek Show Me");
+      return false;
+    }
+    return true;
+  }
+
+  String? cekGender(String? gender) {
+    if (gender == null) {
+      return gender;
+    }
+    if (gender == "man") {
+      return "men";
+    }
+    if (gender == "woman") {
+      return "women";
+    }
+    return gender;
+  }
+
+  bool cekReview(UserModel tempUser) {
+    if (listReviewUser.isEmpty) {
+      return true;
+    }
+    for (var temp in listReviewUser) {
+      if (tempUser.id == temp.idUser) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   bool cekDistance(
       double distance, UserModel tempUser, UserModel currentUserTemp) {
     if (distance <= currentUserTemp.maxDistance &&
         tempUser.id != currentUserTemp.id &&
         !tempUser.isBlocked) {
-      return true;
+      return false;
     }
-    return false;
+    return true;
   }
 
   Future<UserModel> initNextSwipe(UserModel userModel) async {

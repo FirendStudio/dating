@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:hookup4u/domain/core/interfaces/loading.dart';
 import 'package:hookup4u/infrastructure/dal/controller/global_controller.dart';
 import 'package:hookup4u/infrastructure/dal/util/Global.dart';
+import 'package:hookup4u/infrastructure/dal/util/general.dart';
 import '../../../../domain/core/interfaces/report/report_user.dart';
 import '../../../../domain/core/model/user_model.dart';
 import '../../../../infrastructure/dal/util/color.dart';
@@ -131,19 +132,75 @@ class HomeScreen extends GetView<HomeController> {
   }
 
   Widget carouselWidget() {
-    return Material(
-      elevation: 5,
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            SizedBox(
-              height: Get.height,
-              child: listUserWidget(),
-            ),
-          ],
+    return Obx(() {
+      if (globalController.reviewModel.value?.status?.value == "suspend") {
+        return Align(
+          alignment: Alignment.center,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: CircleAvatar(
+                  backgroundColor: secondryColor,
+                  radius: 40,
+                ),
+              ),
+              Text(
+                "Your account has been suspend",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: secondryColor,
+                  decoration: TextDecoration.none,
+                  fontSize: 18,
+                ),
+              )
+            ],
+          ),
+          // ) : swiperWidget(),
+        );
+      }
+      if (globalController.reviewModel.value?.status?.value == "review") {
+        return Align(
+          alignment: Alignment.center,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: CircleAvatar(
+                  backgroundColor: secondryColor,
+                  radius: 40,
+                ),
+              ),
+              Text(
+                "Waiting for Admin Verification",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: secondryColor,
+                  decoration: TextDecoration.none,
+                  fontSize: 18,
+                ),
+              )
+            ],
+          ),
+          // ) : swiperWidget(),
+        );
+      }
+      return Material(
+        elevation: 5,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(
+                height: Get.height,
+                child: listUserWidget(),
+              ),
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   Widget listUserWidget() {
@@ -562,7 +619,8 @@ class HomeScreen extends GetView<HomeController> {
                     imageUrl: userModel.imageUrl[0]['url'] ?? "",
                     fit: BoxFit.cover,
                     useOldImageOnUrlChange: true,
-                    placeholder: (context, url) => loadingWidget(Get.height * .78, null),
+                    placeholder: (context, url) =>
+                        loadingWidget(Get.height * .78, null),
                     errorWidget: (context, url, error) => Icon(Icons.error),
                   ),
                 ),

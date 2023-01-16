@@ -6,7 +6,9 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/domain/core/model/CustomTapModel.dart';
+import 'package:hookup4u/domain/core/model/user_model.dart';
 import 'package:hookup4u/infrastructure/dal/controller/global_controller.dart';
+import 'package:hookup4u/infrastructure/dal/util/Global.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
@@ -208,6 +210,13 @@ class AuthRegisterController extends GetxController {
               SetOptions(merge: true),
             );
         Get.back();
+        var query = await Get.find<GlobalController>().getUser(
+            FirebaseAuth.instance.currentUser!, Session().getLoginType());
+        var docs = query?.docs.first;
+
+        Map<String, dynamic> data = docs!.data() as Map<String, dynamic>;
+        Get.find<GlobalController>().currentUser.value =
+            UserModel.fromJson(data);
         await Future.delayed(Duration(seconds: 1));
         progressLoading.value = 0.0;
         await showWelcomDialog(Get.context);

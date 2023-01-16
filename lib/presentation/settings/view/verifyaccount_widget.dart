@@ -6,7 +6,7 @@ import 'package:hookup4u/infrastructure/dal/util/general.dart';
 import 'package:hookup4u/presentation/settings/controllers/settings.controller.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
-import '../../../../infrastructure/dal/util/color.dart';
+import '../../../infrastructure/dal/util/color.dart';
 
 class VerifyAccountwidget extends StatefulWidget {
   const VerifyAccountwidget({super.key});

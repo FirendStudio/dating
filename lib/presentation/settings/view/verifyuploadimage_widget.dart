@@ -3,8 +3,8 @@ import 'package:get/get.dart';
 import 'package:hookup4u/infrastructure/dal/util/general.dart';
 import 'package:hookup4u/presentation/settings/controllers/settings.controller.dart';
 import 'package:image_picker/image_picker.dart';
-import '../../../../infrastructure/dal/util/Global.dart';
-import '../../../../infrastructure/dal/util/color.dart';
+import '../../../infrastructure/dal/util/Global.dart';
+import '../../../infrastructure/dal/util/color.dart';
 
 class VerifyUploadImageWidget extends GetView<SettingsController> {
   const VerifyUploadImageWidget({Key? key}) : super(key: key);

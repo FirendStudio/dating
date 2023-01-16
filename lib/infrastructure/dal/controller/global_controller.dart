@@ -1,19 +1,16 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
+import 'package:hookup4u/domain/core/model/SuspendModel.dart';
 import 'package:hookup4u/domain/core/model/user_model.dart';
 import 'package:hookup4u/infrastructure/dal/util/Global.dart';
 import 'package:hookup4u/infrastructure/dal/util/general.dart';
 import 'package:hookup4u/infrastructure/dal/util/session.dart';
 import 'package:hookup4u/infrastructure/navigation/routes.dart';
-
-import '../../../domain/core/interfaces/dialog.dart';
 import '../../../domain/core/model/Payment.dart';
 import '../services/fcm_service.dart';
 import '../util/local_notif.dart';
@@ -24,11 +21,13 @@ class GlobalController extends GetxController {
   Map<String, dynamic> items = {};
   StreamSubscription<DocumentSnapshot>? streamCurrentUser;
   StreamSubscription<DocumentSnapshot>? streamPayment;
+  StreamSubscription<DocumentSnapshot>? streamSuspend;
   RxBool isPurchased = false.obs;
   Payment? paymentModel;
   List<int> listAge = [];
   RxInt distance = 0.obs;
   int initFCM = 0;
+  Rxn<ReviewModel> reviewModel = Rxn();
 
   @override
   onInit() async {
@@ -48,14 +47,34 @@ class GlobalController extends GetxController {
     super.onClose();
     streamCurrentUser?.cancel();
     streamPayment?.cancel();
+    streamSuspend?.cancel();
   }
 
   initAfterLogin() {
     listenUser();
     initPayment();
+    listenSuspend();
     for (int i = 18; i <= 99; i++) {
       listAge.add(i);
     }
+  }
+
+  listenSuspend() {
+    streamSuspend = queryDocDB("Review/${currentUser.value?.id}")
+        .snapshots()
+        .listen((event) async {
+      if (!event.exists) {
+        return;
+      }
+      if (kDebugMode) {
+        print(event.data());
+      }
+
+      reviewModel.value =
+          ReviewModel.fromJson(event.data() as Map<String, dynamic>);
+      reviewModel.value?.status?.value = reviewModel.value?.getStatus();
+      reviewModel.value?.reason?.value = reviewModel.value?.getReason();
+    });
   }
 
   initFirebaseMessaging() async {

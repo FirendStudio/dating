@@ -12,6 +12,7 @@ class Routes {
   static const DETAILPARTNER = '/profile-detailpartner';
   static const HOME = '/home';
   static const NOTIF = '/notif';
+  static const NOTIF_VIEW_CHAT = '/notif-view-chat';
   static const PAYMENT_DETAILS = '/payment-details';
   static const PAYMENT_SUBCRIPTION = '/payment-subcription';
   static const PROFILE = '/profile';
@@ -24,5 +25,6 @@ class Routes {
   static const Verify_Account = '/verify-account';
   static const Verify_Upload = '/verify-upload';
   static const WELCOME = '/welcome';
-  static const NOTIF_VIEW_CHAT = '/notif-view-chat';
+  static const SETTINGS_VIEW_VERIFIED_PROFILE =
+      '/settings-view-verified-profile';
 }

@@ -8,6 +8,7 @@ import 'package:hookup4u/infrastructure/navigation/routes.dart';
 import 'package:the_apple_sign_in/apple_sign_in_button.dart' as i;
 import '../../../infrastructure/dal/util/Global.dart';
 import '../../../infrastructure/dal/util/color.dart';
+import '../../../infrastructure/dal/util/session.dart';
 import 'controllers/auth_login.controller.dart';
 
 class AuthLoginScreen extends GetView<AuthLoginController> {
@@ -174,6 +175,7 @@ class AuthLoginScreen extends GetView<AuthLoginController> {
                           "You must agree our terms & conditions to use this apps");
                       return;
                     }
+                    Session().saveLoginType("phone");
                     Get.toNamed(Routes.AUTH_OTP, arguments: {
                       "updateNumber": false,
                     });
