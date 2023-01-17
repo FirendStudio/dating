@@ -6,8 +6,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/infrastructure/dal/util/general.dart';
+import 'package:hookup4u/presentation/dashboard/view/home/controllers/home.controller.dart';
 import '../../../../domain/core/model/CustomTapModel.dart';
 import '../../../../domain/core/model/user_model.dart';
+import '../../../../infrastructure/dal/controller/global_controller.dart';
+import '../../../../infrastructure/dal/util/Global.dart';
 import '../../../../infrastructure/dal/util/color.dart';
 
 class ProfileEditController extends GetxController {
@@ -144,7 +147,7 @@ class ProfileEditController extends GetxController {
     }
 
     if (updateMap.length > 0) {
-      queryCollectionDB("Users")
+      await queryCollectionDB("Users")
           .doc(globalController.currentUser.value?.id)
           .set(updateMap, SetOptions(merge: true));
     }

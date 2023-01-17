@@ -9,7 +9,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:the_apple_sign_in/the_apple_sign_in.dart';
 import '../../../domain/core/model/VerifyModel.dart';
@@ -19,6 +18,7 @@ import '../../../infrastructure/dal/controller/global_controller.dart';
 import '../../../infrastructure/dal/util/Global.dart';
 import '../../../infrastructure/dal/util/general.dart';
 import '../../../infrastructure/navigation/routes.dart';
+import '../../dashboard/view/home/controllers/home.controller.dart';
 
 class SettingsController extends GetxController {
   static const your_client_id = '709280423766575';
@@ -97,10 +97,10 @@ class SettingsController extends GetxController {
   }
 
   @override
-  void onClose() {
+  Future<void> onClose() async {
     super.onClose();
     if (changeValues.length > 0) {
-      updateData();
+      await updateData();
     }
   }
 

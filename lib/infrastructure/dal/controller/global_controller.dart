@@ -12,6 +12,7 @@ import 'package:hookup4u/infrastructure/dal/util/general.dart';
 import 'package:hookup4u/infrastructure/dal/util/session.dart';
 import 'package:hookup4u/infrastructure/navigation/routes.dart';
 import '../../../domain/core/model/Payment.dart';
+import '../../../presentation/dashboard/view/home/controllers/home.controller.dart';
 import '../services/fcm_service.dart';
 import '../util/local_notif.dart';
 
@@ -117,6 +118,13 @@ class GlobalController extends GetxController {
       currentUser.value = tempUser;
       currentUser.value!.relasi.value =
           await Global().getRelationship(tempUser.id);
+      bool cek = Get.isRegistered<HomeController>();
+      if(kDebugMode){
+        print("Cek Home is registered : " + cek.toString());
+      }
+      if (cek) {
+        Get.find<HomeController>().initUser();
+      }
       initFirebaseMessaging();
     });
   }

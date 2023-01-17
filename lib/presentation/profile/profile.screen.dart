@@ -192,7 +192,7 @@ class ProfileScreen extends GetView<ProfileController> {
                                   backgroundColor: primaryColor,
                                   child: Icon(
                                     Icons.add_a_photo,
-                                    color: Color.fromARGB(255, 112, 55, 55),
+                                    color: Colors.white,
                                     size: 32,
                                   ),
                                   onPressed: () {
