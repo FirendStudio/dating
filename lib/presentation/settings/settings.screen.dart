@@ -319,6 +319,7 @@ class SettingsScreen extends GetView<SettingsController> {
                                     ),
                                   ),
                                   onTap: () async {
+                                    // print(await Global().getLocationCoordinates());
                                     // await Get.to(() => UploadLocationWidget());
                                   },
                                 ),

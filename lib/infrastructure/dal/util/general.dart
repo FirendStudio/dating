@@ -8,6 +8,7 @@ import '../controller/global_controller.dart';
 RxDouble progressLoading = 0.0.obs;
 String env = ConfigEnvironments.getEnvironments()['path']!;
 String mapboxApi = "pk.************000000000XnrcvFYOz9sHe7CjA";
+String googleApiKey = "AIzaSyB0Pw_knFRuZFHwVY6-JkMv7IjHKrMFq-A";
 var globalController = Get.put(GlobalController());
 
 CollectionReference<Map<String, dynamic>> queryCollectionDB(String path) {

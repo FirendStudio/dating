@@ -1,12 +1,14 @@
 import 'dart:io';
 import 'dart:math';
+// import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:hookup4u/presentation/notif/controllers/notif.controller.dart';
 import 'package:image/image.dart' as i;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_geocoder/geocoder.dart';
+// import 'package:flutter_geocoder/geocoder.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/infrastructure/dal/util/color.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -104,20 +106,37 @@ class Global {
   Future<Map<String, dynamic>?> coordinatesToAddress(
       {latitude, longitude}) async {
     try {
+      // print(lati)
+      List<Placemark> result =
+          await placemarkFromCoordinates(latitude, longitude);
       Map<String, dynamic> obj = {};
-      final coordinates = Coordinates(latitude, longitude);
-      List<Address> result =
-          await Geocoder.local.findAddressesFromCoordinates(coordinates);
       String currentAddress =
-          "${result.first.locality ?? ''} ${result.first.subLocality ?? ''} ${result.first.subAdminArea ?? ''} ${result.first.countryName ?? ''}, ${result.first.postalCode ?? ''}";
-      print("Address : " + result.first.toMap().toString());
-      print(currentAddress);
+          "${result.first.locality ?? ''} ${result.first.subLocality ?? ''} ${result.first.administrativeArea ?? ''} ${result.first.country ?? ''}, ${result.first.postalCode ?? ''}";
+      
+      if (kDebugMode) {
+        print(result);
+        print("Address : " + result.first.toJson().toString());
+        print(currentAddress);
+      }
       obj['PlaceName'] = currentAddress;
       obj['latitude'] = latitude;
       obj['longitude'] = longitude;
-      obj['countryName'] = result.first.countryName ?? "";
-      obj['countryID'] = result.first.countryCode ?? "";
-      obj['data'] = result.first.toMap();
+      obj['countryName'] = result.first.country ?? "";
+      obj['countryID'] = result.first.isoCountryCode ?? "";
+      obj['data'] = result.first.toJson();
+      // final coordinates = Coordinates(latitude, longitude);
+      // List<Address> result = await Geocoder.google(googleApiKey).findAddressesFromCoordinates(coordinates);
+      // await Geocoder.local.findAddressesFromCoordinates(coordinates);
+      // String currentAddress =
+      //     "${result.first.locality ?? ''} ${result.first.subLocality ?? ''} ${result.first.subAdminArea ?? ''} ${result.first.countryName ?? ''}, ${result.first.postalCode ?? ''}";
+      // print("Address : " + result.first.toMap().toString());
+      // print(currentAddress);
+      // obj['PlaceName'] = currentAddress;
+      // obj['latitude'] = latitude;
+      // obj['longitude'] = longitude;
+      // obj['countryName'] = result.first.countryName ?? "";
+      // obj['countryID'] = result.first.countryCode ?? "";
+      // obj['data'] = result.first.toMap();
 
       return obj;
     } catch (_) {

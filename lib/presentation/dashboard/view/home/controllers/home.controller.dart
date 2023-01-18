@@ -153,7 +153,7 @@ class HomeController extends GetxController {
     }
     if (currentUser.showMe
         .contains(cekGender(tempUser.editInfo?['userGender']))) {
-      print("Masuk cek Show Me");
+      // print("Masuk cek Show Me");
       return false;
     }
     return true;
