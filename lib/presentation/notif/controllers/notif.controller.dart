@@ -106,7 +106,7 @@ class NotifController extends GetxController {
   filterMatches() async {
     listMatchUser.value = [];
     listMatchUserAll.forEach((element) {
-      Timestamp timeStamp = element['timestamp'];
+      Timestamp timeStamp = element['timestamp'] ?? Timestamp.now();
       var mapTemp = MatchModel(
         matches: element['Matches'],
         isRead: element['isRead'],

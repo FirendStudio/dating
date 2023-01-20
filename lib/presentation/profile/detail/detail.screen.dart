@@ -413,7 +413,7 @@ class DetailScreen extends GetView<DetailController> {
                                 size: 30,
                               ),
                               onPressed: () async {
-                                bool cek = Global().searchFirstUser(
+                                bool cek = await Global().searchFirstUser(
                                   Get.find<HomeController>().checkedUser,
                                   controller.user.id,
                                 );
@@ -434,7 +434,7 @@ class DetailScreen extends GetView<DetailController> {
                                 size: 30,
                               ),
                               onPressed: () async {
-                                bool cek = Global().searchFirstUser(
+                                bool cek = await Global().searchFirstUser(
                                   Get.find<HomeController>().checkedUser,
                                   controller.user.id,
                                 );

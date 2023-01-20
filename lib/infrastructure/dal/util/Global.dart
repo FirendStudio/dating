@@ -112,7 +112,7 @@ class Global {
       Map<String, dynamic> obj = {};
       String currentAddress =
           "${result.first.locality ?? ''} ${result.first.subLocality ?? ''} ${result.first.administrativeArea ?? ''} ${result.first.country ?? ''}, ${result.first.postalCode ?? ''}";
-      
+
       if (kDebugMode) {
         print(result);
         print("Address : " + result.first.toJson().toString());
@@ -891,12 +891,11 @@ class Global {
     return File(file.path);
   }
 
-  bool searchFirstUser(List<String> list, String idUser) {
-    var temp = list.firstWhereOrNull((element) => idUser == element);
-    if (temp != null) {
-      return true;
-    }
-    return false;
+  Future<bool> searchFirstUser(List<String> list, String idUser) async {
+    DocumentSnapshot userdoc =
+        await queryCollectionDB("Users").doc("$idUser").get();
+    var temp = userdoc.exists;
+    return temp;
   }
 
   // Future<void> handleCameraAndMic(callType) async {

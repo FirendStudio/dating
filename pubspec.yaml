@@ -1,5 +1,5 @@
 name: hookup4u
-version: 1.0.12+51
+version: 1.0.12+52
 description: A new Flutter application.
 environment: 
   sdk: '>=2.18.2 <3.0.0'
