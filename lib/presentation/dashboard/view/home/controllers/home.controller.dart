@@ -41,6 +41,9 @@ class HomeController extends GetxController {
   }
 
   initUser() async {
+    if (isLoading.value) {
+      return;
+    }
     isLoading.value = true;
     listUsers.value = [];
     listReviewUser.value = [];
@@ -82,6 +85,9 @@ class HomeController extends GetxController {
     });
     print("Count All User : " + temp.length.toString());
     for (var doc in temp) {
+      if (doc.id == "5VZ3Fp0NMgX5X3iDYW4vnCCxni22") {
+        print("Masuk sni woy");
+      }
       Map<String, dynamic> json = doc.data();
       if (json.containsKey("age")) {
         UserModel tempUser = UserModel.fromJson(json);
