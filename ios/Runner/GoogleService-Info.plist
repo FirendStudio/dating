@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>320445830507-rmqfclnkr3d182vb5flk1ho3b1ismkn1.apps.googleusercontent.com</string>
+	<string>320445830507-qhl3qfrakcgcaidgns21k3kklbel9f6e.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.320445830507-rmqfclnkr3d182vb5flk1ho3b1ismkn1</string>
+	<string>com.googleusercontent.apps.320445830507-qhl3qfrakcgcaidgns21k3kklbel9f6e</string>
 	<key>ANDROID_CLIENT_ID</key>
 	<string>320445830507-4np897s0ir6lj427il1rea2f8voerhae.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
@@ -15,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>com.jab.jablesscupid</string>
+	<string>com.jab.unjabbed</string>
 	<key>PROJECT_ID</key>
 	<string>jablesscupid</string>
 	<key>STORAGE_BUCKET</key>
@@ -31,6 +31,6 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:320445830507:ios:3c341f6dd2e56d006e282e</string>
+	<string>1:320445830507:ios:f5d47ed447902eca6e282e</string>
 </dict>
 </plist>
