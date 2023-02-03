@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hookup4u/domain/core/model/ChatModel.dart';
 import 'package:hookup4u/domain/core/model/MatchModel.dart';
 import 'package:hookup4u/infrastructure/dal/controller/global_controller.dart';
 import '../../../domain/core/model/Relationship.dart';
@@ -24,12 +23,14 @@ class NotifController extends GetxController {
       listStreamRoom = RxList();
 
   initAll() {
+    debugPrint("call--notification-initAll()");
     getLikedByList();
     getMatches();
   }
 
   @override
   void onInit() {
+    debugPrint("call--notification-onInit()");
     super.onInit();
     initAll();
   }
@@ -77,6 +78,7 @@ class NotifController extends GetxController {
       print(ondata.docs.length);
       if (ondata.docs.isNotEmpty) {
         listMatchUserAll.assignAll(ondata.docs);
+
         filterMatches();
         filterLiked();
       }
@@ -101,6 +103,7 @@ class NotifController extends GetxController {
         }
       }
     }
+    listLikedUser.refresh();
   }
 
   filterMatches() async {
@@ -133,6 +136,7 @@ class NotifController extends GetxController {
         }
       }
     }
+    listMatchUser.refresh();
   }
 
   Future<int> getNotifLeave(String idChat) async {
@@ -220,7 +224,7 @@ class NotifController extends GetxController {
       idUser: globalController.currentUser.value?.id ?? "",
     );
 
-    // print(cek);
+    print(cek);
     cek = await addNewPendingReq(
       context2: context2,
       userName: globalController.currentUser.value?.name ?? "",

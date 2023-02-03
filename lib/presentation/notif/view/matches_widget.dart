@@ -23,7 +23,9 @@ class MatchesWidget extends GetView<NotifController> {
         child: ListView.builder(
           itemCount: controller.listMatchUser.length,
           itemBuilder: (BuildContext context, int index) {
-            MatchModel doc = controller.listMatchUser[index];
+          MatchModel doc
+             = controller.listMatchUser[index];
+            debugPrint("in MatchesWidget doc type=====>${doc.type.value}");
             if (doc.type.value == 2) {
               return blockedWidget(doc, context);
             }
@@ -151,12 +153,15 @@ class MatchesWidget extends GetView<NotifController> {
               if (!resultChat.exists) {
                 Global().setNewOptionMessage(idChat);
               }
+
               Global().disconnectWidget(
                 Get.find<GlobalController>().currentUser.value!,
                 tempuser,
                 idChat,
                 'notif',
+                doc:doc
               );
+
             },
             backgroundColor: Color(0xFF0392CF),
             foregroundColor: Colors.white,

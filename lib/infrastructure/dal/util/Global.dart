@@ -1,22 +1,26 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:math';
-// import 'package:geolocator/geolocator.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:hookup4u/presentation/notif/controllers/notif.controller.dart';
-import 'package:image/image.dart' as i;
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
+// import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
+
 // import 'package:flutter_geocoder/geocoder.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/infrastructure/dal/util/color.dart';
+import 'package:hookup4u/presentation/notif/controllers/notif.controller.dart';
+import 'package:image/image.dart' as i;
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:location/location.dart' as loc;
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:location/location.dart' as loc;
 
 import '../../../domain/core/model/Relationship.dart';
 import '../../../domain/core/model/user_model.dart';
@@ -27,6 +31,7 @@ import 'general.dart';
 class Global {
   static String font = "Arial";
   ImagePicker imagePicker = ImagePicker();
+
   String readTimestamp(int timestamp) {
     var now = new DateTime.now();
     var format = new DateFormat('HH:mm a');
@@ -54,8 +59,7 @@ class Global {
   }
 
   showInfoDialog(String text) {
-    Get.snackbar("Information", text,
-        colorText: primaryColor, backgroundColor: Colors.white);
+    Get.snackbar("Information", text, colorText: primaryColor, backgroundColor: Colors.white);
   }
 
   launchURL(String url) async {
@@ -66,8 +70,7 @@ class Global {
     }
   }
 
-  Map<String, dynamic> getLoginType(
-      String metode, String uid, Map<String, dynamic> loginID) {
+  Map<String, dynamic> getLoginType(String metode, String uid, Map<String, dynamic> loginID) {
     if (metode == "apple.com" || metode == "apple") {
       loginID['apple'] = uid;
       print("Login with apple");
@@ -103,12 +106,10 @@ class Global {
     }
   }
 
-  Future<Map<String, dynamic>?> coordinatesToAddress(
-      {latitude, longitude}) async {
+  Future<Map<String, dynamic>?> coordinatesToAddress({latitude, longitude}) async {
     try {
       // print(lati)
-      List<Placemark> result =
-          await placemarkFromCoordinates(latitude, longitude);
+      List<Placemark> result = await placemarkFromCoordinates(latitude, longitude);
       Map<String, dynamic> obj = {};
       String currentAddress =
           "${result.first.locality ?? ''} ${result.first.subLocality ?? ''} ${result.first.administrativeArea ?? ''} ${result.first.country ?? ''}, ${result.first.postalCode ?? ''}";
@@ -153,8 +154,7 @@ class Global {
   }
 
   Future<Relationship> getRelationship(String idUser) async {
-    DocumentSnapshot data =
-        await queryCollectionDB("Relationship").doc(idUser).get();
+    DocumentSnapshot data = await queryCollectionDB("Relationship").doc(idUser).get();
 
     if (!data.exists) {
       await setNewRelationship(idUser);
@@ -177,17 +177,13 @@ class Global {
       "updateAt": FieldValue.serverTimestamp()
     };
 
-    await queryCollectionDB("Relationship")
-        .doc(uid)
-        .set(newRelation, SetOptions(merge: true));
+    await queryCollectionDB("Relationship").doc(uid).set(newRelation, SetOptions(merge: true));
   }
 
   double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
     var p = 0.017453292519943295;
     var c = cos;
-    var a = 0.5 -
-        c((lat2 - lat1) * p) / 2 +
-        c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
+    var a = 0.5 - c((lat2 - lat1) * p) / 2 + c(lat1 * p) * c(lat2 * p) * (1 - c((lon2 - lon1) * p)) / 2;
     return 12742 * asin(sqrt(a));
   }
 
@@ -207,14 +203,10 @@ class Global {
         );
       },
     );
-    var data = await queryCollectionDB("Users")
-        .doc(userModel.relasi.value!.partner!.partnerId)
-        .get();
+    var data = await queryCollectionDB("Users").doc(userModel.relasi.value!.partner!.partnerId).get();
 
-    UserModel userSecondPartner =
-        UserModel.fromJson(data.data() as Map<String, dynamic>);
-    userSecondPartner.relasi.value =
-        await getRelationship(userModel.relasi.value!.partner!.partnerId);
+    UserModel userSecondPartner = UserModel.fromJson(data.data() as Map<String, dynamic>);
+    userSecondPartner.relasi.value = await getRelationship(userModel.relasi.value!.partner!.partnerId);
     Get.back();
     userSecondPartner.distanceBW = Global()
         .calculateDistance(
@@ -248,14 +240,10 @@ class Global {
     );
     UserModel? userSecondPartner;
     if (userModel.relasi.value!.partner!.partnerId.isNotEmpty) {
-      var data = await queryCollectionDB("Users")
-          .doc(userModel.relasi.value?.partner?.partnerId)
-          .get();
+      var data = await queryCollectionDB("Users").doc(userModel.relasi.value?.partner?.partnerId).get();
 
-      userSecondPartner =
-          UserModel.fromJson(data.data() as Map<String, dynamic>);
-      userSecondPartner.relasi.value =
-          await getRelationship(userModel.relasi.value!.partner!.partnerId);
+      userSecondPartner = UserModel.fromJson(data.data() as Map<String, dynamic>);
+      userSecondPartner.relasi.value = await getRelationship(userModel.relasi.value!.partner!.partnerId);
       userSecondPartner.distanceBW = Global()
           .calculateDistance(
             currentUser.coordinates?['latitude'] ?? 0,
@@ -285,9 +273,8 @@ class Global {
         .doc(userModel.id)
         .set({
       'userName': userModel.name,
-      'pictureUrl': (userModel.imageUrl[0].runtimeType == String)
-          ? userModel.imageUrl[0]
-          : userModel.imageUrl[0]['url'],
+      'pictureUrl':
+          (userModel.imageUrl[0].runtimeType == String) ? userModel.imageUrl[0] : userModel.imageUrl[0]['url'],
       'DislikedUser': userModel.id,
       'timestamp': DateTime.now(),
     }, SetOptions(merge: true));
@@ -311,8 +298,7 @@ class Global {
       cek = true;
       print("Masuk sini");
 
-      Get.find<GlobalController>()
-          .sendMatchedFCM(idUser: userModel.id, name: userModel.name);
+      Get.find<GlobalController>().sendMatchedFCM(idUser: userModel.id, name: userModel.name);
       showDialog(
           context: Get.context!,
           builder: (ctx) {
@@ -331,10 +317,7 @@ class Global {
                         child: Text(
                       "It's a match\n With ",
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                          color: primaryColor,
-                          fontSize: 30,
-                          decoration: TextDecoration.none),
+                      style: TextStyle(color: primaryColor, fontSize: 30, decoration: TextDecoration.none),
                     )
                         // .tr(args: ['${widget.users[index].name}']),
                         ),
@@ -343,60 +326,39 @@ class Global {
               ),
             );
           });
-      await queryCollectionDB('Users')
-          .doc(currentUser.id)
-          .collection("Matches")
-          .doc(userModel.id)
-          .set({
+      await queryCollectionDB('Users').doc(currentUser.id).collection("Matches").doc(userModel.id).set({
         'Matches': userModel.id,
         'isRead': false,
         'userName': userModel.name,
-        'pictureUrl': (userModel.imageUrl[0].runtimeType == String)
-            ? userModel.imageUrl[0]
-            : userModel.imageUrl[0]['url'],
+        'pictureUrl':
+            (userModel.imageUrl[0].runtimeType == String) ? userModel.imageUrl[0] : userModel.imageUrl[0]['url'],
         'timestamp': FieldValue.serverTimestamp()
       }, SetOptions(merge: true));
-      await queryCollectionDB('Users')
-          .doc(userModel.id)
-          .collection("Matches")
-          .doc(currentUser.id)
-          .set({
+      await queryCollectionDB('Users').doc(userModel.id).collection("Matches").doc(currentUser.id).set({
         'Matches': currentUser.id,
         'userName': currentUser.name,
-        'pictureUrl': (currentUser.imageUrl[0].runtimeType == String)
-            ? currentUser.imageUrl[0]
-            : currentUser.imageUrl[0]['url'],
+        'pictureUrl':
+            (currentUser.imageUrl[0].runtimeType == String) ? currentUser.imageUrl[0] : currentUser.imageUrl[0]['url'],
         'isRead': false,
         'timestamp': FieldValue.serverTimestamp()
       }, SetOptions(merge: true));
     }
 
     if (!cek) {
-      Get.find<GlobalController>()
-          .sendLikedFCM(idUser: userModel.id, name: userModel.name);
+      Get.find<GlobalController>().sendLikedFCM(idUser: userModel.id, name: userModel.name);
     }
 
-    await queryCollectionDB('Users')
-        .doc(currentUser.id)
-        .collection("CheckedUser")
-        .doc(userModel.id)
-        .set({
+    await queryCollectionDB('Users').doc(currentUser.id).collection("CheckedUser").doc(userModel.id).set({
       'userName': userModel.name,
-      'pictureUrl': (userModel.imageUrl[0].runtimeType == String)
-          ? userModel.imageUrl[0]
-          : userModel.imageUrl[0]['url'],
+      'pictureUrl':
+          (userModel.imageUrl[0].runtimeType == String) ? userModel.imageUrl[0] : userModel.imageUrl[0]['url'],
       'LikedUser': userModel.id,
       'timestamp': FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
-    await queryCollectionDB('Users')
-        .doc(userModel.id)
-        .collection("LikedBy")
-        .doc(currentUser.id)
-        .set({
+    await queryCollectionDB('Users').doc(userModel.id).collection("LikedBy").doc(currentUser.id).set({
       'userName': currentUser.name,
-      'pictureUrl': (currentUser.imageUrl[0].runtimeType == String)
-          ? currentUser.imageUrl[0]
-          : currentUser.imageUrl[0]['url'],
+      'pictureUrl':
+          (currentUser.imageUrl[0].runtimeType == String) ? currentUser.imageUrl[0] : currentUser.imageUrl[0]['url'],
       'LikedBy': currentUser.id,
       'timestamp': FieldValue.serverTimestamp()
     }, SetOptions(merge: true));
@@ -439,8 +401,7 @@ class Global {
     });
   }
 
-  leaveWidget(
-      UserModel sender, UserModel second, String idChat, String type) async {
+  leaveWidget(UserModel sender, UserModel second, String idChat, String type) async {
     return await showDialog(
       context: Get.context!,
       builder: (BuildContext context) {
@@ -469,8 +430,7 @@ class Global {
                     Expanded(
                       flex: 1,
                       child: InkWell(
-                        onTap: () =>
-                            leaveFunction(sender, second, idChat, type),
+                        onTap: () => leaveFunction(sender, second, idChat, type),
                         child: Container(
                           margin: EdgeInsets.only(
                             left: 0,
@@ -544,8 +504,7 @@ class Global {
     );
   }
 
-  leaveFunction(
-      UserModel sender, UserModel second, String idChat, String type) async {
+  leaveFunction(UserModel sender, UserModel second, String idChat, String type) async {
     await queryCollectionDB("chats").doc(idChat).collection('messages').add({
       'type': 'Leave',
       'text': "${sender.name} has left the conversation.",
@@ -566,8 +525,7 @@ class Global {
     Get.back();
   }
 
-  restoreLeaveWidget(UserModel sender, UserModel second, String idMessage,
-      String idChat, String type) async {
+  restoreLeaveWidget(UserModel sender, UserModel second, String idMessage, String idChat, String type) async {
     return await showDialog(
       context: Get.context!,
       builder: (BuildContext context) {
@@ -595,8 +553,7 @@ class Global {
                     Expanded(
                       flex: 1,
                       child: InkWell(
-                        onTap: () => restoreLeaveFunction(
-                            sender, second, idMessage, idChat, type),
+                        onTap: () => restoreLeaveFunction(sender, second, idMessage, idChat, type),
                         child: Container(
                           margin: EdgeInsets.only(
                             left: 0,
@@ -667,14 +624,8 @@ class Global {
     );
   }
 
-  restoreLeaveFunction(UserModel sender, UserModel second, String idMessage,
-      String chatId, String type) async {
-    await queryCollectionDB("chats")
-        .doc(chatId)
-        .collection('messages')
-        .doc(idMessage)
-        .delete()
-        .then((value) async {
+  restoreLeaveFunction(UserModel sender, UserModel second, String idMessage, String chatId, String type) async {
+    await queryCollectionDB("chats").doc(chatId).collection('messages').doc(idMessage).delete().then((value) async {
       await Get.find<NotifController>().filterMatches();
       Get.find<GlobalController>().sendRestoreLeaveFCM(
         idUser: second.id,
@@ -687,8 +638,7 @@ class Global {
     });
   }
 
-  disconnectWidget(
-      UserModel sender, UserModel second, String idChat, String type) async {
+  disconnectWidget(UserModel sender, UserModel second, String idChat, String type, {doc}) async {
     return await showDialog(
       context: Get.context!,
       builder: (BuildContext context) {
@@ -717,8 +667,9 @@ class Global {
                     Expanded(
                       flex: 1,
                       child: InkWell(
-                        onTap: () =>
-                            disconnectFunction(sender, second, idChat, type),
+                        onTap: () {
+                          disconnectFunction(sender, second, idChat, type, doc);
+                        },
                         child: Container(
                           margin: EdgeInsets.only(
                             left: 0,
@@ -792,47 +743,73 @@ class Global {
     );
   }
 
-  disconnectFunction(
-      UserModel sender, UserModel second, String chatId, String type) async {
-    var result = await queryCollectionDB("chats")
-        .doc(chatId)
-        .collection('messages')
-        .orderBy('time', descending: true)
-        .limit(1)
-        .get();
-
-    if (result.docs.isNotEmpty && result.docs.first['type'] == "Leave") {
-      if (kDebugMode) {
-        print(result.docs.first['type']);
-      }
-      await queryCollectionDB("chats")
+  disconnectFunction(UserModel sender, UserModel second, String chatId, String type, doc) async {
+    try {
+      var result = await queryCollectionDB("chats")
           .doc(chatId)
           .collection('messages')
-          .doc(result.docs.first.id)
-          .delete();
-    }
-    // Get.back();
-    // return;
-    await queryCollectionDB("chats").doc(chatId).collection('messages').add({
-      'type': 'Disconnect',
-      'text': "${sender.name} has blocked you",
-      'sender_id': sender.id,
-      'receiver_id': second.id,
-      'isRead': false,
-      'image_url': "",
-      'time': FieldValue.serverTimestamp(),
-    });
-    queryCollectionDB("chats")
-        .doc(chatId)
-        .set({"active": false, "docId": chatId}, SetOptions(merge: true)).then(
-            (value) {
-      Get.find<GlobalController>().sendDisconnectFCM(
-        idUser: second.id,
-        name: Get.find<GlobalController>().currentUser.value?.name ?? "",
-      );
+          .orderBy('time', descending: true)
+          .limit(1)
+          .get();
+      if (result.docs.isNotEmpty && result.docs.first['type'] == "Leave") {
+        if (kDebugMode) {
+          print(result.docs.first['type']);
+        }
+        await queryCollectionDB("chats")
+            .doc(chatId)
+            .collection('messages')
+            .doc(result.docs.first.id)
+            .delete()
+            .onError((error, stackTrace) {
+          debugPrint("error-disconnectFunction--delete messages-->$error");
+        });
+      }
+      // Get.back();
+      // return;
+      await queryCollectionDB("chats").doc(chatId).collection('messages').add({
+        'type': 'Disconnect',
+        'text': "${sender.name} has blocked you",
+        'sender_id': sender.id,
+        'receiver_id': second.id,
+        'isRead': false,
+        'image_url': "",
+        'time': FieldValue.serverTimestamp(),
+      });
+
+      queryCollectionDB("chats")
+          .doc(chatId)
+          .set({"active": false, "docId": chatId}, SetOptions(merge: true)).then((value) {
+        Get.find<GlobalController>().sendDisconnectFCM(
+          idUser: second.id,
+          name: Get.find<GlobalController>().currentUser.value?.name ?? "",
+        );
+
+        // Get.to(()=>Tabbar(null, null));
+      }).onError((error, stackTrace) {
+        debugPrint("error-disconnectFunction--set active false in  messages-->$error");
+        Get.back();
+      });
+      print("matches type==before=${doc.type.value}");
+      doc.type.value = 2;
+      print("matches type===${doc.type.value}");
+      Get.find<NotifController>().filterMatches();
+      // Get.find<NotifController>().listLikedUser.refresh();
       Get.back();
-      // Get.to(()=>Tabbar(null, null));
-    });
+    /*  debugPrint("indexNotif.value disconnectFunction--before-->${Get.find<NotifController>().indexNotif.value}");
+      Get.find<NotifController>().indexNotif.value = 1;
+      debugPrint("indexNotif.value disconnectFunction--before-->${Get.find<NotifController>().indexNotif.value}");
+      Future.delayed(Duration(seconds: 1)).then((value) => {
+            Get.find<NotifController>().indexNotif.value = 0,
+            debugPrint("indexNotif.value disconnectFunction--after-->${Get.find<NotifController>().indexNotif.value}"),
+            Get.back()
+          });*/
+
+      // Get.offAllNamed(Routes.DASHBOARD, arguments: [
+      //   {"isFromNotification": true}
+      // ]);
+    } on Exception catch (e) {
+      debugPrint("error-disconnectFunction---->$e");
+    }
   }
 
   Future<File?> compressimage(File image) async {
@@ -840,8 +817,7 @@ class Global {
       final tempdir = await getTemporaryDirectory();
       final path = tempdir.path;
       i.Image imagefile = i.decodeImage(image.readAsBytesSync())!;
-      final compressedImagefile = File('$path.jpg')
-        ..writeAsBytesSync(i.encodeJpg(imagefile, quality: 80));
+      final compressedImagefile = File('$path.jpg')..writeAsBytesSync(i.encodeJpg(imagefile, quality: 80));
       return compressedImagefile;
     } catch (e) {
       print(e.toString());
@@ -865,8 +841,7 @@ class Global {
   }
 
   Future<File?> pickImage(ImageSource source, {bool metode = false}) async {
-    final XFile? file =
-        await imagePicker.pickImage(source: source, imageQuality: 50);
+    final XFile? file = await imagePicker.pickImage(source: source, imageQuality: 50);
 
     if (file == null) {
       return null;
@@ -892,24 +867,23 @@ class Global {
   }
 
   Future<bool> searchFirstUser(List<String> list, String idUser) async {
-    DocumentSnapshot userdoc =
-        await queryCollectionDB("Users").doc("$idUser").get();
+    DocumentSnapshot userdoc = await queryCollectionDB("Users").doc("$idUser").get();
     var temp = userdoc.exists;
     return temp;
   }
 
-  // Future<void> handleCameraAndMic(callType) async {
-  //   if (callType == "VideoCall") {
-  //     Map<Permission, PermissionStatus> statuses = await [
-  //       Permission.camera,
-  //       Permission.microphone,
-  //     ].request();
-  //     print(statuses);
-  //   } else {
-  //     Map<Permission, PermissionStatus> statuses = await [
-  //       Permission.microphone,
-  //     ].request();
-  //     print(statuses);
-  //   }
-  // }
+// Future<void> handleCameraAndMic(callType) async {
+//   if (callType == "VideoCall") {
+//     Map<Permission, PermissionStatus> statuses = await [
+//       Permission.camera,
+//       Permission.microphone,
+//     ].request();
+//     print(statuses);
+//   } else {
+//     Map<Permission, PermissionStatus> statuses = await [
+//       Permission.microphone,
+//     ].request();
+//     print(statuses);
+//   }
+// }
 }

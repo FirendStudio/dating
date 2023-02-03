@@ -1,14 +1,16 @@
-import 'package:flutter/material.dart';
-
-import 'package:get/get.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:hookup4u/presentation/notif/view/liked_widget.dart';
 import 'package:hookup4u/presentation/notif/view/matches_widget.dart';
+
 import '../../infrastructure/dal/util/color.dart';
 import 'controllers/notif.controller.dart';
+import 'view/AdminNotificationWidget.dart';
 
 class NotifScreen extends GetView<NotifController> {
   const NotifScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     // Get.put(NotifController());
@@ -29,24 +31,34 @@ class NotifScreen extends GetView<NotifController> {
           elevation: 0,
         ),
         backgroundColor: primaryColor,
-        bottomNavigationBar: CurvedNavigationBar(
-          color: primaryColor,
-          index: controller.indexNotif.value,
-          backgroundColor: Colors.white,
-          items: <Widget>[
-            Icon(
-              Icons.notifications_active,
-              size: 30,
-              color: Colors.white,
-            ),
-            Icon(
-              Icons.volunteer_activism,
-              size: 30,
-              color: Colors.white,
-            ),
-          ],
-          onTap: (index) {
-            controller.indexNotif.value = index;
+        bottomNavigationBar: Obx(
+          () {
+            debugPrint("in boottombar ${controller.indexNotif.value}");
+            return CurvedNavigationBar(
+              color: primaryColor,
+              index: controller.indexNotif.value,
+              backgroundColor: Colors.white,
+              items: <Widget>[
+                Icon(
+                  Icons.notifications_active,
+                  size: 30,
+                  color: Colors.white,
+                ),
+                Icon(
+                  Icons.volunteer_activism,
+                  size: 30,
+                  color: Colors.white,
+                ),
+                  Icon(
+                  Icons.person,
+                  size: 30,
+                  color: Colors.white,
+                ),
+              ],
+              onTap: (index) {
+                controller.indexNotif.value = index;
+              },
+            );
           },
         ),
         body: Container(
@@ -57,8 +69,7 @@ class NotifScreen extends GetView<NotifController> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              if (controller.indexNotif.value == 1 &&
-                  controller.listLikedUser.isNotEmpty)
+              if (controller.indexNotif.value == 1 && controller.listLikedUser.isNotEmpty)
                 Row(children: [
                   Padding(
                     padding: EdgeInsets.only(
@@ -67,19 +78,16 @@ class NotifScreen extends GetView<NotifController> {
                     ),
                     child: Text(
                       "Members that liked your profile!",
-                      style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.bold),
                     ),
                   ),
                 ]),
+              if(controller.indexNotif.value==2)
+                AdminNotificationWidget(),
               if (controller.indexNotif.value == 0) MatchesWidget(),
-              if (controller.indexNotif.value == 0 &&
-                  controller.listMatchUser.length < 5)
+              if (controller.indexNotif.value == 0 && controller.listMatchUser.length < 5)
                 Container(
-                  padding:
-                      EdgeInsets.only(top: 20, bottom: 20, right: 15, left: 15),
+                  padding: EdgeInsets.only(top: 20, bottom: 20, right: 15, left: 15),
                   margin: EdgeInsets.only(right: 15, left: 15, bottom: 30),
                   decoration: BoxDecoration(
                     color: Colors.yellow[100],

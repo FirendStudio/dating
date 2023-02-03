@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -11,6 +12,7 @@ import 'package:hookup4u/infrastructure/dal/util/Global.dart';
 import 'package:hookup4u/infrastructure/dal/util/general.dart';
 import 'package:hookup4u/infrastructure/dal/util/session.dart';
 import 'package:hookup4u/infrastructure/navigation/routes.dart';
+
 import '../../../domain/core/model/Payment.dart';
 import '../../../presentation/dashboard/view/home/controllers/home.controller.dart';
 import '../services/fcm_service.dart';
@@ -21,6 +23,7 @@ class GlobalController extends GetxController {
   Rxn<UserModel> currentUser = Rxn();
   Map<String, dynamic> items = {};
   StreamSubscription<DocumentSnapshot>? streamCurrentUser;
+  StreamSubscription<QuerySnapshot>? streamUserCollection;
   StreamSubscription<DocumentSnapshot>? streamPayment;
   StreamSubscription<DocumentSnapshot>? streamSuspend;
   RxBool isPurchased = false.obs;
@@ -29,6 +32,7 @@ class GlobalController extends GetxController {
   RxInt distance = 0.obs;
   int initFCM = 0;
   Rxn<ReviewModel> reviewModel = Rxn();
+  List notificationTitleList = ["Matched", "Liked", "New Chat", "Leaving Chat", "Resume Chat", "Blocked Chat"];
 
   @override
   onInit() async {
@@ -53,6 +57,7 @@ class GlobalController extends GetxController {
 
   initAfterLogin() {
     listenUser();
+    listenUserCollection();
     initPayment();
     listenSuspend();
     for (int i = 18; i <= 99; i++) {
@@ -61,9 +66,7 @@ class GlobalController extends GetxController {
   }
 
   listenSuspend() {
-    streamSuspend = queryDocDB("Review/${currentUser.value?.id}")
-        .snapshots()
-        .listen((event) async {
+    streamSuspend = queryDocDB("Review/${currentUser.value?.id}").snapshots().listen((event) async {
       if (!event.exists) {
         return;
       }
@@ -71,8 +74,7 @@ class GlobalController extends GetxController {
         print(event.data());
       }
 
-      reviewModel.value =
-          ReviewModel.fromJson(event.data() as Map<String, dynamic>);
+      reviewModel.value = ReviewModel.fromJson(event.data() as Map<String, dynamic>);
       reviewModel.value?.status?.value = reviewModel.value?.getStatus();
       reviewModel.value?.reason?.value = reviewModel.value?.getReason();
     });
@@ -88,38 +90,60 @@ class GlobalController extends GetxController {
     if (kDebugMode) {
       print("Subcribe to ${currentUser.value?.id}");
     }
-    await FirebaseMessaging.instance
-        .getInitialMessage()
-        .then((RemoteMessage? message) {
+    await FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {
+      if(message!=null) {
+        checkNotifications(message);
+        debugPrint("notification--getInitialMessage-->${message.data.toString()}");
+      }
       if (kDebugMode) {
         print('Firebase Connect');
       }
     });
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      showNotification(message);
+      // debugPrint("notification--onMessage-->${message.data.toString()}");
+      checkNotifications(message);
+      showNotification(message, "onMessage");
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
-      showNotification(message);
+      checkNotifications(message);
+      showNotification(message, "onMessageOpenedApp");
     });
   }
 
+  checkNotifications(RemoteMessage message) async {
+      debugPrint("call checkNotifications---->${message.notification?.title.toString().trim()} ${message.notification?.body.toString().trim()} ");
+    if (message.notification != null) {
+      if (!notificationTitleList.contains(message.notification?.title.toString().trim())) {
+        UserModel currentUserTemp = Get.find<GlobalController>().currentUser.value!;
+
+        try {
+          await queryCollectionDB('/Users/${currentUserTemp.id}/notification').add({
+            "title": message.notification?.title.toString().trim(),
+            "body":   message.notification?.body.toString().trim(),
+            "time": FieldValue.serverTimestamp(),
+          }).then((value) => {debugPrint("successFully added notification data--->")});
+        } on Exception catch (e) {
+          debugPrint("checkNotifications----$e>");
+        }
+      }
+    }else{
+      debugPrint("call checkNotifications---else ->");
+    }
+  }
+
   listenUser() {
-    streamCurrentUser = queryDocDB(
-            "Users/${Get.find<GlobalController>().currentUser.value?.id}")
-        .snapshots()
-        .listen((event) async {
+    streamCurrentUser =
+        queryDocDB("Users/${Get.find<GlobalController>().currentUser.value?.id}").snapshots().listen((event) async {
       if (kDebugMode) {
         print(event.data());
       }
-      UserModel tempUser =
-          UserModel.fromJson(event.data() as Map<String, dynamic>);
+      UserModel tempUser = UserModel.fromJson(event.data() as Map<String, dynamic>);
       currentUser.value = tempUser;
-      currentUser.value!.relasi.value =
-          await Global().getRelationship(tempUser.id);
+      currentUser.value!.relasi.value = await Global().getRelationship(tempUser.id);
       bool cek = Get.isRegistered<HomeController>();
-      if(kDebugMode){
+      if (kDebugMode) {
         print("Cek Home is registered : " + cek.toString());
       }
       if (cek) {
@@ -127,6 +151,24 @@ class GlobalController extends GetxController {
       }
       initFirebaseMessaging();
     });
+  }
+
+  listenUserCollection() {
+    streamUserCollection =
+        FirebaseFirestore.instance.collection("Users").snapshots().listen((event) {
+          debugPrint("listen userData Successfully--->");
+
+
+          bool cek = Get.isRegistered<HomeController>();
+          if (kDebugMode) {
+            print("Cek Home is listenUserCollection : " + cek.toString());
+          }
+          if (cek) {
+            debugPrint("listenUserCollection-------->");
+            Get.find<HomeController>().initUser();
+          }
+        });
+
   }
 
   getAccessItems() async {
@@ -137,10 +179,7 @@ class GlobalController extends GetxController {
 
   initPayment() {
     print("Init Payment");
-    streamPayment = queryCollectionDB("Payment")
-        .doc(currentUser.value?.id)
-        .snapshots()
-        .listen((event) async {
+    streamPayment = queryCollectionDB("Payment").doc(currentUser.value?.id).snapshots().listen((event) async {
       if (!event.exists) {
         await setUpdatePayment(
           uid: currentUser.value?.id ?? "",
@@ -156,8 +195,7 @@ class GlobalController extends GetxController {
       if (paymentModel!.status == false) {
         isPurchased.value = false;
       }
-      if (paymentModel!.status == true &&
-          paymentModel!.date!.isBefore(DateTime.now())) {
+      if (paymentModel!.status == true && paymentModel!.date!.isBefore(DateTime.now())) {
         isPurchased.value = false;
         await setUpdatePayment(
           uid: currentUser.value?.id ?? "",
@@ -212,20 +250,14 @@ class GlobalController extends GetxController {
         var userProvider = user.providerData[index];
         type = getTypeMetode(userProvider.providerId);
         print("Type : $type" + " ID : " + user.uid);
-        var result = await queryCollectionDB('Users')
-            .where(type, isEqualTo: user.uid)
-            .limit(1)
-            .get();
+        var result = await queryCollectionDB('Users').where(type, isEqualTo: user.uid).limit(1).get();
         data = result;
         if (result.docs.isNotEmpty) {
           break;
         }
       }
     } else {
-      data = await queryCollectionDB('Users')
-          .where(type, isEqualTo: user.uid)
-          .limit(1)
-          .get();
+      data = await queryCollectionDB('Users').where(type, isEqualTo: user.uid).limit(1).get();
     }
     return data;
   }
@@ -282,7 +314,9 @@ class GlobalController extends GetxController {
       print("ID User : " + (currentUser.value?.id ?? ""));
     }
     initAfterLogin();
-    Get.offAllNamed(Routes.DASHBOARD);
+    Get.offAllNamed(
+      Routes.DASHBOARD,
+    );
   }
 
   Future<void> addNewLoginTypeUser(User user, String metode) async {
@@ -302,8 +336,7 @@ class GlobalController extends GetxController {
     var userID = "";
     userID = user.uid;
     // print("Masuk gak ya");
-    Map<String, dynamic> userModel =
-        userSnapshot.docs.first.data() as Map<String, dynamic>;
+    Map<String, dynamic> userModel = userSnapshot.docs.first.data() as Map<String, dynamic>;
 
     print(userModel);
     loginID = {
@@ -318,9 +351,7 @@ class GlobalController extends GetxController {
     Map<String, dynamic> data = {
       "LoginID": loginID,
     };
-    await queryCollectionDB("Users")
-        .doc(userID)
-        .set(data, SetOptions(merge: true));
+    await queryCollectionDB("Users").doc(userID).set(data, SetOptions(merge: true));
   }
 
   firstAddUser({
@@ -355,20 +386,14 @@ class GlobalController extends GetxController {
       'phoneNumber': auth.currentUser!.phoneNumber,
       'timestamp': FieldValue.serverTimestamp()
     });
-    await queryCollectionDB("Users")
-        .doc(auth.currentUser!.uid)
-        .set(dataExisting, SetOptions(merge: true));
+    await queryCollectionDB("Users").doc(auth.currentUser!.uid).set(dataExisting, SetOptions(merge: true));
   }
 
   sendMatchedFCM({required String idUser, required String name}) async {
-    showSimpleNotification(
-        title: "Matched", body: "You are matched with $name");
+    showSimpleNotification(title: "Matched", body: "You are matched with $name");
     // UserModel userFCM = Get.find<TabsController>().getUserSelected(idUser);
     String toParams = "/topics/" + idUser;
-    var data = {
-      "title": "Matched",
-      "body": "You are matched with ${currentUser.value?.name}"
-    };
+    var data = {"title": "Matched", "body": "You are matched with ${currentUser.value?.name}"};
     print(data);
     var response = await FCMService().sendFCM(data: data, to: toParams);
     if (response.statusCode == 200) {
@@ -390,18 +415,14 @@ class GlobalController extends GetxController {
       "body": "Someone just liked your profile! Tap to see if you're a match!",
       "idUser": idUser,
     };
-    var notif = {
-      "title": "Liked",
-      "body": "Someone just liked your profile! Tap to see if you're a match!"
-    };
+    var notif = {"title": "Liked", "body": "Someone just liked your profile! Tap to see if you're a match!"};
     if (kDebugMode) {
       print(data);
     }
-    var response = await FCMService()
-        .sendCustomFCM(data: data, to: toParams, notif: notif);
+    var response = await FCMService().sendCustomFCM(data: data, to: toParams, notif: notif);
     if (response.statusCode == 200) {
       var result = await response.stream.bytesToString();
-      print("Success Request FCM");
+      print("Success Request sendLikedFCM FCM");
       print(result);
       var data = jsonDecode(result);
     } else {
@@ -433,10 +454,7 @@ class GlobalController extends GetxController {
       print("Send Leave FCM");
     }
     String toParams = "/topics/" + idUser;
-    var data = {
-      "title": "Leaving Chat",
-      "body": "$name has left the conversation"
-    };
+    var data = {"title": "Leaving Chat", "body": "$name has left the conversation"};
     var response = await FCMService().sendFCM(data: data, to: toParams);
     if (response.statusCode == 200) {
       var result = await response.stream.bytesToString();
@@ -454,10 +472,7 @@ class GlobalController extends GetxController {
       print("Send Restore Leave FCM");
     }
     String toParams = "/topics/" + idUser;
-    var data = {
-      "title": "Resume Chat",
-      "body": "$name has resumed the conversation"
-    };
+    var data = {"title": "Resume Chat", "body": "$name has resumed the conversation"};
     var response = await FCMService().sendFCM(data: data, to: toParams);
     if (response.statusCode == 200) {
       var result = await response.stream.bytesToString();

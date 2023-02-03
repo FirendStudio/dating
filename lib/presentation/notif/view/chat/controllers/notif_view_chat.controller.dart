@@ -145,7 +145,7 @@ class NotifViewChatController extends GetxController {
     await queryCollectionDB("chats").doc(chatId).set({
       clearID: true,
     }, SetOptions(merge: true));
-    Get.offAllNamed(Routes.DASHBOARD);
+    Get.offAllNamed(Routes.DASHBOARD,);
   }
 
   Future<Null> sendText(String text, UserModel sender, UserModel second) async {

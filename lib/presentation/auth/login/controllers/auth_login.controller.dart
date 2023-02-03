@@ -2,9 +2,11 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 // import 'package:apple_sign_in/apple_sign_in.dart' as i;
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:hookup4u/infrastructure/dal/controller/global_controller.dart';
+import 'package:hookup4u/presentation/auth/login/RememberLoginDialog.dart';
 import 'package:the_apple_sign_in/the_apple_sign_in.dart';
 
 import '../../../../domain/core/model/custom_web_view.dart';
@@ -13,8 +15,7 @@ import '../../../../infrastructure/dal/util/session.dart';
 
 class AuthLoginController extends GetxController {
   static const your_client_id = '709280423766575';
-  static const your_redirect_url =
-      'https://jablesscupid.firebaseapp.com/__/auth/handler';
+  static const your_redirect_url = 'https://jablesscupid.firebaseapp.com/__/auth/handler';
   RxBool isChecked = false.obs;
   final GoogleSignIn googleSignIn = GoogleSignIn(
     scopes: <String>[
@@ -24,6 +25,24 @@ class AuthLoginController extends GetxController {
   );
   GoogleSignInAccount? googleUser;
 
+  @override
+  void onInit() {
+    if (Session().getLoginType() != "") {
+      WidgetsBinding.instance.addPostFrameCallback((_) => showRememberLoginDialog(Session().getLoginType()));
+    }
+    super.onInit();
+  }
+
+  showRememberLoginDialog(loginWith) {
+    showDialog(
+      barrierDismissible: false,
+      context: Get.context!,
+      builder: (context) => RememberLoginDialog(
+        loginWith: "fb",
+      ),
+    );
+  }
+
   Future<void> handleAppleLogin() async {
     User? user;
     final AuthorizationResult result = await TheAppleSignIn.performRequests([
@@ -32,7 +51,6 @@ class AuthLoginController extends GetxController {
     try {
       switch (result.status) {
         case AuthorizationStatus.authorized:
-
           // Store user ID
           Session().saveLoginType("apple");
           final AppleIdCredential appleIdCredential = result.credential!;
@@ -40,14 +58,10 @@ class AuthLoginController extends GetxController {
           OAuthProvider oAuthProvider = OAuthProvider("apple.com");
           final AuthCredential credential = oAuthProvider.credential(
             idToken: String.fromCharCodes(appleIdCredential.identityToken!),
-            accessToken:
-                String.fromCharCodes(appleIdCredential.authorizationCode!),
+            accessToken: String.fromCharCodes(appleIdCredential.authorizationCode!),
           );
 
-          user = (await Get.find<GlobalController>()
-                  .auth
-                  .signInWithCredential(credential))
-              .user;
+          user = (await Get.find<GlobalController>().auth.signInWithCredential(credential)).user;
           print('username ${user?.displayName} \n photourl ${user?.photoURL}');
           // await _setDataUser(currentUser);
           if (user == null) {
@@ -99,9 +113,7 @@ class AuthLoginController extends GetxController {
     );
     // Once signed in, return the UserCredential
     try {
-      var data = await Get.find<GlobalController>()
-          .auth
-          .signInWithCredential(credential);
+      var data = await Get.find<GlobalController>().auth.signInWithCredential(credential);
       if (kDebugMode) {
         print(Get.find<GlobalController>().auth.currentUser?.providerData);
       }
@@ -131,9 +143,7 @@ class AuthLoginController extends GetxController {
     if (result != null) {
       try {
         final facebookAuthCred = FacebookAuthProvider.credential(result);
-        user =
-            (await FirebaseAuth.instance.signInWithCredential(facebookAuthCred))
-                .user;
+        user = (await FirebaseAuth.instance.signInWithCredential(facebookAuthCred)).user;
         if (user == null) {
           return;
         }

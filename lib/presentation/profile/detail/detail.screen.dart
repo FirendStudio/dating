@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/presentation/dashboard/view/home/controllers/home.controller.dart';
-import 'package:hookup4u/presentation/notif/controllers/notif.controller.dart';
+
 import '../../../domain/core/interfaces/report/report_user.dart';
 import '../../../domain/core/model/user_model.dart';
 import '../../../infrastructure/dal/util/Global.dart';
@@ -413,6 +413,7 @@ class DetailScreen extends GetView<DetailController> {
                                 size: 30,
                               ),
                               onPressed: () async {
+                                debugPrint("dislove in notification--->");
                                 bool cek = await Global().searchFirstUser(
                                   Get.find<HomeController>().checkedUser,
                                   controller.user.id,
@@ -421,8 +422,9 @@ class DetailScreen extends GetView<DetailController> {
                                   Global().showInfoDialog("User not Found");
                                   return;
                                 }
-                                // Get.back();
                                 await Global().disloveFunction(controller.user);
+                                Get.back();
+
                               },
                             ),
                             FloatingActionButton(

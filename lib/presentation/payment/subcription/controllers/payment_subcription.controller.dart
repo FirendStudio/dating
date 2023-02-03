@@ -155,7 +155,7 @@ class PaymentSubcriptionController extends GetxController {
         ),
       );
       if (response.isTapConfirmButton) {
-        Get.offAllNamed(Routes.DASHBOARD);
+        Get.offAllNamed(Routes.DASHBOARD,);
       }
       return;
     } else if (purchase != null && purchase.status == PurchaseStatus.error) {

@@ -1,4 +1,5 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -20,10 +21,11 @@ showSimpleNotification({required String title, required String body}) async {
   );
 }
 
-showNotification(RemoteMessage? message) async {
+showNotification(RemoteMessage? message,String isFrom) async {
   RemoteNotification? notification = message?.notification;
   String? title = notification?.title ?? "";
   String? body = notification?.body ?? "";
+  debugPrint("notification--$isFrom-->${title +" "+ body}");
 
   const AndroidNotificationDetails androidplatformChannelSpecifics =
       AndroidNotificationDetails('your channel id', 'your channel name',

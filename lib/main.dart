@@ -74,7 +74,7 @@ void main() async {
       onSelectNotification: (String? payload) async {
     if (payload != null && payload.isNotEmpty) {
       debugPrint('notification payload: $payload');
-      // Get.find<NotificationController>().initPayload(payload);
+
     }
     // selectedNotificationPayload = payload;
     // selectNotificationSubject.add(payload);
@@ -117,6 +117,7 @@ class Main extends StatelessWidget {
           color: primaryColor
         ),
       ),
+
       initialRoute: initialRoute,
       getPages: Nav.routes,
     );

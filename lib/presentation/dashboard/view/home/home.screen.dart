@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -7,17 +8,18 @@ import 'package:hookup4u/domain/core/interfaces/loading.dart';
 import 'package:hookup4u/infrastructure/dal/controller/global_controller.dart';
 import 'package:hookup4u/infrastructure/dal/util/Global.dart';
 import 'package:hookup4u/infrastructure/dal/util/general.dart';
+
 import '../../../../domain/core/interfaces/report/report_user.dart';
 import '../../../../domain/core/model/user_model.dart';
 import '../../../../infrastructure/dal/util/color.dart';
 import 'controllers/home.controller.dart';
 
-class HomeScreen extends GetView<HomeController> {
-  const HomeScreen({Key? key}) : super(key: key);
+class HomeScreen extends StatelessWidget {
+  HomeScreen({Key? key}) : super(key: key);
+  final HomeController controller = Get.put(HomeController());
 
   @override
   Widget build(BuildContext context) {
-    Get.put(HomeController());
     return Obx(
       (() {
         if (controller.isLoading.value) {
@@ -82,12 +84,9 @@ class HomeScreen extends GetView<HomeController> {
                               size: 30,
                             ),
                             onPressed: () async {
-                              await Global().disloveFunction(controller
-                                  .listUsers[controller.indexUser.value]);
-                              controller.listUsers.remove(controller
-                                  .listUsers[controller.indexUser.value]);
-                              if (controller.listUsers.length ==
-                                  controller.indexUser.value) {
+                              await Global().disloveFunction(controller.listUsers[controller.indexUser.value]);
+                              controller.listUsers.remove(controller.listUsers[controller.indexUser.value]);
+                              if (controller.listUsers.length == controller.indexUser.value) {
                                 controller.indexUser.value--;
                               }
                             },
@@ -101,21 +100,98 @@ class HomeScreen extends GetView<HomeController> {
                               size: 30,
                             ),
                             onPressed: () async {
-                              await Global().loveUserFunction(controller
-                                  .listUsers[controller.indexUser.value]);
-                              controller.listUsers.remove(controller
-                                  .listUsers[controller.indexUser.value]);
+                              await Global().loveUserFunction(controller.listUsers[controller.indexUser.value]);
+                              controller.listUsers.remove(controller.listUsers[controller.indexUser.value]);
                               // print("Data User index ke 1 : " +
                               //     controller.indexUser.value.toString());
                               // print(controller.listUsers.length);
                               // print(controller.listUsers.length ==
                               //     controller.indexUser.value);
-                              if (controller.listUsers.length ==
-                                  controller.indexUser.value) {
+                              if (controller.listUsers.length == controller.indexUser.value) {
                                 controller.indexUser.value--;
                                 // print("Data User index ke 2 : " +
                                 //     controller.indexUser.value.toString());
                               }
+                            },
+                          ),
+                          FloatingActionButton(
+                            heroTag: UniqueKey(),
+                            backgroundColor: Colors.white,
+                            child: Icon(
+                              Icons.add,
+                              color: primaryColor,
+                              size: 30,
+                            ),
+                            onPressed: () async {
+                              Map<String, dynamic> dataExisting = {};
+
+                              dataExisting.addAll({'UserName': "demo"});
+
+                              dataExisting.addAll({
+                                'user_DOB': "2000-10-10 00:00:00.000",
+                                'age': 20,
+                              });
+
+                              dataExisting.addAll({
+                                "sexualOrientation": {'orientation': "straight", 'showOnProfile': false},
+                              });
+                              dataExisting.addAll({
+                                'desires': ["relationship"],
+                                'showdesires': false,
+                              });
+                              dataExisting.addAll({'status': "single", 'showstatus': false});
+                              dataExisting.addAll({
+                                'showGender': ['men', 'women']
+                              });
+                              dataExisting.addAll({
+                                'editInfo': {'university': "", 'userGender': "man", 'showOnProfile': false}
+                              });
+
+                              dataExisting.addAll(
+                                {
+                                  "listSwipedUser": [],
+                                  "verified": 0,
+                                  'location': {
+                                    'latitude': 21.2335577,
+                                    'longitude': 72.8640695,
+                                    'address': "Surat Uttran Gujarat India, 394105",
+                                    'countryName': "India",
+                                    'countryID': "IN",
+                                  },
+                                  'maximum_distance': 41000,
+                                  'age_range': {
+                                    'min': "18",
+                                    'max': "99",
+                                  },
+                                },
+                              );
+                              var imageData = {
+                                "url":
+                                    "https://firebasestorage.googleapis.com/v0/b/jablesscupid.appspot.com/o/users%2F01RmPHU9AUfCtkF8tFoqkueypcS2%2F799837372.jpg?alt=media&token=dbf07aba-f6a2-4928-9d46-7f93cccdadda",
+                                "show": "true"
+                              };
+                              Map<String, dynamic> LoginID = {
+                                "fb": "",
+                                "apple": "",
+                                "phone": "123456789",
+                                "google": "",
+                              };
+
+                              dataExisting.addAll({
+                                "LoginID": LoginID,
+                                "metode": "",
+                                'userId': "123456789",
+                                // 'UserName': user.displayName ?? '',
+                                'Pictures': [imageData],
+                                'phoneNumber': "123456789",
+                                'timestamp': FieldValue.serverTimestamp(),
+                                "verified": 3,
+                              });
+
+                              await queryCollectionDB("Users")
+                                  .doc("123456789")
+                                  .set(dataExisting, SetOptions(merge: true))
+                                  .then((value) => {debugPrint("add new user successfully-->")});
                             },
                           ),
                         ],
@@ -207,8 +283,7 @@ class HomeScreen extends GetView<HomeController> {
     return Obx(() {
       return CarouselSlider(
         options: CarouselOptions(
-          initialPage:
-              controller.listUsers.isNotEmpty ? controller.indexUser.value : 0,
+          initialPage: controller.listUsers.isNotEmpty ? controller.indexUser.value : 0,
           height: Get.height,
           viewportFraction: 1.0,
           enlargeCenterPage: false,
@@ -216,8 +291,7 @@ class HomeScreen extends GetView<HomeController> {
           onPageChanged: (index, reason) async {
             print("Index User : " + index.toString());
             controller.addLastSwiped(controller.listUsers[index]);
-            controller.listUsers[index] =
-                await controller.initNextSwipe(controller.listUsers[index]);
+            controller.listUsers[index] = await controller.initNextSwipe(controller.listUsers[index]);
             controller.indexImage.value = 0;
             controller.indexUser.value = index;
           },
@@ -229,11 +303,9 @@ class HomeScreen extends GetView<HomeController> {
               () {
                 bool cekPartner = false;
                 UserModel? userPartner;
-                if (value.relasi.value?.partner != null &&
-                    value.relasi.value!.partner!.partnerId.isNotEmpty) {
+                if (value.relasi.value?.partner != null && value.relasi.value!.partner!.partnerId.isNotEmpty) {
                   cekPartner = true;
-                  userPartner = controller
-                      .getUserSelected(value.relasi.value!.partner!.partnerId);
+                  userPartner = controller.getUserSelected(value.relasi.value!.partner!.partnerId);
                   if (userPartner != null) {
                     print("Cek isRelationship : " + userPartner.name);
                   }
@@ -247,29 +319,22 @@ class HomeScreen extends GetView<HomeController> {
                 String desiresText = "";
                 String interestText = "";
                 if (value.desires.isNotEmpty) {
-                  for (int index2 = 0;
-                      index2 <= value.desires.length - 1;
-                      index2++) {
+                  for (int index2 = 0; index2 <= value.desires.length - 1; index2++) {
                     if (desiresText.isEmpty) {
                       desiresText = Global().capitalize(value.desires[index2]);
                       print(desiresText);
                     } else {
-                      desiresText +=
-                          ", " + Global().capitalize(value.desires[index2]);
+                      desiresText += ", " + Global().capitalize(value.desires[index2]);
                     }
                   }
                 }
 
                 if (value.interest.isNotEmpty) {
-                  for (int index2 = 0;
-                      index2 <= value.interest.length - 1;
-                      index2++) {
+                  for (int index2 = 0; index2 <= value.interest.length - 1; index2++) {
                     if (interestText.isEmpty) {
-                      interestText =
-                          Global().capitalize(value.interest[index2]);
+                      interestText = Global().capitalize(value.interest[index2]);
                     } else {
-                      interestText +=
-                          ", " + Global().capitalize(value.interest[index2]);
+                      interestText += ", " + Global().capitalize(value.interest[index2]);
                     }
                   }
                 }
@@ -307,11 +372,9 @@ class HomeScreen extends GetView<HomeController> {
                                         child: Material(
                                           color: (value.verified != 3)
                                               ? Colors.grey[400]
-                                              : Colors
-                                                  .greenAccent, // Button color
+                                              : Colors.greenAccent, // Button color
                                           child: InkWell(
-                                            splashColor:
-                                                Colors.red, // Splash color
+                                            splashColor: Colors.red, // Splash color
                                             onTap: () {},
                                             child: SizedBox(
                                               width: 23,
@@ -346,10 +409,7 @@ class HomeScreen extends GetView<HomeController> {
                                           barrierDismissible: true,
                                           context: Get.context!,
                                           builder: (context) => ReportUser(
-                                            currentUser:
-                                                Get.find<GlobalController>()
-                                                    .currentUser
-                                                    .value!,
+                                            currentUser: Get.find<GlobalController>().currentUser.value!,
                                             seconduser: value,
                                           ),
                                         );
@@ -392,13 +452,11 @@ class HomeScreen extends GetView<HomeController> {
                                             ", " +
                                             value.sexualOrientation +
                                             ", " +
-                                            (userPartner?.age ?? "")
-                                                .toString() +
+                                            (userPartner?.age ?? "").toString() +
                                             ", " +
                                             (userPartner?.gender ?? "") +
                                             ", " +
-                                            (userPartner?.sexualOrientation ??
-                                                "") +
+                                            (userPartner?.sexualOrientation ?? "") +
                                             "\n\nCouple, " +
                                             "${value.distanceBW} KM away",
                                     style: TextStyle(
@@ -435,24 +493,17 @@ class HomeScreen extends GetView<HomeController> {
                               leading: Icon(Icons.work, color: primaryColor),
                               title: Text(
                                 "${value.editInfo?['job_title']}${value.editInfo?['company'] != null ? ' at ${value.editInfo?['company']}' : ''}",
-                                style: TextStyle(
-                                    color: secondryColor,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500),
+                                style: TextStyle(color: secondryColor, fontSize: 16, fontWeight: FontWeight.w500),
                               ),
                             )
                           : Container(),
-                      if (value.editInfo?['about'] != null &&
-                          value.editInfo?['about'] != "")
+                      if (value.editInfo?['about'] != null && value.editInfo?['about'] != "")
                         ListTile(
                           dense: true,
                           // leading: Icon(Icons.book, color: primaryColor),
                           title: Text(
                             "About Me",
-                            style: TextStyle(
-                                color: secondryColor,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500),
+                            style: TextStyle(color: secondryColor, fontSize: 16, fontWeight: FontWeight.w500),
                           ),
                           subtitle: Text(value.editInfo?['about'] ?? ""),
                         ),
@@ -463,10 +514,7 @@ class HomeScreen extends GetView<HomeController> {
                               leading: Icon(Icons.home, color: primaryColor),
                               title: Text(
                                 "Living in " + value.editInfo?['living_in'],
-                                style: TextStyle(
-                                    color: secondryColor,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500),
+                                style: TextStyle(color: secondryColor, fontSize: 16, fontWeight: FontWeight.w500),
                               )
                               // .tr(args: ["${data.selectedUser.editInfo['living_in']}"]),
                               )
@@ -497,10 +545,7 @@ class HomeScreen extends GetView<HomeController> {
                           dense: true,
                           title: Text(
                             "Desires",
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold),
+                            style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                           subtitle: Text(desiresText),
                         ),
@@ -514,10 +559,7 @@ class HomeScreen extends GetView<HomeController> {
                           dense: true,
                           title: Text(
                             "Interest",
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold),
+                            style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                           subtitle: Text(interestText),
                         ),
@@ -526,16 +568,12 @@ class HomeScreen extends GetView<HomeController> {
                         height: 10,
                       ),
 
-                      if (value.relasi.value != null &&
-                          value.relasi.value!.partner!.partnerId.isNotEmpty)
+                      if (value.relasi.value != null && value.relasi.value!.partner!.partnerId.isNotEmpty)
                         ListTile(
                           dense: true,
                           title: Text(
                             "Partner",
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold),
+                            style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                         ),
                       if (cekPartner)
@@ -552,14 +590,9 @@ class HomeScreen extends GetView<HomeController> {
                           ),
                           title: Text(
                             value.relasi.value!.partner!.partnerName,
-                            style: TextStyle(
-                                color: Colors.black,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold),
+                            style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
                           ),
-                          subtitle: Text(userPartner!.status +
-                              ", " +
-                              userPartner.sexualOrientation),
+                          subtitle: Text(userPartner!.status + ", " + userPartner.sexualOrientation),
                           leading: CircleAvatar(
                             radius: 25,
                             backgroundColor: secondryColor,
@@ -568,12 +601,10 @@ class HomeScreen extends GetView<HomeController> {
                                 25,
                               ),
                               child: CachedNetworkImage(
-                                imageUrl:
-                                    value.relasi.value!.partner!.partnerImage,
+                                imageUrl: value.relasi.value!.partner!.partnerImage,
                                 fit: BoxFit.cover,
                                 useOldImageOnUrlChange: true,
-                                placeholder: (context, url) =>
-                                    CupertinoActivityIndicator(
+                                placeholder: (context, url) => CupertinoActivityIndicator(
                                   radius: 20,
                                 ),
                                 errorWidget: (context, url, error) => Icon(
@@ -619,8 +650,7 @@ class HomeScreen extends GetView<HomeController> {
                     imageUrl: userModel.imageUrl[0]['url'] ?? "",
                     fit: BoxFit.cover,
                     useOldImageOnUrlChange: true,
-                    placeholder: (context, url) =>
-                        loadingWidget(Get.height * .78, null),
+                    placeholder: (context, url) => loadingWidget(Get.height * .78, null),
                     errorWidget: (context, url, error) => Icon(Icons.error),
                   ),
                 ),
@@ -649,10 +679,8 @@ class HomeScreen extends GetView<HomeController> {
                             imageUrl: value['url'] ?? "",
                             fit: BoxFit.cover,
                             useOldImageOnUrlChange: true,
-                            placeholder: (context, url) =>
-                                loadingWidget(Get.height * .78, null),
-                            errorWidget: (context, url, error) =>
-                                Icon(Icons.error),
+                            placeholder: (context, url) => loadingWidget(Get.height * .78, null),
+                            errorWidget: (context, url, error) => Icon(Icons.error),
                           ),
                         ),
                       ],
@@ -664,11 +692,9 @@ class HomeScreen extends GetView<HomeController> {
                     top: Get.height * 0.30,
                     right: 15,
                     child: Container(
-                      padding:
-                          EdgeInsets.only(top: 4, bottom: 4, right: 4, left: 4),
-                      decoration: BoxDecoration(
-                          color: Colors.black45,
-                          borderRadius: BorderRadius.all(Radius.circular(50))),
+                      padding: EdgeInsets.only(top: 4, bottom: 4, right: 4, left: 4),
+                      decoration:
+                          BoxDecoration(color: Colors.black45, borderRadius: BorderRadius.all(Radius.circular(50))),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: userModel.imageUrl.asMap().entries.map(
@@ -677,20 +703,15 @@ class HomeScreen extends GetView<HomeController> {
                             //     "index entry : " + controller.indexImage.value.toString());
                             return Obx(
                               (() => GestureDetector(
-                                    onTap: () => controller
-                                        .carouselImageController
-                                        .animateToPage(entry.key),
+                                    onTap: () => controller.carouselImageController.animateToPage(entry.key),
                                     child: Container(
                                       width: 4.0,
                                       height: 4.0,
-                                      margin: EdgeInsets.symmetric(
-                                          vertical: 8.0, horizontal: 4.0),
+                                      margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
                                       decoration: BoxDecoration(
                                         shape: BoxShape.circle,
-                                        color: (controller.indexImage.value ==
-                                                entry.key)
-                                            ? Colors.white
-                                            : Colors.white38,
+                                        color:
+                                            (controller.indexImage.value == entry.key) ? Colors.white : Colors.white38,
                                       ),
                                     ),
                                   )),

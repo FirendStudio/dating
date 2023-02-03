@@ -15,7 +15,7 @@ Future showWelcomDialog(context) async {
       Future.delayed(Duration(seconds: 3), () {
         Navigator.pop(context);
         Get.find<GlobalController>().initAfterLogin();
-        Get.toNamed(Routes.DASHBOARD);
+        Get.toNamed(Routes.DASHBOARD, );
       });
       return Center(
         child: Container(

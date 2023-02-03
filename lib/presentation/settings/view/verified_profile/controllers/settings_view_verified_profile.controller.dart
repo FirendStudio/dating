@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +13,7 @@ import '../../../../../infrastructure/navigation/routes.dart';
 class SettingsViewVerifiedProfileController extends GetxController {
   late ReviewModel selectedReviewModel;
   Rxn<File> currentFile = Rxn();
+
   @override
   void onInit() {
     super.onInit();
@@ -39,27 +39,22 @@ class SettingsViewVerifiedProfileController extends GetxController {
         percent: progressLoading.value,
         center: Text(
           "${(progressLoading.value * 100)}%",
-          style: TextStyle(
-              fontWeight: FontWeight.bold, fontSize: 20.0, color: Colors.white),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0, color: Colors.white),
         ),
         footer: Text(
           "Uploading......",
-          style: TextStyle(
-              fontWeight: FontWeight.bold, fontSize: 17.0, color: Colors.white),
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17.0, color: Colors.white),
         ),
         circularStrokeCap: CircularStrokeCap.round,
         progressColor: Colors.purple,
       );
     }));
     FirebaseStorage storage = FirebaseStorage.instance;
-    Reference ref = storage.ref().child(
-        'verify/${globalController.currentUser.value?.id}/${image.hashCode}.jpg');
+    Reference ref = storage.ref().child('verify/${globalController.currentUser.value?.id}/${image.hashCode}.jpg');
     UploadTask uploadTask = ref.putFile(File(image.path));
     uploadTask.snapshotEvents.listen((event) {
-      print("Progress : " +
-          (event.bytesTransferred / event.totalBytes).toString());
-      progressLoading.value =
-          (event.bytesTransferred / event.totalBytes).toDouble();
+      print("Progress : " + (event.bytesTransferred / event.totalBytes).toString());
+      progressLoading.value = (event.bytesTransferred / event.totalBytes).toDouble();
     });
 
     uploadTask.then((res) async {
@@ -73,9 +68,7 @@ class SettingsViewVerifiedProfileController extends GetxController {
           createdAt: DateTime.now(),
           updatedAt: DateTime.now(),
         ));
-        await queryCollectionDB("Review")
-            .doc(selectedReviewModel.idUser)
-            .set(selectedReviewModel.toJson());
+        await queryCollectionDB("Review").doc(selectedReviewModel.idUser).set(selectedReviewModel.toJson());
         Get.back();
         await Future.delayed(Duration(seconds: 1));
         progressLoading.value = 0.0;

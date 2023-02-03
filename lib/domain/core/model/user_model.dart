@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
+
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 
 import 'Relationship.dart';
 
 class UserModel {
-  final String id;
-  final String name;
+   String id;
+   String name;
   final bool isBlocked;
   String address;
   final Map? coordinates;
@@ -16,7 +16,7 @@ class UserModel {
   final bool showingGender;
   final List<String> showMe;
   final int age;
-  final String phoneNumber;
+   String phoneNumber;
   int maxDistance;
   Timestamp? lastmsg;
   final Map? ageRange;
@@ -32,7 +32,7 @@ class UserModel {
   final List<String> interest;
   final Rxn<Relationship> relasi;
   final String fcmToken;
-  final String countryName;
+   String countryName;
   final String countryID;
   final int verified;
 
@@ -172,51 +172,50 @@ class UserModel {
       verified: json['verified'] ?? 0,
     );
   }
-
-  // Map<String, dynamic> toJson() => {
-  //       "id": id,
-  //       // isBlocked: doc['isBlocked'] != null ? doc['isBlocked'] : false,
-  //       "isBlocked": isBlocked,
-  //       "phoneNumber": phoneNumber,
-  //       "UserName": name,
-  //       "editInfo": editInfo,
-  //       'age_range': ageRange,
-  //       "showGender": showMe,
-  //       gender: doc['editInfo']['userGender'] ?? "woman",
-  //       showingGender: doc['editInfo']['showOnProfile'] ?? true,
-  //       maxDistance: doc['maximum_distance'],
-  //       sexualOrientation: doc['sexualOrientation']['orientation'] ?? "",
-  //       showingOrientation: doc['sexualOrientation']['showOnProfile'] ?? "",
-  //       status: doc['status'] ?? 'single',
-  //       desires: doc['desires'] ?? [],
-  //       kinks: doc.data().toString().contains('kinks') ? doc['kinks'] : [],
-  //       interest:
-  //           doc.data().toString().contains('interest') ? doc['interest'] : [],
-  //       age: ((DateTime.now()
-  //                   .difference(DateTime.parse(doc["user_DOB"]))
-  //                   .inDays) /
-  //               365.2425)
-  //           .truncate(),
-  //       address: doc['location']['address'],
-  //       coordinates: doc['location'],
-  //       countryName: doc['location']['countryName'] ?? "",
-  //       countryID: doc['location']['countryID'] ?? "",
-  //       loginID:
-  //           doc.data().toString().contains('LoginID') ? doc['LoginID'] : {},
-  //       metode: doc.data().toString().contains('metode') ? doc['metode'] : "",
-  //       // university: doc['editInfo']['university'],
-  //       imageUrl: doc['Pictures'] != null
-  //           ? List.generate(doc['Pictures'].length, (index) {
-  //               return doc['Pictures'][index];
-  //             })
-  //           : [],
-  //       listSwipedUser: doc.data().toString().contains('listSwipedUser')
-  //           ? doc['listSwipedUser']
-  //           : [],
-  //       // relasi: null,
-  //       fcmToken:
-  //           doc.data().toString().contains('pushToken') ? doc['pushToken'] : "",
-  //       verified:
-  //           doc.data().toString().contains('verified') ? doc['verified'] : 0,
-  //     };
+/*  Map<String, dynamic> toJson() => {
+        "id": id,
+        // isBlocked: doc['isBlocked'] != null ? doc['isBlocked'] : false,
+        "isBlocked": isBlocked,
+        "phoneNumber": phoneNumber,
+        "UserName": name,
+        "editInfo": editInfo,
+        'age_range': ageRange,
+        "showGender": showMe,
+        "gender": json['editInfo']['userGender'] ?? "woman",
+        showingGender: doc['editInfo']['showOnProfile'] ?? true,
+        maxDistance: doc['maximum_distance'],
+        sexualOrientation: doc['sexualOrientation']['orientation'] ?? "",
+        showingOrientation: doc['sexualOrientation']['showOnProfile'] ?? "",
+        status: doc['status'] ?? 'single',
+        desires: doc['desires'] ?? [],
+        kinks: doc.data().toString().contains('kinks') ? doc['kinks'] : [],
+        interest:
+            doc.data().toString().contains('interest') ? doc['interest'] : [],
+        age: ((DateTime.now()
+                    .difference(DateTime.parse(doc["user_DOB"]))
+                    .inDays) /
+                365.2425)
+            .truncate(),
+        address: doc['location']['address'],
+        coordinates: doc['location'],
+        countryName: doc['location']['countryName'] ?? "",
+        countryID: doc['location']['countryID'] ?? "",
+        loginID:
+            doc.data().toString().contains('LoginID') ? doc['LoginID'] : {},
+        metode: doc.data().toString().contains('metode') ? doc['metode'] : "",
+        // university: doc['editInfo']['university'],
+        imageUrl: doc['Pictures'] != null
+            ? List.generate(doc['Pictures'].length, (index) {
+                return doc['Pictures'][index];
+              })
+            : [],
+        listSwipedUser: doc.data().toString().contains('listSwipedUser')
+            ? doc['listSwipedUser']
+            : [],
+        // relasi: null,
+        fcmToken:
+            doc.data().toString().contains('pushToken') ? doc['pushToken'] : "",
+        verified:
+            doc.data().toString().contains('verified') ? doc['verified'] : 0,
+      };*/
 }

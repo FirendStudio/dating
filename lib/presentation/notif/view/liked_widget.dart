@@ -35,7 +35,7 @@ class LikedWidget extends GetView<NotifController> {
 
               return InkWell(
                 onTap: () async {
-                  print(likedUser["LikedBy"]);
+                  print("on tap liked notificationp----->"+likedUser["LikedBy"]);
                   DocumentSnapshot userdoc = await queryCollectionDB("Users")
                       .doc(likedUser["LikedBy"])
                       .get();

@@ -1,10 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/infrastructure/dal/controller/global_controller.dart';
 import 'package:hookup4u/infrastructure/dal/util/session.dart';
+import 'package:hookup4u/presentation/dashboard/view/home/controllers/home.controller.dart';
 import 'package:hookup4u/presentation/notif/controllers/notif.controller.dart';
 import 'package:share/share.dart';
+
 import '../../domain/core/interfaces/search/CustomSearch.dart';
 import '../../infrastructure/dal/util/Global.dart';
 import '../../infrastructure/dal/util/color.dart';
@@ -14,9 +17,10 @@ import 'controllers/settings.controller.dart';
 
 class SettingsScreen extends GetView<SettingsController> {
   const SettingsScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    Get.put(SettingsController());
+//    Get.put(SettingsController());
     return Obx(
       () => Scaffold(
         backgroundColor: primaryColor,
@@ -51,8 +55,7 @@ class SettingsScreen extends GetView<SettingsController> {
                     padding: const EdgeInsets.all(12.0),
                     child: Text(
                       "Account settings",
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                   ),
                   Container(
@@ -67,8 +70,7 @@ class SettingsScreen extends GetView<SettingsController> {
                       }),
                       child: Card(
                         child: Padding(
-                          padding: const EdgeInsets.only(
-                              left: 20.0, right: 10, top: 20, bottom: 20),
+                          padding: const EdgeInsets.only(left: 20.0, right: 10, top: 20, bottom: 20),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
@@ -79,17 +81,10 @@ class SettingsScreen extends GetView<SettingsController> {
                               Expanded(
                                 flex: 2,
                                 child: Text(
-                                  globalController
-                                              .currentUser.value?.verified !=
-                                          3
-                                      ? "Unverified"
-                                      : "Verified",
+                                  globalController.currentUser.value?.verified != 3 ? "Unverified" : "Verified",
                                   style: TextStyle(
-                                    color: globalController
-                                                .currentUser.value?.verified !=
-                                            3
-                                        ? Colors.red
-                                        : Colors.green,
+                                    color:
+                                        globalController.currentUser.value?.verified != 3 ? Colors.red : Colors.green,
                                   ),
                                 ),
                               ),
@@ -111,29 +106,24 @@ class SettingsScreen extends GetView<SettingsController> {
                     padding: EdgeInsets.only(left: 16, right: 16),
                     child: InkWell(
                       onTap: (() {
-                        if (globalController.reviewModel.value?.status?.value ==
-                            "review") {
+                        if (globalController.reviewModel.value?.status?.value == "review") {
                           Global().showInfoDialog("Waiting Reviewed by Admin");
                           return;
                         }
-                        if (globalController.reviewModel.value?.status?.value ==
-                            "suspend") {
+                        if (globalController.reviewModel.value?.status?.value == "suspend") {
                           Get.toNamed(
                             Routes.SETTINGS_VIEW_VERIFIED_PROFILE,
                             arguments: {
-                              "reviewModel":
-                                  globalController.reviewModel.value!,
+                              "reviewModel": globalController.reviewModel.value!,
                             },
                           );
                           return;
                         }
-                        Global()
-                            .showInfoDialog("Your Profile Already Verified");
+                        Global().showInfoDialog("Your Profile Already Verified");
                       }),
                       child: Card(
                         child: Padding(
-                          padding: const EdgeInsets.only(
-                              left: 20.0, right: 10, top: 20, bottom: 20),
+                          padding: const EdgeInsets.only(left: 20.0, right: 10, top: 20, bottom: 20),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: <Widget>[
@@ -144,25 +134,13 @@ class SettingsScreen extends GetView<SettingsController> {
                               Expanded(
                                 flex: 2,
                                 child: Text(
-                                  (globalController.reviewModel.value?.status
-                                                  ?.value ==
-                                              "suspend" ||
-                                          globalController.reviewModel.value
-                                                  ?.status?.value ==
-                                              "review")
-                                      ? (globalController.reviewModel.value
-                                                      ?.status?.value ??
-                                                  "")
-                                              .capitalizeFirst ??
-                                          ""
+                                  (globalController.reviewModel.value?.status?.value == "suspend" ||
+                                          globalController.reviewModel.value?.status?.value == "review")
+                                      ? (globalController.reviewModel.value?.status?.value ?? "").capitalizeFirst ?? ""
                                       : "Verified",
                                   style: TextStyle(
-                                    color: (globalController.reviewModel.value
-                                                    ?.status?.value ==
-                                                "suspend" ||
-                                            globalController.reviewModel.value
-                                                    ?.status?.value ==
-                                                "review")
+                                    color: (globalController.reviewModel.value?.status?.value == "suspend" ||
+                                            globalController.reviewModel.value?.status?.value == "review")
                                         ? Colors.red
                                         : Colors.green,
                                   ),
@@ -203,10 +181,7 @@ class SettingsScreen extends GetView<SettingsController> {
                             Expanded(
                               flex: 2,
                               child: Text(
-                                (globalController.currentUser.value
-                                                ?.phoneNumber ??
-                                            "")
-                                        .isNotEmpty
+                                (globalController.currentUser.value?.phoneNumber ?? "").isNotEmpty
                                     ? "${globalController.currentUser.value?.phoneNumber}"
                                     : "Verify Now",
                                 style: TextStyle(color: secondryColor),
@@ -274,8 +249,7 @@ class SettingsScreen extends GetView<SettingsController> {
                     padding: const EdgeInsets.all(10.0),
                     child: Text(
                       "Discovery settings",
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                   ),
                   Padding(
@@ -346,47 +320,22 @@ class SettingsScreen extends GetView<SettingsController> {
                     padding: const EdgeInsets.all(10.0),
                     child: Text(
                       "Partner",
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                   ),
                   Column(
                     children: [
-                      if ((globalController.currentUser.value?.relasi.value
-                                      ?.pendingAcc ??
-                                  [])
-                              .isEmpty &&
-                          (globalController.currentUser.value?.relasi.value
-                                      ?.pendingReq ??
-                                  [])
-                              .isEmpty)
+                      if ((globalController.currentUser.value?.relasi.value?.pendingAcc ?? []).isEmpty &&
+                          (globalController.currentUser.value?.relasi.value?.pendingReq ?? []).isEmpty)
                         newPartnerWidget(),
-                      if ((globalController.currentUser.value?.relasi.value
-                                      ?.pendingAcc ??
-                                  [])
-                              .isNotEmpty &&
-                          (globalController.currentUser.value?.relasi.value
-                                      ?.pendingReq ??
-                                  [])
-                              .isEmpty)
+                      if ((globalController.currentUser.value?.relasi.value?.pendingAcc ?? []).isNotEmpty &&
+                          (globalController.currentUser.value?.relasi.value?.pendingReq ?? []).isEmpty)
                         pendingWidget(),
-                      if ((globalController.currentUser.value?.relasi.value
-                                      ?.pendingAcc ??
-                                  [])
-                              .isEmpty &&
-                          (globalController.currentUser.value?.relasi.value
-                                      ?.pendingReq ??
-                                  [])
-                              .isNotEmpty)
+                      if ((globalController.currentUser.value?.relasi.value?.pendingAcc ?? []).isEmpty &&
+                          (globalController.currentUser.value?.relasi.value?.pendingReq ?? []).isNotEmpty)
                         acceptWidget(),
-                      if ((globalController.currentUser.value?.relasi.value
-                                      ?.pendingAcc ??
-                                  [])
-                              .isNotEmpty &&
-                          (globalController.currentUser.value?.relasi.value
-                                      ?.pendingReq ??
-                                  [])
-                              .isNotEmpty)
+                      if ((globalController.currentUser.value?.relasi.value?.pendingAcc ?? []).isNotEmpty &&
+                          (globalController.currentUser.value?.relasi.value?.pendingReq ?? []).isNotEmpty)
                         relationWidget(),
                     ],
                   ),
@@ -394,22 +343,62 @@ class SettingsScreen extends GetView<SettingsController> {
                     padding: const EdgeInsets.all(10.0),
                     child: Text(
                       "Search Settings",
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.only(bottom: 5, right: 10, left: 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "Show only Verified User",
+                          style: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.w500),
+                        ),
+                        CupertinoSwitch(
+                          value:SettingsController.isVerifiedUserOnly.value,
+                          onChanged: (value){
+                            SettingsController.isVerifiedUserOnly.value = value;
+                            if (SettingsController.isVerifiedUserOnly.value) {
+                              Get.find<HomeController>().listUsers.removeWhere((element) => element.verified != 3);
+                            } else {
+                              Get.find<HomeController>().initUser();
+                            }
+                          },
+                          activeColor:   primaryColor.withOpacity(0.3),
+                         thumbColor: primaryColor,
+                          trackColor:Colors.grey.shade400.withOpacity(0.5),),
+                     /*   Switch(
+                          // thumb color (round icon)
+
+                          activeColor: primaryColor,
+                          activeTrackColor: primaryColor.withOpacity(0.3),
+                          inactiveThumbColor: Colors.blueGrey.shade600,
+                          inactiveTrackColor: Colors.grey.shade400,
+                          splashRadius: 50.0,
+                          // boolean variable value
+                          value: SettingsController.isVerifiedUserOnly.value,
+                          // changes the state of the switch
+                          onChanged: (value) {
+                            SettingsController.isVerifiedUserOnly.value = value;
+                            if (SettingsController.isVerifiedUserOnly.value) {
+                              Get.find<HomeController>().listUsers.removeWhere((element) => element.verified != 3);
+                            } else {
+                              Get.find<HomeController>().initUser();
+                            }
+                          },
+                        ),*/
+                      ],
                     ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(
-                        top: 5.0, bottom: 5, right: 10, left: 10),
+                    padding: const EdgeInsets.only(top: 5.0, bottom: 5, right: 10, left: 10),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
                           "Show me",
-                          style: TextStyle(
-                              fontSize: 18,
-                              color: Colors.black,
-                              fontWeight: FontWeight.w500),
+                          style: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.w500),
                         ),
                         SizedBox(
                           height: 12,
@@ -432,47 +421,35 @@ class SettingsScreen extends GetView<SettingsController> {
                                     side: BorderSide(
                                       width: 1,
                                       style: BorderStyle.solid,
-                                      color: listShowMe[index].onTap.value
-                                          ? primaryColor
-                                          : secondryColor,
+                                      color: listShowMe[index].onTap.value ? primaryColor : secondryColor,
                                     ),
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(25)),
+                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
                                   ),
                                   child: Container(
-                                    padding: EdgeInsets.only(
-                                        top: 8, bottom: 8, left: 8, right: 8),
+                                    padding: EdgeInsets.only(top: 8, bottom: 8, left: 8, right: 8),
                                     child: Center(
                                       child: Text(
-                                        "${listShowMe[index].name.value}"
-                                            .toUpperCase(),
+                                        "${listShowMe[index].name.value}".toUpperCase(),
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
                                           fontSize: 12,
                                           fontFamily: Global.font,
-                                          color: listShowMe[index].onTap.value
-                                              ? primaryColor
-                                              : secondryColor,
+                                          color: listShowMe[index].onTap.value ? primaryColor : secondryColor,
                                           fontWeight: FontWeight.normal,
                                         ),
                                       ),
                                     ),
                                   ),
                                   onPressed: () {
-                                    listShowMe[index].onTap.value =
-                                        !listShowMe[index].onTap.value;
+                                    listShowMe[index].onTap.value = !listShowMe[index].onTap.value;
                                     if (listShowMe[index].onTap.value) {
-                                      controller.listSelectedGender
-                                          .add(listShowMe[index].name.value);
+                                      controller.listSelectedGender.add(listShowMe[index].name.value);
                                     } else {
-                                      controller.listSelectedGender
-                                          .remove(listShowMe[index].name.value);
+                                      controller.listSelectedGender.remove(listShowMe[index].name.value);
                                     }
                                     print(controller.listSelectedGender);
                                     controller.changeValues.addAll({
-                                      'showGender':
-                                          controller.listSelectedGender,
+                                      'showGender': controller.listSelectedGender,
                                     });
                                   },
                                 ),
@@ -491,10 +468,7 @@ class SettingsScreen extends GetView<SettingsController> {
                         child: ListTile(
                           title: Text(
                             "Maximum distance",
-                            style: TextStyle(
-                                fontSize: 18,
-                                color: primaryColor,
-                                fontWeight: FontWeight.w500),
+                            style: TextStyle(fontSize: 18, color: primaryColor, fontWeight: FontWeight.w500),
                           ),
                           trailing: Text(
                             "${controller.distance.value} Km.",
@@ -509,9 +483,10 @@ class SettingsScreen extends GetView<SettingsController> {
                                   : controller.freeR.toDouble(),
                               activeColor: primaryColor,
                               onChanged: (val) {
-                                controller.changeValues
-                                    .addAll({'maximum_distance': val.round()});
+                                controller.changeValues.addAll({'maximum_distance': val.round()});
                                 controller.distance.value = val.round();
+
+
                               }),
                         ),
                       ),
@@ -523,16 +498,12 @@ class SettingsScreen extends GetView<SettingsController> {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: ListTile(
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: 0.0, horizontal: 16.0),
+                          contentPadding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 16.0),
                           title: Container(
                             margin: EdgeInsets.only(bottom: 10),
                             child: Text(
                               "Age range",
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  color: primaryColor,
-                                  fontWeight: FontWeight.w500),
+                              style: TextStyle(fontSize: 18, color: primaryColor, fontWeight: FontWeight.w500),
                             ),
                           ),
                           subtitle: Row(
@@ -553,8 +524,7 @@ class SettingsScreen extends GetView<SettingsController> {
                                     ),
                                     DropdownButton<int>(
                                       value: controller.ageMin.value,
-                                      items: globalController.listAge
-                                          .map((int value) {
+                                      items: globalController.listAge.map((int value) {
                                         return DropdownMenuItem<int>(
                                           value: value,
                                           child: Text(value.toString()),
@@ -565,10 +535,8 @@ class SettingsScreen extends GetView<SettingsController> {
                                           controller.ageMin.value = valueInt;
                                           controller.changeValues.addAll({
                                             'age_range': {
-                                              'min':
-                                                  '${controller.ageMin.value}',
-                                              'max':
-                                                  '${controller.ageMax.value}'
+                                              'min': '${controller.ageMin.value}',
+                                              'max': '${controller.ageMax.value}'
                                             }
                                           });
                                         }
@@ -583,17 +551,14 @@ class SettingsScreen extends GetView<SettingsController> {
                                   children: [
                                     Text(
                                       "To",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.black),
+                                      style: TextStyle(fontWeight: FontWeight.w500, color: Colors.black),
                                     ),
                                     SizedBox(
                                       width: 10,
                                     ),
                                     DropdownButton<int>(
                                       value: controller.ageMax.value,
-                                      items: globalController.listAge
-                                          .map((int value) {
+                                      items: globalController.listAge.map((int value) {
                                         return DropdownMenuItem<int>(
                                           value: value,
                                           child: Text(value.toString()),
@@ -604,10 +569,8 @@ class SettingsScreen extends GetView<SettingsController> {
                                           controller.ageMax.value = valueInt;
                                           controller.changeValues.addAll({
                                             'age_range': {
-                                              'min':
-                                                  '${controller.ageMin.value}',
-                                              'max':
-                                                  '${controller.ageMax.value}'
+                                              'min': '${controller.ageMin.value}',
+                                              'max': '${controller.ageMax.value}'
                                             }
                                           });
                                         }
@@ -642,9 +605,9 @@ class SettingsScreen extends GetView<SettingsController> {
                       ),
                       onTap: () {
                         Share.share(
-                          'Checkout our brand new dating app! https://jablesscupid.com/', //Replace with your dynamic link and msg for invite users
-                          subject:
-                              'Checkout our brand new dating app! https://jablesscupid.com/',
+                          'Checkout our brand new dating app! https://jablesscupid.com/',
+                          //Replace with your dynamic link and msg for invite users
+                          subject: 'Checkout our brand new dating app! https://jablesscupid.com/',
                         );
                       },
                     ),
@@ -658,8 +621,7 @@ class SettingsScreen extends GetView<SettingsController> {
                             padding: const EdgeInsets.all(18.0),
                             child: Text(
                               "Logout",
-                              style: TextStyle(
-                                  fontSize: 15, fontWeight: FontWeight.w500),
+                              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
                             ),
                           ),
                         ),
@@ -670,12 +632,10 @@ class SettingsScreen extends GetView<SettingsController> {
                           builder: (BuildContext context) {
                             return AlertDialog(
                               title: Text('Logout'),
-                              content: Text(
-                                  'Would you like to logout of your account?'),
+                              content: Text('Would you like to logout of your account?'),
                               actions: <Widget>[
                                 ElevatedButton(
-                                  onPressed: () =>
-                                      Navigator.of(context).pop(false),
+                                  onPressed: () => Navigator.of(context).pop(false),
                                   child: Text('No'),
                                 ),
                                 ElevatedButton(
@@ -709,10 +669,7 @@ class SettingsScreen extends GetView<SettingsController> {
                           child: Center(
                             child: Text(
                               "Delete Account",
-                              style: TextStyle(
-                                  color: primaryColor,
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w500),
+                              style: TextStyle(color: primaryColor, fontSize: 15, fontWeight: FontWeight.w500),
                             ),
                           ),
                         ),
@@ -723,12 +680,11 @@ class SettingsScreen extends GetView<SettingsController> {
                           builder: (BuildContext context) {
                             return AlertDialog(
                               title: Text('Delete Account'),
-                              content:
-                                  Text('Do you want to delete your account?'),
+                              content: Text(
+                                  'Your account has been deleted. We are sorry to see you go and hope to see you back again soon.'),
                               actions: <Widget>[
                                 ElevatedButton(
-                                  onPressed: () =>
-                                      Navigator.of(context).pop(false),
+                                  onPressed: () => Navigator.of(context).pop(false),
                                   child: Text('No'),
                                 ),
                                 ElevatedButton(
@@ -787,10 +743,7 @@ class SettingsScreen extends GetView<SettingsController> {
             child: Center(
               child: Text(
                 "Add Partner",
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500),
+                style: TextStyle(color: Colors.white, fontSize: 15, fontWeight: FontWeight.w500),
               ),
             ),
           ),
@@ -812,10 +765,7 @@ class SettingsScreen extends GetView<SettingsController> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            (globalController.currentUser.value?.relasi.value?.pendingAcc[0]
-                        .userName ??
-                    "") +
-                " (Pending)",
+            (globalController.currentUser.value?.relasi.value?.pendingAcc[0].userName ?? "") + " (Pending)",
             style: TextStyle(fontSize: 16),
           ),
           InkWell(
@@ -840,9 +790,7 @@ class SettingsScreen extends GetView<SettingsController> {
             ),
             onTap: () async {
               await Global().deletePartner(
-                Uid: globalController.currentUser.value?.relasi.value
-                        ?.pendingAcc[0].reqUid ??
-                    "",
+                Uid: globalController.currentUser.value?.relasi.value?.pendingAcc[0].reqUid ?? "",
               );
             },
           ),
@@ -860,10 +808,7 @@ class SettingsScreen extends GetView<SettingsController> {
           Expanded(
             flex: 7,
             child: Text(
-              (globalController.currentUser.value?.relasi.value?.pendingReq[0]
-                          .userName ??
-                      "") +
-                  " (Requested)",
+              (globalController.currentUser.value?.relasi.value?.pendingReq[0].userName ?? "") + " (Requested)",
               style: TextStyle(fontSize: 16),
             ),
           ),
@@ -874,15 +819,9 @@ class SettingsScreen extends GetView<SettingsController> {
               onPressed: () async {
                 await Get.find<NotifController>().acceptPartner(
                   context2: Get.context!,
-                  Uid: globalController.currentUser.value?.relasi.value
-                          ?.pendingReq[0].reqUid ??
-                      "",
-                  imageUrl: globalController.currentUser.value?.relasi.value
-                          ?.pendingReq[0].imageUrl ??
-                      "",
-                  userName: globalController.currentUser.value?.relasi.value
-                          ?.pendingReq[0].userName ??
-                      "",
+                  Uid: globalController.currentUser.value?.relasi.value?.pendingReq[0].reqUid ?? "",
+                  imageUrl: globalController.currentUser.value?.relasi.value?.pendingReq[0].imageUrl ?? "",
+                  userName: globalController.currentUser.value?.relasi.value?.pendingReq[0].userName ?? "",
                 );
               },
               child: Icon(
@@ -901,9 +840,7 @@ class SettingsScreen extends GetView<SettingsController> {
               backgroundColor: primaryColor,
               onPressed: () async {
                 await Global().deletePartner(
-                  Uid: globalController.currentUser.value?.relasi.value
-                          ?.pendingReq[0].reqUid ??
-                      "",
+                  Uid: globalController.currentUser.value?.relasi.value?.pendingReq[0].reqUid ?? "",
                 );
               },
               child: Icon(
@@ -928,9 +865,7 @@ class SettingsScreen extends GetView<SettingsController> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            globalController
-                    .currentUser.value?.relasi.value?.partner?.partnerName ??
-                '',
+            globalController.currentUser.value?.relasi.value?.partner?.partnerName ?? '',
             style: TextStyle(fontSize: 16),
           ),
           InkWell(
@@ -955,9 +890,7 @@ class SettingsScreen extends GetView<SettingsController> {
             ),
             onTap: () async {
               await Global().deletePartner(
-                Uid: globalController
-                        .currentUser.value?.relasi.value?.partner?.partnerId ??
-                    "",
+                Uid: globalController.currentUser.value?.relasi.value?.partner?.partnerId ?? "",
               );
             },
           ),

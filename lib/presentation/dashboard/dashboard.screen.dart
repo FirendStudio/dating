@@ -5,12 +5,14 @@ import 'package:hookup4u/presentation/dashboard/widget/blockuser_widget.dart';
 import 'package:hookup4u/presentation/notif/controllers/notif.controller.dart';
 import 'package:hookup4u/presentation/profile/controllers/profile.controller.dart';
 import 'package:hookup4u/presentation/screens.dart';
+
 import '../../infrastructure/dal/util/color.dart';
 import '../notif/view/room.screen.dart';
 import 'controllers/dashboard.controller.dart';
 
 class DashboardScreen extends GetView<DashboardController> {
-  const DashboardScreen({Key? key}) : super(key: key);
+  DashboardScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     Get.put(DashboardController());

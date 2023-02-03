@@ -31,7 +31,7 @@ class Nav {
   static List<GetPage> routes = [
     GetPage(
       name: Routes.HOME,
-      page: () => const HomeScreen(),
+      page: () =>  HomeScreen(),
       binding: HomeControllerBinding(),
     ),
     GetPage(
@@ -56,7 +56,7 @@ class Nav {
     ),
     GetPage(
       name: Routes.DASHBOARD,
-      page: () => const DashboardScreen(),
+      page: () =>  DashboardScreen(),
       binding: DashboardControllerBinding(),
     ),
     GetPage(

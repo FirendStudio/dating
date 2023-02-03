@@ -47,6 +47,7 @@ class Session {
     await storage.write("listUidSwiped", list);
   }
 
+
   List<String> getSwipedUser() {
     if ((storage.read("listUidSwiped") ?? []).isNotEmpty) {
       return storage.read("listUidSwiped").cast<String>();

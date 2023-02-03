@@ -1,6 +1,6 @@
-import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 class Relationship {
   Relationship({
@@ -24,11 +24,11 @@ class Relationship {
     // print(json['updateAt']);
     return Relationship(
       userId: json["userId"],
-      partner: Partner.fromDocument(json["partner"]),
+      partner: json["partner"]==null?Partner():Partner.fromDocument(json["partner"]),
       inRelationship: json["inRelationship"],
-      pendingReq: List<Pending>.from(json["pendingReq"].map((x) => Pending.fromDocument(x))),
-      pendingAcc: List<Pending>.from(json["pendingAcc"].map((x) => Pending.fromDocument(x))),
-      updateAt: (json['updateAt'] as Timestamp).toDate(),
+      pendingReq: json["pendingReq"]==null?[]:List<Pending>.from(json["pendingReq"].map((x) => Pending.fromDocument(x))),
+      pendingAcc: json["pendingAcc"]==null?[]:List<Pending>.from(json["pendingAcc"].map((x) => Pending.fromDocument(x))),
+      updateAt:json['updateAt']==null?DateTime.now():(json['updateAt'] as Timestamp).toDate(),
     );
   }
 

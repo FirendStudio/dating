@@ -18,7 +18,7 @@ import '../../../infrastructure/dal/controller/global_controller.dart';
 import '../../../infrastructure/dal/util/Global.dart';
 import '../../../infrastructure/dal/util/general.dart';
 import '../../../infrastructure/navigation/routes.dart';
-import '../../dashboard/view/home/controllers/home.controller.dart';
+
 
 class SettingsController extends GetxController {
   static const your_client_id = '709280423766575';
@@ -47,6 +47,7 @@ class SettingsController extends GetxController {
   RxBool isSentOTP = false.obs;
   String countryCode = '+91';
   String smsVerificationCode = "";
+ static RxBool isVerifiedUserOnly=false.obs;
 
   @override
   void onInit() {

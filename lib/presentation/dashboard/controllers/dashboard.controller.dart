@@ -5,9 +5,9 @@ import 'package:get/get.dart';
 import '../../../domain/core/interfaces/dialog.dart';
 import '../../../infrastructure/dal/util/session.dart';
 
-class DashboardController extends GetxController {
+class DashboardController extends GetxController  {
   RxBool isLoading = false.obs;
-
+RxInt initalIndex=1.obs;
   Future<bool> onBack() async {
     return await showDialog(
       context: Get.context!,
