@@ -459,7 +459,7 @@ class DetailScreen extends GetView<DetailController> {
                                 // Get.back();
                                 await Global()
                                     .loveUserFunction(controller.user);
-                                Get.back();
+
                               },
                             ),
                           ],

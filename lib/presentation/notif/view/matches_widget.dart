@@ -8,6 +8,7 @@ import 'package:hookup4u/domain/core/model/MatchModel.dart';
 import 'package:hookup4u/infrastructure/dal/controller/global_controller.dart';
 import 'package:hookup4u/presentation/notif/controllers/notif.controller.dart';
 import 'package:intl/intl.dart';
+
 import '../../../domain/core/model/user_model.dart';
 import '../../../infrastructure/dal/util/Global.dart';
 import '../../../infrastructure/dal/util/color.dart';
@@ -23,8 +24,7 @@ class MatchesWidget extends GetView<NotifController> {
         child: ListView.builder(
           itemCount: controller.listMatchUser.length,
           itemBuilder: (BuildContext context, int index) {
-          MatchModel doc
-             = controller.listMatchUser[index];
+            MatchModel doc = controller.listMatchUser[index];
             debugPrint("in MatchesWidget doc type=====>${doc.type.value}");
             if (doc.type.value == 2) {
               return blockedWidget(doc, context);
@@ -46,8 +46,7 @@ class MatchesWidget extends GetView<NotifController> {
         children: [
           SlidableAction(
             onPressed: (BuildContext context) async {
-              var dataUserReceive =
-                  await queryCollectionDB("Users").doc(doc.matches).get();
+              var dataUserReceive = await queryCollectionDB("Users").doc(doc.matches).get();
               UserModel tempuser;
               if (!dataUserReceive.exists) {
                 Global().showInfoDialog("User not exist");
@@ -56,24 +55,14 @@ class MatchesWidget extends GetView<NotifController> {
               tempuser = UserModel.fromJson(dataUserReceive.data()!);
               tempuser.distanceBW = Global()
                   .calculateDistance(
-                    Get.find<GlobalController>()
-                            .currentUser
-                            .value
-                            ?.coordinates?['latitude'] ??
-                        0,
-                    Get.find<GlobalController>()
-                        .currentUser
-                        .value
-                        ?.coordinates?['longitude'],
+                    Get.find<GlobalController>().currentUser.value?.coordinates?['latitude'] ?? 0,
+                    Get.find<GlobalController>().currentUser.value?.coordinates?['longitude'],
                     tempuser.coordinates?['latitude'] ?? 0,
                     tempuser.coordinates?['longitude'] ?? 0,
                   )
                   .round();
-              String idChat = Global().chatId(
-                  Get.find<GlobalController>().currentUser.value!.id,
-                  tempuser.id);
-              var resultChat =
-                  await queryCollectionDB("chats").doc(idChat).get();
+              String idChat = Global().chatId(Get.find<GlobalController>().currentUser.value!.id, tempuser.id);
+              var resultChat = await queryCollectionDB("chats").doc(idChat).get();
               if (!resultChat.exists) {
                 Global().setNewOptionMessage(idChat);
               }
@@ -105,8 +94,7 @@ class MatchesWidget extends GetView<NotifController> {
                 "notif",
               );
             },
-            backgroundColor:
-                (doc.type.value != 1) ? Color(0xFFFE4A49) : Colors.green[600]!,
+            backgroundColor: (doc.type.value != 1) ? Color(0xFFFE4A49) : Colors.green[600]!,
             foregroundColor: Colors.white,
             icon: (doc.type.value != 1) ? Icons.block : Icons.restore,
             // label: 'Delete',
@@ -120,8 +108,7 @@ class MatchesWidget extends GetView<NotifController> {
         children: [
           SlidableAction(
             onPressed: (BuildContext context) async {
-              var dataUserReceive =
-                  await queryCollectionDB("Users").doc(doc.matches).get();
+              var dataUserReceive = await queryCollectionDB("Users").doc(doc.matches).get();
               UserModel tempuser;
               if (!dataUserReceive.exists) {
                 Global().showInfoDialog("User not exist");
@@ -131,37 +118,20 @@ class MatchesWidget extends GetView<NotifController> {
               tempuser = UserModel.fromJson(dataUserReceive.data()!);
               tempuser.distanceBW = Global()
                   .calculateDistance(
-                    Get.find<GlobalController>()
-                            .currentUser
-                            .value
-                            ?.coordinates?['latitude'] ??
-                        0,
-                    Get.find<GlobalController>()
-                            .currentUser
-                            .value
-                            ?.coordinates?['longitude'] ??
-                        0,
+                    Get.find<GlobalController>().currentUser.value?.coordinates?['latitude'] ?? 0,
+                    Get.find<GlobalController>().currentUser.value?.coordinates?['longitude'] ?? 0,
                     tempuser.coordinates?['latitude'] ?? 0,
                     tempuser.coordinates?['longitude'] ?? 0,
                   )
                   .round();
-              String idChat = Global().chatId(
-                  Get.find<GlobalController>().currentUser.value!.id,
-                  tempuser.id);
-              var resultChat =
-                  await queryCollectionDB("chats").doc(idChat).get();
+              String idChat = Global().chatId(Get.find<GlobalController>().currentUser.value!.id, tempuser.id);
+              var resultChat = await queryCollectionDB("chats").doc(idChat).get();
               if (!resultChat.exists) {
                 Global().setNewOptionMessage(idChat);
               }
 
-              Global().disconnectWidget(
-                Get.find<GlobalController>().currentUser.value!,
-                tempuser,
-                idChat,
-                'notif',
-                doc:doc
-              );
-
+              Global().disconnectWidget(Get.find<GlobalController>().currentUser.value!, tempuser, idChat, 'notif',
+                  doc: doc);
             },
             backgroundColor: Color(0xFF0392CF),
             foregroundColor: Colors.white,
@@ -176,9 +146,7 @@ class MatchesWidget extends GetView<NotifController> {
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20),
               // color: !doc.data['isRead']
-              color: doc.isRead == false
-                  ? primaryColor.withOpacity(.15)
-                  : secondryColor.withOpacity(.15)),
+              color: doc.isRead == false ? primaryColor.withOpacity(.15) : secondryColor.withOpacity(.15)),
           child: ListTile(
             contentPadding: EdgeInsets.all(5),
             leading: CircleAvatar(
@@ -204,10 +172,7 @@ class MatchesWidget extends GetView<NotifController> {
             ),
             title: Text("You are matched with ${doc.userName ?? ""}"),
             subtitle: Text(
-              DateFormat.MMMd('en_US')
-                  .add_jm()
-                  .format(doc.timeStamp ?? DateTime.now())
-                  .toString(),
+              DateFormat.MMMd('en_US').add_jm().format(doc.timeStamp ?? DateTime.now()).toString(),
             ),
             trailing: Padding(
               padding: const EdgeInsets.only(right: 10),
@@ -237,16 +202,12 @@ class MatchesWidget extends GetView<NotifController> {
               ),
             ),
             onTap: () async {
-              DocumentSnapshot userdoc =
-                  await queryCollectionDB("Users").doc(doc.matches).get();
+              DocumentSnapshot userdoc = await queryCollectionDB("Users").doc(doc.matches).get();
               if (userdoc.exists) {
-                UserModel userModel =
-                    UserModel.fromJson(userdoc.data() as Map<String, dynamic>);
-                userModel.relasi.value =
-                    await Global().getRelationship(userModel.id);
+                UserModel userModel = UserModel.fromJson(userdoc.data() as Map<String, dynamic>);
+                userModel.relasi.value = await Global().getRelationship(userModel.id);
                 if (doc.isRead == false) {
-                  queryCollectionDB(
-                          "/Users/${Get.find<GlobalController>().currentUser.value?.id}/Matches")
+                  queryCollectionDB("/Users/${Get.find<GlobalController>().currentUser.value?.id}/Matches")
                       .doc('${doc.matches}')
                       .update(
                     {'isRead': true},
