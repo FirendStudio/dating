@@ -460,7 +460,22 @@ class GlobalController extends GetxController {
     await queryCollectionDB("Users").doc(auth.currentUser!.uid).set(dataExisting, SetOptions(merge: true));
   }
 
-  sendMatchedFCM({required String idUser, required String name}) async {
+  sendMatchedDeletedFCM({required String idUser, required String name}) async {
+    // showSimpleNotification(title: "Matched", body: "You are matched with $name");
+    // UserModel userFCM = Get.find<TabsController>().getUserSelected(idUser);
+    String toParams = "/topics/" + idUser;
+    var data = {"title": "Matched", "body": " You will not be able to contact ${currentUser.value?.name} member again."};
+    print(data);
+    var response = await FCMService().sendFCM(data: data, to: toParams);
+    if (response.statusCode == 200) {
+      var result = await response.stream.bytesToString();
+      print("Success sendMatchedDeletedFCM FCM");
+      print(result);
+      var data = jsonDecode(result);
+    } else {
+      print(response.reasonPhrase);
+    }
+  } sendMatchedFCM({required String idUser, required String name}) async {
     showSimpleNotification(title: "Matched", body: "You are matched with $name");
     // UserModel userFCM = Get.find<TabsController>().getUserSelected(idUser);
     String toParams = "/topics/" + idUser;

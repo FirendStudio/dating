@@ -12,6 +12,7 @@ import 'package:geocoding/geocoding.dart';
 
 // import 'package:flutter_geocoder/geocoder.dart';
 import 'package:get/get.dart';
+import 'package:hookup4u/domain/core/model/MatchModel.dart';
 import 'package:hookup4u/infrastructure/dal/util/color.dart';
 import 'package:hookup4u/presentation/notif/controllers/notif.controller.dart';
 import 'package:image/image.dart' as i;
@@ -656,6 +657,8 @@ class Global {
                 Text(
                   "This action will permanently disconnect you from ${second.name}." +
                       "\nAre you sure you want to proceed?",
+                  /*"This action will permanently disconnect you from ${second.name}." +
+                      "\nAre you sure you want to proceed?",*/
                   textAlign: TextAlign.start,
                   style: TextStyle(fontSize: 14),
                 ),
@@ -668,7 +671,116 @@ class Global {
                       flex: 1,
                       child: InkWell(
                         onTap: () {
-                          disconnectFunction(sender, second, idChat, type, doc);
+                        //  disconnectFunction(sender, second, idChat, type, doc);
+                        },
+                        child: Container(
+                          margin: EdgeInsets.only(
+                            left: 0,
+                            top: 4,
+                            bottom: 4,
+                            right: 6,
+                          ),
+                          padding: EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.grey[400]!,
+                            ),
+                            // borderRadius: BorderRadius.all(Radius.circular(20))
+                          ),
+                          child: Text(
+                            "Yes",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      flex: 1,
+                      child: InkWell(
+                        onTap: () {
+                          Get.back();
+                          // if (type == "chat") {
+                          //   Get.back();
+                          // }
+                        },
+                        child: Container(
+                          margin: EdgeInsets.only(
+                            left: 6,
+                            top: 4,
+                            bottom: 4,
+                            right: 0,
+                          ),
+                          padding: EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Colors.grey[400]!,
+                            ),
+                            // borderRadius: BorderRadius.all(Radius.circular(20))
+                          ),
+                          child: Text(
+                            "No",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 15,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            insetAnimationCurve: Curves.decelerate,
+            actions: [],
+          ),
+        );
+      },
+    );
+  }
+
+  deleteMatchesDialog(MatchModel doc) async {
+    return await showDialog(
+      context: Get.context!,
+      builder: (BuildContext context) {
+        return Material(
+          color: Colors.transparent,
+          child: CupertinoAlertDialog(
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text("Permanently Delete"),
+              ],
+            ),
+            content: Column(
+              children: [
+                Text(
+                  "This action will permanently Delete you from ${doc.userName}." +
+                      "\nAre you sure you want to proceed?",
+                  /*"This action will permanently disconnect you from ${second.name}." +
+                      "\nAre you sure you want to proceed?",*/
+                  textAlign: TextAlign.start,
+                  style: TextStyle(fontSize: 14),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: InkWell(
+                        onTap: () {
+                       //  disconnectFunction(sender, second, idChat, type, doc);
+                          Get.find<NotifController>().getDeleteMatches(doc);
+                          Get.back();
                         },
                         child: Container(
                           margin: EdgeInsets.only(

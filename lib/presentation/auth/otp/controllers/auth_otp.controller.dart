@@ -76,6 +76,7 @@ class AuthOtpController extends GetxController {
 
   smsCodeSent(
       String verificationId, List<int> code, BuildContext context) async {
+
     // set the verification code so that we can use it to log the user in
     smsVerificationCode = verificationId;
 

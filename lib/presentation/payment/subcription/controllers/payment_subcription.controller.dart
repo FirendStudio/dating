@@ -188,8 +188,8 @@ class PaymentSubcriptionController extends GetxController {
     final PurchaseParam purchaseParam = PurchaseParam(productDetails: product);
     try {
       await iap.buyNonConsumable(purchaseParam: purchaseParam);
-    } catch (e) {
-      print(e);
+    } catch (e,stack) {
+      print("buyProduct---->$e $stack");
       Get.snackbar("Information", "You've already Subcribed");
       return;
     }

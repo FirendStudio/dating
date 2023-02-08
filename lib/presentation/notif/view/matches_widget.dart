@@ -20,19 +20,25 @@ class MatchesWidget extends GetView<NotifController> {
   @override
   Widget build(BuildContext context) {
     return Obx(
-      () => Expanded(
+      () =>controller.listMatchUser.isNotEmpty? Expanded(
         child: ListView.builder(
           itemCount: controller.listMatchUser.length,
           itemBuilder: (BuildContext context, int index) {
             MatchModel doc = controller.listMatchUser[index];
-            debugPrint("in MatchesWidget doc type=====>${doc.type.value}");
+
             if (doc.type.value == 2) {
               return blockedWidget(doc, context);
             }
             return normalWidget(doc, context);
           },
         ),
-      ),
+      ):Expanded(
+        child: Center(
+            child: Text(
+              "No Matches",
+              style: TextStyle(color: secondryColor, fontSize: 16),
+            )),
+      )
     );
   }
 
@@ -108,6 +114,8 @@ class MatchesWidget extends GetView<NotifController> {
         children: [
           SlidableAction(
             onPressed: (BuildContext context) async {
+             Global().deleteMatchesDialog(doc);
+/*
               var dataUserReceive = await queryCollectionDB("Users").doc(doc.matches).get();
               UserModel tempuser;
               if (!dataUserReceive.exists) {
@@ -131,7 +139,7 @@ class MatchesWidget extends GetView<NotifController> {
               }
 
               Global().disconnectWidget(Get.find<GlobalController>().currentUser.value!, tempuser, idChat, 'notif',
-                  doc: doc);
+                  doc: doc);*/
             },
             backgroundColor: Color(0xFF0392CF),
             foregroundColor: Colors.white,

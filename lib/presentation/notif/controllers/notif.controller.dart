@@ -65,7 +65,7 @@ class NotifController extends GetxController {
         .snapshots()
         .listen((data) async {
       listLikedUserAll.assignAll(data.docs);
-      print("getLikedByList : " + listLikedUserAll.length.toString());
+      print("call-------  getLikedByList : " + listLikedUserAll.length.toString());
       filterLiked();
     });
   }
@@ -78,31 +78,61 @@ class NotifController extends GetxController {
       print(ondata.docs.length);
       if (ondata.docs.isNotEmpty) {
         listMatchUserAll.assignAll(ondata.docs);
-
+        print("call------- getMatches : " + listLikedUserAll.length.toString());
         filterMatches();
         filterLiked();
       }
     });
   }
+
   getDeleteMatches(MatchModel matchesModel) async {
-
-    await queryCollectionDB('/Users/${Get.find<GlobalController>().currentUser.value?.id}/Matches').doc(matchesModel.matches).delete().then((value) => {
-     debugPrint("success in getDeleteMatches======>")
-     }).onError((error, stackTrace)  {
-       debugPrint("error in getDeleteMatches======>");
-       return {};
-     });
-    await  queryCollectionDB('Users')
-         .doc(Get.find<GlobalController>().currentUser.value?.id)
-         .collection("LikedBy").doc(matchesModel.matches).delete().then((value) => {
-     debugPrint("success in getDeleteMatches===LikedBY===>")
-     }).onError((error, stackTrace)  {
-       debugPrint("error in getDeleteMatches===LikedBY===>");
-       return {};
-     });
-
-    listLikedUser.remove(matchesModel);
-    listLikedUser.refresh();
+    await queryCollectionDB('/Users/${Get.find<GlobalController>().currentUser.value?.id}/Matches')
+        .doc(matchesModel.matches)
+        .delete()
+        .then((value) => {debugPrint("success in getDeleteMatches======>")})
+        .onError((error, stackTrace) {
+      debugPrint("error in getDeleteMatches======>$error");
+      return {};
+    });
+    await queryCollectionDB('Users')
+        .doc(Get.find<GlobalController>().currentUser.value?.id)
+        .collection("LikedBy")
+        .doc(matchesModel.matches)
+        .delete()
+        .then((value) => {debugPrint("success in getDeleteMatches===LikedBY===>")})
+        .onError((error, stackTrace) {
+      debugPrint("error in getDeleteMatches===LikedBY===>$error");
+      return {};
+    });
+    String chatId = Global().chatId(Get.find<GlobalController>().currentUser.value!.id, matchesModel.matches!);
+    /*await queryCollectionDB("chats").doc(chatId).delete().then((value) {
+      debugPrint("success in getDeleteMatches===chats===>");
+    }).onError((error, stackTrace) {
+      debugPrint("success in getDeleteMatches===chats===>$error");
+    });*/
+    await queryCollectionDB("chats").doc(chatId).collection('messages').add({
+      'type': 'Disconnect',
+      'text': "${Get.find<GlobalController>().currentUser.value!.name} has blocked you",
+      'sender_id': Get.find<GlobalController>().currentUser.value!.id,
+      'receiver_id': matchesModel.matches,
+      'isRead': false,
+      'image_url': "",
+      'time': FieldValue.serverTimestamp(),
+    });
+    queryCollectionDB("chats")
+        .doc(chatId)
+        .set({"active": false, "docId": chatId}, SetOptions(merge: true))
+        .then((value) {})
+        .onError((error, stackTrace) {
+          debugPrint("error-delete--set active false in  messages-->$error");
+          Get.back();
+        });
+    debugPrint("matches list length=before===${listMatchUser.length}");
+    listMatchUserAll.remove(matchesModel);
+    listMatchUser.remove(matchesModel);
+    listMatchUser.refresh();
+    debugPrint("matches list length====${listMatchUser.length}");
+    globalController.sendMatchedDeletedFCM(idUser: matchesModel.matches!, name: matchesModel.userName!);
   }
 
   filterLiked() {
@@ -512,8 +542,8 @@ class NotifController extends GetxController {
         "inRelationship": true,
         "partner": {
           "partnerId": globalController.currentUser.value?.id ?? "",
-          "partnerImage": globalController.currentUser.value?.imageUrl[0]['url']?? "" ,
-          "partnerName": globalController.currentUser.value?.name?? "",
+          "partnerImage": globalController.currentUser.value?.imageUrl[0]['url'] ?? "",
+          "partnerName": globalController.currentUser.value?.name ?? "",
         },
         // "updateAt" : FieldValue.serverTimestamp()
       });
