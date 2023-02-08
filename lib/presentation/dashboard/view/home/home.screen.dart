@@ -102,98 +102,14 @@ class HomeScreen extends StatelessWidget {
                             onPressed: () async {
                               await Global().loveUserFunction(controller.listUsers[controller.indexUser.value]);
                               controller.listUsers.remove(controller.listUsers[controller.indexUser.value]);
-                              // print("Data User index ke 1 : " +
-                              //     controller.indexUser.value.toString());
-                              // print(controller.listUsers.length);
-                              // print(controller.listUsers.length ==
-                              //     controller.indexUser.value);
+
                               if (controller.listUsers.length == controller.indexUser.value) {
                                 controller.indexUser.value--;
-                                // print("Data User index ke 2 : " +
-                                //     controller.indexUser.value.toString());
+
                               }
                             },
                           ),
-                          FloatingActionButton(
-                            heroTag: UniqueKey(),
-                            backgroundColor: Colors.white,
-                            child: Icon(
-                              Icons.add,
-                              color: primaryColor,
-                              size: 30,
-                            ),
-                            onPressed: () async {
-                              Map<String, dynamic> dataExisting = {};
-
-                              dataExisting.addAll({'UserName': "demo"});
-
-                              dataExisting.addAll({
-                                'user_DOB': "2000-10-10 00:00:00.000",
-                                'age': 20,
-                              });
-
-                              dataExisting.addAll({
-                                "sexualOrientation": {'orientation': "straight", 'showOnProfile': false},
-                              });
-                              dataExisting.addAll({
-                                'desires': ["relationship"],
-                                'showdesires': false,
-                              });
-                              dataExisting.addAll({'status': "single", 'showstatus': false});
-                              dataExisting.addAll({
-                                'showGender': ['men', 'women']
-                              });
-                              dataExisting.addAll({
-                                'editInfo': {'university': "", 'userGender': "man", 'showOnProfile': false}
-                              });
-
-                              dataExisting.addAll(
-                                {
-                                  "listSwipedUser": [],
-                                  "verified": 0,
-                                  'location': {
-                                    'latitude': 21.2335577,
-                                    'longitude': 72.8640695,
-                                    'address': "Surat Uttran Gujarat India, 394105",
-                                    'countryName': "India",
-                                    'countryID': "IN",
-                                  },
-                                  'maximum_distance': 41000,
-                                  'age_range': {
-                                    'min': "18",
-                                    'max': "99",
-                                  },
-                                },
-                              );
-                              var imageData = {
-                                "url":
-                                    "https://firebasestorage.googleapis.com/v0/b/jablesscupid.appspot.com/o/users%2F01RmPHU9AUfCtkF8tFoqkueypcS2%2F799837372.jpg?alt=media&token=dbf07aba-f6a2-4928-9d46-7f93cccdadda",
-                                "show": "true"
-                              };
-                              Map<String, dynamic> LoginID = {
-                                "fb": "",
-                                "apple": "",
-                                "phone": "123456789",
-                                "google": "",
-                              };
-
-                              dataExisting.addAll({
-                                "LoginID": LoginID,
-                                "metode": "",
-                                'userId': "123456789",
-                                // 'UserName': user.displayName ?? '',
-                                'Pictures': [imageData],
-                                'phoneNumber': "123456789",
-                                'timestamp': FieldValue.serverTimestamp(),
-                                "verified": 3,
-                              });
-
-                              await queryCollectionDB("Users")
-                                  .doc("123456789")
-                                  .set(dataExisting, SetOptions(merge: true))
-                                  .then((value) => {debugPrint("add new user successfully-->")});
-                            },
-                          ),
+                         //addUser(),
                         ],
                       ),
                     ),
@@ -204,6 +120,89 @@ class HomeScreen extends StatelessWidget {
           ),
         );
       }),
+    );
+  }
+
+  Widget addUser() {
+    return FloatingActionButton(
+      heroTag: UniqueKey(),
+      backgroundColor: Colors.white,
+      child: Icon(
+        Icons.add,
+        color: primaryColor,
+        size: 30,
+      ),
+      onPressed: () async {
+        Map<String, dynamic> dataExisting = {};
+
+        dataExisting.addAll({'UserName': "demo"});
+
+        dataExisting.addAll({
+          'user_DOB': "2000-10-10 00:00:00.000",
+          'age': 20,
+        });
+
+        dataExisting.addAll({
+          "sexualOrientation": {'orientation': "straight", 'showOnProfile': false},
+        });
+        dataExisting.addAll({
+          'desires': ["relationship"],
+          'showdesires': false,
+        });
+        dataExisting.addAll({'status': "single", 'showstatus': false});
+        dataExisting.addAll({
+          'showGender': ['men', 'women']
+        });
+        dataExisting.addAll({
+          'editInfo': {'university': "", 'userGender': "man", 'showOnProfile': false}
+        });
+
+        dataExisting.addAll(
+          {
+            "listSwipedUser": [],
+            "verified": 0,
+            'location': {
+              'latitude': 21.2335577,
+              'longitude': 72.8640695,
+              'address': "Surat Uttran Gujarat India, 394105",
+              'countryName': "India",
+              'countryID': "IN",
+            },
+            'maximum_distance': 41000,
+            'age_range': {
+              'min': "18",
+              'max': "99",
+            },
+          },
+        );
+        var imageData = {
+          "url":
+              "https://firebasestorage.googleapis.com/v0/b/jablesscupid.appspot.com/o/users%2F01RmPHU9AUfCtkF8tFoqkueypcS2%2F799837372.jpg?alt=media&token=dbf07aba-f6a2-4928-9d46-7f93cccdadda",
+          "show": "true"
+        };
+        Map<String, dynamic> LoginID = {
+          "fb": "",
+          "apple": "",
+          "phone": "123456789",
+          "google": "",
+        };
+
+        dataExisting.addAll({
+          "LoginID": LoginID,
+          "metode": "",
+          'userId': "123456789",
+          // 'UserName': user.displayName ?? '',
+          'Pictures': [imageData],
+          'phoneNumber': "123456789",
+          'timestamp': FieldValue.serverTimestamp(),
+          "verified": 3,
+        });
+
+        await queryCollectionDB("Users")
+            .doc("123456789")
+            .set(dataExisting, SetOptions(merge: true))
+            .then((value) => {debugPrint("add new user successfully-->")});
+      },
     );
   }
 
@@ -589,10 +588,10 @@ class HomeScreen extends StatelessWidget {
                             ),
                           ),
                           title: Text(
-                            value.relasi.value!.partner!.partnerName,
+                            value.relasi.value!.partner!.partnerName?? "",
                             style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
                           ),
-                          subtitle: Text(userPartner!.status + ", " + userPartner.sexualOrientation),
+                          subtitle: Text((userPartner?.status ?? "" )+ ", " +( userPartner?.sexualOrientation ?? "")),
                           leading: CircleAvatar(
                             radius: 25,
                             backgroundColor: secondryColor,

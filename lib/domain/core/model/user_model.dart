@@ -1,12 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 
 import 'Relationship.dart';
 
 class UserModel {
-   String id;
-   String name;
+  String id;
+  String name;
   final bool isBlocked;
   String address;
   final Map? coordinates;
@@ -16,7 +15,7 @@ class UserModel {
   final bool showingGender;
   final List<String> showMe;
   final int age;
-   String phoneNumber;
+  String phoneNumber;
   int maxDistance;
   Timestamp? lastmsg;
   final Map? ageRange;
@@ -32,7 +31,7 @@ class UserModel {
   final List<String> interest;
   final Rxn<Relationship> relasi;
   final String fcmToken;
-   String countryName;
+  String countryName;
   final String countryID;
   final int verified;
 
@@ -71,106 +70,89 @@ class UserModel {
 
   factory UserModel.fromDocument(DocumentSnapshot doc) {
     return UserModel(
-      id: doc['userId'],
-      // isBlocked: doc['isBlocked'] != null ? doc['isBlocked'] : false,
-      isBlocked: doc.data().toString().contains('isBlocked')
-          ? doc['isBlocked']
-          : false,
-      phoneNumber: doc.data().toString().contains('phoneNumber')
-          ? doc['phoneNumber'] ?? ""
-          : "",
-      name: doc['UserName'],
-      editInfo: doc['editInfo'],
-      ageRange: doc['age_range'],
-      showMe: List.generate((doc['showGender'] ?? []).length, (index) {
-              return doc[index];
-            }),
-      gender: doc['editInfo']['userGender'] ?? "woman",
-      showingGender: doc['editInfo']['showOnProfile'] ?? true,
-      maxDistance: doc['maximum_distance'],
-      sexualOrientation: doc['sexualOrientation']['orientation'] ?? "",
-      showingOrientation: doc['sexualOrientation']['showOnProfile'] ?? "",
-      status: doc['status'] ?? 'single',
-      desires: doc['desires'] ?? [],
-      kinks: doc.data().toString().contains('kinks') ? doc['kinks'] : [],
-      interest:
-          doc.data().toString().contains('interest') ? doc['interest'] : [],
-      age:
-          ((DateTime.now().difference(DateTime.parse(doc["user_DOB"])).inDays) /
-                  365.2425)
-              .truncate(),
-      address: doc['location']['address'],
-      coordinates: doc['location'],
-      countryName: doc['location']['countryName'] ?? "",
-      countryID: doc['location']['countryID'] ?? "",
-      loginID: doc.data().toString().contains('LoginID') ? doc['LoginID'] : {},
-      metode: doc.data().toString().contains('metode') ? doc['metode'] : "",
-      // university: doc['editInfo']['university'],
-      imageUrl: doc['Pictures'] != null
-          ? List.generate(doc['Pictures'].length, (index) {
-              return doc['Pictures'][index];
-            })
-          : [],
-      listSwipedUser: doc.data().toString().contains('listSwipedUser')
-          ? doc['listSwipedUser']
-          : [],
-      relasi: Rxn(),
-      fcmToken:
-          doc.data().toString().contains('pushToken') ? doc['pushToken'] : "",
-      verified:
-          doc.data().toString().contains('verified') ? doc['verified'] : 0,
-    );
+        id: doc['userId'],
+        // isBlocked: doc['isBlocked'] != null ? doc['isBlocked'] : false,
+        isBlocked: doc.data().toString().contains('isBlocked') ? doc['isBlocked'] : false,
+        phoneNumber: doc.data().toString().contains('phoneNumber') ? doc['phoneNumber'] ?? "" : "",
+        name: doc['UserName'],
+        editInfo: doc['editInfo'],
+        ageRange: doc['age_range'],
+        showMe: List.generate((doc['showGender'] ?? []).length, (index) {
+          return doc[index];
+        }),
+        gender: doc['editInfo']['userGender'] ?? "woman",
+        showingGender: doc['editInfo']['showOnProfile'] ?? true,
+        maxDistance: doc['maximum_distance'],
+        sexualOrientation: doc['sexualOrientation']['orientation'] ?? "",
+        showingOrientation: doc['sexualOrientation']['showOnProfile'] ?? "",
+        status: doc['status'] ?? 'single',
+        desires: doc['desires'] ?? [],
+        kinks: doc.data().toString().contains('kinks') ? doc['kinks'] : [],
+        interest: doc.data().toString().contains('interest') ? doc['interest'] : [],
+        age: ((DateTime.now().difference(DateTime.parse(doc["user_DOB"])).inDays) / 365.2425).truncate(),
+        address: doc['location']['address'],
+        coordinates: doc['location'],
+        countryName: doc['location']['countryName'] ?? "",
+        countryID: doc['location']['countryID'] ?? "",
+        loginID: doc.data().toString().contains('LoginID') ? doc['LoginID'] : {},
+        metode: doc.data().toString().contains('metode') ? doc['metode'] : "",
+        // university: doc['editInfo']['university'],
+        imageUrl: doc['Pictures'] != null
+            ? List.generate(doc['Pictures'].length, (index) {
+                return doc['Pictures'][index];
+              })
+            : [],
+        listSwipedUser: doc.data().toString().contains('listSwipedUser') ? doc['listSwipedUser'] : [],
+        relasi: Rxn(),
+        fcmToken: doc.data().toString().contains('pushToken') ? doc['pushToken'] : "",
+        verified: doc.data().toString().contains('verified') ? doc['verified'] : 0,
+        lastmsg: doc.data().toString().contains('timestamp') ? doc['timestamp'] : Timestamp.now());
   }
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
-      id: json['userId'],
-      isBlocked: json['isBlocked'] ?? false,
-      phoneNumber: json['phoneNumber'] ?? "",
-      name: json['UserName'] ?? "",
-      editInfo: json['editInfo'],
-      ageRange: json['age_range'],
-      showMe: List.generate((json['showGender'] ?? []).length, (index) {
-        return json['showGender'][index];
-      }),
-      gender: json['editInfo']['userGender'] ?? "woman",
-      showingGender: json['editInfo']['showOnProfile'] ?? true,
-      maxDistance: json['maximum_distance'] ?? 0,
-      sexualOrientation: json['sexualOrientation']['orientation'] ?? "",
-      showingOrientation: json['sexualOrientation']['showOnProfile'] ?? false,
-      status: json['status'] ?? 'single',
-      desires: List.generate((json['desires'] ?? []).length, (index) {
-        return json['desires'][index];
-      }),
-      kinks: List.generate((json['kinks'] ?? []).length, (index) {
-        return json['kinks'][index];
-      }),
-      interest: List.generate((json['interest'] ?? []).length, (index) {
-        return json['interest'][index];
-      }),
-      age: ((DateTime.now()
-                  .difference(DateTime.parse(json["user_DOB"]))
-                  .inDays) /
-              365.2425)
-          .truncate(),
-      address: json['location']['address'] ?? "",
-      coordinates: json['location'],
-      countryName: json['location']['countryName'] ?? "",
-      countryID: json['location']['countryID'] ?? "",
-      loginID: json['LoginID'],
-      metode: json['metode'] ?? "",
-      // university: doc['editInfo']['university'],
-      imageUrl: List.generate((json['Pictures'] ?? []).length, (index) {
-        return json['Pictures'][index];
-      }),
-      listSwipedUser:
-          List.generate((json['listSwipedUser'] ?? []).length, (index) {
-        return json['listSwipedUser'][index];
-      }),
-      relasi: Rxn(),
-      fcmToken: json['pushToken'] ?? "",
-      verified: json['verified'] ?? 0,
-    );
+        id: json['userId'],
+        isBlocked: json['isBlocked'] ?? false,
+        phoneNumber: json['phoneNumber'] ?? "",
+        name: json['UserName'] ?? "",
+        editInfo: json['editInfo'],
+        ageRange: json['age_range'],
+        showMe: List.generate((json['showGender'] ?? []).length, (index) {
+          return json['showGender'][index];
+        }),
+        gender: json['editInfo']['userGender'] ?? "woman",
+        showingGender: json['editInfo']['showOnProfile'] ?? true,
+        maxDistance: json['maximum_distance'] ?? 0,
+        sexualOrientation: json['sexualOrientation']['orientation'] ?? "",
+        showingOrientation: json['sexualOrientation']['showOnProfile'] ?? false,
+        status: json['status'] ?? 'single',
+        desires: List.generate((json['desires'] ?? []).length, (index) {
+          return json['desires'][index];
+        }),
+        kinks: List.generate((json['kinks'] ?? []).length, (index) {
+          return json['kinks'][index];
+        }),
+        interest: List.generate((json['interest'] ?? []).length, (index) {
+          return json['interest'][index];
+        }),
+        age: ((DateTime.now().difference(DateTime.parse(json["user_DOB"])).inDays) / 365.2425).truncate(),
+        address: json['location']['address'] ?? "",
+        coordinates: json['location'],
+        countryName: json['location']['countryName'] ?? "",
+        countryID: json['location']['countryID'] ?? "",
+        loginID: json['LoginID'],
+        metode: json['metode'] ?? "",
+        // university: doc['editInfo']['university'],
+        imageUrl: List.generate((json['Pictures'] ?? []).length, (index) {
+          return json['Pictures'][index];
+        }),
+        listSwipedUser: List.generate((json['listSwipedUser'] ?? []).length, (index) {
+          return json['listSwipedUser'][index];
+        }),
+        relasi: Rxn(),
+        fcmToken: json['pushToken'] ?? "",
+        verified: json['verified'] ?? 0,
+        lastmsg: json['timestamp'] ?? Timestamp.now());
   }
 /*  Map<String, dynamic> toJson() => {
         "id": id,

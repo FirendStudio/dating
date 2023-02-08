@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:hookup4u/domain/core/model/Relationship.dart';
 import 'package:hookup4u/domain/core/model/SuspendModel.dart';
 import 'package:hookup4u/domain/core/model/user_model.dart';
 import 'package:hookup4u/infrastructure/dal/util/Global.dart';
@@ -33,6 +34,7 @@ class GlobalController extends GetxController {
   int initFCM = 0;
   Rxn<ReviewModel> reviewModel = Rxn();
   List notificationTitleList = ["Matched", "Liked", "New Chat", "Leaving Chat", "Resume Chat", "Blocked Chat"];
+  RxList<UserModel> globalListUsers = RxList();
 
   @override
   onInit() async {
@@ -91,7 +93,7 @@ class GlobalController extends GetxController {
       print("Subcribe to ${currentUser.value?.id}");
     }
     await FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {
-      if(message!=null) {
+      if (message != null) {
         checkNotifications(message);
         debugPrint("notification--getInitialMessage-->${message.data.toString()}");
       }
@@ -113,7 +115,8 @@ class GlobalController extends GetxController {
   }
 
   checkNotifications(RemoteMessage message) async {
-      debugPrint("call checkNotifications---->${message.notification?.title.toString().trim()} ${message.notification?.body.toString().trim()} ");
+    debugPrint(
+        "call checkNotifications---->${message.notification?.title.toString().trim()} ${message.notification?.body.toString().trim()} ");
     if (message.notification != null) {
       if (!notificationTitleList.contains(message.notification?.title.toString().trim())) {
         UserModel currentUserTemp = Get.find<GlobalController>().currentUser.value!;
@@ -121,14 +124,14 @@ class GlobalController extends GetxController {
         try {
           await queryCollectionDB('/Users/${currentUserTemp.id}/notification').add({
             "title": message.notification?.title.toString().trim(),
-            "body":   message.notification?.body.toString().trim(),
+            "body": message.notification?.body.toString().trim(),
             "time": FieldValue.serverTimestamp(),
           }).then((value) => {debugPrint("successFully added notification data--->")});
         } on Exception catch (e) {
           debugPrint("checkNotifications----$e>");
         }
       }
-    }else{
+    } else {
       debugPrint("call checkNotifications---else ->");
     }
   }
@@ -141,7 +144,18 @@ class GlobalController extends GetxController {
       }
       UserModel tempUser = UserModel.fromJson(event.data() as Map<String, dynamic>);
       currentUser.value = tempUser;
-      currentUser.value!.relasi.value = await Global().getRelationship(tempUser.id);
+
+      // currentUser.value!.relasi.value = await Global().getRelationship(tempUser.id);
+      ///-- add Partner
+      queryCollectionDB("Relationship").doc(tempUser.id).snapshots().listen((data) async {
+        if (!data.exists) {
+          await Global().setNewRelationship(tempUser.id);
+          // data = await queryCollectionDB("Relationship").doc(tempUser.id).get();
+        } else {
+          currentUser.value!.relasi.value = Relationship.fromDocument(data.data() as Map<String, dynamic>);
+        }
+      });
+
       bool cek = Get.isRegistered<HomeController>();
       if (kDebugMode) {
         print("Cek Home is registered : " + cek.toString());
@@ -154,21 +168,78 @@ class GlobalController extends GetxController {
   }
 
   listenUserCollection() {
-    streamUserCollection =
-        FirebaseFirestore.instance.collection("Users").snapshots().listen((event) {
-          debugPrint("listen userData Successfully--->");
+    streamUserCollection = FirebaseFirestore.instance.collection("Users").snapshots().listen((event) {
+      debugPrint("listen userData Successfully--->");
 
+      bool cek = Get.isRegistered<HomeController>();
+      if (kDebugMode) {
+        print("Cek Home is listenUserCollection : " + cek.toString());
+      }
+      if (cek) {
+        // Get.find<HomeController>().initUser();
+        getUserIsNotExits(cek, event);
+      }
+    });
+  }
 
-          bool cek = Get.isRegistered<HomeController>();
-          if (kDebugMode) {
-            print("Cek Home is listenUserCollection : " + cek.toString());
+  void getUserIsNotExits(bool cek, QuerySnapshot<Map<String, dynamic>> event) {
+    globalListUsers.clear();
+    globalListUsers.refresh();
+    if (cek) {
+      debugPrint("listenUserCollection-------->");
+      // Get.find<HomeController>().initUser();
+
+      for (var doc in event.docs) {
+        Map<String, dynamic> json = doc.data();
+        if (json.containsKey("age")) {
+          UserModel tempUser = UserModel.fromJson(json);
+          double distance = Global().calculateDistance(
+            currentUser.value?.coordinates?['latitude'] ?? 0.0,
+            currentUser.value?.coordinates?['longitude'] ?? 0.0,
+            tempUser.coordinates?['latitude'] ?? 0.0,
+            tempUser.coordinates?['longitude'] ?? 0.0,
+          );
+          tempUser.distanceBW = distance.round();
+
+          if (Get.find<HomeController>().filterUser(tempUser, currentUser.value!, distance)) {
+            continue;
           }
-          if (cek) {
-            debugPrint("listenUserCollection-------->");
-            Get.find<HomeController>().initUser();
-          }
-        });
 
+          if (tempUser.imageUrl.isNotEmpty) {
+            List imageUrlTemp = [];
+            for (int i = 0; i <= tempUser.imageUrl.length - 1; i++) {
+              if (tempUser.imageUrl[i].runtimeType == String) {
+                imageUrlTemp.add({"url": tempUser.imageUrl[i], "show": "true"});
+              } else {
+                if (tempUser.imageUrl[i]['show'] == "true") {
+                  imageUrlTemp.add(tempUser.imageUrl[i]);
+                }
+              }
+            }
+          }
+
+          globalListUsers.add(tempUser);
+          globalListUsers.refresh();
+          continue;
+        }
+      }
+      debugPrint("in listen collection globalListUsers length---->${globalListUsers.length}");
+      debugPrint("in listen collection listUsers length---->${Get.find<HomeController>().listUsers.length}");
+      globalListUsers.forEach((element) {
+        if (!Get.find<HomeController>().listUsers.contains(element) &&
+            element.lastmsg?.compareTo(Timestamp.fromDate(Timestamp.now().toDate().subtract(Duration(minutes: 15)))) ==
+                1) {
+          debugPrint("in if user not contain---->${element.name}");
+          Get.find<HomeController>().listUsers.add(element);
+          Get.find<HomeController>().listUsers.refresh();
+        } else {
+          debugPrint("in if user  contain---->${element.name}");
+        }
+      });
+      Get.find<HomeController>().listUsers.toSet();
+      Get.find<HomeController>().listUsers.refresh();
+      // Get.find<HomeController>().listUsers.sort((a, b) => a.distanceBW.compareTo(b.distanceBW));
+    }
   }
 
   getAccessItems() async {

@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
@@ -6,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/domain/core/model/MatchModel.dart';
 import 'package:hookup4u/infrastructure/dal/controller/global_controller.dart';
+
 import '../../../domain/core/model/Relationship.dart';
 import '../../../infrastructure/dal/util/Global.dart';
 import '../../../infrastructure/dal/util/general.dart';
@@ -19,8 +21,7 @@ class NotifController extends GetxController {
   RxList<MatchModel> listMatchNewUser = RxList();
   StreamSubscription<QuerySnapshot>? streamLikedBy;
   StreamSubscription<QuerySnapshot>? streamMatches;
-  RxList<StreamSubscription<QuerySnapshot<Map<String, dynamic>>>?>
-      listStreamRoom = RxList();
+  RxList<StreamSubscription<QuerySnapshot<Map<String, dynamic>>>?> listStreamRoom = RxList();
 
   initAll() {
     debugPrint("call--notification-initAll()");
@@ -70,8 +71,7 @@ class NotifController extends GetxController {
   }
 
   getMatches() async {
-    streamMatches = queryCollectionDB(
-            '/Users/${Get.find<GlobalController>().currentUser.value?.id}/Matches')
+    streamMatches = queryCollectionDB('/Users/${Get.find<GlobalController>().currentUser.value?.id}/Matches')
         .orderBy('timestamp', descending: true)
         .snapshots()
         .listen((ondata) async {
@@ -93,11 +93,9 @@ class NotifController extends GetxController {
           return;
         }
         for (int j = 0; j <= listLikedUserAll.length - 1; j++) {
-          if (listLikedUserAll[j]['LikedBy'] ==
-              listMatchUserAll[i]['Matches']) {
+          if (listLikedUserAll[j]['LikedBy'] == listMatchUserAll[i]['Matches']) {
             if (listLikedUser.isNotEmpty) {
-              listLikedUser.removeWhere((element) =>
-                  element['LikedBy'] == listLikedUserAll[j]['LikedBy']);
+              listLikedUser.removeWhere((element) => element['LikedBy'] == listLikedUserAll[j]['LikedBy']);
             }
           }
         }
@@ -159,8 +157,7 @@ class NotifController extends GetxController {
 
   int filterType(String idMatch) {
     if (listMatchUser.isNotEmpty) {
-      var data = listMatchUser
-          .firstWhereOrNull((element) => element.matches == idMatch);
+      var data = listMatchUser.firstWhereOrNull((element) => element.matches == idMatch);
       if (kDebugMode) {
         print(data);
       }
@@ -172,38 +169,30 @@ class NotifController extends GetxController {
   }
 
   acceptPartner(
-      {required BuildContext context2,
-      required String Uid,
-      required String imageUrl,
-      required String userName}) async {
+      {required BuildContext context2, required String Uid, required String imageUrl, required String userName}) async {
     ArtDialogResponse? response;
-    if (globalController.currentUser.value?.relasi.value?.inRelationship ==
-            true &&
-        globalController.currentUser.value?.relasi.value?.partner?.partnerId ==
-            Uid) {
+    if (globalController.currentUser.value?.relasi.value?.inRelationship == true &&
+        globalController.currentUser.value?.relasi.value?.partner?.partnerId == Uid) {
       ArtSweetAlert.show(
         context: context2,
         artDialogArgs: ArtDialogArgs(
           type: ArtSweetAlertType.info,
-          title: "You already in releationship with $userName",
+          title: "You already in relationship with $userName",
         ),
       );
 
       return;
     }
 
-    if (globalController.currentUser.value?.relasi.value?.inRelationship ==
-            true &&
-        globalController.currentUser.value?.relasi.value?.partner?.partnerId !=
-            Uid) {
+    if (globalController.currentUser.value?.relasi.value?.inRelationship == true &&
+        globalController.currentUser.value?.relasi.value?.partner?.partnerId != Uid) {
       response = await ArtSweetAlert.show(
         barrierDismissible: false,
         context: context2,
         artDialogArgs: ArtDialogArgs(
           // showCancelBtn: true,
           denyButtonText: "No",
-          title:
-              "You are already in relationship, do you want change to another partner?",
+          title: "You are already in relationship, do you want change to another partner?",
           confirmButtonText: "Yes",
         ),
       );
@@ -235,10 +224,7 @@ class NotifController extends GetxController {
   }
 
   addNewPartner(
-      {required BuildContext context2,
-      required String userName,
-      required String imageUrl,
-      required String Uid}) async {
+      {required BuildContext context2, required String userName, required String imageUrl, required String Uid}) async {
     ArtDialogResponse? response = await ArtSweetAlert.show(
       barrierDismissible: false,
       context: context2,
@@ -268,20 +254,16 @@ class NotifController extends GetxController {
     }
 
     if (response.isTapConfirmButton) {
-      if (globalController.currentUser.value?.relasi.value?.inRelationship ==
-              true ||
-          (globalController.currentUser.value?.relasi.value?.pendingReq ?? [])
-              .isNotEmpty ||
-          (globalController.currentUser.value?.relasi.value?.pendingAcc ?? [])
-              .isNotEmpty) {
+      if (globalController.currentUser.value?.relasi.value?.inRelationship == true ||
+          (globalController.currentUser.value?.relasi.value?.pendingReq ?? []).isNotEmpty ||
+          (globalController.currentUser.value?.relasi.value?.pendingAcc ?? []).isNotEmpty) {
         response = await ArtSweetAlert.show(
           barrierDismissible: false,
           context: context2,
           artDialogArgs: ArtDialogArgs(
             // showCancelBtn: true,
             denyButtonText: "No",
-            title:
-                "You are already in relationship, do you want change to another partner?",
+            title: "You are already in relationship, do you want change to another partner?",
             confirmButtonText: "Yes",
           ),
         );
@@ -300,19 +282,12 @@ class NotifController extends GetxController {
       bool cek = false;
 
       print(globalController.currentUser.value?.relasi.value?.pendingAcc);
-      if ((globalController.currentUser.value?.relasi.value?.pendingAcc ?? [])
-          .isNotEmpty) {
+      if ((globalController.currentUser.value?.relasi.value?.pendingAcc ?? []).isNotEmpty) {
         cek = false;
         for (int index = 0;
-            index <=
-                (globalController.currentUser.value?.relasi.value?.pendingAcc ??
-                            [])
-                        .length -
-                    1;
+            index <= (globalController.currentUser.value?.relasi.value?.pendingAcc ?? []).length - 1;
             index++) {
-          if (Uid ==
-              globalController
-                  .currentUser.value?.relasi.value?.pendingAcc[index].reqUid) {
+          if (Uid == globalController.currentUser.value?.relasi.value?.pendingAcc[index].reqUid) {
             cek = true;
             break;
           }
@@ -329,10 +304,8 @@ class NotifController extends GetxController {
         await Global().setNewRelationship(Uid);
         data = await queryCollectionDB("Relationship").doc(Uid).get();
       }
-      Relationship relationUserPartnerReq =
-          Relationship.fromDocument(data.data()!);
-      if (relationUserPartnerReq.pendingReq.isNotEmpty ||
-          relationUserPartnerReq.pendingAcc.isNotEmpty) {
+      Relationship relationUserPartnerReq = Relationship.fromDocument(data.data()!);
+      if (relationUserPartnerReq.pendingReq.isNotEmpty || relationUserPartnerReq.pendingAcc.isNotEmpty) {
         Get.snackbar("Information", "User partner already requested partner");
         return;
       }
@@ -358,11 +331,10 @@ class NotifController extends GetxController {
 
       if (cek) {
         ArtSweetAlert.show(
-            context: context2,
-            artDialogArgs: ArtDialogArgs(
-                type: ArtSweetAlertType.success, title: "Success"));
+            context: context2, artDialogArgs: ArtDialogArgs(type: ArtSweetAlertType.success, title: "Success"));
       }
       update();
+
       await Future.delayed(Duration(seconds: 2));
       Get.back();
       Get.back();
@@ -399,14 +371,12 @@ class NotifController extends GetxController {
   // }
 
   Future<bool> addNewPendingAcc(
-      {required String userName,
-      required String imageUrl,
-      required String UidPartner,
-      required String idUser}) async {
+      {required String userName, required String imageUrl, required String UidPartner, required String idUser}) async {
     List<Pending> listNewPendingAcc = [];
     bool cek = false;
     Relationship relationUserRequested;
     Map<String, dynamic> updateAcc = {};
+    Map<String, dynamic> updatePartnerAcc = {};
 
     if (idUser != globalController.currentUser.value?.id) {
       var data = await queryCollectionDB("Relationship").doc(idUser).get();
@@ -421,34 +391,24 @@ class NotifController extends GetxController {
       if (listNewPendingAcc.isNotEmpty) {
         cek = false;
         for (int index = 0; index <= listNewPendingAcc.length - 1; index++) {
-          if (globalController.currentUser.value?.id ==
-              listNewPendingAcc[index].reqUid) {
+          if (globalController.currentUser.value?.id == listNewPendingAcc[index].reqUid) {
             cek = true;
             break;
           }
         }
         if (!cek) {
-          listNewPendingAcc.add(Pending(
-              userName: userName,
-              imageUrl: imageUrl,
-              reqUid: UidPartner,
-              createdAt: DateTime.now()));
+          listNewPendingAcc
+              .add(Pending(userName: userName, imageUrl: imageUrl, reqUid: UidPartner, createdAt: DateTime.now()));
         }
       } else {
-        listNewPendingAcc.add(Pending(
-            userName: userName,
-            imageUrl: imageUrl,
-            reqUid: UidPartner,
-            createdAt: DateTime.now()));
+        listNewPendingAcc
+            .add(Pending(userName: userName, imageUrl: imageUrl, reqUid: UidPartner, createdAt: DateTime.now()));
       }
 
       cek = false;
       if (relationUserRequested.pendingReq.isNotEmpty) {
-        for (int index = 0;
-            index <= relationUserRequested.pendingReq.length - 1;
-            index++) {
-          if (globalController.currentUser.value?.id ==
-              relationUserRequested.pendingReq[index].reqUid) {
+        for (int index = 0; index <= relationUserRequested.pendingReq.length - 1; index++) {
+          if (globalController.currentUser.value?.id == relationUserRequested.pendingReq[index].reqUid) {
             cek = true;
             break;
           }
@@ -456,8 +416,7 @@ class NotifController extends GetxController {
       }
     } else {
       cek = false;
-      listNewPendingAcc.assignAll(
-          globalController.currentUser.value?.relasi.value?.pendingAcc ?? []);
+      listNewPendingAcc.assignAll(globalController.currentUser.value?.relasi.value?.pendingAcc ?? []);
       if (listNewPendingAcc.isNotEmpty) {
         for (int index = 0; index <= listNewPendingAcc.length - 1; index++) {
           if (UidPartner == listNewPendingAcc[index].reqUid) {
@@ -487,18 +446,11 @@ class NotifController extends GetxController {
       }
 
       cek = false;
-      if ((globalController.currentUser.value?.relasi.value?.pendingReq ?? [])
-          .isNotEmpty) {
+      if ((globalController.currentUser.value?.relasi.value?.pendingReq ?? []).isNotEmpty) {
         for (int index = 0;
-            index <=
-                (globalController.currentUser.value?.relasi.value?.pendingReq ??
-                            [])
-                        .length -
-                    1;
+            index <= (globalController.currentUser.value?.relasi.value?.pendingReq ?? []).length - 1;
             index++) {
-          if (UidPartner ==
-              globalController
-                  .currentUser.value?.relasi.value?.pendingReq[index].reqUid) {
+          if (UidPartner == globalController.currentUser.value?.relasi.value?.pendingReq[index].reqUid) {
             cek = true;
             break;
           }
@@ -506,13 +458,12 @@ class NotifController extends GetxController {
       }
     }
 
-    List listUpdateAcc =
-        listNewPendingAcc.map((player) => player.toJson()).toList();
+    List listUpdateAcc = listNewPendingAcc.map((player) => player.toJson()).toList();
     updateAcc.addAll({
       "pendingAcc": listUpdateAcc,
     });
     print(updateAcc);
-
+    debugPrint("partner id cek---$cek->");
     if (cek) {
       print(idUser);
       updateAcc.addAll({
@@ -524,16 +475,53 @@ class NotifController extends GetxController {
         },
         // "updateAt" : FieldValue.serverTimestamp()
       });
-
+      bool resultPartner = false;
       await queryCollectionDB("Relationship")
           .doc(idUser)
-          .set(updateAcc, SetOptions(merge: true));
-      return true;
-    }
+          .set(updateAcc, SetOptions(merge: true))
+          .then((value) => {debugPrint("--add partner successfully 481--->"), resultPartner = true})
+          .onError(
+        (error, stackTrace) {
+          debugPrint("error--add partner 484--$error>");
+          resultPartner = false;
+          return {};
+        },
+      );
 
+      updatePartnerAcc.addAll({
+        "inRelationship": true,
+        "partner": {
+          "partnerId": globalController.currentUser.value?.id ?? "",
+          "partnerImage": globalController.currentUser.value?.imageUrl[0]['url']?? "" ,
+          "partnerName": globalController.currentUser.value?.name?? "",
+        },
+        // "updateAt" : FieldValue.serverTimestamp()
+      });
+      debugPrint("opposite user data --$updatePartnerAcc>");
+      await queryCollectionDB("Relationship")
+          .doc(UidPartner)
+          .set(updatePartnerAcc, SetOptions(merge: true))
+          .then((value) => {debugPrint("opposite--add partner successfully --->"), resultPartner = true})
+          .onError(
+        (error, stackTrace) {
+          debugPrint("error-opposite-add partner --$error>");
+          resultPartner = false;
+          return {};
+        },
+      );
+      return resultPartner;
+    }
+    debugPrint("partner data=outer===$updateAcc=======partner id===$idUser ");
     await queryCollectionDB("Relationship")
         .doc(idUser)
-        .set(updateAcc, SetOptions(merge: true));
+        .set(updateAcc, SetOptions(merge: true))
+        .then((value) => {debugPrint("--add partner successfully -outer-->")})
+        .onError(
+      (error, stackTrace) {
+        debugPrint("error--add partner outer--$error>");
+        return {};
+      },
+    );
     return true;
   }
 
@@ -545,53 +533,39 @@ class NotifController extends GetxController {
       required String idUser}) async {
     bool cek = false;
     List<Pending> listNewPendingReq = [];
+    Map<String, dynamic> updateAcc = {};
 
     if (idUser != globalController.currentUser.value?.id) {
-      DocumentSnapshot data =
-          await queryCollectionDB("Relationship").doc(idUser).get();
+      DocumentSnapshot data = await queryCollectionDB("Relationship").doc(idUser).get();
 
       if (!data.exists) {
         await Global().setNewRelationship(idUser);
         data = await queryCollectionDB("Relationship").doc(idUser).get();
       }
-      Relationship relationUserRequested =
-          Relationship.fromDocument(data.data() as Map<String, dynamic>);
+      Relationship relationUserRequested = Relationship.fromDocument(data.data() as Map<String, dynamic>);
 
       cek = false;
       listNewPendingReq.assignAll(relationUserRequested.pendingReq);
       if (relationUserRequested.pendingReq.isNotEmpty) {
         cek = false;
-        for (int index = 0;
-            index <= relationUserRequested.pendingReq.length - 1;
-            index++) {
-          if (globalController.currentUser.value?.id ==
-              relationUserRequested.pendingReq[index].reqUid) {
+        for (int index = 0; index <= relationUserRequested.pendingReq.length - 1; index++) {
+          if (globalController.currentUser.value?.id == relationUserRequested.pendingReq[index].reqUid) {
             cek = true;
             break;
           }
         }
         if (cek) {
-          listNewPendingReq.add(Pending(
-              userName: userName,
-              imageUrl: imageUrl,
-              reqUid: Uid,
-              createdAt: DateTime.now()));
+          listNewPendingReq
+              .add(Pending(userName: userName, imageUrl: imageUrl, reqUid: Uid, createdAt: DateTime.now()));
         }
       } else {
-        listNewPendingReq.add(Pending(
-            userName: userName,
-            imageUrl: imageUrl,
-            reqUid: Uid,
-            createdAt: DateTime.now()));
+        listNewPendingReq.add(Pending(userName: userName, imageUrl: imageUrl, reqUid: Uid, createdAt: DateTime.now()));
       }
 
       cek = false;
       if (relationUserRequested.pendingAcc.isNotEmpty) {
-        for (int index = 0;
-            index <= relationUserRequested.pendingAcc.length - 1;
-            index++) {
-          if (globalController.currentUser.value?.id ==
-              relationUserRequested.pendingAcc[index].reqUid) {
+        for (int index = 0; index <= relationUserRequested.pendingAcc.length - 1; index++) {
+          if (globalController.currentUser.value?.id == relationUserRequested.pendingAcc[index].reqUid) {
             cek = true;
             break;
           }
@@ -599,8 +573,7 @@ class NotifController extends GetxController {
       }
     } else {
       cek = false;
-      listNewPendingReq.assignAll(
-          globalController.currentUser.value?.relasi.value?.pendingReq ?? []);
+      listNewPendingReq.assignAll(globalController.currentUser.value?.relasi.value?.pendingReq ?? []);
       if (listNewPendingReq.isNotEmpty) {
         for (int index = 0; index <= listNewPendingReq.length - 1; index++) {
           if (Uid == listNewPendingReq[index].reqUid) {
@@ -609,40 +582,43 @@ class NotifController extends GetxController {
           }
         }
         if (!cek) {
-          listNewPendingReq.add(Pending(
-              userName: userName,
-              imageUrl: imageUrl,
-              reqUid: Uid,
-              createdAt: DateTime.now()));
+          listNewPendingReq
+              .add(Pending(userName: userName, imageUrl: imageUrl, reqUid: Uid, createdAt: DateTime.now()));
         }
       } else {
-        listNewPendingReq.add(Pending(
-            userName: userName,
-            imageUrl: imageUrl,
-            reqUid: Uid,
-            createdAt: DateTime.now()));
+        listNewPendingReq.add(Pending(userName: userName, imageUrl: imageUrl, reqUid: Uid, createdAt: DateTime.now()));
       }
 
       cek = false;
-      if ((globalController.currentUser.value?.relasi.value?.pendingAcc ?? [])
-          .isNotEmpty) {
+      if ((globalController.currentUser.value?.relasi.value?.pendingAcc ?? []).isNotEmpty) {
         for (int index = 0;
-            index <=
-                (globalController.currentUser.value?.relasi.value?.pendingAcc ??
-                            [])
-                        .length -
-                    1;
+            index <= (globalController.currentUser.value?.relasi.value?.pendingAcc ?? []).length - 1;
             index++) {
-          if (Uid ==
-              (globalController.currentUser.value?.relasi.value?.pendingAcc ??
-                      [])[index]
-                  .reqUid) {
+          if (Uid == (globalController.currentUser.value?.relasi.value?.pendingAcc ?? [])[index].reqUid) {
             cek = true;
             break;
           }
         }
       }
     }
-    return true;
+    List listUpdateAcc = listNewPendingReq.map((player) => player.toJson()).toList();
+    updateAcc.addAll({
+      "pendingReq": listUpdateAcc,
+    });
+
+    debugPrint("partner data===request =$updateAcc=======partner id===$idUser ");
+    bool result = false;
+    await queryCollectionDB("Relationship")
+        .doc(idUser)
+        .set(updateAcc, SetOptions(merge: true))
+        .then((value) => {debugPrint("--add partner request successfully 589--->"), result = true})
+        .onError(
+      (error, stackTrace) {
+        debugPrint("error--add partner request592--$error>");
+        result = false;
+        return {};
+      },
+    );
+    return result;
   }
 }

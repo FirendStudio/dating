@@ -278,7 +278,7 @@ class Global {
       'DislikedUser': userModel.id,
       'timestamp': DateTime.now(),
     }, SetOptions(merge: true));
-    // listUsers.remove(userModel);
+     // listUsers.remove(userModel);
   }
 
   loveUserFunction(UserModel userModel) async {

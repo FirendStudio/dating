@@ -5,9 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/presentation/dashboard/view/home/controllers/home.controller.dart';
+import 'package:hookup4u/presentation/notif/controllers/notif.controller.dart';
 
 import '../../../domain/core/interfaces/report/report_user.dart';
 import '../../../domain/core/model/user_model.dart';
+import '../../../infrastructure/dal/controller/global_controller.dart';
 import '../../../infrastructure/dal/util/Global.dart';
 import '../../../infrastructure/dal/util/color.dart';
 import '../../../infrastructure/dal/util/general.dart';
@@ -423,6 +425,16 @@ class DetailScreen extends GetView<DetailController> {
                                   return;
                                 }
                                 await Global().disloveFunction(controller.user);
+
+
+                                queryCollectionDB('Users')
+                                    .doc(Get.find<GlobalController>().currentUser.value?.id)
+                                    .collection("LikedBy").doc(controller.user.id).delete().then((value) => {
+                                  debugPrint("delete successfully dis love in notification")
+                                });
+                                Get.find<NotifController>().listLikedUser.remove(controller.user);
+                                Get.find<NotifController>().listLikedUser.refresh();
+
                                 Get.back();
 
                               },
@@ -447,6 +459,7 @@ class DetailScreen extends GetView<DetailController> {
                                 // Get.back();
                                 await Global()
                                     .loveUserFunction(controller.user);
+                                Get.back();
                               },
                             ),
                           ],

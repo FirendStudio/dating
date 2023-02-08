@@ -27,6 +27,7 @@ class AuthLoginController extends GetxController {
 
   @override
   void onInit() {
+    ///-- Sign up issue
     if (Session().getLoginType() != "") {
       WidgetsBinding.instance.addPostFrameCallback((_) => showRememberLoginDialog(Session().getLoginType()));
     }
@@ -38,7 +39,7 @@ class AuthLoginController extends GetxController {
       barrierDismissible: false,
       context: Get.context!,
       builder: (context) => RememberLoginDialog(
-        loginWith: "fb",
+        loginWith: loginWith,
       ),
     );
   }

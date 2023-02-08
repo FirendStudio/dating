@@ -346,6 +346,8 @@ class SettingsScreen extends GetView<SettingsController> {
                       style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                   ),
+
+                  ///-- search only verified User
                   Container(
                     padding: const EdgeInsets.only(bottom: 5, right: 10, left: 10),
                     child: Row(
@@ -356,29 +358,7 @@ class SettingsScreen extends GetView<SettingsController> {
                           style: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.w500),
                         ),
                         CupertinoSwitch(
-                          value:SettingsController.isVerifiedUserOnly.value,
-                          onChanged: (value){
-                            SettingsController.isVerifiedUserOnly.value = value;
-                            if (SettingsController.isVerifiedUserOnly.value) {
-                              Get.find<HomeController>().listUsers.removeWhere((element) => element.verified != 3);
-                            } else {
-                              Get.find<HomeController>().initUser();
-                            }
-                          },
-                          activeColor:   primaryColor.withOpacity(0.3),
-                         thumbColor: primaryColor,
-                          trackColor:Colors.grey.shade400.withOpacity(0.5),),
-                     /*   Switch(
-                          // thumb color (round icon)
-
-                          activeColor: primaryColor,
-                          activeTrackColor: primaryColor.withOpacity(0.3),
-                          inactiveThumbColor: Colors.blueGrey.shade600,
-                          inactiveTrackColor: Colors.grey.shade400,
-                          splashRadius: 50.0,
-                          // boolean variable value
                           value: SettingsController.isVerifiedUserOnly.value,
-                          // changes the state of the switch
                           onChanged: (value) {
                             SettingsController.isVerifiedUserOnly.value = value;
                             if (SettingsController.isVerifiedUserOnly.value) {
@@ -387,7 +367,10 @@ class SettingsScreen extends GetView<SettingsController> {
                               Get.find<HomeController>().initUser();
                             }
                           },
-                        ),*/
+                          activeColor: primaryColor.withOpacity(0.3),
+                          thumbColor: primaryColor,
+                          trackColor: Colors.grey.shade400.withOpacity(0.5),
+                        ),
                       ],
                     ),
                   ),
@@ -485,8 +468,6 @@ class SettingsScreen extends GetView<SettingsController> {
                               onChanged: (val) {
                                 controller.changeValues.addAll({'maximum_distance': val.round()});
                                 controller.distance.value = val.round();
-
-
                               }),
                         ),
                       ),
@@ -675,34 +656,7 @@ class SettingsScreen extends GetView<SettingsController> {
                         ),
                       ),
                       onTap: () async {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text('Delete Account'),
-                              content: Text(
-                                  'Your account has been deleted. We are sorry to see you go and hope to see you back again soon.'),
-                              actions: <Widget>[
-                                ElevatedButton(
-                                  onPressed: () => Navigator.of(context).pop(false),
-                                  child: Text('No'),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () async {
-                                    try {
-                                      await controller.deleteUser();
-                                      await FirebaseAuth.instance.signOut();
-                                      Get.offAllNamed(Routes.AUTH_LOGIN);
-                                    } catch (e) {
-                                      Global().showInfoDialog(e.toString());
-                                    }
-                                  },
-                                  child: Text('Yes'),
-                                ),
-                              ],
-                            );
-                          },
-                        );
+                        await buildShowDeleteAccountDialog(context, false);
                       },
                     ),
                   ),
@@ -729,6 +683,45 @@ class SettingsScreen extends GetView<SettingsController> {
         ),
         // ),
       ),
+    );
+  }
+
+  buildShowDeleteAccountDialog(BuildContext context, isFromPermanently) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Delete Account'),
+          content: Text(
+            isFromPermanently
+                ? 'Your account has been deleted. We are sorry to see you go and hope to see you back again soon.'
+                : "You are about to permanently delete your account. Are you sure you want to do this?",
+          ),
+          actions: <Widget>[
+            ElevatedButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text('No'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                if(isFromPermanently){
+                try {
+                  await controller.deleteUser();
+                  await FirebaseAuth.instance.signOut();
+                  Get.offAllNamed(Routes.AUTH_LOGIN);
+                } catch (e) {
+                  Global().showInfoDialog(e.toString());
+                }
+                }{
+                  Get.back();
+                  buildShowDeleteAccountDialog(context,true);
+                }
+              },
+              child: Text('Yes'),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -817,6 +810,7 @@ class SettingsScreen extends GetView<SettingsController> {
             child: FloatingActionButton(
               backgroundColor: Colors.greenAccent,
               onPressed: () async {
+                debugPrint("add partner accept request----->");
                 await Get.find<NotifController>().acceptPartner(
                   context2: Get.context!,
                   Uid: globalController.currentUser.value?.relasi.value?.pendingReq[0].reqUid ?? "",
@@ -866,7 +860,9 @@ class SettingsScreen extends GetView<SettingsController> {
         children: [
           Text(
             globalController.currentUser.value?.relasi.value?.partner?.partnerName ?? '',
-            style: TextStyle(fontSize: 16),
+            style: TextStyle(
+              fontSize: 16,
+            ),
           ),
           InkWell(
             child: SizedBox(

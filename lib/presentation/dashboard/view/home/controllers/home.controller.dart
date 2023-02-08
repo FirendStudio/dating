@@ -43,6 +43,7 @@ class HomeController extends GetxController {
     initUser();
   }
 
+  ///-- search only verified user and  location base user display
   initUser() async {
     if (isLoading.value) {
       return;
@@ -86,8 +87,10 @@ class HomeController extends GetxController {
       listReviewUser.add(ReviewModel.fromJson(element.data()));
     });
     print("Count All User : " + temp.length.toString());
-    for (var doc in temp) {
 
+
+
+    for (var doc in temp) {
       Map<String, dynamic> json = doc.data();
       if (json.containsKey("age")) {
         UserModel tempUser = UserModel.fromJson(json);
@@ -131,9 +134,10 @@ class HomeController extends GetxController {
     listUsers.forEach((element) async {
       if (element.countryName.isNotEmpty && element.countryName != "") {
         try {
-          // debugPrint("translatedName--before---${element.countryName}");
+
           googleTranslator.translate(element.countryName, to: 'en').then((value) => {
-                element.countryName = value.toString(), /*debugPrint("translatedName--after---${element.countryName}")*/
+            element.countryName = value.toString()??"",
+
               });
         } on Exception catch (e) {
           debugPrint("translatedName--error---$e");
@@ -161,8 +165,9 @@ class HomeController extends GetxController {
     }
   }
 
-  /*initUser() async {
-    debugPrint("call initUser()------->");
+  ///-- client initUser();
+
+  initUserClient() async {
     if (isLoading.value) {
       return;
     }
@@ -173,7 +178,9 @@ class HomeController extends GetxController {
     listSwipedUser = Session().getSwipedUser();
     List<UserModel> tempList = [];
     UserModel currentUserTemp = Get.find<GlobalController>().currentUser.value!;
-    var query = await queryCollectionDB('/Users/${currentUserTemp.id}/CheckedUser').get();
+    var query =
+    await queryCollectionDB('/Users/${currentUserTemp.id}/CheckedUser')
+        .get();
     if (query.docs.isNotEmpty) {
       query.docs.forEach((element) {
         // print(element.data()["LikedUser"]);
@@ -186,10 +193,12 @@ class HomeController extends GetxController {
     }
     query = await queryCollectionDB('Users')
         .where(
-          'age',
-          isGreaterThanOrEqualTo: int.parse(currentUserTemp.ageRange?['min'] ?? 0),
-          isLessThanOrEqualTo: int.parse(currentUserTemp.ageRange?['max'] ?? 100),
-        )
+      'age',
+      isGreaterThanOrEqualTo:
+      int.parse(currentUserTemp.ageRange?['min'] ?? 0),
+      isLessThanOrEqualTo:
+      int.parse(currentUserTemp.ageRange?['max'] ?? 100),
+    )
         .orderBy('age', descending: false)
         .get();
     if (query.docs.isEmpty) {
@@ -206,7 +215,6 @@ class HomeController extends GetxController {
       if (doc.id == "5VZ3Fp0NMgX5X3iDYW4vnCCxni22") {
         print("Masuk sni woy");
       }
-
       Map<String, dynamic> json = doc.data();
       if (json.containsKey("age")) {
         UserModel tempUser = UserModel.fromJson(json);
@@ -217,12 +225,6 @@ class HomeController extends GetxController {
           tempUser.coordinates?['longitude'] ?? 0,
         );
         tempUser.distanceBW = distance.round();
-        */
-  /*   if(doc.data()["phoneNumber"]=="+917202855235"){
-          debugPrint("get pat data---");
-          tempList.add(tempUser);
-        }*/
-  /*
         if (filterUser(tempUser, currentUserTemp, distance)) {
           continue;
         }
@@ -246,17 +248,28 @@ class HomeController extends GetxController {
         continue;
       }
     }
-
     listUsers.sort((a, b) => a.distanceBW.compareTo(b.distanceBW));
     listUsers.addAll(tempList);
-    final googleTranslator = GoogleTranslator();
-    listUsers.forEach((element) async {
-      if (element.countryName.isNotEmpty && element.countryName != "") {
-        try {
-          // debugPrint("translatedName--before---${element.countryName}");
-          googleTranslator.translate(element.countryName, to: 'en').then((value) => {
-                element.countryName = value.toString(), */
-  /*debugPrint("translatedName--after---${element.countryName}")*/
+    if (listUsers.isEmpty) {
+      isLoading.value = false;
+      return;
+    }
+    listUsers.first.relasi.value =
+    await Global().getRelationship(listUsers.first.id);
+    addLastSwiped(listUsers.first);
+    if (kDebugMode) {
+      print("count User Existing : " + listUsers.length.toString());
+    }
+    isLoading.value = false;
+    listUsers.sort((a, b) => a.distanceBW.compareTo(b.distanceBW));
+    listUsers.refresh();
+
+    if (SettingsController.isVerifiedUserOnly.value) {
+      listUsers.removeWhere((element) => element.verified != 3);
+      listUsers.sort((a, b) => a.distanceBW.compareTo(b.distanceBW));
+      listUsers.refresh();
+    }
+  }
 
   bool filterUser(UserModel tempUser, UserModel currentUserTemp, double distance) {
     if (checkedUser.contains(tempUser.id)) {

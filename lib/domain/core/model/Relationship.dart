@@ -1,4 +1,5 @@
 
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 
@@ -24,7 +25,11 @@ class Relationship {
     // print(json['updateAt']);
     return Relationship(
       userId: json["userId"],
-      partner: json["partner"]==null?Partner():Partner.fromDocument(json["partner"]),
+      partner: json["partner"]==null?Partner(
+        partnerId: "",
+        partnerImage: "",
+        partnerName: ""
+      ):Partner.fromDocument(json["partner"]),
       inRelationship: json["inRelationship"],
       pendingReq: json["pendingReq"]==null?[]:List<Pending>.from(json["pendingReq"].map((x) => Pending.fromDocument(x))),
       pendingAcc: json["pendingAcc"]==null?[]:List<Pending>.from(json["pendingAcc"].map((x) => Pending.fromDocument(x))),

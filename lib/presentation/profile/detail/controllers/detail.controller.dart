@@ -8,7 +8,7 @@ import '../../../notif/controllers/notif.controller.dart';
 class DetailController extends GetxController {
   UserModel? userPartner;
   late UserModel user;
-  String type = "";
+  // String type = "";
   late UserModel currentUser;
   String interestText = "";
   String desiresText = "";
@@ -22,7 +22,7 @@ class DetailController extends GetxController {
     currentUser = Get.find<GlobalController>().currentUser.value!;
     userPartner = Get.arguments['userPartner'];
     user = Get.arguments['user'];
-    type = Get.arguments['userPartner'] ?? "";
+    // type = Get.arguments['userPartner'] ?? "";
     isMe = user.id == currentUser.id;
     if (user.relasi.value != null &&
         user.relasi.value!.partner!.partnerId.isNotEmpty) {

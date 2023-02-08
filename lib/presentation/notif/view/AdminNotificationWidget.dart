@@ -18,15 +18,15 @@ class AdminNotificationWidget extends GetView<NotifController> {
       () => Expanded(
         child: StreamBuilder(
             stream: queryCollectionDB('/Users/${Get.find<GlobalController>().currentUser.value?.id}/notification')
-                .get()
-                .asStream(),
+                .orderBy("time", descending: true)
+                .snapshots(),
             builder: (BuildContext context, AsyncSnapshot snapshot) {
               debugPrint("listen userData Successfully- AdminNotification-->");
               if (snapshot.hasData) {
                 return ListView.builder(
                   itemCount: snapshot.data.docs.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return singleItem(snapshot.data.docs[index].data(),index);
+                    return singleItem(snapshot.data.docs[index].data(), index);
                   },
                 );
               } else {
@@ -41,11 +41,11 @@ class AdminNotificationWidget extends GetView<NotifController> {
     );
   }
 
-  singleItem(data,index) {
+  singleItem(data, index) {
     return Container(
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(20), color: primaryColor.withOpacity(.15)),
-      padding:  EdgeInsets.symmetric(vertical:10,horizontal: 15),
-      margin: EdgeInsets.only(bottom: 10, left: 10, right: 10,top:index==0?10:0 ),
+      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+      margin: EdgeInsets.only(bottom: 10, left: 10, right: 10, top: index == 0 ? 10 : 0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -67,10 +67,9 @@ class AdminNotificationWidget extends GetView<NotifController> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Text(
-                DateFormat.MMMd('en_US')
-                    .add_jm()
-                    .format((data['time'] as Timestamp).toDate())
-                    .toString(),
+                data['time'] != null
+                    ? DateFormat.MMMd('en_US').add_jm().format((data['time'] as Timestamp).toDate()).toString()
+                    : "",
                 style: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
               ),
             ],
