@@ -280,9 +280,9 @@ class GlobalController extends GetxController {
         isPurchased.value = true;
       }
 
-      if (kDebugMode) {
+     /* if (kDebugMode) {
         isPurchased.value = true;
-      }
+      }*/
       if (kDebugMode) {
         print("Payment Status : " + isPurchased.value.toString());
       }
