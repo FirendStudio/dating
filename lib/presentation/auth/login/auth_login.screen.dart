@@ -13,6 +13,8 @@ import 'controllers/auth_login.controller.dart';
 
 class AuthLoginScreen extends GetView<AuthLoginController> {
   const AuthLoginScreen({Key? key}) : super(key: key);
+
+
   @override
   Widget build(BuildContext context) {
     // Get.put(AuthLoginController());

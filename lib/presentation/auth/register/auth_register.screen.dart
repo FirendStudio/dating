@@ -108,7 +108,7 @@ class AuthRegisterScreen extends GetView<AuthRegisterController> {
                               fontWeight: FontWeight.bold),
                         ),
                         subtitle: AutoSizeText(
-                          "Please make sure that your photos, age and bio are accurate and a true representation of who you are.",
+                          "Please make sure that your photos, age, and bio are accurate and true.",
                           style: TextStyle(
                             fontSize: Get.height * 0.025,
                             fontFamily: Global.font,

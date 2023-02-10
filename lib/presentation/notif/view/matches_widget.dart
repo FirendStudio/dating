@@ -19,27 +19,28 @@ class MatchesWidget extends GetView<NotifController> {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(
-      () =>controller.listMatchUser.isNotEmpty? Expanded(
-        child: ListView.builder(
-          itemCount: controller.listMatchUser.length,
-          itemBuilder: (BuildContext context, int index) {
-            MatchModel doc = controller.listMatchUser[index];
+    return Obx(() => controller.listMatchUser.isNotEmpty
+        ? Expanded(
+            child: ListView.builder(
+                itemCount: controller.listMatchUser.length,
+                itemBuilder: (BuildContext context, int index) {
+                  MatchModel doc = controller.listMatchUser[index];
 
-            if (doc.type.value == 2) {
-              return blockedWidget(doc, context);
-            }
-            return normalWidget(doc, context);
-          },
-        ),
-      ):Expanded(
-        child: Center(
-            child: Text(
+                  if (doc.type.value == 2) {
+                    return Container();
+                    // return blockedWidget(doc, context);
+                  }
+
+                  return normalWidget(doc, context);
+                }),
+          )
+        : Expanded(
+            child: Center(
+                child: Text(
               "No Matches",
               style: TextStyle(color: secondryColor, fontSize: 16),
             )),
-      )
-    );
+          ));
   }
 
   normalWidget(MatchModel doc, BuildContext context) {
@@ -114,7 +115,7 @@ class MatchesWidget extends GetView<NotifController> {
         children: [
           SlidableAction(
             onPressed: (BuildContext context) async {
-             Global().deleteMatchesDialog(doc);
+              Global().deleteMatchesDialog(doc);
 /*
               var dataUserReceive = await queryCollectionDB("Users").doc(doc.matches).get();
               UserModel tempuser;

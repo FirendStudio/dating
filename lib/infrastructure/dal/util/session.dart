@@ -10,6 +10,10 @@ class Session {
     await storage.write("user", jsonEncode(userModel));
   }
 
+  void clearDate() async {
+    await storage.erase();
+  }
+
   UserModel? getUser() {
     UserModel? userModel;
     String? temp = storage.read("user");
@@ -46,7 +50,6 @@ class Session {
   void saveSwipedUser(List<String> list) async {
     await storage.write("listUidSwiped", list);
   }
-
 
   List<String> getSwipedUser() {
     if ((storage.read("listUidSwiped") ?? []).isNotEmpty) {

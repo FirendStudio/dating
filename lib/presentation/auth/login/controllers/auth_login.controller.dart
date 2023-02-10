@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 
 // import 'package:apple_sign_in/apple_sign_in.dart' as i;
 import 'package:google_sign_in/google_sign_in.dart';
@@ -28,9 +29,11 @@ class AuthLoginController extends GetxController {
   @override
   void onInit() {
     ///-- Sign up issue
+    if(!Get.find<GlobalController>().isFromLogOut.value){
     if (Session().getLoginType() != "") {
       WidgetsBinding.instance.addPostFrameCallback((_) => showRememberLoginDialog(Session().getLoginType()));
-    }
+
+    }}
     super.onInit();
   }
 

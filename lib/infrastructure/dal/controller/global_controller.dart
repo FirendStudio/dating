@@ -35,7 +35,7 @@ class GlobalController extends GetxController {
   Rxn<ReviewModel> reviewModel = Rxn();
   List notificationTitleList = ["Matched", "Liked", "New Chat", "Leaving Chat", "Resume Chat", "Blocked Chat"];
   RxList<UserModel> globalListUsers = RxList();
-
+RxBool isFromLogOut=false.obs;
   @override
   onInit() async {
     super.onInit();
@@ -280,7 +280,7 @@ class GlobalController extends GetxController {
         isPurchased.value = true;
       }
 
-     /* if (kDebugMode) {
+      /* if (kDebugMode) {
         isPurchased.value = true;
       }*/
       if (kDebugMode) {
@@ -356,12 +356,13 @@ class GlobalController extends GetxController {
     }
     User? user = auth.currentUser;
     print(user);
-    if (user == null) {
+    if (user == null && Get.arguments == null) {
       Get.offAllNamed(Routes.AUTH_LOGIN);
+
       return;
     }
 
-    String cek = user.providerData[0].providerId;
+    String cek = user!.providerData[0].providerId;
     navigationCheck(user, cek);
   }
 
@@ -464,7 +465,10 @@ class GlobalController extends GetxController {
     // showSimpleNotification(title: "Matched", body: "You are matched with $name");
     // UserModel userFCM = Get.find<TabsController>().getUserSelected(idUser);
     String toParams = "/topics/" + idUser;
-    var data = {"title": "Matched", "body": " You will not be able to contact ${currentUser.value?.name} member again."};
+    var data = {
+      "title": "Matched",
+      "body": " You will not be able to contact ${currentUser.value?.name} member again."
+    };
     print(data);
     var response = await FCMService().sendFCM(data: data, to: toParams);
     if (response.statusCode == 200) {
@@ -475,7 +479,9 @@ class GlobalController extends GetxController {
     } else {
       print(response.reasonPhrase);
     }
-  } sendMatchedFCM({required String idUser, required String name}) async {
+  }
+
+  sendMatchedFCM({required String idUser, required String name}) async {
     showSimpleNotification(title: "Matched", body: "You are matched with $name");
     // UserModel userFCM = Get.find<TabsController>().getUserSelected(idUser);
     String toParams = "/topics/" + idUser;

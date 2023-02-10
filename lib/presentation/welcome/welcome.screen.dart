@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:get/get.dart';
+import 'package:hookup4u/infrastructure/dal/controller/global_controller.dart';
 import 'package:hookup4u/infrastructure/navigation/routes.dart';
 import '../../infrastructure/dal/util/color.dart';
 import 'controllers/welcome.controller.dart';
@@ -95,6 +96,7 @@ class WelcomeScreen extends GetView<WelcomeController> {
                       ))),
                   onTap: () async {
                     Get.toNamed(Routes.AUTH_LOGIN);
+
                   },
                 ),
               ),

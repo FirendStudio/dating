@@ -624,8 +624,11 @@ class SettingsScreen extends GetView<SettingsController> {
                                     try {
                                       await FirebaseAuth.instance.signOut();
                                       Session().saveSwipedUser([]);
+
                                       Get.delete<GlobalController>();
+
                                       Get.put(GlobalController());
+                                      Get.find<GlobalController>().isFromLogOut.value = true;
                                     } catch (e) {
                                       Global().showInfoDialog(e.toString());
                                     }
@@ -689,8 +692,10 @@ class SettingsScreen extends GetView<SettingsController> {
   buildShowDeleteAccountDialog(BuildContext context, isFromPermanently) async {
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
+
           title: Text('Delete Account'),
           content: Text(
             isFromPermanently
@@ -698,26 +703,36 @@ class SettingsScreen extends GetView<SettingsController> {
                 : "You are about to permanently delete your account. Are you sure you want to do this?",
           ),
           actions: <Widget>[
-            ElevatedButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text('No'),
-            ),
+            isFromPermanently
+                ? SizedBox()
+                : ElevatedButton(
+                    onPressed: () => Navigator.of(context).pop(false),
+                    child: Text('No'),
+                  ),
             ElevatedButton(
               onPressed: () async {
-                if(isFromPermanently){
-                try {
-                  await controller.deleteUser();
-                  await FirebaseAuth.instance.signOut();
-                  Get.offAllNamed(Routes.AUTH_LOGIN);
-                } catch (e) {
-                  Global().showInfoDialog(e.toString());
+                if (isFromPermanently) {
+                  try {
+                    Get.back();
+                    Get.find<GlobalController>().isFromLogOut.value = true;
+
+                    Get.offAllNamed(
+                      Routes.AUTH_LOGIN,
+                    );
+                  } catch (e) {
+                    Global().showInfoDialog(e.toString());
+                  }
                 }
-                }{
-                  Get.back();
-                  buildShowDeleteAccountDialog(context,true);
-                }
+                String getType = Session().getLoginType();
+                Session().clearDate();
+                Session().saveLoginType(getType);
+
+                await controller.deleteUser();
+                await FirebaseAuth.instance.signOut();
+                Get.back();
+                buildShowDeleteAccountDialog(context, true);
               },
-              child: Text('Yes'),
+              child: Text(!isFromPermanently ? 'Yes' : 'OK'),
             ),
           ],
         );
