@@ -467,7 +467,8 @@ RxBool isFromLogOut=false.obs;
     String toParams = "/topics/" + idUser;
     var data = {
       "title": "Matched",
-      "body": " You will not be able to contact ${currentUser.value?.name} member again."
+      "body": "${currentUser.value?.name} has deleted your profile and no longer wants to chat with you. You will not be able to contact this member again"
+
     };
     print(data);
     var response = await FCMService().sendFCM(data: data, to: toParams);
