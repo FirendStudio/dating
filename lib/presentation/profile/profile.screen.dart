@@ -402,6 +402,7 @@ class ProfileScreen extends GetView<ProfileController> {
                           Get.find<GlobalController>().isPurchased.value
                               ? "Check Payment Details"
                               : "Subscribe Plan",
+                         // "Subscribe Plan",
                           style: TextStyle(
                             fontSize: 15,
                             color: textColor,
@@ -411,11 +412,12 @@ class ProfileScreen extends GetView<ProfileController> {
                       ),
                     ),
                     onTap: () async {
-                      if (globalController.isPurchased.value) {
+                      if (  Get.find<GlobalController>().isPurchased.value) {
                         Get.toNamed(Routes.PAYMENT_DETAILS);
                       } else {
                         Get.toNamed(Routes.PAYMENT_SUBCRIPTION);
                       }
+
                     },
                   ),
                 ),

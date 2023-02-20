@@ -6,7 +6,7 @@ import 'package:hookup4u/domain/core/model/user_model.dart';
 class Session {
   var storage = GetStorage();
 
-  void saveUser(UserModel userModel) async {
+  void setSubscribeUser(UserModel userModel) async {
     await storage.write("user", jsonEncode(userModel));
   }
 
@@ -14,7 +14,7 @@ class Session {
     await storage.erase();
   }
 
-  UserModel? getUser() {
+  UserModel? getSubscribeUser() {
     UserModel? userModel;
     String? temp = storage.read("user");
     if (temp != null) {

@@ -1,11 +1,12 @@
 name: hookup4u
-version: 1.0.14+55
-#version: 1.0.12+52
+version: 1.0.14+58
+#version: 1.0.12+57
 description: A new Flutter application.
 environment: 
   sdk: '>=2.18.2 <3.0.0'
 
-dependencies: 
+dependencies:
+
   country_code_picker: ^2.0.2
   pin_code_fields: ^7.4.0
   swipe_stack: ^1.0.0

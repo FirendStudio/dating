@@ -4,15 +4,13 @@ import 'package:get/get.dart';
 import 'package:hookup4u/infrastructure/dal/util/session.dart';
 import 'package:hookup4u/infrastructure/navigation/routes.dart';
 import 'package:hookup4u/presentation/auth/login/controllers/auth_login.controller.dart';
-
 import '../../../../infrastructure/dal/util/color.dart';
 
-// import 'package:easy_localization/easy_localization.dart';
 
 class RememberLoginDialog extends StatefulWidget {
-  String loginWith;
+  final String loginWith, wishedLoginType;
 
-  RememberLoginDialog({required this.loginWith});
+  RememberLoginDialog({required this.loginWith, required this.wishedLoginType});
 
   @override
   _RememberLoginDialogState createState() => _RememberLoginDialogState();
@@ -31,17 +29,15 @@ class _RememberLoginDialogState extends State<RememberLoginDialog> {
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                "Remember My Choice",
+                "Remember Your Choice",
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 22,
-                ),
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
               ),
             ),
             Text(
-              "Last Time You Login with this",
+              "Are you certain that you wish to log in using your ${getLoginType(widget.wishedLoginType)}, even though your initial registration was created using your ${getLoginType(widget.loginWith)}?",
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 14, color: Colors.black),
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: Colors.black),
             ),
           ],
         ),
@@ -49,36 +45,36 @@ class _RememberLoginDialogState extends State<RememberLoginDialog> {
       actions: <Widget>[
         Material(
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 5),
-              child: Column(
-          children: [
+          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 5),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
                   foregroundColor: primaryColor,
                 ),
                 child: Text(
-                  getLoginType(widget.loginWith),
+                  "Yes",
                   style: TextStyle(color: Colors.white),
                 ),
                 onPressed: () {
                   Get.back();
-                  getLoginEvent(widget.loginWith);
-
+                  getLoginEvent(widget.wishedLoginType);
                 },
               ),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
                 child: Text(
-                  "CANCEL",
+                  "No",
                   style: TextStyle(color: Colors.white),
                 ),
                 onPressed: () {
                   Get.back();
                 },
               )
-          ],
-        ),
-            ))
+            ],
+          ),
+        ))
       ],
     );
   }
@@ -86,13 +82,13 @@ class _RememberLoginDialogState extends State<RememberLoginDialog> {
   getLoginType(loginType) {
     switch (loginType) {
       case "phone":
-        return "LOGIN WITH PHONE NUMBER";
+        return "Phone Number";
       case "apple":
-        return "LOGIN WITH APPLE";
+        return "apple Account";
       case "google":
-        return "LOGIN WITH GOOGLE";
+        return "google Account";
       case "fb":
-        return "LOGIN WITH FACEBOOK";
+        return "facebook Account";
     }
   }
 

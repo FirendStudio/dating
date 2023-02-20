@@ -20,14 +20,14 @@ class MatchesWidget extends GetView<NotifController> {
   @override
   Widget build(BuildContext context) {
     return Obx(() => controller.listMatchUser.isNotEmpty
-        ? Expanded(
+        ? Flexible(
             child: ListView.builder(
                 itemCount: controller.listMatchUser.length,
                 itemBuilder: (BuildContext context, int index) {
                   MatchModel doc = controller.listMatchUser[index];
 
-                  if (doc.type.value == 2) {
-                    return Container();
+                  if (doc.isDeleted!) {
+                    return matchesDeletedWidget(doc, context);
                     // return blockedWidget(doc, context);
                   }
 
@@ -224,6 +224,84 @@ class MatchesWidget extends GetView<NotifController> {
                 }
                 Global().initProfil(userModel);
               }
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  matchesDeletedWidget(MatchModel doc, BuildContext context) {
+    return  Slidable(
+      key: const ValueKey(1),
+
+      endActionPane: ActionPane(
+        extentRatio: 1 / 4,
+        motion: ScrollMotion(),
+        children: [
+          SlidableAction(
+            onPressed: (BuildContext context) async {
+              controller.deletedMatchesDeleted(doc);
+            },
+            backgroundColor: Color(0xFF0392CF),
+            foregroundColor: Colors.white,
+            icon: Icons.delete,
+            // label: 'Save',
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(20),
+            // color: !doc.data['isRead']
+            color: secondryColor.withOpacity(.15),
+          ),
+          child: ListTile(
+            contentPadding: EdgeInsets.all(5),
+            leading: CircleAvatar(
+              radius: 25,
+              backgroundColor: secondryColor,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(
+                  25,
+                ),
+                child: CachedNetworkImage(
+                  imageUrl: doc.pictureUrl ?? "",
+                  fit: BoxFit.cover,
+                  useOldImageOnUrlChange: true,
+                  placeholder: (context, url) => CupertinoActivityIndicator(
+                    radius: 20,
+                  ),
+                  errorWidget: (context, url, error) => Icon(
+                    Icons.error,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+            ),
+            title: Container(
+                padding: EdgeInsets.symmetric(vertical: 3),child: Text("${doc.userName} Match has been deleted")),
+            subtitle: Container(
+            padding: EdgeInsets.symmetric(horizontal: 10,vertical: 8),
+
+              decoration: BoxDecoration(
+                color: Colors.black,
+                borderRadius: BorderRadius.circular(30.0),
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                'You will not be able to contact this member again.',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 11.0,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            onTap: () async {
+              Global().showInfoDialog("You will not be able to contact this member again");
             },
           ),
         ),

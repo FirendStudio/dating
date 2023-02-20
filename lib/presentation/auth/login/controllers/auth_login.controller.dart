@@ -29,20 +29,21 @@ class AuthLoginController extends GetxController {
   @override
   void onInit() {
     ///-- Sign up issue
-    if(!Get.find<GlobalController>().isFromLogOut.value){
+  /*  if(!Get.find<GlobalController>().isFromLogOut.value){
     if (Session().getLoginType() != "") {
       WidgetsBinding.instance.addPostFrameCallback((_) => showRememberLoginDialog(Session().getLoginType()));
 
-    }}
+    }}*/
     super.onInit();
   }
 
-  showRememberLoginDialog(loginWith) {
+  showRememberLoginDialog(loginWith, wishedLoginType) {
     showDialog(
       barrierDismissible: false,
       context: Get.context!,
       builder: (context) => RememberLoginDialog(
         loginWith: loginWith,
+          wishedLoginType:wishedLoginType
       ),
     );
   }

@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:hookup4u/infrastructure/dal/controller/global_controller.dart';
 import 'package:hookup4u/infrastructure/dal/util/session.dart';
 import 'package:hookup4u/presentation/dashboard/view/home/controllers/home.controller.dart';
@@ -468,6 +469,7 @@ class SettingsScreen extends GetView<SettingsController> {
                               onChanged: (val) {
                                 controller.changeValues.addAll({'maximum_distance': val.round()});
                                 controller.distance.value = val.round();
+                                globalController.addDistance.value=0;
                               }),
                         ),
                       ),
@@ -625,8 +627,9 @@ class SettingsScreen extends GetView<SettingsController> {
                                       await FirebaseAuth.instance.signOut();
                                       Session().saveSwipedUser([]);
 
-                                      Get.delete<GlobalController>();
 
+                                      Get.find<GlobalController>().isPurchased.value=false;
+                                      Get.delete<GlobalController>();
                                       Get.put(GlobalController());
                                       Get.find<GlobalController>().isFromLogOut.value = true;
                                     } catch (e) {

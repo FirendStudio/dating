@@ -241,27 +241,30 @@ class Global {
     );
     UserModel? userSecondPartner;
     if (userModel.relasi.value!.partner!.partnerId.isNotEmpty) {
-      var data = await queryCollectionDB("Users").doc(userModel.relasi.value?.partner?.partnerId).get();
+      try {
+        var data = await queryCollectionDB("Users").doc(userModel.relasi.value?.partner?.partnerId).get();
 
-      userSecondPartner = UserModel.fromJson(data.data() as Map<String, dynamic>);
-      userSecondPartner.relasi.value = await getRelationship(userModel.relasi.value!.partner!.partnerId);
-      userSecondPartner.distanceBW = Global()
-          .calculateDistance(
-            currentUser.coordinates?['latitude'] ?? 0,
-            currentUser.coordinates?['longitude'] ?? 0,
-            userSecondPartner.coordinates?['latitude'] ?? 0,
-            userSecondPartner.coordinates?['longitude'] ?? 0,
-          )
-          .round();
+        userSecondPartner = UserModel.fromJson(data.data() as Map<String, dynamic>);
+        userSecondPartner.relasi.value = await getRelationship(userModel.relasi.value!.partner!.partnerId);
+        userSecondPartner.distanceBW = Global()
+            .calculateDistance(
+              currentUser.coordinates?['latitude'] ?? 0,
+              currentUser.coordinates?['longitude'] ?? 0,
+              userSecondPartner.coordinates?['latitude'] ?? 0,
+              userSecondPartner.coordinates?['longitude'] ?? 0,
+            )
+            .round();
+      } on Exception catch (e) {
+        debugPrint("error--initProfil---->$e");
+        Get.back();
+      }
     }
-
-    Get.back();
 
     Get.toNamed(Routes.DETAIL, arguments: {
       "userPartner": userSecondPartner,
       "user": userModel,
       "type": type,
-    });
+    })?.whenComplete(() => Get.back());
   }
 
   disloveFunction(UserModel userModel) async {
@@ -279,14 +282,14 @@ class Global {
       'DislikedUser': userModel.id,
       'timestamp': DateTime.now(),
     }, SetOptions(merge: true));
-     // listUsers.remove(userModel);
+    // listUsers.remove(userModel);
   }
 
   loveUserFunction(UserModel userModel) async {
     bool cek = false;
     UserModel currentUser = Get.find<GlobalController>().currentUser.value!;
     if (kDebugMode) {
-      print(userModel.id);
+      print("loveUserFunction=====>${userModel.id}");
     }
     var doc = await queryCollectionDB('Users')
         .doc(Get.find<GlobalController>().currentUser.value?.id)
@@ -300,10 +303,11 @@ class Global {
       print("Masuk sini");
 
       Get.find<GlobalController>().sendMatchedFCM(idUser: userModel.id, name: userModel.name);
+
       showDialog(
           context: Get.context!,
           builder: (ctx) {
-            Future.delayed(Duration(milliseconds: 1700), () {
+            Future.delayed(Duration(milliseconds: 1000), () {
               Navigator.pop(ctx);
             });
             return Padding(
@@ -343,27 +347,24 @@ class Global {
         'isRead': false,
         'timestamp': FieldValue.serverTimestamp()
       }, SetOptions(merge: true));
-    }
-
-    if (!cek) {
+    } else {
       Get.find<GlobalController>().sendLikedFCM(idUser: userModel.id, name: userModel.name);
+
+      await queryCollectionDB('Users').doc(currentUser.id).collection("CheckedUser").doc(userModel.id).set({
+        'userName': userModel.name,
+        'pictureUrl':
+            (userModel.imageUrl[0].runtimeType == String) ? userModel.imageUrl[0] : userModel.imageUrl[0]['url'],
+        'LikedUser': userModel.id,
+        'timestamp': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+      await queryCollectionDB('Users').doc(userModel.id).collection("LikedBy").doc(currentUser.id).set({
+        'userName': currentUser.name,
+        'pictureUrl':
+            (currentUser.imageUrl[0].runtimeType == String) ? currentUser.imageUrl[0] : currentUser.imageUrl[0]['url'],
+        'LikedBy': currentUser.id,
+        'timestamp': FieldValue.serverTimestamp()
+      }, SetOptions(merge: true));
     }
-
-    await queryCollectionDB('Users').doc(currentUser.id).collection("CheckedUser").doc(userModel.id).set({
-      'userName': userModel.name,
-      'pictureUrl':
-          (userModel.imageUrl[0].runtimeType == String) ? userModel.imageUrl[0] : userModel.imageUrl[0]['url'],
-      'LikedUser': userModel.id,
-      'timestamp': FieldValue.serverTimestamp(),
-    }, SetOptions(merge: true));
-    await queryCollectionDB('Users').doc(userModel.id).collection("LikedBy").doc(currentUser.id).set({
-      'userName': currentUser.name,
-      'pictureUrl':
-          (currentUser.imageUrl[0].runtimeType == String) ? currentUser.imageUrl[0] : currentUser.imageUrl[0]['url'],
-      'LikedBy': currentUser.id,
-      'timestamp': FieldValue.serverTimestamp()
-    }, SetOptions(merge: true));
-
     // if(data.indexUser+1 == data.users.length){
     //
     //   data.indexUser--;
@@ -671,7 +672,7 @@ class Global {
                       flex: 1,
                       child: InkWell(
                         onTap: () {
-                        //  disconnectFunction(sender, second, idChat, type, doc);
+                          //  disconnectFunction(sender, second, idChat, type, doc);
                         },
                         child: Container(
                           margin: EdgeInsets.only(
@@ -778,7 +779,7 @@ class Global {
                       flex: 1,
                       child: InkWell(
                         onTap: () {
-                       //  disconnectFunction(sender, second, idChat, type, doc);
+                          //  disconnectFunction(sender, second, idChat, type, doc);
                           Get.find<NotifController>().getDeleteMatches(doc);
                           Get.back();
                         },
@@ -907,7 +908,7 @@ class Global {
       Get.find<NotifController>().filterMatches();
       // Get.find<NotifController>().listLikedUser.refresh();
       Get.back();
-    /*  debugPrint("indexNotif.value disconnectFunction--before-->${Get.find<NotifController>().indexNotif.value}");
+      /*  debugPrint("indexNotif.value disconnectFunction--before-->${Get.find<NotifController>().indexNotif.value}");
       Get.find<NotifController>().indexNotif.value = 1;
       debugPrint("indexNotif.value disconnectFunction--before-->${Get.find<NotifController>().indexNotif.value}");
       Future.delayed(Duration(seconds: 1)).then((value) => {

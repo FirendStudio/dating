@@ -35,10 +35,12 @@ class GlobalController extends GetxController {
   Rxn<ReviewModel> reviewModel = Rxn();
   List notificationTitleList = ["Matched", "Liked", "New Chat", "Leaving Chat", "Resume Chat", "Blocked Chat"];
   RxList<UserModel> globalListUsers = RxList();
-RxBool isFromLogOut=false.obs;
+  RxBool isFromLogOut = false.obs;
+  RxInt addDistance = 0.obs;
   @override
   onInit() async {
     super.onInit();
+
     if (GetPlatform.isIOS) {
       await FirebaseMessaging.instance.requestPermission();
 
@@ -144,7 +146,7 @@ RxBool isFromLogOut=false.obs;
       }
       UserModel tempUser = UserModel.fromJson(event.data() as Map<String, dynamic>);
       currentUser.value = tempUser;
-
+      addDistance.value=currentUser.value!.maxDistance;
       // currentUser.value!.relasi.value = await Global().getRelationship(tempUser.id);
       ///-- add Partner
       queryCollectionDB("Relationship").doc(tempUser.id).snapshots().listen((data) async {
@@ -201,7 +203,7 @@ RxBool isFromLogOut=false.obs;
           );
           tempUser.distanceBW = distance.round();
 
-          if (Get.find<HomeController>().filterUser(tempUser, currentUser.value!, distance)) {
+          if (Get.find<HomeController>().filterUser(tempUser, currentUser.value!, distance,false)) {
             continue;
           }
 
@@ -258,13 +260,19 @@ RxBool isFromLogOut=false.obs;
           status: false,
           date: DateTime.now(),
           purchasedId: "",
+          isFrom: "initPayment is not exists"
         );
         isPurchased.value = false;
         return;
       }
+
       paymentModel = Payment.fromDocument(event.data()!);
+      debugPrint("Init Payment paymentModel!.status==before==>${paymentModel!.status}");
+      debugPrint("Init Payment paymentModel!.isPurchased==before==>${isPurchased.value}");
       if (paymentModel!.status == false) {
         isPurchased.value = false;
+        debugPrint("Init Payment paymentModel!.status==false=date=>${paymentModel!.status}");
+        debugPrint("Init Payment paymentModel!.isPurchased==false=date=>${isPurchased.value}");
       }
       if (paymentModel!.status == true && paymentModel!.date!.isBefore(DateTime.now())) {
         isPurchased.value = false;
@@ -274,10 +282,15 @@ RxBool isFromLogOut=false.obs;
           status: false,
           date: DateTime.now(),
           purchasedId: "",
+            isFrom: "initPayment is paymentModel!.status == true"
         );
+        debugPrint("Init Payment paymentModel!.status==isBefore=date=>${paymentModel!.status}");
+        debugPrint("Init Payment paymentModel!.isPurchased==isBefore=date=>${isPurchased.value}");
       }
       if (paymentModel!.status && paymentModel!.date!.isAfter(DateTime.now())) {
         isPurchased.value = true;
+        debugPrint("Init Payment paymentModel!.status==isAfter=date=>${paymentModel!.status}");
+        debugPrint("Init Payment paymentModel!.isPurchased==isAfter=date=>${isPurchased.value}");
       }
 
       /* if (kDebugMode) {
@@ -295,6 +308,7 @@ RxBool isFromLogOut=false.obs;
     required bool status,
     required DateTime date,
     required String purchasedId,
+    required String isFrom,
   }) async {
     Map<String, dynamic> newRelation = {
       "userId": uid,
@@ -303,13 +317,20 @@ RxBool isFromLogOut=false.obs;
       "status": status,
       "date": date.toString(),
     };
-
-    await queryCollectionDB("Payment").doc(uid).set(
+    print("call  setUpdatePayment=======> $isFrom");
+    await queryCollectionDB("Payment")
+        .doc(uid)
+        .set(
           newRelation,
           SetOptions(
             merge: true,
           ),
-        );
+        )
+        .then((value) => {print("call  setUpdatePayment===successfully====> ")})
+        .onError((error, stackTrace) {
+      print("error--setUpdatePayment---$error>");
+      return {};
+    });
   }
 
   Future<QuerySnapshot?> getUser(User user, String metode) async {
@@ -467,8 +488,8 @@ RxBool isFromLogOut=false.obs;
     String toParams = "/topics/" + idUser;
     var data = {
       "title": "Matched",
-      "body": "${currentUser.value?.name} has deleted your profile and no longer wants to chat with you. You will not be able to contact this member again"
-
+      "body":
+          "${currentUser.value?.name} has deleted your profile and no longer wants to chat with you. You will not be able to contact this member again"
     };
     print(data);
     var response = await FCMService().sendFCM(data: data, to: toParams);

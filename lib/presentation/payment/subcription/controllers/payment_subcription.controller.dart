@@ -11,6 +11,7 @@ import 'package:hookup4u/infrastructure/navigation/routes.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:in_app_purchase_storekit/store_kit_wrappers.dart';
 import 'package:rflutter_alert/rflutter_alert.dart';
+
 import '../../../../infrastructure/dal/util/Global.dart';
 
 class PaymentSubcriptionController extends GetxController {
@@ -42,7 +43,7 @@ class PaymentSubcriptionController extends GetxController {
 
   void initialize() async {
     isAvailable.value = await iap.isAvailable();
-    print(isAvailable.value);
+    print("isAvailable=====>${isAvailable.value}");
     if (isAvailable.value) {
       List<Future> futures = [
         getProducts(await fetchPackageIds()),
@@ -57,30 +58,41 @@ class PaymentSubcriptionController extends GetxController {
         var transactions = await paymentWrapper.transactions();
         transactions.forEach((transaction) async {
           print(transaction.transactionState);
-          await paymentWrapper
-              .finishTransaction(transaction)
-              .catchError((onError) {
+          await paymentWrapper.finishTransaction(transaction).catchError((onError) {
             print('finishTransaction Error $onError');
           });
         });
       }
 
-      streamSubscription = iap.purchaseStream.listen((data) {
-        print(purchases);
+      /*    streamSubscription = iap.purchaseStream.listen((data) {
+        print("listen--streamSubscription-->$data");
         purchases.assignAll(data);
         purchases.forEach(
           (purchase) async {
             await verifyPuchase(purchase.productID);
           },
         );
+      });*/
+      streamSubscription = iap.purchaseStream.listen((purchaseDetailsList) {
+        print("listen--streamSubscription-->$purchaseDetailsList");
+        purchases.assignAll(purchaseDetailsList);
+        purchases.forEach(
+          (purchase) async {
+            await verifyPuchase(purchase.productID);
+          },
+        );
+      }, onDone: () {
+        streamSubscription?.cancel();
+      }, onError: (error) {
+        // handle error here.
       });
-      streamSubscription?.onError(
+      /*    streamSubscription?.onError(
         (error) {
-          Global().showInfoDialog(error != null
-              ? error
-              : "Oops !! something went wrong. Try Again");
+          print("purchase.status==error===>streamSubscription=>");
+
+          Global().showInfoDialog(error != null ? error : "Oops !! something went wrong. Try Again");
         },
-      );
+      );*/
     }
     isLoading.value = false;
   }
@@ -106,9 +118,7 @@ class PaymentSubcriptionController extends GetxController {
     List<String> packageId = [];
 
     QuerySnapshot<Map<String, dynamic>> data =
-        await queryCollectionDB("Packages")
-            .where('status', isEqualTo: true)
-            .get();
+        await queryCollectionDB("Packages").where('status', isEqualTo: true).get();
     if (data.docs.isNotEmpty) {
       packageId.addAll(data.docs.map((e) => e['id']));
     }
@@ -117,20 +127,40 @@ class PaymentSubcriptionController extends GetxController {
 
   Future<void> verifyPuchase(String id) async {
     PurchaseDetails? purchase = hasPurchased(id);
-    print(purchase?.status);
-    if (purchase != null && purchase.status == PurchaseStatus.purchased) {
-      print(purchase.productID);
 
+    if (purchase != null && purchase.status == PurchaseStatus.purchased) {
+      print("purchase.status==purchased===>${purchase.status}");
+      print("purchase.status=purchased==productID==>${purchase.productID}");
+      print("purchase.status==purchased=.error?.messag==>${purchase.error?.message}");
+      print("purchase.status==purchased=.verificationData.sourc==>${purchase.verificationData.source}");
+      print(
+          "purchase.status==purchased=.verificationData.localVerificationDat==>${purchase.verificationData.localVerificationData}");
+      print(
+          "purchase.status==purchased=.verificationData.serverVerificationDat==>${purchase.verificationData.serverVerificationData}");
+      print("purchase.status==purchased=.transactionDate}==>${purchase.transactionDate}");
+      print("purchase.status==purchased=.pendingCompletePurchase}==>${purchase.pendingCompletePurchase}");
+      print("purchase.status==purchased=.error?.detail==>${purchase.error?.details}");
+      print("purchase.status==purchased=.error?.cod==>${purchase.error?.code}");
+      print("purchase.status=purchased==productID==>${purchase.productID}");
+      // Get.find<GlobalController>().isPurchased.value = true;
       // if (Platform.isIOS) {
       await iap.completePurchase(purchase);
+      globalController.isPurchased.value = true;
+
       DateTime? date;
       var now = new DateTime.now();
       if (purchase.productID == "quarterly_unjabbed") {
-        date = DateTime(now.year, now.month + 3, now.day);
+        date = DateTime(
+            now.year, now.month + 3, now.day, now.hour, now.minute, now.second, now.millisecond, now.microsecond);
       } else if (purchase.productID == "monthly_unjabbed") {
-        date = DateTime(now.year, now.month + 1, now.day);
+        date = DateTime(
+            now.year, now.month + 1, now.day, now.hour, now.minute + 5, now.second, now.millisecond, now.microsecond);
       } else if (purchase.productID == "weekly") {
-        date = DateTime(now.year, now.month, now.day + 7);
+        date = DateTime.now().add(Duration(days: 7));
+        // date = DateTime(now.year, now.month, now.day + 7);
+      } else if (purchase.productID == "unjabbed_monthly") {
+        date = DateTime(
+            now.year, now.month + 2, now.day, now.hour, now.minute, now.second, now.millisecond, now.microsecond);
       }
       print("Masuk Sini");
       if (date == null) {
@@ -138,15 +168,16 @@ class PaymentSubcriptionController extends GetxController {
         return;
       }
       await globalController.setUpdatePayment(
-        uid: globalController.currentUser.value?.id ?? "",
-        status: true,
-        packageId: purchase.productID,
-        date: date,
-        purchasedId: purchase.purchaseID ?? "",
-      );
+          uid: globalController.currentUser.value?.id ?? "",
+          status: true,
+          packageId: purchase.productID,
+          date: date,
+          purchasedId: purchase.purchaseID ?? "",
+          isFrom: "verifyPuchase");
       //}
       ArtDialogResponse response = await ArtSweetAlert.show(
         context: Get.context!,
+        barrierDismissible: false,
         artDialogArgs: ArtDialogArgs(
           confirmButtonText: "Ok",
           type: ArtSweetAlertType.success,
@@ -155,19 +186,52 @@ class PaymentSubcriptionController extends GetxController {
         ),
       );
       if (response.isTapConfirmButton) {
-        Get.offAllNamed(Routes.DASHBOARD,);
+        Get.offAllNamed(
+          Routes.DASHBOARD,
+        );
       }
       return;
     } else if (purchase != null && purchase.status == PurchaseStatus.error) {
+      print("purchase.status==error===>${purchase.error?.message}");
+      print("purchase.status==error===>${purchase.verificationData.source}");
+      print("purchase.status==error===>${purchase.verificationData.localVerificationData}");
+      print("purchase.status==error===>${purchase.verificationData.serverVerificationData}");
+      print("purchase.status==error===>${purchase.transactionDate}");
+      print("purchase.status==error===>${purchase.pendingCompletePurchase}");
+      print("purchase.status==error===>${purchase.error?.details}");
+      print("purchase.status==error===>${purchase.error?.code}");
+      print("purchase.status=error==productID==>${purchase.productID}");
+      /*
+      if (purchase.error?.message == "BillingResponse.itemAlreadyOwned") {
+        globalController.isPurchased.value = true;
+        Get.back();
+      } else {
+        await globalController.setUpdatePayment(
+            uid: globalController.currentUser.value?.id ?? "",
+            packageId: "",
+            status: false,
+            date: DateTime.now(),
+            purchasedId: "",
+            isFrom: "PurchaseStatus.canceled");
+      }*/
+      /*   await globalController.setUpdatePayment(
+          uid: globalController.currentUser.value?.id ?? "",
+          packageId: "",
+          status: false,
+          date: DateTime.now(),
+          purchasedId: "",
+          isFrom: "PurchaseStatus.error");*/
       await Alert(
         context: Get.context!,
-        type: AlertType.error,
-        title: "Failed",
-        desc: "Oops !! something went wrong. Try Again",
+        type: AlertType.info,
+        title: "subscription",
+
+        desc:
+            "It appears that you have already associated this subscription with another account. To activate a free trial subscription on this account, you will need to cancel the current subscription in the Google Play Store.",
         buttons: [
           DialogButton(
             child: Text(
-              "Retry",
+              "Ok",
               style: TextStyle(color: Colors.white, fontSize: 20),
             ),
             onPressed: () => Get.back(),
@@ -175,20 +239,36 @@ class PaymentSubcriptionController extends GetxController {
           )
         ],
       ).show();
+    } else if (purchase != null && purchase.status == PurchaseStatus.canceled) {
+      print("purchase.status==canceled===>${purchase.status}");
+      print("purchase.status=canceled==productID==>${purchase.productID}");
+      await globalController.setUpdatePayment(
+          uid: globalController.currentUser.value?.id ?? "",
+          packageId: "",
+          status: false,
+          date: DateTime.now(),
+          purchasedId: "",
+          isFrom: "PurchaseStatus.canceled");
+    } else if (purchase != null && purchase.status == PurchaseStatus.pending) {
+      print("purchase.status==pending===>${purchase.status}");
+      print("purchase.status=pending==productID==>${purchase.productID}");
+    } else if (purchase != null && purchase.status == PurchaseStatus.restored) {
+      print("purchase.status==restored===>${purchase.status}");
+      print("purchase.status=restored==productID==>${purchase.productID}");
     }
     return;
   }
 
   PurchaseDetails? hasPurchased(String productId) {
-    return purchases
-        .firstWhereOrNull((purchase) => purchase.productID == productId);
+    return purchases.firstWhereOrNull((purchase) => purchase.productID == productId);
   }
 
   void buyProduct(ProductDetails product) async {
     final PurchaseParam purchaseParam = PurchaseParam(productDetails: product);
     try {
-      await iap.buyNonConsumable(purchaseParam: purchaseParam);
-    } catch (e,stack) {
+        var resultBuyProduct = await iap.buyNonConsumable(purchaseParam: purchaseParam);
+      print("buyProduct---->$resultBuyProduct");
+    } catch (e, stack) {
       print("buyProduct---->$e $stack");
       Get.snackbar("Information", "You've already Subcribed");
       return;

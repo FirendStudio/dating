@@ -15,9 +15,11 @@ import '../../../../../infrastructure/dal/util/session.dart';
 class HomeController extends GetxController {
   RxBool isLoading = false.obs;
   RxList<UserModel> listUsers = RxList();
+  RxList<UserModel> addNewUsers = RxList();
   RxList<ReviewModel> listReviewUser = RxList();
   List<String> checkedUser = [];
   List<String> listSwipedUser = [];
+
   RxInt indexImage = 0.obs;
   RxInt indexUser = 0.obs;
   CarouselController carouselUserController = CarouselController();
@@ -88,8 +90,6 @@ class HomeController extends GetxController {
     });
     print("Count All User : " + temp.length.toString());
 
-
-
     for (var doc in temp) {
       Map<String, dynamic> json = doc.data();
       if (json.containsKey("age")) {
@@ -101,10 +101,6 @@ class HomeController extends GetxController {
           tempUser.coordinates?['longitude'] ?? 0.0,
         );
         tempUser.distanceBW = distance.round();
-
-        if (filterUser(tempUser, currentUserTemp, distance)) {
-          continue;
-        }
 
         if (tempUser.imageUrl.isNotEmpty) {
           List imageUrlTemp = [];
@@ -118,6 +114,12 @@ class HomeController extends GetxController {
             }
           }
         }
+        if (filterUser(tempUser, currentUserTemp, distance, false)) {
+          addNewUsers.add(tempUser);
+          addNewUsers.refresh();
+          continue;
+        }
+
         if (listSwipedUser.contains(json['userId'])) {
           tempList.add(tempUser);
           continue;
@@ -134,10 +136,8 @@ class HomeController extends GetxController {
     listUsers.forEach((element) async {
       if (element.countryName.isNotEmpty && element.countryName != "") {
         try {
-
           googleTranslator.translate(element.countryName, to: 'en').then((value) => {
-            element.countryName = value.toString()??"",
-
+                element.countryName = value.toString() ?? "",
               });
         } on Exception catch (e) {
           debugPrint("translatedName--error---$e");
@@ -165,6 +165,60 @@ class HomeController extends GetxController {
     }
   }
 
+  getNewUsersData() async {
+    debugPrint("get NewUser data===>${addNewUsers.length}");
+    checkedUser = [];
+    List<UserModel> tempList = [];
+    UserModel currentUserTemp = Get.find<GlobalController>().currentUser.value!;
+
+    var query = await queryCollectionDB('/Users/${currentUserTemp.id}/CheckedUser').get();
+
+    if (query.docs.isNotEmpty) {
+      query.docs.forEach((element) {
+        // print(element.data()["LikedUser"]);
+        if (element.data()["LikedUser"] == null) {
+          checkedUser.add(element.data()["DislikedUser"]);
+        } else {
+          checkedUser.add(element.data()["LikedUser"]);
+        }
+      });
+    }
+    addNewUsers.sort((a, b) => a.distanceBW.compareTo(b.distanceBW));
+    debugPrint("get NewUser data===addDistance==>${globalController.addDistance.value}");
+    globalController.addDistance.value += 500;
+    debugPrint("get NewUser data=after==addDistance==>${globalController.addDistance.value}");
+    for (var singleUser in addNewUsers) {
+      if (filterUser(singleUser, currentUserTemp, singleUser.distanceBW.toDouble() ?? 0.0, true)) {
+        continue;
+      }
+      if (listSwipedUser.contains(singleUser.id)) {
+        tempList.add(singleUser);
+        continue;
+      }
+      tempList.add(singleUser);
+    }
+    final googleTranslator = GoogleTranslator();
+    tempList.forEach((element) async {
+      if (element.countryName.isNotEmpty && element.countryName != "") {
+        try {
+          googleTranslator.translate(element.countryName, to: 'en').then((value) => {
+                element.countryName = value.toString() ?? "",
+              });
+        } on Exception catch (e) {
+          debugPrint("translatedName--error---$e");
+        }
+      }
+    });
+    tempList.sort((a, b) => a.distanceBW.compareTo(b.distanceBW));
+    debugPrint("get NewUser data=after==>${tempList.length}");
+    tempList.forEach((element) {
+      if (!listUsers.contains(element)) {
+        listUsers.add(element);
+      }
+    });
+    listUsers.refresh();
+  }
+
   ///-- client initUser();
 
   initUserClient() async {
@@ -178,9 +232,7 @@ class HomeController extends GetxController {
     listSwipedUser = Session().getSwipedUser();
     List<UserModel> tempList = [];
     UserModel currentUserTemp = Get.find<GlobalController>().currentUser.value!;
-    var query =
-    await queryCollectionDB('/Users/${currentUserTemp.id}/CheckedUser')
-        .get();
+    var query = await queryCollectionDB('/Users/${currentUserTemp.id}/CheckedUser').get();
     if (query.docs.isNotEmpty) {
       query.docs.forEach((element) {
         // print(element.data()["LikedUser"]);
@@ -193,12 +245,10 @@ class HomeController extends GetxController {
     }
     query = await queryCollectionDB('Users')
         .where(
-      'age',
-      isGreaterThanOrEqualTo:
-      int.parse(currentUserTemp.ageRange?['min'] ?? 0),
-      isLessThanOrEqualTo:
-      int.parse(currentUserTemp.ageRange?['max'] ?? 100),
-    )
+          'age',
+          isGreaterThanOrEqualTo: int.parse(currentUserTemp.ageRange?['min'] ?? 0),
+          isLessThanOrEqualTo: int.parse(currentUserTemp.ageRange?['max'] ?? 100),
+        )
         .orderBy('age', descending: false)
         .get();
     if (query.docs.isEmpty) {
@@ -225,7 +275,7 @@ class HomeController extends GetxController {
           tempUser.coordinates?['longitude'] ?? 0,
         );
         tempUser.distanceBW = distance.round();
-        if (filterUser(tempUser, currentUserTemp, distance)) {
+        if (filterUser(tempUser, currentUserTemp, distance, false)) {
           continue;
         }
         if (tempUser.imageUrl.isNotEmpty) {
@@ -254,8 +304,7 @@ class HomeController extends GetxController {
       isLoading.value = false;
       return;
     }
-    listUsers.first.relasi.value =
-    await Global().getRelationship(listUsers.first.id);
+    listUsers.first.relasi.value = await Global().getRelationship(listUsers.first.id);
     addLastSwiped(listUsers.first);
     if (kDebugMode) {
       print("count User Existing : " + listUsers.length.toString());
@@ -271,7 +320,7 @@ class HomeController extends GetxController {
     }
   }
 
-  bool filterUser(UserModel tempUser, UserModel currentUserTemp, double distance) {
+  bool filterUser(UserModel tempUser, UserModel currentUserTemp, double distance, bool isFromNewUSers) {
     if (checkedUser.contains(tempUser.id)) {
       if (tempUser.name == "arjun") {
         debugPrint("call filterUser---checked-->");
@@ -284,11 +333,25 @@ class HomeController extends GetxController {
       }
       return true;
     }
-    if (cekDistance(distance, tempUser, currentUserTemp)) {
-      if (tempUser.name == "arjun") {
-        debugPrint("call filterUser---cek ditsnce-->");
+    if (isFromNewUSers) {
+      if (distance <= globalController.addDistance.value.toDouble() &&
+          tempUser.id != currentUserTemp.id &&
+          !tempUser.isBlocked) {
+        return false;
+      } else {
+        return true;
       }
-      return true;
+    } else {
+      if (cekDistance(
+        distance,
+        tempUser,
+        currentUserTemp,
+      )) {
+        if (tempUser.name == "arjun") {
+          debugPrint("call filterUser---cek ditsnce-->");
+        }
+        return true;
+      }
     }
     if (cekReview(tempUser)) {
       if (tempUser.name == "arjun") {

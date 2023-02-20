@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:hookup4u/domain/core/interfaces/loading.dart';
 import 'package:hookup4u/infrastructure/dal/controller/global_controller.dart';
 import 'package:hookup4u/infrastructure/dal/util/Global.dart';
@@ -105,11 +106,10 @@ class HomeScreen extends StatelessWidget {
 
                               if (controller.listUsers.length == controller.indexUser.value) {
                                 controller.indexUser.value--;
-
                               }
                             },
                           ),
-                         //addUser(),
+                          //addUser(),
                         ],
                       ),
                     ),
@@ -293,6 +293,13 @@ class HomeScreen extends StatelessWidget {
             controller.listUsers[index] = await controller.initNextSwipe(controller.listUsers[index]);
             controller.indexImage.value = 0;
             controller.indexUser.value = index;
+
+            if (index == controller.listUsers.length -2) {
+              debugPrint("get NewUser==current index=$index=>");
+              controller.isLoading.value=true;
+              controller.getNewUsersData();
+              controller.isLoading.value=false;
+            }
           },
         ),
         carouselController: controller.carouselUserController,
@@ -588,10 +595,10 @@ class HomeScreen extends StatelessWidget {
                             ),
                           ),
                           title: Text(
-                            value.relasi.value!.partner!.partnerName?? "",
+                            value.relasi.value!.partner!.partnerName ?? "",
                             style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
                           ),
-                          subtitle: Text((userPartner?.status ?? "" )+ ", " +( userPartner?.sexualOrientation ?? "")),
+                          subtitle: Text((userPartner?.status ?? "") + ", " + (userPartner?.sexualOrientation ?? "")),
                           leading: CircleAvatar(
                             radius: 25,
                             backgroundColor: secondryColor,
@@ -651,6 +658,10 @@ class HomeScreen extends StatelessWidget {
                     useOldImageOnUrlChange: true,
                     placeholder: (context, url) => loadingWidget(Get.height * .78, null),
                     errorWidget: (context, url, error) => Icon(Icons.error),
+                    // maxHeightDiskCache: 100,
+                    // maxWidthDiskCache:  100,
+                    memCacheWidth: 200,
+                    memCacheHeight: 200,
                   ),
                 ),
               ],
@@ -680,6 +691,9 @@ class HomeScreen extends StatelessWidget {
                             useOldImageOnUrlChange: true,
                             placeholder: (context, url) => loadingWidget(Get.height * .78, null),
                             errorWidget: (context, url, error) => Icon(Icons.error),
+                            memCacheWidth: 200,
+                            memCacheHeight: 200,
+
                           ),
                         ),
                       ],

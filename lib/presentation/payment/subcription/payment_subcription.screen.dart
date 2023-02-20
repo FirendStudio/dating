@@ -15,7 +15,7 @@ class PaymentSubcriptionScreen extends GetView<PaymentSubcriptionController> {
   const PaymentSubcriptionScreen({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    Get.put(PaymentSubcriptionController());
+
     return Obx(
       () => Scaffold(
         body: SingleChildScrollView(

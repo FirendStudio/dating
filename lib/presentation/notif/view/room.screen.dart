@@ -148,6 +148,59 @@ class RoomScreen extends GetView<NotifController> {
                                 Get.toNamed(Routes.PAYMENT_SUBCRIPTION);
                               }
                             } else {
+                              if (!globalController.isPurchased.value) {
+                                ArtDialogResponse? response = await ArtSweetAlert.show(
+                                  barrierDismissible: false,
+                                  context: Get.context!,
+                                  artDialogArgs: ArtDialogArgs(
+                                    denyButtonText: "Cancel",
+                                    title: "Information",
+                                    text:
+                                    "Upgrade now to start chatting with this member!",
+                                    confirmButtonText: "Subscribe Now",
+                                    type: ArtSweetAlertType.warning,
+                                  ),
+                                );
+
+                                if (response?.isTapConfirmButton == true) {
+                                  Get.toNamed(Routes.PAYMENT_SUBCRIPTION);
+                                  return;
+                                }
+                                return;
+                              }
+                              UserModel? userSecond;
+                              var data = await queryCollectionDB("Users")
+                                  .doc(controller
+                                  .listMatchNewUser[index].matches ?? "")
+                                  .get();
+                              if (!data.exists) {
+                                Global().showInfoDialog("User not exist");
+                                return;
+                              }
+                              userSecond = UserModel.fromJson(
+                                  data.data() as Map<String, dynamic>);
+                              userSecond.relasi.value =
+                              await Global().getRelationship(userSecond.id);
+                              userSecond.distanceBW = Global()
+                                  .calculateDistance(
+                                globalController.currentUser.value
+                                    ?.coordinates?['latitude'] ??
+                                    0,
+                                globalController.currentUser.value
+                                    ?.coordinates?['longitude'] ??
+                                    0,
+                                userSecond.coordinates?['latitude'] ?? 0,
+                                userSecond.coordinates?['longitude'] ?? 0,
+                              )
+                                  .round();
+                              Get.toNamed(Routes.NOTIF_VIEW_CHAT, arguments: {
+                                "chatId": Global().chatId(
+                                  globalController.currentUser.value?.id ?? "",
+                                  controller
+                                      .listMatchNewUser[index].matches ?? "",
+                                ),
+                                "userSecond": userSecond
+                              });
                               // await Get.find<ChatController>().initChatScreen(
                               //     chatId(currentUser, data.newmatches[index]));
                               // Navigator.push(

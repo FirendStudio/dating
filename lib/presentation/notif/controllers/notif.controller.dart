@@ -22,6 +22,7 @@ class NotifController extends GetxController {
   StreamSubscription<QuerySnapshot>? streamLikedBy;
   StreamSubscription<QuerySnapshot>? streamMatches;
   RxList<StreamSubscription<QuerySnapshot<Map<String, dynamic>>>?> listStreamRoom = RxList();
+  RxBool isLoading = false.obs;
 
   initAll() {
     debugPrint("call--notification-initAll()");
@@ -86,14 +87,34 @@ class NotifController extends GetxController {
   }
 
   getDeleteMatches(MatchModel matchesModel) async {
+    isLoading.value = true;
     await queryCollectionDB('/Users/${Get.find<GlobalController>().currentUser.value?.id}/Matches')
         .doc(matchesModel.matches)
         .delete()
         .then((value) => {debugPrint("success in getDeleteMatches======>")})
         .onError((error, stackTrace) {
       debugPrint("error in getDeleteMatches======>$error");
+      Global().showInfoDialog("Error Check Your Internet Connection");
+      isLoading.value = false;
       return {};
     });
+    await queryCollectionDB('/Users/${matchesModel.matches}/Matches')
+        .doc(Get.find<GlobalController>().currentUser.value?.id)
+        .set({
+          "Matches": "${Get.find<GlobalController>().currentUser.value?.id}",
+          "isRead": true,
+          "pictureUrl": Get.find<GlobalController>().currentUser.value?.imageUrl.first["url"] ?? "",
+          "timestamp": FieldValue.serverTimestamp(),
+          "userName": Get.find<GlobalController>().currentUser.value?.name,
+          "isDeleted": true
+        })
+        .then((value) => {debugPrint("success in getDeleteMatches===partner===>")})
+        .onError((error, stackTrace) {
+          debugPrint("error in getDeleteMatches===partner===>$error");
+          Global().showInfoDialog("Error Check Your Internet Connection");
+          isLoading.value = false;
+          return {};
+        });
     await queryCollectionDB('Users')
         .doc(Get.find<GlobalController>().currentUser.value?.id)
         .collection("LikedBy")
@@ -102,6 +123,7 @@ class NotifController extends GetxController {
         .then((value) => {debugPrint("success in getDeleteMatches===LikedBY===>")})
         .onError((error, stackTrace) {
       debugPrint("error in getDeleteMatches===LikedBY===>$error");
+      Global().showInfoDialog("Error Check Your Internet Connection");
       return {};
     });
     String chatId = Global().chatId(Get.find<GlobalController>().currentUser.value!.id, matchesModel.matches!);
@@ -125,6 +147,7 @@ class NotifController extends GetxController {
         .then((value) {})
         .onError((error, stackTrace) {
           debugPrint("error-delete--set active false in  messages-->$error");
+          isLoading.value = false;
           Get.back();
         });
     debugPrint("matches list length=before===${listMatchUser.length}");
@@ -133,6 +156,41 @@ class NotifController extends GetxController {
     listMatchUser.refresh();
     debugPrint("matches list length====${listMatchUser.length}");
     globalController.sendMatchedDeletedFCM(idUser: matchesModel.matches!, name: matchesModel.userName!);
+    isLoading.value = false;
+  }
+
+  deletedMatchesDeleted(MatchModel matchesModel) async {
+    isLoading.value = true;
+    await queryCollectionDB('/Users/${Get.find<GlobalController>().currentUser.value?.id}/Matches')
+        .doc(matchesModel.matches)
+        .delete()
+        .then((value) => {debugPrint("success in deletedMatchesDeleted======>")})
+        .onError((error, stackTrace) {
+      debugPrint("error in deletedMatchesDeleted======>$error");
+      Global().showInfoDialog("Error Check Your Internet Connection");
+      isLoading.value = false;
+      return {
+
+      };
+    });
+    await queryCollectionDB('Users')
+        .doc(Get.find<GlobalController>().currentUser.value?.id)
+        .collection("LikedBy")
+        .doc(matchesModel.matches)
+        .delete()
+        .then((value) => {debugPrint("success in deletedMatchesDeleted===LikedBY===>")})
+        .onError((error, stackTrace) {
+      Global().showInfoDialog("Error Check Your Internet Connection");
+      isLoading.value = false;
+      debugPrint("error in deletedMatchesDeleted===LikedBY===>$error");
+      return {};
+    });
+
+    listMatchUserAll.remove(matchesModel);
+    listMatchUser.remove(matchesModel);
+    listMatchUser.refresh();
+
+    isLoading.value = false;
   }
 
   filterLiked() {
@@ -155,6 +213,7 @@ class NotifController extends GetxController {
   }
 
   filterMatches() async {
+    listMatchNewUser.clear();
     listMatchUser.value = [];
     listMatchUserAll.forEach((element) {
       Timestamp timeStamp = element['timestamp'] ?? Timestamp.now();
@@ -165,6 +224,7 @@ class NotifController extends GetxController {
         timeStamp: (timeStamp.toDate()),
         userName: element['userName'],
         type: 0.obs,
+        isDeleted: element.data().keys.toList().contains("isDeleted")? element['isDeleted']: false,
       );
       if (!element['isRead']) {
         listMatchNewUser.add(mapTemp);

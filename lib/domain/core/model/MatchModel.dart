@@ -20,6 +20,8 @@ class MatchModel {
     this.lastMsg = "",
     required this.type,
     this.timeStamp,
+    this.isDeleted
+
   });
 
   String? matches;
@@ -29,6 +31,7 @@ class MatchModel {
   String lastMsg;
   RxInt type;
   DateTime? timeStamp;
+  bool?  isDeleted;
 
   // factory MatchModel.fromJson(Map<String, dynamic> json) => MatchModel(
   //     matches: json["Matches"],

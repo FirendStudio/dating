@@ -1,11 +1,14 @@
 import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/infrastructure/navigation/routes.dart';
+
 // import 'package:apple_sign_in/apple_signs_in.dart' as i;
 import 'package:the_apple_sign_in/apple_sign_in_button.dart' as i;
+
 import '../../../infrastructure/dal/util/Global.dart';
 import '../../../infrastructure/dal/util/color.dart';
 import '../../../infrastructure/dal/util/session.dart';
@@ -13,7 +16,6 @@ import 'controllers/auth_login.controller.dart';
 
 class AuthLoginScreen extends GetView<AuthLoginController> {
   const AuthLoginScreen({Key? key}) : super(key: key);
-
 
   @override
   Widget build(BuildContext context) {
@@ -102,7 +104,13 @@ class AuthLoginScreen extends GetView<AuthLoginController> {
                       style: i.ButtonStyle.black,
                       cornerRadius: 50,
                       type: i.ButtonType.defaultButton,
-                      onPressed: () => controller.handleAppleLogin(),
+                      onPressed: () {
+                        if (Session().getLoginType() == "apple" || Session().getLoginType() == "") {
+                          controller.handleAppleLogin();
+                        } else {
+                          controller.showRememberLoginDialog(Session().getLoginType(), "apple");
+                        }
+                      },
                     ),
                   ),
                 if (Platform.isAndroid)
@@ -147,25 +155,29 @@ class AuthLoginScreen extends GetView<AuthLoginController> {
                         ),
                         onTap: () async {
                           if (!controller.isChecked.value) {
-                            Global().showInfoDialog(
-                                "You must agree our terms & conditions to use this apps");
+                            Global().showInfoDialog("You must agree our terms & conditions to use this apps");
                             return;
                           }
-                          showDialog(
-                            context: context,
-                            builder: (context) => Container(
-                              height: 30,
-                              width: 30,
-                              child: Center(
-                                child: CupertinoActivityIndicator(
-                                  key: UniqueKey(),
-                                  radius: 20,
-                                  animating: true,
+                          if (Session().getLoginType() == "google" || Session().getLoginType() == "") {
+                            showDialog(
+                              context: context,
+                              builder: (context) => Container(
+                                height: 30,
+                                width: 30,
+                                child: Center(
+                                  child: CupertinoActivityIndicator(
+                                    key: UniqueKey(),
+                                    radius: 20,
+                                    animating: true,
+                                  ),
                                 ),
                               ),
-                            ),
-                          );
-                          await controller.handleGoogleLogin(context);
+                            );
+                            await controller.handleGoogleLogin(context);
+                          } else {
+                            controller.showRememberLoginDialog(Session().getLoginType(), "google");
+                          }
+
                         },
                       ),
                     ),
@@ -173,14 +185,17 @@ class AuthLoginScreen extends GetView<AuthLoginController> {
                 InkWell(
                   onTap: () {
                     if (!controller.isChecked.value) {
-                      Global().showInfoDialog(
-                          "You must agree our terms & conditions to use this apps");
+                      Global().showInfoDialog("You must agree our terms & conditions to use this apps");
                       return;
                     }
-                    Session().saveLoginType("phone");
-                    Get.toNamed(Routes.AUTH_OTP, arguments: {
-                      "updateNumber": false,
-                    });
+                    if (Session().getLoginType() == "phone" || Session().getLoginType() == "") {
+                      Session().saveLoginType("phone");
+                      Get.toNamed(Routes.AUTH_OTP, arguments: {
+                        "updateNumber": false,
+                      });
+                    } else {
+                      controller.showRememberLoginDialog(Session().getLoginType(), "phone");
+                    }
                   },
                   child: Container(
                     height: Get.height * .065,
@@ -234,34 +249,35 @@ class AuthLoginScreen extends GetView<AuthLoginController> {
                           child: Text(
                             "LOGIN WITH FACEBOOK".toString(),
                             style: TextStyle(
-                                color: textColor,
-                                fontSize: 16,
-                                fontFamily: Global.font,
-                                fontWeight: FontWeight.bold),
+                                color: textColor, fontSize: 16, fontFamily: Global.font, fontWeight: FontWeight.bold),
                           ),
                         ),
                       ),
                       onTap: () async {
                         if (!controller.isChecked.value) {
-                          Global().showInfoDialog(
-                              "You must agree our terms & conditions to use this apps");
+                          Global().showInfoDialog("You must agree our terms & conditions to use this apps");
                           return;
                         }
-                        showDialog(
-                          context: context,
-                          builder: (context) => Container(
-                            height: 30,
-                            width: 30,
-                            child: Center(
-                              child: CupertinoActivityIndicator(
-                                key: UniqueKey(),
-                                radius: 20,
-                                animating: true,
+                        if (Session().getLoginType() == "fb" || Session().getLoginType() == "") {
+                          showDialog(
+                            context: context,
+                            builder: (context) => Container(
+                              height: 30,
+                              width: 30,
+                              child: Center(
+                                child: CupertinoActivityIndicator(
+                                  key: UniqueKey(),
+                                  radius: 20,
+                                  animating: true,
+                                ),
                               ),
                             ),
-                          ),
-                        );
-                        controller.handleFacebookLogin(context);
+                          );
+                          controller.handleFacebookLogin(context);
+                        } else {
+                          controller.showRememberLoginDialog(Session().getLoginType(), "fb");
+                        }
+
                       },
                     ),
                   ),
@@ -281,8 +297,7 @@ class AuthLoginScreen extends GetView<AuthLoginController> {
                     () => CheckboxListTile(
                       value: controller.isChecked.value,
                       onChanged: (bool? value) {
-                        controller.isChecked.value =
-                            !controller.isChecked.value;
+                        controller.isChecked.value = !controller.isChecked.value;
                       },
                       dense: true,
                       controlAffinity: ListTileControlAffinity.leading,
@@ -298,11 +313,10 @@ class AuthLoginScreen extends GetView<AuthLoginController> {
                   GestureDetector(
                     child: Text(
                       "Privacy Policy",
-                      style: TextStyle(
-                          color: Colors.black, fontWeight: FontWeight.bold),
+                      style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
                     ),
-                    onTap: () => Global().launchURL(
-                        "https://jablesscupid.com/privacy-policy/"), //TODO: add privacy policy
+                    onTap: () =>
+                        Global().launchURL("https://jablesscupid.com/privacy-policy/"), //TODO: add privacy policy
                   ),
                   Container(
                     margin: EdgeInsets.only(left: 10, right: 10),
@@ -315,8 +329,7 @@ class AuthLoginScreen extends GetView<AuthLoginController> {
                   GestureDetector(
                     child: Text(
                       "Terms & Conditions",
-                      style: TextStyle(
-                          color: Colors.black, fontWeight: FontWeight.bold),
+                      style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
                     ),
                     onTap: () => Global().launchURL(
                       "https://jablesscupid.com/terms-conditions/",
@@ -341,8 +354,7 @@ class AuthLoginScreen extends GetView<AuthLoginController> {
                   child: Text('No'.toString()),
                 ),
                 TextButton(
-                  onPressed: () => SystemChannels.platform
-                      .invokeMethod('SystemNavigator.pop'),
+                  onPressed: () => SystemChannels.platform.invokeMethod('SystemNavigator.pop'),
                   child: Text('Yes'.toString()),
                 ),
               ],
