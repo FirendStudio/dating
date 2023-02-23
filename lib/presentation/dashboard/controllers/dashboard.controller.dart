@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:hookup4u/infrastructure/dal/util/general.dart';
 
 import '../../../domain/core/interfaces/dialog.dart';
 import '../../../infrastructure/dal/util/session.dart';
@@ -9,6 +10,7 @@ class DashboardController extends GetxController  {
   RxBool isLoading = false.obs;
 RxInt initalIndex=1.obs;
   Future<bool> onBack() async {
+    globalController.upgradeCounts.value=0;
     return await showDialog(
       context: Get.context!,
       builder: (BuildContext context) {

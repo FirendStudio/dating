@@ -1,3 +1,4 @@
+import 'package:country_code_picker/country_code_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ import '../../infrastructure/dal/util/Global.dart';
 import '../../infrastructure/dal/util/color.dart';
 import '../../infrastructure/dal/util/general.dart';
 import '../../infrastructure/navigation/routes.dart';
+import '../profile/update_location/update_location_widget.dart';
 import 'controllers/settings.controller.dart';
 
 class SettingsScreen extends GetView<SettingsController> {
@@ -294,8 +296,8 @@ class SettingsScreen extends GetView<SettingsController> {
                                     ),
                                   ),
                                   onTap: () async {
-                                    // print(await Global().getLocationCoordinates());
-                                    // await Get.to(() => UploadLocationWidget());
+                                    print(await Global().getLocationCoordinates());
+                                    await Get.to(() => UploadLocationWidget());
                                   },
                                 ),
                               ],
@@ -444,6 +446,28 @@ class SettingsScreen extends GetView<SettingsController> {
                       ],
                     ),
                   ),
+                 /* Padding(
+                    padding:
+                    const EdgeInsets.symmetric(vertical: 20, horizontal: 50),
+
+                        child: CountryCodePicker(
+                          onChanged: (value) {
+                            controller.countryCode = value.dialCode ?? "";
+                          },
+                          // Initial selection and favorite can be one of code ('IT') OR dial_code('+39')
+                          initialSelection: 'IN',
+                          favorite: [controller.countryCode, 'IN'],
+                          // optional. Shows only country name and flag
+                          showCountryOnly: false,
+                          // optional. Shows only country name and flag when popup is closed.
+                          showOnlyCountryWhenClosed: false,
+                          // optional. aligns the flag and the Text left
+                          alignLeft: false,
+                        ),
+                      ),*/
+
+
+
                   Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: Card(

@@ -100,7 +100,8 @@ class PaymentSubcriptionController extends GetxController {
   Future<void> getProducts(List<String> _productIds) async {
     print(_productIds.length);
     if (_productIds.length > 0) {
-      Set<String> ids = Set.from(_productIds);
+      Set<String> ids = Set.from(["unjabbed_monthly"]);
+      // Set<String> ids = Set.from(_productIds);
       print(ids);
       ProductDetailsResponse response = await iap.queryProductDetails(ids);
       products.value = response.productDetails;
@@ -109,7 +110,7 @@ class PaymentSubcriptionController extends GetxController {
         print(products.length);
       }
       // products.forEach((element) {});
-
+      print("getProducts==l=>${products.length}");
       selectedProduct.value = products.length > 0 ? products[0] : null;
     }
   }
@@ -121,6 +122,7 @@ class PaymentSubcriptionController extends GetxController {
         await queryCollectionDB("Packages").where('status', isEqualTo: true).get();
     if (data.docs.isNotEmpty) {
       packageId.addAll(data.docs.map((e) => e['id']));
+      debugPrint("fetchPackageIds=====>$packageId");
     }
     return packageId;
   }
@@ -161,6 +163,9 @@ class PaymentSubcriptionController extends GetxController {
       } else if (purchase.productID == "unjabbed_monthly") {
         date = DateTime(
             now.year, now.month + 2, now.day, now.hour, now.minute, now.second, now.millisecond, now.microsecond);
+      }else if (purchase.productID == "unlimited_no_ads_subscription") {
+        date = DateTime(
+            now.year, now.month + 1, now.day, now.hour, now.minute, now.second, now.millisecond, now.microsecond);
       }
       print("Masuk Sini");
       if (date == null) {
@@ -225,7 +230,6 @@ class PaymentSubcriptionController extends GetxController {
         context: Get.context!,
         type: AlertType.info,
         title: "subscription",
-
         desc:
             "It appears that you have already associated this subscription with another account. To activate a free trial subscription on this account, you will need to cancel the current subscription in the Google Play Store.",
         buttons: [
@@ -266,7 +270,7 @@ class PaymentSubcriptionController extends GetxController {
   void buyProduct(ProductDetails product) async {
     final PurchaseParam purchaseParam = PurchaseParam(productDetails: product);
     try {
-        var resultBuyProduct = await iap.buyNonConsumable(purchaseParam: purchaseParam);
+      var resultBuyProduct = await iap.buyNonConsumable(purchaseParam: purchaseParam);
       print("buyProduct---->$resultBuyProduct");
     } catch (e, stack) {
       print("buyProduct---->$e $stack");

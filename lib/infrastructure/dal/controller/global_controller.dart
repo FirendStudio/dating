@@ -37,6 +37,9 @@ class GlobalController extends GetxController {
   RxList<UserModel> globalListUsers = RxList();
   RxBool isFromLogOut = false.obs;
   RxInt addDistance = 0.obs;
+  RxInt adsCount = 0.obs;
+  RxInt upgradeCounts = 0.obs;
+
   @override
   onInit() async {
     super.onInit();

@@ -1,14 +1,16 @@
+import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
+import 'package:hookup4u/InterstitalAd.dart';
 import 'package:hookup4u/domain/core/interfaces/loading.dart';
 import 'package:hookup4u/infrastructure/dal/controller/global_controller.dart';
 import 'package:hookup4u/infrastructure/dal/util/Global.dart';
 import 'package:hookup4u/infrastructure/dal/util/general.dart';
+import 'package:hookup4u/infrastructure/navigation/routes.dart';
 
 import '../../../../domain/core/interfaces/report/report_user.dart';
 import '../../../../domain/core/model/user_model.dart';
@@ -281,24 +283,41 @@ class HomeScreen extends StatelessWidget {
   Widget listUserWidget() {
     return Obx(() {
       return CarouselSlider(
+
         options: CarouselOptions(
           initialPage: controller.listUsers.isNotEmpty ? controller.indexUser.value : 0,
           height: Get.height,
+          scrollPhysics: globalController.adsCount.value == 20
+              // ||globalController.upgradeCounts.value == 100
+              ? NeverScrollableScrollPhysics()
+              : ScrollPhysics(),
           viewportFraction: 1.0,
           enlargeCenterPage: false,
           scrollDirection: Axis.horizontal,
+
           onPageChanged: (index, reason) async {
             print("Index User : " + index.toString());
             controller.addLastSwiped(controller.listUsers[index]);
             controller.listUsers[index] = await controller.initNextSwipe(controller.listUsers[index]);
             controller.indexImage.value = 0;
             controller.indexUser.value = index;
+          print(
+                "adsCount=====>${globalController.adsCount.value}  upgradeCounts===>${globalController.upgradeCounts.value}    ");
 
-            if (index == controller.listUsers.length -2) {
+        /*  if(!globalController.isPurchased.value){
+
+          }
+          */
+
+            if (globalController.adsCount.value == 20 /*&& globalController.upgradeCounts.value!= 100*/) {
+              await InterstitalAd.loadInterstitialAd();
+            }
+
+            if (index == controller.listUsers.length - 2) {
               debugPrint("get NewUser==current index=$index=>");
-              controller.isLoading.value=true;
+              controller.isLoading.value = true;
               controller.getNewUsersData();
-              controller.isLoading.value=false;
+              controller.isLoading.value = false;
             }
           },
         ),
@@ -693,7 +712,6 @@ class HomeScreen extends StatelessWidget {
                             errorWidget: (context, url, error) => Icon(Icons.error),
                             memCacheWidth: 200,
                             memCacheHeight: 200,
-
                           ),
                         ),
                       ],

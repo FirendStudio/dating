@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:hookup4u/infrastructure/dal/controller/global_controller.dart';
 import 'package:hookup4u/infrastructure/dal/util/color.dart';
 
@@ -18,6 +19,7 @@ FlutterLocalNotificationsPlugin? flutterLocalNotificationsPlugin;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   if (kIsWeb) {
     await Firebase.initializeApp(options: DefaultFirebaseConfig.platformOptions);
   } else {
@@ -86,7 +88,7 @@ void main() async {
     DeviceOrientation.portraitDown,
     DeviceOrientation.portraitUp,
   ]);
-
+  await MobileAds.instance.initialize();
   runApp(Main(initialRoute));
 }
 

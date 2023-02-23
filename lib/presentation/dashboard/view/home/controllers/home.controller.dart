@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:hookup4u/domain/core/model/SuspendModel.dart';
 import 'package:hookup4u/infrastructure/dal/util/Global.dart';
 import 'package:hookup4u/presentation/settings/controllers/settings.controller.dart';
@@ -54,6 +55,7 @@ class HomeController extends GetxController {
     listUsers.value = [];
     listReviewUser.value = [];
     checkedUser = [];
+    addNewUsers.value=[];
     listSwipedUser = Session().getSwipedUser();
     List<UserModel> tempList = [];
     UserModel currentUserTemp = Get.find<GlobalController>().currentUser.value!;
@@ -430,6 +432,9 @@ class HomeController extends GetxController {
       return;
     }
     listSwipedUser.add(userModel.id);
+    globalController.adsCount.value++;
+    globalController.upgradeCounts.value++;
+
     if (kDebugMode) {
       print("Adding Name to last Swiped : " + userModel.name);
       print("Adding user to last Swiped : " + userModel.id);

@@ -6,7 +6,7 @@ environment:
   sdk: '>=2.18.2 <3.0.0'
 
 dependencies:
-
+  google_mobile_ads: ^2.3.0
   country_code_picker: ^2.0.2
   pin_code_fields: ^7.4.0
   swipe_stack: ^1.0.0
