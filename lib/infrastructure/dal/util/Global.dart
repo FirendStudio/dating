@@ -141,8 +141,8 @@ class Global {
       // obj['data'] = result.first.toMap();
 
       return obj;
-    } catch (_) {
-      print(_);
+    } catch (e) {
+      print("coordinatesToAddress===error===$e>");
       return null;
     }
   }

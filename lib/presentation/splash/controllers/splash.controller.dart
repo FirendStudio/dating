@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:hookup4u/presentation/payment/subcription/controllers/payment_subcription.controller.dart';
 
 import '../../../infrastructure/dal/controller/global_controller.dart';
 
@@ -9,6 +10,8 @@ class SplashController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    print("call splash controller===>");
+
   }
 
   @override

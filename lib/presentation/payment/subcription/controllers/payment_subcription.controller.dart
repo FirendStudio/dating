@@ -1,10 +1,13 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:art_sweetalert/art_sweetalert.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_inapp_purchase/flutter_inapp_purchase.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/infrastructure/dal/util/general.dart';
 import 'package:hookup4u/infrastructure/navigation/routes.dart';
@@ -38,12 +41,19 @@ class PaymentSubcriptionController extends GetxController {
   @override
   void onClose() {
     super.onClose();
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
     streamSubscription?.cancel();
   }
 
   void initialize() async {
+    print("initialize()-------call->${isAvailable.value}");
     isAvailable.value = await iap.isAvailable();
-    print("isAvailable=====>${isAvailable.value}");
+    print("initialize()-------isAvailable->${isAvailable.value}");
     if (isAvailable.value) {
       List<Future> futures = [
         getProducts(await fetchPackageIds()),
@@ -73,16 +83,19 @@ class PaymentSubcriptionController extends GetxController {
           },
         );
       });*/
+      var result = await FlutterInappPurchase.instance.initialize();
+      print("getPastPurchases========?$result");
+      getPastPurchases();
       streamSubscription = iap.purchaseStream.listen((purchaseDetailsList) {
         print("listen--streamSubscription-->$purchaseDetailsList");
         purchases.assignAll(purchaseDetailsList);
         purchases.forEach(
           (purchase) async {
-            await verifyPuchase(purchase.productID);
+            await verifyPurchase(purchase.productID, false);
           },
         );
       }, onDone: () {
-        streamSubscription?.cancel();
+        // streamSubscription?.cancel();
       }, onError: (error) {
         // handle error here.
       });
@@ -97,10 +110,52 @@ class PaymentSubcriptionController extends GetxController {
     isLoading.value = false;
   }
 
+  void getPastPurchases() async {
+    print('getPastPurchases----calll ---->>>');
+    // remove this if you want to restore past purchases in iOS
+    if (Platform.isIOS) {
+      return;
+    }
+
+    List<PurchasedItem>? purchasedItems = await FlutterInappPurchase.instance.getAvailablePurchases();
+
+    // log('purchasedItem 2---->>>${json.decode(purchasedItems.toString())}');
+
+    print('purchasedItem 1---->>>${purchasedItems.toString()}');
+    if (purchasedItems!.length > 0) {
+      for (var purchasedItem in purchasedItems) {
+        bool isValid = false;
+        if (Platform.isAndroid) {
+          Map map = json.decode(purchasedItem.transactionReceipt!);
+          print('getPastPurchases----map ---->>>${map.toString()}');
+
+          print('getPastPurchases------isSubscribe --->>>>${globalController.isPurchased.value}');
+          bool cancelOrNot = map['acknowledged'];
+          globalController.isPurchased.value = cancelOrNot;
+          DateTime now = DateTime.now();
+
+          await globalController.setUpdatePayment(
+              uid: globalController.currentUser.value?.id ?? "",
+              status: true,
+              packageId: purchasedItem.productId ?? "",
+              date: DateTime(
+                  now.year, now.month + 1, now.day, now.hour, now.minute, now.second, now.millisecond, now.microsecond),
+              purchasedId: purchasedItem.transactionId ?? "",
+              isFrom: "getPastPurchases");
+
+          print(
+              'getPastPurchases globalController.isPurchased.value-----isSubscribe --->>>>${globalController.isPurchased.value}');
+        }
+      }
+    } else {
+      log('purchasedItem 1--null-->>>${purchasedItems.toString()}');
+    }
+  }
+
   Future<void> getProducts(List<String> _productIds) async {
     print(_productIds.length);
     if (_productIds.length > 0) {
-      Set<String> ids = Set.from(["unjabbed_monthly"]);
+      Set<String> ids = Set.from(["unlimited_no_ads_subscription"]);
       // Set<String> ids = Set.from(_productIds);
       print(ids);
       ProductDetailsResponse response = await iap.queryProductDetails(ids);
@@ -127,9 +182,9 @@ class PaymentSubcriptionController extends GetxController {
     return packageId;
   }
 
-  Future<void> verifyPuchase(String id) async {
+  Future<void> verifyPurchase(String id, bool isFromPastPurchase) async {
     PurchaseDetails? purchase = hasPurchased(id);
-
+    print("call--verifyPuchase--from $isFromPastPurchase");
     if (purchase != null && purchase.status == PurchaseStatus.purchased) {
       print("purchase.status==purchased===>${purchase.status}");
       print("purchase.status=purchased==productID==>${purchase.productID}");
@@ -163,9 +218,9 @@ class PaymentSubcriptionController extends GetxController {
       } else if (purchase.productID == "unjabbed_monthly") {
         date = DateTime(
             now.year, now.month + 2, now.day, now.hour, now.minute, now.second, now.millisecond, now.microsecond);
-      }else if (purchase.productID == "unlimited_no_ads_subscription") {
+      } else if (purchase.productID == "unlimited_no_ads_subscription") {
         date = DateTime(
-            now.year, now.month + 1, now.day, now.hour, now.minute, now.second, now.millisecond, now.microsecond);
+            now.year, now.month, now.day, now.hour, now.minute + 1, now.second, now.millisecond, now.microsecond);
       }
       print("Masuk Sini");
       if (date == null) {
@@ -180,20 +235,22 @@ class PaymentSubcriptionController extends GetxController {
           purchasedId: purchase.purchaseID ?? "",
           isFrom: "verifyPuchase");
       //}
-      ArtDialogResponse response = await ArtSweetAlert.show(
-        context: Get.context!,
-        barrierDismissible: false,
-        artDialogArgs: ArtDialogArgs(
-          confirmButtonText: "Ok",
-          type: ArtSweetAlertType.success,
-          title: "Confirmation",
-          text: "You have now successfully subscribed to our app!",
-        ),
-      );
-      if (response.isTapConfirmButton) {
-        Get.offAllNamed(
-          Routes.DASHBOARD,
+      if (!isFromPastPurchase) {
+        ArtDialogResponse response = await ArtSweetAlert.show(
+          context: Get.context!,
+          barrierDismissible: false,
+          artDialogArgs: ArtDialogArgs(
+            confirmButtonText: "Ok",
+            type: ArtSweetAlertType.success,
+            title: "Confirmation",
+            text: "You have now successfully subscribed to our app!",
+          ),
         );
+        if (response.isTapConfirmButton) {
+          Get.offAllNamed(
+            Routes.DASHBOARD,
+          );
+        }
       }
       return;
     } else if (purchase != null && purchase.status == PurchaseStatus.error) {

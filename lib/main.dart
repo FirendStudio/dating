@@ -124,6 +124,6 @@ class AppBidding extends Bindings {
   @override
   void dependencies() {
     Get.put(GlobalController());
-    Get.put(PaymentSubcriptionController());
+
   }
 }

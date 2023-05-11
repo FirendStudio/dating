@@ -2,7 +2,6 @@ import 'package:carousel_slider/carousel_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
 import 'package:hookup4u/domain/core/model/SuspendModel.dart';
 import 'package:hookup4u/infrastructure/dal/util/Global.dart';
 import 'package:hookup4u/presentation/settings/controllers/settings.controller.dart';
@@ -20,7 +19,7 @@ class HomeController extends GetxController {
   RxList<ReviewModel> listReviewUser = RxList();
   List<String> checkedUser = [];
   List<String> listSwipedUser = [];
-
+  List ad = [];
   RxInt indexImage = 0.obs;
   RxInt indexUser = 0.obs;
   CarouselController carouselUserController = CarouselController();
@@ -43,11 +42,11 @@ class HomeController extends GetxController {
   }
 
   initAllHome() {
-    initUser();
+    initUser(false);
   }
 
   ///-- search only verified user and  location base user display
-  initUser() async {
+  initUser(bool? isFromListen) async {
     if (isLoading.value) {
       return;
     }
@@ -55,8 +54,9 @@ class HomeController extends GetxController {
     listUsers.value = [];
     listReviewUser.value = [];
     checkedUser = [];
-    addNewUsers.value=[];
+    addNewUsers.value = [];
     listSwipedUser = Session().getSwipedUser();
+    final googleTranslator = GoogleTranslator();
     List<UserModel> tempList = [];
     UserModel currentUserTemp = Get.find<GlobalController>().currentUser.value!;
 
@@ -116,26 +116,49 @@ class HomeController extends GetxController {
             }
           }
         }
-        if (filterUser(tempUser, currentUserTemp, distance, false)) {
-          addNewUsers.add(tempUser);
-          addNewUsers.refresh();
-          continue;
+        if (tempUser.countryName.isNotEmpty && tempUser.countryName != "") {
+          try {
+            googleTranslator.translate(tempUser.countryName, to: 'en').then((value) => {
+                  tempUser.countryName = value.toString() ?? "",
+                });
+          } on Exception catch (e) {
+            debugPrint("translatedName--error---$e");
+          }
+        }
+        if (!globalController.isFromLocationChange.value) {
+          if (filterUser(tempUser, currentUserTemp, distance, false)) {
+            addNewUsers.add(tempUser);
+            addNewUsers.refresh();
+          } else {
+            listUsers.add(tempUser);
+            listUsers.refresh();
+          }
+        } else {
+          if ((currentUserTemp.countryName.toLowerCase().trim() == tempUser.countryName.toLowerCase().trim() &&
+                  !tempUser.isBlocked) &&
+              tempUser.id != currentUserTemp.id) {
+            debugPrint(
+                "currentUserTemp.countryName------>${currentUserTemp.countryName.toLowerCase()}    tempUser.countryName======>${tempUser.countryName}");
+
+            listUsers.add(tempUser);
+            listUsers.refresh();
+          } else {
+            addNewUsers.add(tempUser);
+            addNewUsers.refresh();
+          }
         }
 
-        if (listSwipedUser.contains(json['userId'])) {
+        /*  if (listSwipedUser.contains(json['userId'])) {
           tempList.add(tempUser);
           continue;
-        }
-        listUsers.add(tempUser);
-        listUsers.refresh();
-        continue;
+        }*/
+
       }
     }
 
     listUsers.sort((a, b) => a.distanceBW.compareTo(b.distanceBW));
-    listUsers.addAll(tempList);
-    final googleTranslator = GoogleTranslator();
-    listUsers.forEach((element) async {
+    // listUsers.addAll(tempList);
+    /*  listUsers.forEach((element) async {
       if (element.countryName.isNotEmpty && element.countryName != "") {
         try {
           googleTranslator.translate(element.countryName, to: 'en').then((value) => {
@@ -145,7 +168,7 @@ class HomeController extends GetxController {
           debugPrint("translatedName--error---$e");
         }
       }
-    });
+    });*/
 
     if (listUsers.isEmpty) {
       isLoading.value = false;
@@ -159,18 +182,21 @@ class HomeController extends GetxController {
     isLoading.value = false;
     listUsers.sort((a, b) => a.distanceBW.compareTo(b.distanceBW));
     listUsers.refresh();
-
+    if (isFromListen!) {
+      globalController.isFromLocationChange.value = false;
+    }
     if (SettingsController.isVerifiedUserOnly.value) {
       listUsers.removeWhere((element) => element.verified != 3);
       listUsers.sort((a, b) => a.distanceBW.compareTo(b.distanceBW));
       listUsers.refresh();
     }
+    debugPrint("listUsers===length====>${listUsers.length}");
   }
 
-  getNewUsersData() async {
-    debugPrint("get NewUser data===>${addNewUsers.length}");
+  getNewUsersData(int distance) async {
+    debugPrint("get NewUser data=listUsers.last.maxDistance==>${listUsers.last.distanceBW}");
     checkedUser = [];
-    List<UserModel> tempList = [];
+    RxList<UserModel> tempList = RxList();
     UserModel currentUserTemp = Get.find<GlobalController>().currentUser.value!;
 
     var query = await queryCollectionDB('/Users/${currentUserTemp.id}/CheckedUser').get();
@@ -187,42 +213,33 @@ class HomeController extends GetxController {
     }
     addNewUsers.sort((a, b) => a.distanceBW.compareTo(b.distanceBW));
     debugPrint("get NewUser data===addDistance==>${globalController.addDistance.value}");
-    globalController.addDistance.value += 500;
+    globalController.addDistance.value += (int.parse(listUsers.last.distanceBW.toString()))+distance;
     debugPrint("get NewUser data=after==addDistance==>${globalController.addDistance.value}");
     for (var singleUser in addNewUsers) {
-      if (filterUser(singleUser, currentUserTemp, singleUser.distanceBW.toDouble() ?? 0.0, true)) {
-        continue;
-      }
-      if (listSwipedUser.contains(singleUser.id)) {
+      if (distance <= globalController.addDistance.value.toDouble() &&
+          distance>=listUsers.last.distanceBW &&
+          singleUser.id != currentUserTemp.id &&
+          !singleUser.isBlocked) {
         tempList.add(singleUser);
-        continue;
       }
-      tempList.add(singleUser);
+
     }
-    final googleTranslator = GoogleTranslator();
-    tempList.forEach((element) async {
-      if (element.countryName.isNotEmpty && element.countryName != "") {
-        try {
-          googleTranslator.translate(element.countryName, to: 'en').then((value) => {
-                element.countryName = value.toString() ?? "",
-              });
-        } on Exception catch (e) {
-          debugPrint("translatedName--error---$e");
-        }
-      }
-    });
+
     tempList.sort((a, b) => a.distanceBW.compareTo(b.distanceBW));
+
     debugPrint("get NewUser data=after==>${tempList.length}");
     tempList.forEach((element) {
       if (!listUsers.contains(element)) {
         listUsers.add(element);
+        listUsers.refresh();
       }
     });
-    listUsers.refresh();
+
+    debugPrint("get NewUser data=listUsers.last.maxDistance==afterrrrrrrrrrr======>${listUsers.last.distanceBW}");
+    //listUsers.sort((a, b) => a.distanceBW.compareTo(b.distanceBW));
   }
 
   ///-- client initUser();
-
   initUserClient() async {
     if (isLoading.value) {
       return;
@@ -234,6 +251,7 @@ class HomeController extends GetxController {
     listSwipedUser = Session().getSwipedUser();
     List<UserModel> tempList = [];
     UserModel currentUserTemp = Get.find<GlobalController>().currentUser.value!;
+
     var query = await queryCollectionDB('/Users/${currentUserTemp.id}/CheckedUser').get();
     if (query.docs.isNotEmpty) {
       query.docs.forEach((element) {
@@ -322,59 +340,64 @@ class HomeController extends GetxController {
     }
   }
 
-  bool filterUser(UserModel tempUser, UserModel currentUserTemp, double distance, bool isFromNewUSers) {
+  bool filterUser(UserModel tempUser, UserModel currentUserTemp, double distance, bool isFromNewUsers) {
     if (checkedUser.contains(tempUser.id)) {
-      if (tempUser.name == "arjun") {
-        debugPrint("call filterUser---checked-->");
-      }
       return true;
     }
-    if (cekShowMe(currentUserTemp, tempUser)) {
-      if (tempUser.name == "arjun") {
-        debugPrint("call filterUser---cekshowme-->");
-      }
+
+    if (cekShowMe(currentUserTemp, tempUser, isFromNewUsers)) {
       return true;
     }
-    if (isFromNewUSers) {
-      if (distance <= globalController.addDistance.value.toDouble() &&
-          tempUser.id != currentUserTemp.id &&
-          !tempUser.isBlocked) {
-        return false;
-      } else {
-        return true;
-      }
-    } else {
-      if (cekDistance(
-        distance,
-        tempUser,
-        currentUserTemp,
-      )) {
-        if (tempUser.name == "arjun") {
-          debugPrint("call filterUser---cek ditsnce-->");
-        }
-        return true;
-      }
+
+    if (cekDistance(
+      distance,
+      tempUser,
+      currentUserTemp,
+    )) {
+      return true;
     }
+
     if (cekReview(tempUser)) {
-      if (tempUser.name == "arjun") {
-        debugPrint("call filterUser---cekreview-->");
-      }
       return true;
     }
-    if (tempUser.name == "arjun") {
-      debugPrint("call filterUser---outter-->");
-    }
+
     return false;
   }
 
-  bool cekShowMe(UserModel currentUser, UserModel tempUser) {
+  bool cekShowMe(UserModel currentUser, UserModel tempUser, bool isFromNewUsers) {
     if (currentUser.showMe.isEmpty) {
       return false;
     }
-    if (currentUser.showMe.contains(cekGender(tempUser.editInfo?['userGender']))) {
-      // print("Masuk cek Show Me");
-      return false;
+    List genderList = [
+      "gender fluid",
+      "gender non conforming",
+      "gender queer",
+      "agender",
+      "androgynous",
+      "gender questioning",
+      "intersex",
+      "non-binary",
+      "pangender",
+      "trans human",
+      "trans man",
+      "trans woman",
+      "transfeminime",
+      "transmasculine",
+      "two-spirit"
+    ];
+    if (isFromNewUsers || (listUsers.length <= 2)) {
+      for (var gender in genderList) {
+        if (currentUser.showMe.contains(gender) ||
+            currentUser.showMe.contains(cekGender(tempUser.editInfo?['userGender'])) && currentUser.id != tempUser.id) {
+          return false;
+        }
+      }
+    } else {
+      if (currentUser.showMe.contains(cekGender(tempUser.editInfo?['userGender']))) {
+        return false;
+      }
     }
+
     return true;
   }
 
@@ -404,7 +427,12 @@ class HomeController extends GetxController {
   }
 
   bool cekDistance(double distance, UserModel tempUser, UserModel currentUserTemp) {
-    if (distance <= currentUserTemp.maxDistance && tempUser.id != currentUserTemp.id && !tempUser.isBlocked) {
+    var maxDistance = currentUserTemp.maxDistance;
+    if (currentUserTemp.maxDistance <= 500) {
+      //debugPrint("cekDistance====>${currentUserTemp.maxDistance}   $maxDistance");
+      maxDistance = 5000;
+    }
+    if (distance <= maxDistance && tempUser.id != currentUserTemp.id && !tempUser.isBlocked) {
       return false;
     }
     return true;
@@ -432,8 +460,6 @@ class HomeController extends GetxController {
       return;
     }
     listSwipedUser.add(userModel.id);
-    globalController.adsCount.value++;
-    globalController.upgradeCounts.value++;
 
     if (kDebugMode) {
       print("Adding Name to last Swiped : " + userModel.name);

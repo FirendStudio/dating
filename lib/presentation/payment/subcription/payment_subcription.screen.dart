@@ -1,11 +1,11 @@
-import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swiper_null_safety/flutter_swiper_null_safety.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/domain/core/interfaces/loading.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:url_launcher/url_launcher_string.dart';
+
 import '../../../infrastructure/dal/util/Global.dart';
 import '../../../infrastructure/dal/util/color.dart';
 import '../../../infrastructure/dal/util/general.dart';
@@ -13,9 +13,9 @@ import 'controllers/payment_subcription.controller.dart';
 
 class PaymentSubcriptionScreen extends GetView<PaymentSubcriptionController> {
   const PaymentSubcriptionScreen({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-
     return Obx(
       () => Scaffold(
         body: SingleChildScrollView(
@@ -106,8 +106,7 @@ class PaymentSubcriptionScreen extends GetView<PaymentSubcriptionController> {
                         child: Align(
                           alignment: Alignment.bottomCenter,
                           child: Container(
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10)),
+                            decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
                             height: 100,
                             width: MediaQuery.of(context).size.width * .85,
                             child: ClipRRect(
@@ -117,16 +116,13 @@ class PaymentSubcriptionScreen extends GetView<PaymentSubcriptionController> {
                                 curve: Curves.linear,
                                 autoplay: true,
                                 physics: ScrollPhysics(),
-                                itemBuilder:
-                                    (BuildContext context, int index2) {
+                                itemBuilder: (BuildContext context, int index2) {
                                   return Column(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: <Widget>[
                                       Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        crossAxisAlignment: CrossAxisAlignment.center,
                                         children: <Widget>[
                                           Icon(
                                             listAdds[index2]["icon"],
@@ -173,6 +169,28 @@ class PaymentSubcriptionScreen extends GetView<PaymentSubcriptionController> {
                         ),
                       ),
                       controller.isLoading.value
+                          ? Container(
+                              height: Get.width * .8,
+                              child: loadingWidget(Get.width * .8, null),
+                            )
+                          : controller.products.isNotEmpty
+                              ? getProduct(
+                                  context: context,
+                                  product: controller.products.first,
+                                  interval: getInterval(controller.products.first),
+                                  intervalCount: "1",
+                                  price: controller.products.first.price,
+                                )
+                              : Container(
+                                  height: MediaQuery.of(context).size.width * .8,
+                                  child: Center(
+                                    child: Text("No active product found!!"),
+                                  ),
+                                ),
+                      SizedBox(
+                        height: 20,
+                      ),
+                      /* controller.isLoading.value
                           ? Container(
                               height: Get.width * .8,
                               child: loadingWidget(Get.width * .8, null),
@@ -282,7 +300,7 @@ class PaymentSubcriptionScreen extends GetView<PaymentSubcriptionController> {
                                   child: Center(
                                     child: Text("No active product found!!"),
                                   ),
-                                )
+                                )*/
                     ],
                   ),
                 ),
@@ -312,24 +330,28 @@ class PaymentSubcriptionScreen extends GetView<PaymentSubcriptionController> {
                       child: Center(
                         child: Text(
                           "CONTINUE",
-                          style: TextStyle(
-                              fontSize: 15,
-                              color: textColor,
-                              fontWeight: FontWeight.bold),
+                          style: TextStyle(fontSize: 15, color: textColor, fontWeight: FontWeight.bold),
                         ),
                       ),
                     ),
                     onTap: () async {
                       // print(selectedProduct);
                       // return;
+                      controller.selectedProduct.value = controller.products.first;
                       if (controller.selectedProduct.value != null)
+                        controller.buyProduct(controller.selectedProduct.value!);
+                      else {
+                        Global().showInfoDialog(
+                          "You must choose a subscription to continue.",
+                        );
+                      } /*  if (controller.selectedProduct.value != null)
                         controller
                             .buyProduct(controller.selectedProduct.value!);
                       else {
                         Global().showInfoDialog(
                           "You must choose a subscription to continue.",
                         );
-                      }
+                      }*/
                     },
                   ),
                 ),
@@ -377,6 +399,8 @@ class PaymentSubcriptionScreen extends GetView<PaymentSubcriptionController> {
       return "Month(s)";
     } else if (product.id == "weekly") {
       return "Week(s)";
+    } else if (product.id == "unlimited_no_ads_subscription") {
+      return "Month(s)";
     } else {
       return "Year(s)";
     }
@@ -391,9 +415,9 @@ class PaymentSubcriptionScreen extends GetView<PaymentSubcriptionController> {
   }) {
     return AnimatedContainer(
       curve: Curves.easeIn,
-      height: 100, //setting up dimention if product get selected
-      width: controller.selectedProduct.value !=
-              product //setting up dimention if product get selected
+      height: 100,
+      //setting up dimention if product get selected
+      width: controller.selectedProduct.value != product //setting up dimention if product get selected
           ? Get.width * .19
           : Get.width * .22,
       decoration: controller.selectedProduct.value == product
@@ -412,9 +436,7 @@ class PaymentSubcriptionScreen extends GetView<PaymentSubcriptionController> {
           Text(
             intervalCount,
             style: TextStyle(
-              color: controller.selectedProduct.value != product
-                  ? Colors.black
-                  : primaryColor,
+              color: controller.selectedProduct.value != product ? Colors.black : primaryColor,
               fontSize: 25,
               fontWeight: FontWeight.bold,
             ),
@@ -422,9 +444,7 @@ class PaymentSubcriptionScreen extends GetView<PaymentSubcriptionController> {
           Text(
             interval,
             style: TextStyle(
-              color: controller.selectedProduct.value != product
-                  ? Colors.black
-                  : primaryColor,
+              color: controller.selectedProduct.value != product ? Colors.black : primaryColor,
               fontWeight: FontWeight.w600,
               fontSize: 15,
             ),
@@ -432,9 +452,59 @@ class PaymentSubcriptionScreen extends GetView<PaymentSubcriptionController> {
           Text(
             price,
             style: TextStyle(
-              color: controller.selectedProduct.value != product
-                  ? Colors.black
-                  : primaryColor,
+              color: controller.selectedProduct.value != product ? Colors.black : primaryColor,
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget getProduct({
+    required BuildContext context,
+    required String intervalCount,
+    required String interval,
+    required ProductDetails product,
+    required String price,
+  }) {
+    return Container(
+      height: 80, //setting up dimention if product get selected
+      width: 150,
+      decoration: controller.selectedProduct.value == product
+          ? BoxDecoration(
+              shape: BoxShape.rectangle,
+              borderRadius: BorderRadius.circular(10),
+              color: Colors.white,
+              border: Border.all(width: 2, color: primaryColor),
+            )
+          : null,
+
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
+          // SizedBox(height: MediaQuery.of(context).size.height * .02),
+          Text(
+            intervalCount,
+            style: TextStyle(
+              color: controller.selectedProduct.value != product ? Colors.black : primaryColor,
+              fontSize: 25,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          Text(
+            interval,
+            style: TextStyle(
+              color: controller.selectedProduct.value != product ? Colors.black : primaryColor,
+              fontWeight: FontWeight.w600,
+              fontSize: 15,
+            ),
+          ),
+          Text(
+            price,
+            style: TextStyle(
+              color: controller.selectedProduct.value != product ? Colors.black : primaryColor,
               fontSize: 13,
               fontWeight: FontWeight.bold,
             ),

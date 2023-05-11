@@ -14,8 +14,9 @@ Random random = Random();
 
 String get interstitialAdUnitId {
   if (Platform.isAndroid) {
-    return 'ca-app-pub-3940256099942544/1033173712';
-    // return "ca-app-pub-8440353933109445/3462497666";
+    return "ca-app-pub-9920967673222897/6754332183";
+    // return 'ca-app-pub-3940256099942544/1033173712';
+
   } else if (Platform.isIOS) {
     return 'ca-app-pub-3940256099942544/4411468910';
   } else {

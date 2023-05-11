@@ -25,102 +25,128 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(
       (() {
-        if (controller.isLoading.value) {
-          return loadingWidget(Get.height, null);
-        }
-        return Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-          ),
-          child: Stack(
-            children: [
-              Stack(
-                children: <Widget>[
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                    ),
-                    height: Get.height,
-                    width: Get.width,
-                    child: controller.listUsers.length == 0
-                        ? Align(
-                            alignment: Alignment.center,
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: CircleAvatar(
-                                    backgroundColor: secondryColor,
-                                    radius: 40,
+        return controller.isLoading.value
+            ? loadingWidget(Get.height, null)
+            : Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                ),
+                child: Stack(
+                  children: [
+                    Stack(
+                      children: <Widget>[
+                        Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                          ),
+                          height: Get.height,
+                          width: Get.width,
+                          child: controller.listUsers.length == 0
+                              ? Align(
+                                  alignment: Alignment.center,
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: CircleAvatar(
+                                          backgroundColor: secondryColor,
+                                          radius: 40,
+                                        ),
+                                      ),
+                                      Text(
+                                        "There's no one new around you.",
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                          color: secondryColor,
+                                          decoration: TextDecoration.none,
+                                          fontSize: 18,
+                                        ),
+                                      )
+                                    ],
                                   ),
-                                ),
-                                Text(
-                                  "There's no one new around you.",
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    color: secondryColor,
-                                    decoration: TextDecoration.none,
-                                    fontSize: 18,
-                                  ),
+                                  // ) : swiperWidget(),
                                 )
+                              : carouselWidget(),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(25),
+                          child: Align(
+                            alignment: Alignment.bottomCenter,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: <Widget>[
+                                FloatingActionButton(
+                                  heroTag: UniqueKey(),
+                                  backgroundColor: Colors.white,
+                                  child: Icon(
+                                    Icons.clear,
+                                    color: primaryColor,
+                                    size: 30,
+                                  ),
+                                  onPressed: () async {
+                                    await Global().disloveFunction(controller.listUsers[controller.indexUser.value]);
+                                    controller.listUsers.remove(controller.listUsers[controller.indexUser.value]);
+                                    if (controller.listUsers.length == controller.indexUser.value) {
+                                      controller.indexUser.value--;
+                                    }
+                                  },
+                                ),
+                                FloatingActionButton(
+                                  heroTag: UniqueKey(),
+                                  backgroundColor: Colors.white,
+                                  child: Icon(
+                                    Icons.favorite,
+                                    color: primaryColor,
+                                    size: 30,
+                                  ),
+                                  onPressed: () async {
+                                    await Global().loveUserFunction(controller.listUsers[controller.indexUser.value]);
+                                    controller.listUsers.remove(controller.listUsers[controller.indexUser.value]);
+
+                                    if (controller.listUsers.length == controller.indexUser.value) {
+                                      controller.indexUser.value--;
+                                    }
+                                  },
+                                ),
+                                /* FloatingActionButton(
+                                  heroTag: UniqueKey(),
+                                  backgroundColor: Colors.white,
+                                  child: Icon(
+                                    Icons.ac_unit,
+                                    color: primaryColor,
+                                    size: 30,
+                                  ),
+                                  onPressed: () async {
+                                    var query = await queryCollectionDB('Users')  .where(
+                                      'age',
+                                      isGreaterThanOrEqualTo: 0,
+                                      isLessThanOrEqualTo:  100,
+                                    )
+                                        .orderBy('age', descending: false).get();
+                                    List<QueryDocumentSnapshot<Map<String, dynamic>>> temp = query.docs;
+                                    int count = 0;
+                                    for (var doc in temp) {
+                                      Map<String, dynamic> json = doc.data();
+
+                                      if (doc.data()["location"]["countryName"] == globalController.currentUser.value?.countryName) {
+                                        count++;
+                                      }
+                                    }
+                                    debugPrint("globalController.currentUser.value?.countryName==length data==>$count   ${globalController.currentUser.value?.countryName}");
+                                  },
+                                ),*/
+                                //addUser(),
                               ],
                             ),
-                            // ) : swiperWidget(),
-                          )
-                        : carouselWidget(),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(25),
-                    child: Align(
-                      alignment: Alignment.bottomCenter,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: <Widget>[
-                          FloatingActionButton(
-                            heroTag: UniqueKey(),
-                            backgroundColor: Colors.white,
-                            child: Icon(
-                              Icons.clear,
-                              color: primaryColor,
-                              size: 30,
-                            ),
-                            onPressed: () async {
-                              await Global().disloveFunction(controller.listUsers[controller.indexUser.value]);
-                              controller.listUsers.remove(controller.listUsers[controller.indexUser.value]);
-                              if (controller.listUsers.length == controller.indexUser.value) {
-                                controller.indexUser.value--;
-                              }
-                            },
                           ),
-                          FloatingActionButton(
-                            heroTag: UniqueKey(),
-                            backgroundColor: Colors.white,
-                            child: Icon(
-                              Icons.favorite,
-                              color: primaryColor,
-                              size: 30,
-                            ),
-                            onPressed: () async {
-                              await Global().loveUserFunction(controller.listUsers[controller.indexUser.value]);
-                              controller.listUsers.remove(controller.listUsers[controller.indexUser.value]);
-
-                              if (controller.listUsers.length == controller.indexUser.value) {
-                                controller.indexUser.value--;
-                              }
-                            },
-                          ),
-                          //addUser(),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              )
-            ],
-          ),
-        );
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              );
       }),
     );
   }
@@ -283,40 +309,72 @@ class HomeScreen extends StatelessWidget {
   Widget listUserWidget() {
     return Obx(() {
       return CarouselSlider(
-
         options: CarouselOptions(
-          initialPage: controller.listUsers.isNotEmpty ? controller.indexUser.value : 0,
+          initialPage: globalController.addDistance.value == 0
+              ? 0
+              : controller.listUsers.isNotEmpty
+                  ? controller.indexUser.value
+                  : 0,
           height: Get.height,
-          scrollPhysics: globalController.adsCount.value == 20
-              // ||globalController.upgradeCounts.value == 100
-              ? NeverScrollableScrollPhysics()
-              : ScrollPhysics(),
+          scrollPhysics: globalController.isPurchased.value
+              ? ScrollPhysics()
+              : globalController.adsCount.value == 20 || globalController.upgradeCounts.value == 99
+                  ? NeverScrollableScrollPhysics()
+                  : ScrollPhysics(),
           viewportFraction: 1.0,
           enlargeCenterPage: false,
           scrollDirection: Axis.horizontal,
-
           onPageChanged: (index, reason) async {
             print("Index User : " + index.toString());
+            if (!globalController.isPurchased.value) {
+              globalController.adsCount.value++;
+              globalController.upgradeCounts.value++;
+            }
             controller.addLastSwiped(controller.listUsers[index]);
             controller.listUsers[index] = await controller.initNextSwipe(controller.listUsers[index]);
             controller.indexImage.value = 0;
             controller.indexUser.value = index;
-          print(
+            print(
                 "adsCount=====>${globalController.adsCount.value}  upgradeCounts===>${globalController.upgradeCounts.value}    ");
 
-        /*  if(!globalController.isPurchased.value){
+            if (!globalController.isPurchased.value) {
+              if (globalController.adsCount.value == 20 && globalController.upgradeCounts.value != 99) {
+                await InterstitalAd.loadInterstitialAd();
+              }
 
-          }
-          */
+              /// upgrade show  dialog 100 swipe
+              else if (globalController.upgradeCounts.value == 99) {
+                globalController.upgradeCounts.value = 0;
+                globalController.adsCount.value = 0;
+                debugPrint(
+                    "adsCount===upgradeCounts==>${globalController.adsCount.value}  upgradeCounts===>${globalController.upgradeCounts.value}    ");
 
-            if (globalController.adsCount.value == 20 /*&& globalController.upgradeCounts.value!= 100*/) {
-              await InterstitalAd.loadInterstitialAd();
+                ArtDialogResponse? response = await ArtSweetAlert.show(
+                  barrierDismissible: false,
+                  context: Get.context!,
+                  artDialogArgs: ArtDialogArgs(
+                    denyButtonText: "Cancel",
+                    title: "Information",
+                    text: "Don't like ads? Enjoy our app Ad FREE by upgrading your account. ",
+                    confirmButtonText: "Upgrade Now",
+                    type: ArtSweetAlertType.info,
+                  ),
+                );
+                if (response?.isTapConfirmButton == true) {
+                  globalController.upgradeCounts.value = 0;
+                  Get.toNamed(Routes.PAYMENT_SUBCRIPTION);
+                }
+              }
+            }else{
+              globalController.adsCount.value=0;
+              globalController.upgradeCounts.value=0;
             }
 
-            if (index == controller.listUsers.length - 2) {
+            /// load more user
+            if (index == controller.listUsers.length - 2 || controller.listUsers.length <= 1) {
               debugPrint("get NewUser==current index=$index=>");
               controller.isLoading.value = true;
-              controller.getNewUsersData();
+              controller.getNewUsersData(5000);
               controller.isLoading.value = false;
             }
           },
@@ -712,6 +770,8 @@ class HomeScreen extends StatelessWidget {
                             errorWidget: (context, url, error) => Icon(Icons.error),
                             memCacheWidth: 200,
                             memCacheHeight: 200,
+                            // maxHeightDiskCache: 100,
+                            // maxWidthDiskCache:  100,
                           ),
                         ),
                       ],

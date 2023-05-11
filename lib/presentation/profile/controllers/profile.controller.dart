@@ -34,7 +34,7 @@ class ProfileController extends GetxController {
     super.onClose();
   }
 
-  void updateAddress(Map _address) {
+  void updateAddress(Map _address,isFromCurrentLocation) {
     showCupertinoModalPopup(
         context: Get.context!,
         builder: (ctx) {
@@ -91,6 +91,9 @@ class ProfileController extends GetxController {
                   ),
                   onPressed: () async {
                     Get.back();
+                    if(isFromCurrentLocation){
+                      Get.back();
+                    }
                     await queryCollectionDB("Users")
                         .doc('${globalController.currentUser.value?.id}')
                         .update(
@@ -98,7 +101,9 @@ class ProfileController extends GetxController {
                         'location': {
                           'latitude': _address['latitude'],
                           'longitude': _address['longitude'],
-                          'address': _address['PlaceName']
+                          'address': _address['PlaceName'],
+                          "countryName":_address["countryName"],
+                          "countryID":_address["countryID"],
                         },
                       },
                     );
@@ -106,7 +111,7 @@ class ProfileController extends GetxController {
                       barrierDismissible: false,
                       context: Get.context!,
                       builder: (_) {
-                        Future.delayed(Duration(seconds: 3), () {
+                        Future.delayed(Duration(seconds: 2), () {
                           Get.back();
                         });
                         return Center(

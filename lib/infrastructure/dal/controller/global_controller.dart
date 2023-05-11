@@ -39,6 +39,7 @@ class GlobalController extends GetxController {
   RxInt addDistance = 0.obs;
   RxInt adsCount = 0.obs;
   RxInt upgradeCounts = 0.obs;
+  RxBool isFromLocationChange=false.obs;
 
   @override
   onInit() async {
@@ -149,7 +150,7 @@ class GlobalController extends GetxController {
       }
       UserModel tempUser = UserModel.fromJson(event.data() as Map<String, dynamic>);
       currentUser.value = tempUser;
-      addDistance.value=currentUser.value!.maxDistance;
+      // addDistance.value=currentUser.value!.maxDistance;
       // currentUser.value!.relasi.value = await Global().getRelationship(tempUser.id);
       ///-- add Partner
       queryCollectionDB("Relationship").doc(tempUser.id).snapshots().listen((data) async {
@@ -166,7 +167,10 @@ class GlobalController extends GetxController {
         print("Cek Home is registered : " + cek.toString());
       }
       if (cek) {
-        Get.find<HomeController>().initUser();
+        debugPrint("call inituser===from globalcontroller==>");
+
+        Get.find<HomeController>().initUser(true);
+
       }
       initFirebaseMessaging();
     });
@@ -254,7 +258,7 @@ class GlobalController extends GetxController {
   }
 
   initPayment() {
-    print("Init Payment");
+    print("Init Payment------>");
     streamPayment = queryCollectionDB("Payment").doc(currentUser.value?.id).snapshots().listen((event) async {
       if (!event.exists) {
         await setUpdatePayment(
@@ -277,7 +281,7 @@ class GlobalController extends GetxController {
         debugPrint("Init Payment paymentModel!.status==false=date=>${paymentModel!.status}");
         debugPrint("Init Payment paymentModel!.isPurchased==false=date=>${isPurchased.value}");
       }
-      if (paymentModel!.status == true && paymentModel!.date!.isBefore(DateTime.now())) {
+      if (paymentModel!.status  && paymentModel!.date!.isBefore(DateTime.now())) {
         isPurchased.value = false;
         await setUpdatePayment(
           uid: currentUser.value?.id ?? "",
@@ -290,6 +294,7 @@ class GlobalController extends GetxController {
         debugPrint("Init Payment paymentModel!.status==isBefore=date=>${paymentModel!.status}");
         debugPrint("Init Payment paymentModel!.isPurchased==isBefore=date=>${isPurchased.value}");
       }
+
       if (paymentModel!.status && paymentModel!.date!.isAfter(DateTime.now())) {
         isPurchased.value = true;
         debugPrint("Init Payment paymentModel!.status==isAfter=date=>${paymentModel!.status}");
@@ -402,7 +407,20 @@ class GlobalController extends GetxController {
       print(userAuth.docs.first);
     }
     var docs = userAuth.docs.first;
-
+    Map<String, dynamic>? location = await Global().getLocationCoordinates();
+    await queryCollectionDB("Users")
+        .doc('${ userAuth.docs.first.id}')
+        .update(
+      {
+        'location': {
+          'latitude': location!['latitude'],
+          'longitude': location['longitude'],
+          'address': location['PlaceName'],
+          "countryName":location["countryName"],
+          "countryID":location["countryID"],
+        },
+      },
+    );
     Map<String, dynamic> data = docs.data() as Map<String, dynamic>;
     currentUser.value = UserModel.fromJson(data);
     if (kDebugMode) {

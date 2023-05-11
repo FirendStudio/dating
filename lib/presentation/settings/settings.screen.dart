@@ -248,77 +248,9 @@ class SettingsScreen extends GetView<SettingsController> {
                       ),
                     ),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Text(
-                      "Discovery settings",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15),
-                    child: Card(
-                      child: ExpansionTile(
-                        key: UniqueKey(),
-                        leading: Text(
-                          "Current location : ",
-                          style: TextStyle(
-                            fontSize: 14,
-                          ),
-                        ),
-                        title: Text(
-                          (globalController.currentUser.value?.address ?? ""),
-                          style: TextStyle(
-                            color: Colors.blue,
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 15),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Icon(
-                                  Icons.location_on,
-                                  color: Colors.blue,
-                                  size: 25,
-                                ),
-                                InkWell(
-                                  child: Text(
-                                    "Change location",
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      color: Colors.blue,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                  onTap: () async {
-                                    print(await Global().getLocationCoordinates());
-                                    await Get.to(() => UploadLocationWidget());
-                                  },
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(
-                      left: 15,
-                    ),
-                    child: Text(
-                      "Change your location to see members in other city",
-                      style: TextStyle(color: Colors.black54),
-                    ),
-                  ),
+
+
+
                   Padding(
                     padding: const EdgeInsets.all(10.0),
                     child: Text(
@@ -367,7 +299,7 @@ class SettingsScreen extends GetView<SettingsController> {
                             if (SettingsController.isVerifiedUserOnly.value) {
                               Get.find<HomeController>().listUsers.removeWhere((element) => element.verified != 3);
                             } else {
-                              Get.find<HomeController>().initUser();
+                              Get.find<HomeController>().initUser(false);
                             }
                           },
                           activeColor: primaryColor.withOpacity(0.3),
@@ -492,11 +424,81 @@ class SettingsScreen extends GetView<SettingsController> {
                               activeColor: primaryColor,
                               onChanged: (val) {
                                 controller.changeValues.addAll({'maximum_distance': val.round()});
+
                                 controller.distance.value = val.round();
                                 globalController.addDistance.value=0;
                               }),
                         ),
                       ),
+                    ),
+                  ),  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Text(
+                      "Discovery settings",
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: Card(
+                      child: ExpansionTile(
+                        key: UniqueKey(),
+                        leading: Text(
+                          "Current location : ",
+                          style: TextStyle(
+                            fontSize: 14,
+                          ),
+                        ),
+                        title: Text(
+                          (globalController.currentUser.value?.address ?? ""),
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        children: <Widget>[
+                          InkWell(
+                            onTap: () async {
+                              // print(await Global().getLocationCoordinates());
+                              await Get.to(() => UploadLocationWidget());
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 18),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Icon(
+                                    Icons.location_on,
+                                    color: Colors.blue,
+                                    size: 25,
+                                  ),
+                                  Text(
+                                    "Change location",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: Colors.blue,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+
+                        ],
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      left: 15,
+                    ),
+                    child: Text(
+                      "Change your location to see members in other city",
+                      style: TextStyle(color: Colors.black54),
                     ),
                   ),
                   Padding(

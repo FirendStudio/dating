@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hookup4u/config.dart';
+
 import '../../../domain/core/model/CustomTapModel.dart';
 import '../controller/global_controller.dart';
 

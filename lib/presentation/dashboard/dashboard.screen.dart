@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:hookup4u/infrastructure/dal/controller/global_controller.dart';
 import 'package:hookup4u/presentation/dashboard/widget/blockuser_widget.dart';
 import 'package:hookup4u/presentation/notif/controllers/notif.controller.dart';
+import 'package:hookup4u/presentation/payment/subcription/controllers/payment_subcription.controller.dart';
 import 'package:hookup4u/presentation/profile/controllers/profile.controller.dart';
 import 'package:hookup4u/presentation/screens.dart';
 
@@ -15,6 +16,7 @@ class DashboardScreen extends GetView<DashboardController> {
 
   @override
   Widget build(BuildContext context) {
+    Get.put(PaymentSubcriptionController());
     Get.put(DashboardController());
     Get.put(NotifController());
     Get.put(ProfileController());
